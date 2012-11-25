@@ -8,7 +8,8 @@
 module.exports = function() {
 	var mongoose = require('mongoose')
 	  , conf = require('./db-config.js')
-	  , connect = 'mongodb://' + conf.user + ':' + conf.pass + '@' + conf.host + ':' + conf.port + '/' + conf.name
+	  , creds = (conf.user && conf.pass) ? conf.user + ':' + conf.pass + '@' : ''
+	  , connect = 'mongodb://' + creds + conf.host + ':' + conf.port + '/' + conf.name
 	  , db = mongoose.createConnection(connect);
 	
 	db.on('error', console.error.bind(console, 'connection error:'));

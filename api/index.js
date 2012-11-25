@@ -76,46 +76,51 @@ module.exports = function(app) {
 	////
 	app.post('/api/user/create', function(req, res) {
 		var body = req.body;
+		// if both email and pass are supplied
 		if (body.email && body.password) {
+			// lookup existing user by email
 			db.user
-			.findOne({ email : body.email})
+			.findOne({ email : body.email })
 			.exec(function(err, user) {
 				if (err) {
 					console.log(err);
-				}
-				
-				if (!user) {
-					var newUser = new db.user({
-						email : body.email,
-						hash : crypto.createHash('sha1').update('lillian12').digest(),
-						apiKey : generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 }),
-						memberSince : new Date().toDateString(),
-						isConfirmed : false,
-						isPro : false,
-						confirmCode : generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 })
-					});
-					console.log(db);
-					newUser.save(function(err) {
-						if (err) {
-							res.writeHead(500);
-							res.write('User could not be created.');
-							res.end();
-						} else {
-							res.write(JSON.stringify({
-								userId : user._id,
-								apiKey : user.apiKey,
-								message : 'A confirmation email was sent to ' + user.email + '.'
-							}));
-							res.end();
-							mailer.send('confirm', newUser);
-						}
-					});
 				} else {
-					res.writeHead(500);
-					res.write('The email supplied is already in use.');
-					res.end();
+					// if all is good, then create the new user account
+					if (!user) {
+						var newUser = new db.user({
+							email : body.email,
+							hash : crypto.createHash('sha1').update(body.password).digest(),
+							apiKey : generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 }),
+							memberSince : new Date().toDateString(),
+							isConfirmed : false,
+							isPro : false,
+							confirmCode : generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 })
+						});
+						newUser.save(function(err) {
+							if (err) {
+								res.writeHead(500);
+								res.write('User could not be created.');
+								res.end();
+							} else {
+								res.write(JSON.stringify({
+									userId : newUser._id,
+									apiKey : newUser.apiKey,
+									message : 'A confirmation email was sent to ' + newUser.email + '.'
+								}));
+								res.end();
+								console.log('New user "' + newUser.email + '" saved!');
+								mailer.send('confirm', newUser);
+							}
+						});
+					// otherwise, fail
+					} else {
+						res.writeHead(500);
+						res.write('The email supplied is already in use.');
+						res.end();
+					}
 				}
 			});
+		// need more data
 		} else {
 			res.writeHead(500);
 			res.write('Missing required parameters.');

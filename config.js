@@ -12,21 +12,24 @@ module.exports = (function(env) {
 		dev : {
 			env : 'DEVELOPMENT',
 			app_port : 1337,
-			useSSL : false
+			useSSL : false,
+			domain : 'http://localhost:1337/'
 		},
 		
 		// qa config
 		qa : {
 			env : "TEST",
 			app_port : 80,
-			useSSL : false
+			useSSL : false,
+			domain : 'http://qa.beelancer.com/'
 		},
 		
 		//prod config
 		prod : {
 			env : 'PRODUCTION',
 			app_port : 443,
-			useSSL : true
+			useSSL : true,
+			domain : 'https://app.beelancer.com/'
 		}
 	};
 	

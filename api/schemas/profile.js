@@ -24,5 +24,12 @@ module.exports = new Schema({
 	ratings : [{
 		type : ObjectId,
 		ref : 'rating'
-	}]
+	}],
+	address : {
+		line : String,
+		suite : String,
+		city : String,
+		state : String,
+		zip : String
+	}
 });

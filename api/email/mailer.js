@@ -10,18 +10,21 @@ var conf = require('./email-config.js')
   , mlserver = email.server.connect(conf)
   , tmpl_path = __dirname + '/templates/'
   , fs = require('fs')
-  , handlebars = require('handlebars');
+  , handlebars = require('handlebars')
+  , appConf = require('../../config.js');
 
 module.exports.send = function(tmpl, tmpl_data) {
-	fs.readFile(tmpl_path + tmpl, function(err, data) {
+	tmpl_data.domain = appConf.domain;
+	
+	fs.readFile(tmpl_path + tmpl + '.html', function(err, data) {
 		if (err) {
 			console.log(err);
 		} else {
-			var body = handlebars.compile(data)(tmpl_data);
+			var body = handlebars.compile(data.toString())(tmpl_data);
 			mlserver.send({
 				text : 'Your confirmation number is ' + tmpl_data.confirmCode, 
 				from : 'Beelancer <noreply@beelancer.com>', 
-				to : '<' + body.email + '>',
+				to : '<' + tmpl_data.email + '>',
 				subject : 'Confirm Your Beelancer Account',
 				attachment : [
 					{
@@ -30,7 +33,7 @@ module.exports.send = function(tmpl, tmpl_data) {
 					}
 				]
 			}, function(err, message) { 
-				console.log(err || message); 
+				console.log(err || 'Confirmation email sent to "' + tmpl_data.email + '".'); 
 			});
 		}
 	});

@@ -10,10 +10,10 @@ module.exports = (function(env) {
 	var config = {
 		// dev config
 		dev : {
-			user : 'beedev',
-			pass : '​b3374nc3r',
-			host : 'alex.mongohq.com',
-			port : 10002,
+			user : '',
+			pass : '​',
+			host : 'cloud.gordonwritescode.com',
+			port : 27017,
 			name : 'beelancer-dev'
 		},
 		
@@ -21,8 +21,8 @@ module.exports = (function(env) {
 		qa : {
 			user : 'beedev',
 			pass : '​b3374nc3r',
-			host : 'alex.mongohq.com',
-			port : 10002,
+			host : 'cloud.gordonwritescode.com',
+			port : 27017,
 			name : 'beelancer-dev'
 		},
 		
@@ -30,8 +30,8 @@ module.exports = (function(env) {
 		prod : {
 			user : 'beedev',
 			pass : '​b3374nc3r',
-			host : 'alex.mongohq.com',
-			port : 10002,
+			host : 'cloud.gordonwritescode.com',
+			port : 27017,
 			name : 'beelancer-dev'
 		}
 	};
