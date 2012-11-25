@@ -14,8 +14,8 @@ module.exports = function(app) {
 		});
 	});
 	
-	// api routes
-	var api = require('./api');
+	// Initialize API
+	require('./api')(app);
 	
 	
 	

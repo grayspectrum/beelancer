@@ -75,7 +75,7 @@ app.configure('prod', function(){
 });
 
 ////
-// Initialize HTTP Routing
+// Connect DB and Initialize HTTP Routing
 ////
 routes(app);
 

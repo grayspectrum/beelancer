@@ -24,7 +24,8 @@
 		"handlebars" : "1.0.7",
 		"emailjs" : "0.3.x",
 		"commander" : "1.1.x",
-		"spijs" : "0.1.x"
+		"spijs" : "0.1.x",
+		"rbytes" : ">=0.0.2"
 	},
 	"analyze": false,
 	"engines": {

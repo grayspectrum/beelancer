@@ -10,21 +10,21 @@ module.exports = (function(env) {
 	var config = {
 		// dev config
 		dev : {
-			env : env,
+			env : 'DEVELOPMENT',
 			app_port : 1337,
 			useSSL : false
 		},
 		
 		// qa config
 		qa : {
-			env : env,
+			env : "TEST",
 			app_port : 80,
 			useSSL : false
 		},
 		
 		//prod config
 		prod : {
-			env : env,
+			env : 'PRODUCTION',
 			app_port : 443,
 			useSSL : true
 		}
