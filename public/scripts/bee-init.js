@@ -11,6 +11,9 @@ var bee = new spi.App({
 	container : 'main'
 });
 
+// Load API Library
+_.load(['/scripts/bee-api.js']);
+
 // Register Modules
 (function(app) {
 	

@@ -8,6 +8,10 @@ var mongoose = require('mongoose')
   , ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new Schema({
+	user : {
+		type : ObjectId,
+		ref : 'user'
+	},
 	firstName : String,
 	lastName : String,
 	title : String,

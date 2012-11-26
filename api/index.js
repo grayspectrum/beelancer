@@ -33,7 +33,7 @@ function generateKey(spec) {
 // Inspects a request object for authentication
 function verifyUser(req, callback) {
 	var creds = (function(headers, cookies) {
-		return (headers) ? { 
+		return (headers.userid && headers.apikey) ? { 
 			userId : headers.userid,
 			apiKey : headers.apikey
 		} : {
@@ -41,6 +41,7 @@ function verifyUser(req, callback) {
 			apiKey : cookies.apikey || false
 		};
 	})(req.headers, req.cookies);
+		
 	if (creds.userId && creds.apiKey) {
 		db.user
 		.findOne({ _id : creds.userId })
@@ -104,7 +105,6 @@ module.exports = function(app) {
 							} else {
 								res.write(JSON.stringify({
 									userId : newUser._id,
-									apiKey : newUser.apiKey,
 									message : 'A confirmation email was sent to ' + newUser.email + '.'
 								}));
 								res.end();
@@ -126,6 +126,119 @@ module.exports = function(app) {
 			res.write('Missing required parameters.');
 			res.end();
 		}
+	});
+	
+	////
+	// PUT - /api/user/confirm
+	// Confirms a new user
+	//
+	// Params => userId, confirmCode
+	////
+	app.put('/api/user/confirm', function(req, res) {
+		var body = req.body;
+		if (body.userId && body.confirmCode) {
+			db.user
+			.findOne({ _id : body.userId , confirmCode : confirmCode })
+			.exec(function(err, user) {
+				if (err || !user) {
+					res.writeHead(500);
+					res.write('Unable to confirm account.');
+					res.end();
+				} else {
+					if (user.isConfirmed) {
+						res.writeHead(500);
+						res.write('Account is already confirmed.');
+						res.end();
+					} else {
+						user.isConfirmed = true;
+						user.save(function(err) {
+							if (err) {
+								res.writeHead(500);
+								res.write('There was a problem confirming the account.');
+								res.end();
+							} else {
+								res.write('The account for ' + user.email + ' has been confirmed!');
+								res.end();
+							}
+						});
+					}
+				}
+			});
+		} else {
+			res.writeHead(500);
+			res.write('Missing userId or confimCode.');
+			res.end();
+		}
+	});
+	
+	////
+	// PUT - /api/user/login
+	// Generates a new API key and returns credentials
+	//
+	// Params => email, password
+	////
+	app.put('/api/user/login', function(req, res) {
+		var body = req.body;
+		if (req.body.email && req.body.password) {
+			var hash = crypto.createHash('sha1').update(body.password).digest();
+			db.user
+			.findOne({ email : body.email, hash : hash })
+			.exec(function(err, user) {
+				if (err || !user) {
+					res.writeHead(401);
+					res.write('Incorrect email or password.');
+					res.end();
+				} else {
+					user.apiKey = generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 });
+					user.save(function(err) {
+						if (err) {
+							res.write(500);
+							res.write('Error generating new API key.');
+							res.end();
+						} else {
+							res.write(JSON.stringify({
+								userId : user._id,
+								apiKey : user.apiKey,
+								profile : user.profile || false
+							}));
+							res.end();
+						}
+					});
+				}
+			});
+		} else {
+			res.writeHead(401);
+			res.write('Email or password is missing.');
+			res.end();
+		}
+	});
+	
+	////
+	// PUT - /api/user/logout
+	// Removes API key from user document
+	//
+	// Headers => userId, apiKey
+	////
+	app.put('/api/user/logout', function(req, res) {
+		verifyUser(req, function(err, user) {
+			if (err) {
+				res.writeHead(401);
+				res.write(err.text);
+				res.end();
+			} else {
+				user.apiKey = null;
+				user.save(function(err) {
+					if (err) {
+						res.writeHead(500);
+						res.write('Unable to logout.');
+						res.end();
+					} else {
+						res.write('You have been securely logged out.');
+						res.end();
+					}
+				});
+			}
+		});
 	});
 	
 };
