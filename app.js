@@ -6,9 +6,8 @@
  */
 
 
-var fs = require('fs');
-
-var config = require('./config.js')
+var fs = require('fs')
+  , config = require('./config.js')
   , express = require('express')
   , routes = require('./routes.js')
   , spi = require('spijs')
