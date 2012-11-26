@@ -22,18 +22,22 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'invoice'
 	}],
-	team : {
-		owner : {
-			type : ObjectId,
-			ref : 'user'
-		},
-		client : {
-			type : ObjectId,
-			ref : 'user'
-		},
-		members : [{
-			type : ObjectId,
-			ref : 'user'
-		}]
-	}
+	owner : {
+		type : ObjectId,
+		ref : 'user'
+	},
+	client : {
+		type : ObjectId,
+		ref : 'user'
+	},
+	members : [{
+		type : ObjectId,
+		ref : 'user'
+	}],
+	isPublished : Boolean,
+	bids : [{
+		type : ObjectId,
+		ref : 'bid'
+	}],
+	category : String
 });

@@ -1,0 +1,128 @@
+/*
+ * beelancer - api/sections/api-project.js
+ * Author: Gordon Hall
+ * 
+ * /project endpoints
+ */
+
+// Get Models
+var crypto = require('crypto')
+  , mailer = require('../email/mailer.js')
+  , utils = require('../utils.js');
+
+module.exports = function(app, db) {
+	////
+	// GET - /api/project/:projectId
+	// Returns the requested project
+	////
+	app.get('/api/project/:projectId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				var id = req.params.id;
+				// return project
+				db.project.findOne({ 
+					_id : id 
+				}).exec(function(err, project) {
+					if (err || !project) {
+						res.writeHead(500);
+						res.write('Project not found.');
+						res.end();
+					} else {
+						var isOwner = (project.owner === user._id)
+						  , isClient = (project.client === user._id)
+						  , isMember = (project.members.indexOf(user._id) > -1);
+						if (isOwner || isClient || isMember) {
+							res.write(JSON.stringify(project));
+							res.end();
+						} else {
+							res.writeHead(401);
+							res.write('You are not authorized to view this project.');
+							res.end();
+						}
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be registered and logged in to view this project.');
+				res.end();
+			}
+		});
+	});
+	
+	app.get('/api/projects', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.project.find({ 
+					$or : [ 
+						{ owner : user._id }, 
+						{ client : user._id }, 
+						{ members : user._id } 
+					] 
+				}).exec(function(err, projects) {
+					if (err) {
+						res.writeHead(500);
+						res.write('Could not retrieve projects.');
+						res.end();
+					} else {
+						res.write(JSON.stringify(projects));
+						res.end();
+					}
+				});
+			} else {
+				console.log(err);
+				res.writeHead(401);
+				res.write('You must be registered and logged in to view your projects.');
+				res.end();
+			}
+		});
+	});
+	
+	////
+	// POST - /api/project/create
+	// Creates a new project
+	////
+	app.post('/api/project/create', function(req, res) {
+		
+	});
+	
+	////
+	// PUT - /api/project/update
+	// Updates a project
+	////
+	app.put('/api/project/update', function(req, res) {
+		
+	});
+	
+	////
+	// DELETE - /api/project/delete
+	// Deletes a project
+	////
+	app.del('/api/project/delete', function(req, res) {
+		
+	});
+	
+	////
+	// POST - /api/project/publish
+	// Publishes a project to the job board
+	////
+	app.post('/api/project/publish', function(req, res) {
+		
+	});
+	
+	////
+	// POST - /api/project/unpublish
+	// Unpublishes a project from the job board
+	////
+	app.post('/api/project/unpublish', function(req, res) {
+		
+	});
+	
+	////
+	// POST - /api/project/invite
+	// Invites a user to work on a project
+	////
+	app.post('/api/project/invite', function(req, res) {
+		
+	});
+	
+};

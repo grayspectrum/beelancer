@@ -13,6 +13,7 @@ module.exports = function(db) {
 		project : db.model('project', require('./schemas/project.js')),
 		profile : db.model('profile', require('./schemas/profile.js')),
 		message : db.model('message', require('./schemas/message.js')),
-		invoice : db.model('invoice', require('./schemas/invoice.js'))
+		invoice : db.model('invoice', require('./schemas/invoice.js')),
+		bid : db.model('bid', require('./schemas/bid.js'))
 	};
 };

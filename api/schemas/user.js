@@ -31,5 +31,6 @@ module.exports = new Schema({
 	memberSince : Date,
 	proSince : Date,
 	isConfirmed : Boolean,
-	confirmCode : String
+	confirmCode : String,
+	recoveryKey : String
 });
