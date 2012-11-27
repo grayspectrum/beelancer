@@ -14,6 +14,7 @@ module.exports = function(db) {
 		profile : db.model('profile', require('./schemas/profile.js')),
 		message : db.model('message', require('./schemas/message.js')),
 		invoice : db.model('invoice', require('./schemas/invoice.js')),
-		bid : db.model('bid', require('./schemas/bid.js'))
+		bid : db.model('bid', require('./schemas/bid.js')),
+		job : db.model('job', require('./schemas/job.js'))
 	};
 };

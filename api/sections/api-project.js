@@ -80,46 +80,105 @@ module.exports = function(app, db) {
 	////
 	// POST - /api/project/create
 	// Creates a new project
+	//
+	// Required Params => rate, description, title, deadline
 	////
 	app.post('/api/project/create', function(req, res) {
-		
+		var body = req.body;
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				if (body.rate && body.description && body.title && body.deadline) {
+					var project = new db.project(body);
+					project.isActive = true;
+					project.amountPaid = 0;
+					project.owner = user._id;
+					project.save(function(err) {
+						if (err) {
+							console.log(err);
+							res.writeHead(500);
+							res.write('Project could not be saved.');
+							res.end();
+						} else {
+							res.write(JSON.stringify(project));
+							res.end();
+						}
+					});
+				} else {
+					res.writeHead(500);
+					res.write('Missing required project information.');
+					res.end();
+				}
+			} else {
+				res.writeHead(500);
+				res.write('You must be logged in to create a project');
+				res.end();
+			}
+		});
 	});
 	
 	////
 	// PUT - /api/project/update
 	// Updates a project
 	////
-	app.put('/api/project/update', function(req, res) {
-		
+	app.put('/api/project/update/:projectId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			db.project
+				.findOne({ _id : req.params.projectId , owner : user._id})
+			.exec(function(err, project) {
+				if (err || !project) {
+					res.writeHead(500);
+					res.write('Could not find project.');
+					res.end();
+				} else {
+					project.update(req.body, function(err) {
+						if (err) {
+							res.writeHead(500);
+							res.write('Could not update project.');
+							res.end();
+						} else {
+							res.write(JSON.stringify(project));
+							res.end();
+						}
+					});
+				}
+			});
+		});
 	});
 	
 	////
 	// DELETE - /api/project/delete
 	// Deletes a project
 	////
-	app.del('/api/project/delete', function(req, res) {
-		
-	});
-	
-	////
-	// POST - /api/project/publish
-	// Publishes a project to the job board
-	////
-	app.post('/api/project/publish', function(req, res) {
-		
-	});
-	
-	////
-	// POST - /api/project/unpublish
-	// Unpublishes a project from the job board
-	////
-	app.post('/api/project/unpublish', function(req, res) {
-		
+	app.del('/api/project/delete/:projectId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			db.project
+				.findOne({ _id : req.params.projectId , owner : user._id})
+			.exec(function(err, project) {
+				if (err || !project) {
+					res.writeHead(500);
+					res.write('Could not find project.');
+					res.end();
+				} else {
+					project.remove(function(err) {
+						if (err) {
+							res.writeHead(500);
+							res.write('Could not delete project.');
+							res.end();
+						} else {
+							res.write('Project deleted.');
+							res.end();
+						}
+					});
+				}
+			});
+		});
 	});
 	
 	////
 	// POST - /api/project/invite
 	// Invites a user to work on a project
+	//
+	// Params => projectId, userId
 	////
 	app.post('/api/project/invite', function(req, res) {
 		

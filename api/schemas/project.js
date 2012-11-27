@@ -33,11 +33,5 @@ module.exports = new Schema({
 	members : [{
 		type : ObjectId,
 		ref : 'user'
-	}],
-	isPublished : Boolean,
-	bids : [{
-		type : ObjectId,
-		ref : 'bid'
-	}],
-	category : String
+	}]
 });
