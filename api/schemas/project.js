@@ -8,7 +8,7 @@ var mongoose = require('mongoose')
   , ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new Schema({
-	rate : Number,
+	budget : Number,
 	isActive : Boolean,
 	amountPaid : Number,
 	description : String,

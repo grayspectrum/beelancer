@@ -81,13 +81,13 @@ module.exports = function(app, db) {
 	// POST - /api/project/create
 	// Creates a new project
 	//
-	// Required Params => rate, description, title, deadline
+	// Required Params => description, title, deadline
 	////
 	app.post('/api/project/create', function(req, res) {
 		var body = req.body;
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
-				if (body.rate && body.description && body.title && body.deadline) {
+				if (body.description && body.title && body.deadline) {
 					var project = new db.project(body);
 					project.isActive = true;
 					project.amountPaid = 0;
