@@ -20,25 +20,26 @@ module.exports = function(app, db) {
 			if (!err) {
 				var id = req.params.id;
 				// return project
-				db.project.findOne({ 
-					_id : id 
-				}).exec(function(err, project) {
+				db.project
+					.findOne({ 
+						_id : id,
+						$or : [ 
+							{ owner : user._id }, 
+							{ client : user._id }, 
+							{ members : user._id } 
+						] 
+					})
+					.populate('owner', 'profile')
+					.populate('client', 'profile')
+					.populate('members', 'profile')
+				.exec(function(err, project) {
 					if (err || !project) {
 						res.writeHead(500);
 						res.write('Project not found.');
 						res.end();
 					} else {
-						var isOwner = (project.owner === user._id)
-						  , isClient = (project.client === user._id)
-						  , isMember = (project.members.indexOf(user._id) > -1);
-						if (isOwner || isClient || isMember) {
-							res.write(JSON.stringify(project));
-							res.end();
-						} else {
-							res.writeHead(401);
-							res.write('You are not authorized to view this project.');
-							res.end();
-						}
+						res.write(JSON.stringify(project));
+						res.end();
 					}
 				});
 			} else {
@@ -49,6 +50,10 @@ module.exports = function(app, db) {
 		});
 	});
 	
+	////
+	// GET - /api/projects
+	// Returns the users projects
+	////
 	app.get('/api/projects', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
@@ -117,7 +122,7 @@ module.exports = function(app, db) {
 	});
 	
 	////
-	// PUT - /api/project/update
+	// PUT - /api/project/update:projectId
 	// Updates a project
 	////
 	app.put('/api/project/update/:projectId', function(req, res) {

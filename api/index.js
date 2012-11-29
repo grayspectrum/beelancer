@@ -11,4 +11,5 @@ module.exports = function(app) {
 	require('./sections/api-user.js')(app, db);
 	require('./sections/api-profile.js')(app, db);
 	require('./sections/api-project.js')(app, db);
+	require('./sections/api-task.js')(app, db);
 };
