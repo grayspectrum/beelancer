@@ -41,7 +41,8 @@ module.exports.verifyUser = function(req, db, callback) {
 		
 	if (creds.userId && creds.apiKey) {
 		db.user
-		.findOne({ _id : creds.userId })
+			.findOne({ _id : creds.userId })
+			.populate('profile')
 		.exec(function(err, user) {
 			if (err || !user) {
 				callback.call(this, {

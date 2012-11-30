@@ -17,7 +17,8 @@ module.exports = function(app, db) {
 	app.get('/api/profile/:profileId', function(req, res) {
 		var id = req.params.profileId;
 		db.profile
-		.findOne({ _id : id })
+			.findOne({ _id : id })
+			.populate('ratings', null, { isVisible : true })
 		.exec(function(err, profile) {
 			if (err || !profile) {
 				res.writeHead(500);
@@ -162,4 +163,5 @@ module.exports = function(app, db) {
 			}
 		});
 	});
+	
 };

@@ -17,5 +17,14 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'task'
 	}],
-	isPaid : Boolean
+	isPaid : Boolean,
+	forUser : {
+		type : ObjectId,
+		ref : 'profile'
+	},
+	fromUser : {
+		type : ObjectId,
+		ref : 'profile'
+	},
+	dueDate : Date
 });

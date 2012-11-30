@@ -8,8 +8,15 @@ var mongoose = require('mongoose')
   , ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new Schema({
-	scale : Number,
-	score : Number,
+	forUser : {
+		type : ObjectId,
+		ref : 'profile'
+	},
+	fromUser : {
+		type : ObjectId,
+		ref : 'profile'
+	},
 	comment : String,
-	category : String
+	isVisible : Boolean,
+	needsAction : Boolean
 });
