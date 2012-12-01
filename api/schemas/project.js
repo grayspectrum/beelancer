@@ -26,10 +26,7 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'user'
 	},
-	client : {
-		type : ObjectId,
-		ref : 'user'
-	},
+	client : String,
 	members : [{
 		type : ObjectId,
 		ref : 'user'

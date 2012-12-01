@@ -67,11 +67,13 @@ module.exports = (function() {
 	};
 	
 	function getUser(db, id, callback) {
-		db.user.findOne({ _id : id }).exec(function(err, user) {
+		db.profile.findOne({ _id : id })
+			.populate('user','_id team')
+		.exec(function(err, profile) {
 			if (err || !user) {
 				callback.call(this, true, null);
 			} else {
-				callback.call(this, false, user);
+				callback.call(this, false, profile.user);
 			}
 		});
 	};

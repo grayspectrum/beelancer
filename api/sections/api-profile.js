@@ -169,6 +169,47 @@ module.exports = function(app, db) {
 	// Invites user to team
 	////
 	app.post('/api/profile/invite', function(req, res) {
-		
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				var invitee = req.body.invitee
+				  , body = req.body.message
+				  , invitation;
+				
+				invitation = new db.message({
+					from : user.profile._id,
+					to : invitee,
+					body : body,
+					type : 'invitation',
+					attachment : {
+						action : 'team_invite',
+						data : user.profile._id
+					},
+					sentOn : new Date().toString(),
+					isRead : false
+				});
+				
+				invitation.save(function(err) {
+					if (!err) {
+						res.write(JSON.stringify(invitation));
+						res.end();
+					} else {
+						res.writeHead(500);
+						res.write('Could not send invitation.');
+						res.end();
+					}
+				});
+			} else {
+				
+			}
+		});
 	});
+	
+	////
+    // GET - /api/profile/find/:term
+    // Find a profile by the user email
+    ////
+    app.get('/api/profile/find/:email', function(req, res) {
+    	
+    });
+	
 };

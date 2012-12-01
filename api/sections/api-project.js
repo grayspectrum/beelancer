@@ -157,7 +157,10 @@ module.exports = function(app, db) {
 	app.del('/api/project/delete/:projectId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			db.project
-				.findOne({ _id : req.params.projectId , owner : user._id})
+				.findOne({ 
+					_id : req.params.projectId, 
+					owner : user._id
+				})
 			.exec(function(err, project) {
 				if (err || !project) {
 					res.writeHead(500);

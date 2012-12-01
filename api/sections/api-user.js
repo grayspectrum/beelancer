@@ -257,11 +257,4 @@ module.exports = function(app, db) {
 		});
 	});
 	
-	////
-	// POST - /api/user/invite
-	// Invites user to team of caller
-	////
-	app.post('/api/user/invite', function(req, res) {
-		
-	});
 };
