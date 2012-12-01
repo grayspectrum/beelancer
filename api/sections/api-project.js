@@ -186,10 +186,59 @@ module.exports = function(app, db) {
 	// POST - /api/project/invite
 	// Invites a user to work on a project
 	//
-	// Params => projectId, userId
+	// Params => projectId, profileId
 	////
 	app.post('/api/project/invite', function(req, res) {
-		
+		utils.verfiyUser(req, db, function(err, user) {
+			if (!err) {
+				var body = req.body;
+				if (body.userId && body.projectId) {
+					db.project
+						.findOne({ 
+							_id : body.projectId,
+							owner : user._id
+						})
+					.exec(function(err, project) {
+						if (!err) {
+							var invitation = new db.message({
+								body : body.message,
+								from : user.profile._id,
+								to : body.profileId,
+								sentOn : new Date().toString(),
+								isRead : false,
+								type : 'project_invite',
+								attachment : {
+									action : 'project_invite',
+									data : body.project._id
+								}
+							});
+							invitation.save(function(err) {
+								if (!err) {
+									res.write(JSON.stringify(invitation));
+									res.end();
+								} else {
+									res.writeHead(500);
+									res.write('Could not send invitation.');
+									res.end();
+								}
+							});
+						} else {
+							res.writeHead(500);
+							res.write('Project not found or you are not the owner.');
+							res.end();
+						}
+					});
+				} else {
+					res.writeHead(500);
+					res.write('Missing required parameters.');
+					res.end();
+				}
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to invite a user to your project.');
+				res.end();
+			}
+		});
 	});
 	
 };

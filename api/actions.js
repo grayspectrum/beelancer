@@ -46,24 +46,35 @@ module.exports = (function() {
 	project_invite = function(db, message, accept, callback) {
 		var id = message.attachment.data
 		  , to = message.to
-		  , from = message.from;
-		  
-		getProject(db, from, id, function(err, project) {
-			if (err) {
-				callback.call(this, 'Could not get project.', null);
+		  , from = message.from
+		  , inviteeId;
+		
+		getUser(db, to, function(err, invitee) {
+			if (!err) {
+				dispatchInvite(invitee._id, callback);
 			} else {
-				if (accept) {
-					project.members.push(to._id);
-					project.save(function(err) {
-						callback.call(this, err);
-					});
-				} else {
-					message.remove(function(err) {
-						callback.call(this, err);
-					});
-				}
+				callback.call(this, err);
 			}
 		});
+		
+		function dispatchInvite(inviteeId, callback) {
+			getProject(db, from, id, function(err, project) {
+				if (err) {
+					callback.call(this, 'Could not get project.', null);
+				} else {
+					if (accept) {
+						project.members.push(inviteeId);
+						project.save(function(err) {
+							callback.call(this, err);
+						});
+					} else {
+						message.remove(function(err) {
+							callback.call(this, err);
+						});
+					}
+				}
+			});
+		};
 	};
 	
 	function getUser(db, id, callback) {

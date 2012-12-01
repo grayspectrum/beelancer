@@ -19,6 +19,7 @@ module.exports = function(app, db) {
 		db.profile
 			.findOne({ _id : id })
 			.populate('ratings', null, { isVisible : true })
+			.populate('user', '_id')
 		.exec(function(err, profile) {
 			if (err || !profile) {
 				res.writeHead(500);
@@ -209,7 +210,18 @@ module.exports = function(app, db) {
     // Find a profile by the user email
     ////
     app.get('/api/profile/find/:email', function(req, res) {
-    	
+    	db.user.findOne({
+			email : req.params.email
+    	}).populate('profile').exec(function(err, user) {
+    		if (!err) {
+    			res.write(JSON.stringify(user.profile));
+    			res.end();
+    		} else {
+    			res.writeHead(500);
+    			res.write('Profile not found.');
+    			res.end();
+    		}
+    	});
     });
 	
 };
