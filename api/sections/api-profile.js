@@ -164,4 +164,11 @@ module.exports = function(app, db) {
 		});
 	});
 	
+	////
+	// POST - /api/profile/invite
+	// Invites user to team
+	////
+	app.post('/api/profile/invite', function(req, res) {
+		
+	});
 };

@@ -10,11 +10,11 @@ var mongoose = require('mongoose')
 module.exports = new Schema({
 	to : {
 		type : ObjectId,
-		ref : 'user'
+		ref : 'profile'
 	},
 	from : {
 		type : ObjectId,
-		ref : 'user'
+		ref : 'profile'
 	},
 	sentOn : Date,
 	body : String,
