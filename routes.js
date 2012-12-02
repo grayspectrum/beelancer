@@ -9,9 +9,7 @@ module.exports = function(app) {
 	
 	// render app
 	app.get('/', function(req, res) {
-		res.render('index', {
-			
-		});
+		res.render('index', {});
 	});
 	
 	// Initialize API

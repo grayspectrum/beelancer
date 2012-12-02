@@ -8,7 +8,7 @@
 var crypto = require('crypto')
   , mailer = require('../email/mailer.js')
   , utils = require('../utils.js')
-  , actions = require('./actions.js');
+  , actions = require('../actions.js');
 
 module.exports = function(app, db) {
 	

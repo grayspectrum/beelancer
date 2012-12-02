@@ -22,6 +22,7 @@ html
 			//- Menu
 			include ./includes/menu.jade
 			//- Render Main
-			div#main!= body
+			div#main
+				block content
 			//- Footer
 			include ./includes/footer.jade

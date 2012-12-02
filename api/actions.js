@@ -5,7 +5,7 @@
  * Message actions 
  */
 
-var utils = require('../utils.js');
+var utils = require('./utils.js');
 
 module.exports = (function() {
 	// Actions

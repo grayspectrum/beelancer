@@ -13,7 +13,9 @@ module.exports = (function(env) {
 			env : 'DEVELOPMENT',
 			app_port : 1337,
 			useSSL : false,
-			domain : 'http://localhost:1337/'
+			domain : 'http://localhost:1337/',
+			uploadDir : __dirname + '/public/assets/users/avatars',
+			mediaUrl : 'http://localhost:1337'
 		},
 		
 		// qa config
@@ -21,7 +23,9 @@ module.exports = (function(env) {
 			env : "TEST",
 			app_port : 80,
 			useSSL : false,
-			domain : 'http://qa.beelancer.com/'
+			domain : 'http://qa.beelancer.com/',
+			uploadDir : __dirname + '/public/assets/users/avatars',
+			mediaUrl : 'http://qa.files.beelancer.com'
 		},
 		
 		//prod config
@@ -29,7 +33,9 @@ module.exports = (function(env) {
 			env : 'PRODUCTION',
 			app_port : 443,
 			useSSL : true,
-			domain : 'https://app.beelancer.com/'
+			domain : 'https://app.beelancer.com/',
+			uploadDir : __dirname + '/public/assets/users/avatars',
+			mediaUrl : 'https://files.beelancer.com'
 		}
 	};
 	

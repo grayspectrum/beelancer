@@ -64,3 +64,7 @@ module.exports.verifyUser = function(req, db, callback) {
 		}, null);
 	}
 };
+
+module.exports.gravatar = function(email) {
+	return crypto.createHash('md5').update(email).digest('hex');
+};

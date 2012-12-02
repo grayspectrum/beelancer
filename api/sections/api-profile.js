@@ -7,7 +7,10 @@
 
 var crypto = require('crypto')
   , mailer = require('../email/mailer.js')
-  , utils = require('../utils.js');
+  , utils = require('../utils.js')
+  , config = require('../../config.js')
+  , fs = require('fs')
+  , path = require('path');
 
 module.exports = function(app, db) {
 	////
@@ -100,6 +103,7 @@ module.exports = function(app, db) {
 					var profile = new db.profile(body);
 					profile.user = user._id;
 					profile.privacy = body.privacy || 0;
+					profile.avatarUrl = utils.gravatar(user.email);
 					// save ref to user
 					user.profile = profile._id;
 					profile.save(function(err) {
@@ -149,6 +153,7 @@ module.exports = function(app, db) {
 						res.write('Could not locate profile.');
 						res.end();
 					} else {
+						profile.avatarUrl = utils.gravatar(user.email);
 						profile.update(body, function(err) {
 							if (err) {
 								res.writeHead(500);
@@ -200,7 +205,9 @@ module.exports = function(app, db) {
 					}
 				});
 			} else {
-				
+				res.writeHead(401);
+    			res.write('You must be logged in to send invites.');
+    			res.end();
 			}
 		});
 	});
@@ -222,6 +229,60 @@ module.exports = function(app, db) {
     			res.end();
     		}
     	});
+    });
+    
+    ////
+    // POST - /api/profile/avatar
+    // Uploads a new avatar and updates the profile
+    ////
+    app.post('/api/profile/avatar', function(req, res) {
+    	utils.verifyUser(req, db, function(err, user) {
+    		if (!err && user.profile) {
+		    	if (req.files.avatar && (req.files.avatar.type === 'image/jpeg') || (req.files.avatar.type === 'image/png')) {
+		    		var filePath = req.files.avatar.path;
+		    		fs.rename(filePath, config.uploadDir + '/' + user.profile._id + path.extname(filePath), function(err) {
+		    			if (!err) {
+		    				fs.unlink(filePath);
+		    				db.profile
+		    					.findOne({ _id : user.profile._id })
+		    				.exec(function(err, profile) {
+		    					if (!err) {
+		    						profile.avatarUrl = config.mediaUrl + user.profile._id + path.extname(filePath);
+		    						profile.save(function(err) {
+		    							if (!err) {
+		    								res.write(JSON.stringify(profile));
+		    								res.end();
+		    							} else {
+		    								res.writeHead(500);
+		    								res.write('Failed to attach image to profile.');
+		    								res.end();
+		    							}
+		    						});
+		    					} else {
+		    						res.writeHead(500);
+		    						res.write('Could not locate profile to update.');
+		    						res.end();
+		    					}
+		    				});
+		    				res.write('Uploaded!');
+		    				res.end();
+		    			} else {
+		    				res.writeHead(500);
+		    				res.write('Upload error.');
+		    				res.end();
+		    			}
+		    		});
+		    	} else {
+		    		res.writeHead(500);
+		    		res.write('No avatar file found or incorrect image format.');
+		    		res.end();
+	    		}
+	    	} else {
+	    		res.writeHead(401);
+	    		res.write('You must be logged in to update your avatar.');
+	    		res.end();
+	    	}
+	    });
     });
 	
 };

@@ -20,9 +20,9 @@ if (config.useSSL) {
 		key : fs.readFileSync('./certs/ssl-key.pem').toString(),
 		cert : fs.readFileSync('./certs/ssl-cert.pem').toString()
 	};
-	module.exports = app = express.createServer(certs);
+	module.exports = app = express(certs);
 } else {
-	module.exports = app = express.createServer();
+	module.exports = app = express();
 }
 
 ////
@@ -32,6 +32,9 @@ app.configure(function() {
 	// set view directory and engine
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
+	app.set('view options', {
+		layout : true
+	});
 	
 	// methodOverride checks req.body.method for the HTTP method override
 	app.use(express.methodOverride());
@@ -40,7 +43,9 @@ app.configure(function() {
 	app.use(express.favicon(__dirname + '/public/assets/images/favicon.ico'));
 	
 	// bodyParser parses the request body and populates req.body
-	app.use(express.bodyParser());
+	app.use(express.bodyParser({
+		keepExtensions : true
+	}));
 
 	// use cookie parser
 	app.use(express.cookieParser());
@@ -49,7 +54,7 @@ app.configure(function() {
 	app.use(express.static(__dirname + '/public'));
 
 	// use router for non-static files
-	app.use(app.router);
+//	app.use(app.router);
 });
 
 ////
