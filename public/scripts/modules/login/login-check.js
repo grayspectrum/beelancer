@@ -7,6 +7,8 @@
 
 (function() {
 	
-	console.log('Login check loaded.');
+	if (bee.get('loggedIn')) {
+		location.href = '/#!/dashboard';
+	}
 	
 })();

@@ -10,7 +10,26 @@
 	width: 432px;
 	height: 400px;
 	margin-left: -216px;
-	margin-top: -200px;
+	margin-top: -254px;
+}
+
+#loginError {
+	display: none;
+	color: #fff;
+	border-radius: 6px;
+	border: 1px solid #cf0404;
+	padding: 12px 24px;
+	width: 225px;
+	margin: auto;
+	margin-top: -12px;
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	animation-duration: 0.5s;
+	-webkit-animation-duration: 0.5s;
+	-moz-animation-duration: 0.5s;
+	-o-animation-duration: 0.5s;
+	-ms-animation-duration: 0.5s;
 }
 
 #auth {
@@ -69,7 +88,7 @@
 }
 
 #auth_submit:hover {
-	background: #E8CE86;
+	background: #FFC60B;
 	cursor: pointer;
 }
 

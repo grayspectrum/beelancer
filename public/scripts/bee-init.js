@@ -12,7 +12,13 @@ var bee = new spi.App({
 });
 
 // Load API Library
-_.load(['/scripts/bee-api.js']);
+_.load([
+	'/scripts/bee-api.js',
+	'/scripts/bee-ui.js'
+], function() {
+	// render intial view
+	bee.ui.refresh();
+});
 
 // Register Modules
 (function(app) {
@@ -34,4 +40,52 @@ _.load(['/scripts/bee-api.js']);
 		}
 	});
 	
+	var new_profile = new spi.Module(app, {
+		name : 'new_profile',
+		container : 'main',
+		load : {
+			always : [
+				'/scripts/modules/new_profile/new_profile-bindings.js'
+			],
+			before : [
+			
+			],
+			once : [
+				'/scripts/modules/new_profile/new_profile.css'
+			]
+		}
+	});
+	
+	var dashboard = new spi.Module(app, {
+		name : 'dashboard',
+		container : 'main',
+		load : {
+			always : [
+				'/scripts/modules/dashboard/dashboard-bindings.js'
+			],
+			before : [
+			
+			],
+			once : [
+				'/scripts/modules/dashboard/dashboard.css'
+			]
+		}
+	});
+	
+	var not_found = new spi.Module(app, {
+		name : '404',
+		container : 'main',
+		load : {
+			always : [],
+			before : [],
+			once : []
+		}
+	});
+	
 })(bee);
+
+$(window).bind('hashchange', function(event) {
+	event.preventDefault();
+	bee.ui.loader.show();
+	bee.ui.refresh();
+});
