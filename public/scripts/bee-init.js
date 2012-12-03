@@ -27,6 +27,9 @@ _.load(['/scripts/bee-api.js']);
 			],
 			before : [
 				'/scripts/modules/login/login-check.js'
+			],
+			once : [
+				'/scripts/modules/login/login.css'
 			]
 		}
 	});

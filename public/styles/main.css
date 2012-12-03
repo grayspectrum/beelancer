@@ -1,0 +1,42 @@
+/*
+ * beelancer - styles/main
+ * Author: Gordon Hall
+ * 
+ * Base styles fro beelancer ui
+ */
+
+html, body {
+	margin: 0;
+	padding: 0;
+	background : url('/assets/images/bg-trans.png') center center repeat #333;
+	font-family: OpenSans, Helvetica, sans-serif;
+}
+
+h2#logo {
+	text-indent: -9999px;
+	background: url('/assets/images/logo.png') center center no-repeat;
+	font-size: 48px;
+	margin-bottom: 12px;
+}
+
+.light-gradient {
+	background: #ffffff; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+}
+
+.gold-gradient {
+	background: #e8ce86; /* Old browsers */
+	background: -moz-linear-gradient(top,  #e8ce86 0%, #c6a549 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e8ce86), color-stop(100%,#c6a549)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #e8ce86 0%,#c6a549 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #e8ce86 0%,#c6a549 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #e8ce86 0%,#c6a549 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #e8ce86 0%,#c6a549 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8ce86', endColorstr='#c6a549',GradientType=0 ); /* IE6-9 */
+}
