@@ -44,8 +44,46 @@ bee.ui = (function() {
 		}
 	};
 	
+	var menu = (function() {
+		
+		function show() {
+			$('#menu').removeClass('animated bounceOutLeft');
+			$('#header').removeClass('animated bounceOutUp');
+			
+			$('#menu').addClass('animated bounceInLeft').show();
+			$('#header').addClass('animated bounceInDown').show();
+		};
+		
+		function hide() {
+			$('#menu').removeClass('animated bounceInLeft');
+			$('#header').removeClass('animated bounceInDown');
+			
+			$('#menu').addClass('animated bounceOutLeft');
+			$('#header').addClass('animated bounceOutUp');
+		};
+		
+		return {
+			show : show,
+			hide : hide
+		};
+	})();
+	
 	return {
 		loader : loader,
-		refresh : refresh
+		refresh : refresh,
+		menu : menu
 	};
 })();
+
+// Menu Bindings
+$('#menu a').bind('click', function() {
+	$('#menu a').parent().removeClass('active');
+	$(this).parent().addClass('active');
+});
+
+$('#logout').bind('click', function() {
+	bee.api.logout(function(err) {
+		bee.ui.menu.hide();
+		location.href = '/#!/login';
+	});
+});

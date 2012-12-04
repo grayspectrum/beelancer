@@ -56,18 +56,18 @@ _.load([
 		}
 	});
 	
-	var dashboard = new spi.Module(app, {
-		name : 'dashboard',
+	var projects = new spi.Module(app, {
+		name : 'projects',
 		container : 'main',
 		load : {
 			always : [
-				'/scripts/modules/dashboard/dashboard-bindings.js'
+				'/scripts/modules/projects/projects-bindings.js'
 			],
 			before : [
 			
 			],
 			once : [
-				'/scripts/modules/dashboard/dashboard.css'
+				'/scripts/modules/projects/projects.css'
 			]
 		}
 	});
@@ -84,8 +84,12 @@ _.load([
 	
 })(bee);
 
+// view routing
 $(window).bind('hashchange', function(event) {
 	event.preventDefault();
 	bee.ui.loader.show();
 	bee.ui.refresh();
+	var path = '/' + location.hash;
+	$('#menu li').removeClass('active');
+	$('#menu a[href="' + path + '"]').parent().addClass('active');
 });

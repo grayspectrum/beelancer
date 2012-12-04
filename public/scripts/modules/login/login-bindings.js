@@ -32,8 +32,10 @@
 					} else {
 						// check if user has profile
 						if (res.profile) {
+							bee.set('profile', res.profile);
 							bee.set('loggedIn', true);
-							location.href = '/#!/dashboard';
+							location.href = '/#!/projects';
+							bee.ui.menu.show();
 						} else {
 							location.href = '/#!/new_profile';
 						}
