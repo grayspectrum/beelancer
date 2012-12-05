@@ -18,6 +18,7 @@ _.load([
 ], function() {
 	// render intial view
 	bee.ui.refresh();
+	bee.ui.menu.update();
 });
 
 // Register Modules
@@ -89,7 +90,5 @@ $(window).bind('hashchange', function(event) {
 	event.preventDefault();
 	bee.ui.loader.show();
 	bee.ui.refresh();
-	var path = '/' + location.hash;
-	$('#menu li').removeClass('active');
-	$('#menu a[href="' + path + '"]').parent().addClass('active');
+	bee.ui.menu.update();
 });

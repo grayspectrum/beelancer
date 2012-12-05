@@ -73,6 +73,7 @@ bee.api = (function() {
 				callback.call(this, null, data);
 			},
 			function(err) {
+				_.cookies.expire();
 				callback.call(this, err, null);
 			}
 		);

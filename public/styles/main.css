@@ -12,6 +12,11 @@ html, body {
 	font-family: OpenSans, Helvetica, sans-serif;
 }
 
+#app {
+	width: 1024px;
+	margin: auto;
+}
+
 #bee_loader {
 	position: fixed;
 	top: 0;
@@ -23,13 +28,19 @@ html, body {
 	z-index: 9999;
 }
 
+#main {
+	position: relative;
+	z-index: 996;
+}
+
 #header {
 	position: fixed;
 	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: 997;
+	width: 152px;
+	left: 50%;
 	display: none;
+	margin-left: 360px;
+	z-index: 997;
 }
 
 h1.logo {
@@ -39,6 +50,17 @@ h1.logo {
 	background-size: 200px;
 	width: 248px;
 	float: left;
+}
+
+h4 {
+	font-family: Raleway;
+	border: 1px solid #FFC60B;
+	width: 300px;
+	padding: 6px 12px 6px 32px;
+	text-shadow: 0 1px 0 #FFC60B;
+	border-radius: 3px 18px 18px 3px;
+	margin-left: -12px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #user {
@@ -70,12 +92,12 @@ h1.logo {
 	width: 248px;
 	position: fixed;
 	top: 0;
-	left: 0;
 	height: 100%;
 	overflow: auto;
 	background: rgba(0, 0, 0, 0.3);
-	box-shadow: inset -2px 0px 6px;
+	box-shadow: inset -2px 0px 6px, inset 2px 0px 6px;
 	display: none;
+	z-index: 997;
 }
 
 #menu ul {
@@ -143,11 +165,22 @@ h1.logo {
 	cursor: pointer;
 }
 
+.cute {
+	font-family: Raleway;
+}
+
 h2#logo {
 	text-indent: -9999px;
 	background: url('/assets/images/logo.png') center center no-repeat;
 	font-size: 48px;
 	margin-bottom: 12px;
+}
+
+.center-pane {
+	margin: 42px 176px 36px 282px;
+	border-radius: 6px;
+	box-shadow: 0 0 16px black;
+	border: 3px solid white;
 }
 
 .light-gradient {
@@ -181,4 +214,15 @@ h2#logo {
 	background: -ms-linear-gradient(top,  #ff3019 0%,#cf0404 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #ff3019 0%,#cf0404 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3019', endColorstr='#cf0404',GradientType=0 ); /* IE6-9 */
+}
+
+input:focus, textarea:focus {
+	border-color: #E2A809 !important;
+	background: url('/assets/images/tearaway.png') bottom right no-repeat #fff;
+	box-shadow: inset 0 1px 2px #fff;
+	outline: none;
+}
+
+.focused {
+	font-weight: bold;
 }

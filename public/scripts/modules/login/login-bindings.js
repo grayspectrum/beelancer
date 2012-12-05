@@ -38,6 +38,7 @@
 							bee.ui.menu.show();
 						} else {
 							location.href = '/#!/new_profile';
+							bee.ui.menu.show();
 						}
 					}
 				}
