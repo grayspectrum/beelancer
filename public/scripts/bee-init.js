@@ -25,7 +25,7 @@ _.load([
 (function(app) {
 	
 	// Login Module
-	var login = new spi.Module(app, {
+	var login = new bee.Module(app, {
 		name : 'login',
 		container : 'main',
 		load : {
@@ -41,7 +41,7 @@ _.load([
 		}
 	});
 	
-	var new_profile = new spi.Module(app, {
+	var new_profile = new bee.Module(app, {
 		name : 'new_profile',
 		container : 'main',
 		load : {
@@ -57,7 +57,7 @@ _.load([
 		}
 	});
 	
-	var projects = new spi.Module(app, {
+	var projects = new bee.Module(app, {
 		name : 'projects',
 		container : 'main',
 		load : {
@@ -73,7 +73,7 @@ _.load([
 		}
 	});
 	
-	var not_found = new spi.Module(app, {
+	var not_found = new bee.Module(app, {
 		name : '404',
 		container : 'main',
 		load : {

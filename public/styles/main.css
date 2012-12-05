@@ -64,9 +64,8 @@ h4 {
 }
 
 #user {
-	float: right;
 	color: white;
-	margin: 36px 46px 0 0;
+	margin: 36px 0 0 46px;
 }
 
 #welcome {
@@ -86,6 +85,58 @@ h4 {
 	background-size: 20px;
 	font-weight: bold;
 	cursor: pointer;
+}
+
+label.hasError {
+	color: #c01219;
+}
+
+label.hasError input {
+	border-color: #c01219 !important;
+}
+
+#notifications {
+	margin-top: 84px;
+}
+
+.notification {
+	font-size: 12px;
+	padding: 6px 6px 6px 28px;
+	margin: 6px 0;
+	border: 1px solid #fff;
+	border-left: 3px solid;
+	background-color: #f1f1f1;
+	background-size: 14px;
+	box-shadow: 0 0 6px #000;
+	border-radius: 0 3px 3px 0;
+}
+
+.notification:hover {
+	background-color: #e2e2e2 !important;
+	cursor: pointer;
+}
+
+.notification > div {
+	font-size: 10px;
+	text-align: right;
+	font-style: italic;
+	margin-top: 4px;
+	border-top: 1px solid #e2e2e2;
+}
+
+.notification.err {
+	border-left-color: #c01219;
+	background: url('/assets/images/icons/busy.png') 6px center no-repeat #f1f1f1;
+}
+
+.notification.success {
+	border-left-color: #6cc53e;
+	background: url('/assets/images/icons/check.png') 6px center no-repeat #f1f1f1;
+}
+
+.notification.info {
+	border-left-color: #569bda;
+	background: url('/assets/images/icons/flag.png') 6px center no-repeat #f1f1f1;
 }
 
 #menu {

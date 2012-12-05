@@ -85,13 +85,16 @@ bee.ui = (function() {
 	////
 	// Notification System
 	////
-	var notify = (function() {
+	var notifications = (function() {
 		
-		var Notification = function(type, message, mustDismiss) {
+		var active = [];
+		
+		var Notification = function(type, message, mustDismiss, onDismiss) {
 			this.type = type;
 			this.message = message;
 			this.mustDismiss = mustDismiss;
 			this.ui = $(document.createElement('div'));
+			this.onDismiss = onDismiss || function() { };
 			
 			if (mustDismiss) {
 				this.message = message + '<div>Click To Dismiss</div>';
@@ -99,35 +102,68 @@ bee.ui = (function() {
 			
 			this.ui
 				.addClass(this.type + ' notification')
-				.addClass('animated bounce')
+				.addClass('animated bounceIn')
 			.html(this.message);
+			active.push(this);
+			this.index = active.length - 1;
 		};
 		
 		Notification.prototype.notify = function() {
+			var notif = this;
 			this.container.append(this.ui);
+			this.ui.bind('click', this.onDismiss);
 			if (!this.mustDismiss) {
-				this.ui.delay(2000).fadeOut(200, function() {
-					$(this).remove();
-				})
+				setTimeout(function() {
+					notif.dismiss();
+				}, 2000);
 			}
+			this.ui.bind('click', this.dismiss);
+		};
+		
+		Notification.prototype.dismiss = function() {
+			$(this).removeClass('animated bounceIn').addClass('animated bounceOut');
+			var ui = $(this);
+			setTimeout(function() {
+				ui.remove();
+				active.splice(this.index, 1);
+			}, 1000);
 		};
 		
 		Notification.prototype.container = $('#notifications');
 		
-		function show(type, message, mustDismiss) {
-			var n = new Notification(type, message, mustDismiss);
+		function show(type, message, mustDismiss, onDismiss) {
+			var n = new Notification(type, message, mustDismiss, onDismiss);
 			n.notify();
+			return n;
 		};
 		
-		return show;
+		function dismiss() {
+			for (var notif = 0; notif < active.length; notif++) {
+				active[notif].dismiss();
+			}
+		};
 		
-	})()
+		return {
+			notify : show,
+			active : active,
+			dismiss : dismiss
+		};
+		
+	})();
+	
+	function sanitized(value) {
+		var ctr = document.createElement('div');
+		ctr.innerHTML = value;
+		$(ctr).children().remove();
+		return ctr.innerText;
+	};
 	
 	return {
 		loader : loader,
 		refresh : refresh,
 		menu : menu,
-		notify : notify
+		notifications : notifications,
+		sanitized : sanitized
 	};
 })();
 

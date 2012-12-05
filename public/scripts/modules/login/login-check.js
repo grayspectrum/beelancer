@@ -8,7 +8,7 @@
 (function() {
 	
 	if (bee.get('loggedIn')) {
-		location.href = '/#!/dashboard';
+		location.href = '/#!/projects';
 	}
 	
 })();
