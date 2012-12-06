@@ -70,7 +70,7 @@ bee.ui = (function() {
 		};
 		
 		function update() {
-			var path = '/' + location.hash;
+			var path = '/' + location.hash.split('?')[0];
 			$('#menu li').removeClass('active');
 			$('#menu a[href="' + path + '"]').parent().addClass('active');
 		};
@@ -104,8 +104,6 @@ bee.ui = (function() {
 				.addClass(this.type + ' notification')
 				.addClass('animated bounceIn')
 			.html(this.message);
-			active.push(this);
-			this.index = active.length - 1;
 		};
 		
 		Notification.prototype.notify = function() {
@@ -117,16 +115,24 @@ bee.ui = (function() {
 					notif.dismiss();
 				}, 2000);
 			}
-			this.ui.bind('click', this.dismiss);
+			this.ui.bind('click', function() {
+				notif.dismiss();
+			});
+			active.push(this);
 		};
 		
 		Notification.prototype.dismiss = function() {
-			$(this).removeClass('animated bounceIn').addClass('animated bounceOut');
-			var ui = $(this);
+			var notif = this;
+			notif.ui.removeClass('animated bounceIn').addClass('animated bounceOut');
 			setTimeout(function() {
-				ui.remove();
-				active.splice(this.index, 1);
+				notif.ui.remove();
 			}, 1000);
+			var index = this.index();
+			active.splice(index, 1);
+		};
+		
+		Notification.prototype.index = function() {
+			return $.inArray(this, active);
 		};
 		
 		Notification.prototype.container = $('#notifications');
@@ -138,9 +144,10 @@ bee.ui = (function() {
 		};
 		
 		function dismiss() {
-			for (var notif = 0; notif < active.length; notif++) {
-				active[notif].dismiss();
-			}
+			$('#notifications').children().remove();
+			$.each(active, function(index, notif) {
+				active[0].dismiss(true);
+			});
 		};
 		
 		return {
@@ -158,12 +165,29 @@ bee.ui = (function() {
 		return ctr.innerText;
 	};
 	
+	var help = (function() {
+		
+		function show() {
+			
+		};
+		
+		function hide() {
+			
+		};
+		
+		return {
+			show : show,
+			hide : hide
+		};
+	})();
+	
 	return {
 		loader : loader,
 		refresh : refresh,
 		menu : menu,
 		notifications : notifications,
-		sanitized : sanitized
+		sanitized : sanitized,
+		help : help
 	};
 })();
 

@@ -81,7 +81,7 @@ module.exports = function(app, db) {
 		var body = req.body;
 		if (body.userId && body.confirmCode) {
 			db.user
-			.findOne({ _id : body.userId , confirmCode : confirmCode })
+			.findOne({ _id : body.userId , confirmCode : body.confirmCode })
 			.exec(function(err, user) {
 				if (err || !user) {
 					res.writeHead(500);
@@ -100,7 +100,10 @@ module.exports = function(app, db) {
 								res.write('There was a problem confirming the account.');
 								res.end();
 							} else {
-								res.write('The account for ' + user.email + ' has been confirmed!');
+								res.write(JSON.stringify({
+									email : user.email,
+									message : 'Your account has been confirmed!'
+								}));
 								res.end();
 							}
 						});
@@ -132,21 +135,27 @@ module.exports = function(app, db) {
 					res.write('Incorrect email or password.');
 					res.end();
 				} else {
-					user.apiKey = utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 });
-					user.save(function(err) {
-						if (err) {
-							res.write(500);
-							res.write('Error generating new API key.');
-							res.end();
-						} else {
-							res.write(JSON.stringify({
-								userId : user._id,
-								apiKey : user.apiKey,
-								profile : user.profile || false
-							}));
-							res.end();
-						}
-					});
+					if (user.isConfirmed) {
+						user.apiKey = utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 });
+						user.save(function(err) {
+							if (err) {
+								res.write(500);
+								res.write('Error generating new API key.');
+								res.end();
+							} else {
+								res.write(JSON.stringify({
+									userId : user._id,
+									apiKey : user.apiKey,
+									profile : user.profile || false
+								}));
+								res.end();
+							}
+						});
+					} else {
+						res.writeHead(500);
+						res.write('Account is not confirmed. Check your email for a confirmation link.');
+						res.end();
+					}
 				}
 			});
 		} else {

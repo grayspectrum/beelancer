@@ -13,11 +13,11 @@
 	margin-top: -254px;
 }
 
-#loginError {
+#loginError,
+#confirmSuccess {
 	display: none;
 	color: #fff;
 	border-radius: 6px;
-	border: 1px solid #cf0404;
 	padding: 12px 24px;
 	width: 225px;
 	margin: auto;
@@ -30,6 +30,14 @@
 	-moz-animation-duration: 0.5s;
 	-o-animation-duration: 0.5s;
 	-ms-animation-duration: 0.5s;
+}
+
+#loginError {
+	border: 1px solid #cf0404;
+}
+
+#confirmSuccess {
+	border: 1px solid #c9de96;
 }
 
 #auth {
@@ -96,4 +104,3 @@
 	background: #E8CE86;
 	outline: none;
 }
-

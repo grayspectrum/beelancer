@@ -64,9 +64,11 @@
 
 #create_profile .full_block textarea {
 	margin: 6px 0;
-	width: 498px;
+	width: 484px;
 	height: 100px;
 	resize: vertical;
+	padding: 12px;
+	font-size: 14px;
 }
 
 .big_radio {

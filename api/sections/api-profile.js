@@ -26,19 +26,19 @@ module.exports = function(app, db) {
 		.exec(function(err, profile) {
 			if (err || !profile) {
 				res.writeHead(500);
-				res.write('The request profile could not be found.');
+				res.write('The requested profile could not be found.');
 				res.end();
 			} else {
 				var privacy = profile.privacy;
 				switch(privacy) {
 					case 0: // public
-						res.write(JSON.stringidy(profile));
+						res.write(JSON.stringify(profile));
 						res.end();
 						break;
 					case 1: // visible to users
 						utils.verifyUser(req, db, function(err, user) {
 							if (!err) {
-								res.write(JSON.stringidy(profile));
+								res.write(JSON.stringify(profile));
 								res.end();
 							} else {
 								res.writeHead(401);
@@ -86,6 +86,23 @@ module.exports = function(app, db) {
 	});
 	
 	////
+	// GET - /api/profile/me
+	// Returns the callers profile
+	////
+	app.get('/api/me', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				res.write(JSON.stringify(user.profile));
+				res.end();
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to get your profile.');
+				res.end();
+			}
+		});
+	});
+	
+	////
 	// POST - /api/profile/create
 	// Creates a profile for the caller
 	//
@@ -98,35 +115,41 @@ module.exports = function(app, db) {
 				res.write(err.text);
 				res.end();
 			} else {
-				var body = req.body;
-				if (body.firstName && body.lastName && body.title) {
-					var profile = new db.profile(body);
-					profile.user = user._id;
-					profile.privacy = body.privacy || 0;
-					profile.avatarUrl = utils.gravatar(user.email);
-					// save ref to user
-					user.profile = profile._id;
-					profile.save(function(err) {
-						if (err) {
-							res.writeHead(500);
-							res.write('Could not save profile.');
-							res.end();
-						} else {
-							user.save(function(err) {
-								if (err) {
-									res.writeHead(500);
-									res.write('User could not be updated with profile.');
-									res.end()
-								} else {
-									res.write(JSON.stringify(profile));
-									res.end();
-								}
-							});
-						}
-					});
+				if (!user.profile) {
+					var body = req.body;
+					if (body.firstName && body.lastName && body.title) {
+						var profile = new db.profile(body);
+						profile.user = user._id;
+						profile.privacy = body.privacy || 0;
+						profile.avatarUrl = utils.gravatar(user.email);
+						// save ref to user
+						user.profile = profile._id;
+						profile.save(function(err) {
+							if (err) {
+								res.writeHead(500);
+								res.write('Could not save profile.');
+								res.end();
+							} else {
+								user.save(function(err) {
+									if (err) {
+										res.writeHead(500);
+										res.write('User could not be updated with profile.');
+										res.end()
+									} else {
+										res.write(JSON.stringify(profile));
+										res.end();
+									}
+								});
+							}
+						});
+					} else {
+						res.writeHead(500);
+						res.write('First Name, Last Name, and Title are required fields.');
+						res.end();
+					}
 				} else {
 					res.writeHead(500);
-					res.write('First Name, Last Name, and Title are required fields.');
+					res.write('Profile already exists.');
 					res.end();
 				}
 			}
@@ -138,7 +161,7 @@ module.exports = function(app, db) {
 	// Updates the profile for the caller
 	////
 	app.put('/api/profile/update', function(req, res) {
-		verfiyUser(req, function(err, user) {
+		utils.verifyUser(req, db, function(err, user) {
 			if (err) {
 				res.writeHead(401);
 				res.write(err.text);
@@ -146,7 +169,7 @@ module.exports = function(app, db) {
 			} else {
 				var body = req.body;
 				db.profile
-				.findOne({ _id : body.profile })
+				.findOne({ _id : user.profile._id })
 				.exec(function(err, profile) {
 					if (err || !profile) {
 						res.writeHead(500);

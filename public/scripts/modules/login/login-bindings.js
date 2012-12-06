@@ -7,7 +7,33 @@
 
 (function() {
 	
-	bee.ui.loader.hide();
+	var tryConfirm = (_.querystring.get('userId')) && (_.querystring.get('confirmCode'));
+	
+	if (tryConfirm) {
+		var userid = _.querystring.get('userId')
+		  , confirm = _.querystring.get('confirmCode');
+		bee.api.send(
+			'PUT',
+			'/user/confirm',
+			{
+				userId : userid,
+				confirmCode : confirm
+			},
+			function(data) {
+				bee.ui.loader.hide();
+				data = JSON.parse(data);
+				$('#confirmSuccess').html(data.message).addClass('animated bounceInUp').show();
+				$('#auth_email').val(data.email);
+			},
+			function(err) {
+				bee.ui.loader.hide();
+				loginError(err);
+			}
+		);
+	} else {
+		$('.confirmed').remove();
+		bee.ui.loader.hide();
+	}
 	
 	// give email focus
 	 $('#auth_email').focus();
@@ -37,7 +63,7 @@
 							location.href = '/#!/projects';
 							bee.ui.menu.show();
 						} else {
-							location.href = '/#!/new_profile';
+							location.href = '/#!/account?newProfile=true';
 							bee.ui.menu.show();
 						}
 					}

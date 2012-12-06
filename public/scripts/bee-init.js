@@ -41,18 +41,18 @@ _.load([
 		}
 	});
 	
-	var new_profile = new bee.Module(app, {
-		name : 'new_profile',
+	var account = new bee.Module(app, {
+		name : 'account',
 		container : 'main',
 		load : {
 			always : [
-				'/scripts/modules/new_profile/new_profile-bindings.js'
+				'/scripts/modules/account/account-bindings.js'
 			],
 			before : [
 			
 			],
 			once : [
-				'/scripts/modules/new_profile/new_profile.css'
+				'/scripts/modules/account/account.css'
 			]
 		}
 	});
