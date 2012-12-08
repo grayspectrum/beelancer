@@ -33,7 +33,7 @@ module.exports.send = function(tmpl, tmpl_data) {
 					}
 				]
 			}, function(err, message) { 
-				console.log(err || 'Confirmation email sent to "' + tmpl_data.email + '".'); 
+				console.log(err || 'Email to ' + tmpl + ' sent to "' + tmpl_data.email + '".'); 
 			});
 		}
 	});

@@ -47,7 +47,7 @@
 	border-radius: 2px;
 }
 
-#create_profile .hint {
+.hint {
 	margin: 24px;
 	font-size: 14px;
 	font-style: italic;
@@ -106,16 +106,16 @@
 	border: 1px solid #DDD;
 }
 
-#np_submit_wrapper {
+.np_submit_wrapper {
 	border-radius: 6px;
 	margin: 24px auto;
-	width: 274px;
+	width: 302px;
 }
 
-#np_submit {
+#np_submit,
+#recover_account {
 	display: block;
 	width: 100%;
-	background: url('/assets/images/mono/black/contact_card_icon&32.png') 12px center no-repeat;
 	font-size: 28px;
 	font-family: Raleway;
 	font-weight: bold;
@@ -127,7 +127,20 @@
 	border: 2px solid #FFC60B;
 }
 
+#np_submit {
+	background: url('/assets/images/mono/black/contact_card_icon&32.png') 12px center no-repeat;
+}
+
+#recover_account {
+	background: url('/assets/images/mono/black/padlock_closed_icon&32.png') 12px center no-repeat;
+}
+
 #np_submit:hover {
 	background: url('/assets/images/mono/black/contact_card_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+#recover_account:hover {
+	background: url('/assets/images/mono/black/padlock_closed_icon&32.png') 12px center no-repeat #FFC60B;
 	cursor: pointer;
 }

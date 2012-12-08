@@ -13,6 +13,18 @@
 	margin-top: -254px;
 }
 
+#login.register {
+	
+}
+
+#login.recover {
+	
+}
+
+#login.reset {
+	
+}
+
 #loginError,
 #confirmSuccess {
 	display: none;
@@ -40,16 +52,17 @@
 	border: 1px solid #c9de96;
 }
 
-#auth {
+#login form {
 	margin: auto;
 	width: 300px;
 	padding: 24px;
 	border-radius: 10px;
 	border: 2px solid white;
 	box-shadow: 0 0 24px black;
+	display: none;
 }
 
-#auth label {
+#login form label {
 	display: block;
 	margin: 0 0 8px 0;
 	font-weight: bold;
@@ -57,7 +70,7 @@
 	color: #333;
 }
 
-#auth_email, #auth_password {
+.txt {
 	margin: 0 0 12px 0;
 	padding: 6px 12px;
 	font-size: 14px;
@@ -67,14 +80,14 @@
 	width: 274px;
 }
 
-#auth_email:focus, #auth_password:focus {
+.txt:focus {
 	border-color: #E2A809;
 	background: url('/assets/images/tearaway.png') bottom right no-repeat #fff;
 	box-shadow: inset 0 1px 2px #fff;
 	outline: none;
 }
 
-#auth p.sub_text {
+#login form p.sub_text {
 	text-align: center;
 	font-size: 12px;
 	margin: 12px 0 0 0;
@@ -84,7 +97,7 @@
 	border: 1px solid #E2E2E2;
 }
 
-#auth_submit {
+#login .submit {
 	display: block;
 	margin: auto;
 	font-size: 16px;
@@ -95,12 +108,26 @@
 	font-weight: bold;
 }
 
-#auth_submit:hover {
+#login .submit:hover {
 	background: #FFC60B;
 	cursor: pointer;
 }
 
-#auth_submit:focus {
+#login .submit:focus {
 	background: #E8CE86;
 	outline: none;
+}
+
+div.recover {
+	overflow: hidden;
+}
+
+small.recover {
+	display: block;
+	margin: 6px 0 0 0;
+	text-align: center;
+}
+
+small.recover a {
+	font-weight: normal !important;
 }

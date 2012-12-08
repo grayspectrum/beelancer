@@ -201,13 +201,14 @@ module.exports = function(app, db) {
 	////
 	app.post('/api/user/recover', function(req, res) {
 		var body = req.body;
-		if (!body.email) {
+		if (!body.email && !body.user) {
 			res.writeHead(500);
-			res.write('No email address was supplied.');
+			res.write('No email address or user ID was supplied.');
 			res.end();
 		} else {
+			var query = (body.email) ? { email : body.email } : { _id : body.user };
 			db.user
-			.findOne({ email : body.email })
+			.findOne(query)
 			.exec(function(err, user) {
 				if (err || !user) {
 					res.writeHead(500);

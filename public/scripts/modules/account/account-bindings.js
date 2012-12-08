@@ -25,7 +25,33 @@
 				bee.ui.loader.hide();
 			}
 		);
+		
+		// Bind Account Recovery
+		function recoverAccount() {
+			bee.ui.confirm('Are you sure you wish to reset your password?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/user/recover',
+					{
+						user : bee.get('profile').user
+					},
+					function(res) {
+						bee.api.logout(function() {
+							location.href = '/#!/login?recoverSuccess=true';
+						});
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		};
+		$('#recover_account').bind('click', recoverAccount);
+		
 	} else {
+		$('#security').remove();
 		bee.ui.loader.hide();
 	}
 	

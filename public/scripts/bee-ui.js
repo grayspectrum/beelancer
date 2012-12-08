@@ -181,13 +181,46 @@ bee.ui = (function() {
 		};
 	})();
 	
+	////
+	// Confirm Actio
+	////
+	function confirm(msg, callback) {
+		var tmpl = $('#tmpl-bee-ui_confirm').html()
+		  , source = Handlebars.compile(tmpl)
+		  , ui = source({ message : msg });
+		
+		$('body').append(ui);
+		
+		var cancelB = $('#bee-ui_confirm_cancel')
+		  , confirmB = $('#bee-ui_confirm_ok');
+		  
+		function dismiss() {
+			$('#bee-ui_confirm .popup').removeClass('flipInY').addClass('bounceOutDown');
+			$('#bee-ui_confirm').fadeOut(400, function() {
+				$(this).remove();
+			});
+		};
+		
+		cancelB.bind('click', function() {
+			dismiss();
+		});
+		
+		confirmB.bind('click', function() {
+			dismiss();
+			if (callback) {
+				callback.call(window);
+			}
+		});
+	};
+	
 	return {
 		loader : loader,
 		refresh : refresh,
 		menu : menu,
 		notifications : notifications,
 		sanitized : sanitized,
-		help : help
+		help : help,
+		confirm : confirm
 	};
 })();
 
@@ -200,7 +233,6 @@ $('#menu a').bind('click', function() {
 $('#logout').bind('click', function() {
 	bee.ui.loader.show();
 	bee.api.logout(function(err) {
-		bee.ui.menu.hide();
-		location.href = '/#!/login';
+		location.reload();
 	});
 });

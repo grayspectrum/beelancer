@@ -2,11 +2,41 @@
 	<h2 id="logo">beelancer</h2>
 	<form id="auth" class="light-gradient">
 		<label for="auth_email">E-mail:</label>
-		<input type="email" id="auth_email" placeholder="you@example.com" />
-		<label for="auth_password">Password:</label>
-		<input type="password" id="auth_password" placeholder="password" />
-		<input type="submit" id="auth_submit" value="Login" class="gold-gradient" />
-		<p class="sub_text">Not registered? <span class="action register">Click here to sign up!</span></p>
+		<input class="txt" type="email" id="auth_email" placeholder="you@example.com" />
+		<label for="auth_password">Password: </label>
+		<input class="txt" type="password" id="auth_password" placeholder="password" />
+		<input type="submit" id="auth_submit" value="Login" class="gold-gradient submit" />
+		<p class="sub_text">
+			Not registered? <a href="/#!/login?register=true" class="action register">Click here to sign up!</a> 
+		</p>
+		<small class="recover">
+			<a href="/#!/login?recover=true" class="action recover">Forgot your password?</a>
+		</small>
+	</form>
+	<form id="register" class="light-gradient">
+		<label for="register_email">E-mail:</label>
+		<input class="txt" type="email" id="register_email" placeholder="you@example.com" />
+		<label for="register_password">Password:</label>
+		<input class="txt" type="password" id="register_password" placeholder="password" />
+		<label for="register_password2">Re-type Password:</label>
+		<input class="txt" type="password" id="register_password2" placeholder="password" />
+		<input type="submit" id="register_submit" value="Register" class="gold-gradient submit" />
+		<p class="sub_text">Already registered? <a href="/#!/login" class="action login">Click here to login!</a></p>
+	</form>
+	<form id="recover" class="light-gradient">
+		<label for="auth_email">E-mail:</label>
+		<input class="txt" type="email" id="recover_email" placeholder="you@example.com" />
+		<input type="submit" id="recover_submit" value="Recover Password" class="gold-gradient submit" />
+		<p class="sub_text">
+			Remember you password? <a href="/#!/login" class="action register">Try logging in.</a> 
+		</p>
+	</form>
+	<form id="reset" class="light-gradient">
+		<label for="reset_password">New Password:</label>
+		<input class="txt" type="password" id="reset_password" placeholder="password" />
+		<label for="reset_password2">Re-type Password:</label>
+		<input class="txt" type="password" id="reset_password2" placeholder="password" />
+		<input type="submit" id="reset_submit" value="Reset Password" class="gold-gradient submit" />
 	</form>
 	<div id="confirmSuccess" class="green-gradient"></div>
 	<div id="loginError" class="red-gradient"></div>
