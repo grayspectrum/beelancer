@@ -163,20 +163,22 @@
 		};
 		
 		if (validateRegister()) {
-			bee.ui.loader.show();
-			bee.api.send(
-				'POST',
-				'/user/create',
-				creds,
-				function(res) {
-					bee.ui.loader.hide();
-					location.href = '/#!/login?registerSuccess=true';
-				},
-				function(err) {
-					bee.ui.loader.hide();
-					loginError(err);
-				}
-			);
+			bee.ui.confirm('Send account confirmation email to ' + creds.email + '?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/user/create',
+					creds,
+					function(res) {
+						bee.ui.loader.hide();
+						location.href = '/#!/login?registerSuccess=true';
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						loginError(err);
+					}
+				);
+			});
 		}
 	};
 	

@@ -194,6 +194,8 @@ bee.ui = (function() {
 		var cancelB = $('#bee-ui_confirm_cancel')
 		  , confirmB = $('#bee-ui_confirm_ok');
 		  
+		confirmB.focus();
+		  
 		function dismiss() {
 			$('#bee-ui_confirm .popup').removeClass('flipInY').addClass('bounceOutDown');
 			$('#bee-ui_confirm').fadeOut(400, function() {
@@ -235,4 +237,18 @@ $('#logout').bind('click', function() {
 	bee.api.logout(function(err) {
 		location.reload();
 	});
+});
+
+// Live Bindings
+$(document).on('click', '.big_radio', function(){
+	$('.big_radio').removeClass('selected');
+	$(this).addClass('selected');
+});
+
+$(document).on('focus', 'input, textarea', function() {
+	$(this).prev().addClass('focused');
+});
+
+$(document).on('blur', 'input, textarea', function() {
+	$(this).prev().removeClass('focused');
 });

@@ -97,6 +97,9 @@ module.exports = function(app, db) {
 					project.isActive = true;
 					project.amountPaid = 0;
 					project.owner = user._id;
+					if (body.hasClient == 'false') {
+						project.client = user.email;
+					}
 					project.save(function(err) {
 						if (err) {
 							console.log(err);

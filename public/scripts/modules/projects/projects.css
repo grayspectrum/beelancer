@@ -1,0 +1,38 @@
+/*
+ * beelancer - project.css
+ * Author: Gordon Hall
+ */
+
+#projects_create {
+	display: none;
+}
+
+.new_project_submit_wrapper {
+	border-radius: 6px;
+	margin: 24px auto;
+	width: 302px;
+}
+
+#save_project {
+	display: block;
+	width: 100%;
+	font-size: 28px;
+	font-family: Raleway;
+	font-weight: bold;
+	text-shadow: 0 1px 0 #FFC60B;
+	text-align: left;
+	text-indent: 48px;
+	padding: 12px;
+	border-radius: 6px;
+	border: 2px solid #FFC60B;
+	background: url('/assets/images/mono/black/folder_plus_icon&32.png') 12px center no-repeat;
+}
+
+#save_project:hover {
+	cursor: pointer;
+	background: url('/assets/images/mono/black/folder_plus_icon&32.png') 12px center no-repeat #FFC60B;
+}
+
+#newproject_client-info {
+	display: none;
+}

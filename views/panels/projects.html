@@ -1,3 +1,80 @@
-<div id="projects" class="light-gradient center-pane animated fadeInUp">
-	Projects
+<div id="projects_nav" class="light-gradient center-pane animated fadeInUp">
+	<ul>
+		<li>
+			<a href="/#!/projects?newProject=true" class="new_project">New Project</a>
+		</li>
+	</ul>
+</div>
+<div id="projects_active" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">Active Projects</h4>
+	<div id="projects_active_list"></div>
+	<div class="pagination">
+		<button class="pageLeft">&lt;</button>
+		<span class="pageLocation">
+			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+		</span>
+		<button class="pageLeft">&gt;</button>
+	</div>
+</div>
+<div id="projects_closed" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">Closed Projects</h4>
+	<div id="projects_closed_list"></div>
+	<div class="pagination">
+		<button class="pageLeft">&lt;</button>
+		<span class="pageLocation">
+			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+		</span>
+		<button class="pageLeft">&gt;</button>
+	</div>
+</div>
+<div id="projects_create" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">New Project</h4>
+	<form id="create_project">
+		<div class="group">
+			<label for="newproject_title">
+				<span>Title: </span>
+				<input class="required" type="text" id="newproject_title" placeholder="" name="title" />
+			</label>
+			<label for="newproject_deadline">
+				<span>Deadline: </span>
+				<input class="required" type="text" id="newproject_deadline" placeholder="" name="deadline" />
+			</label>
+		</div>
+		<p class="hint">
+			Give your team members an overview of the project. Or if you plan on posting this project to the job board, be sure 
+			that you give high-level information about the project goals, so candidates have a fundamental understanding of what 
+			the project is "all about".
+		</p>
+		<label class="full_block" for="newproject_desc">
+			<span>Description: </span>
+			<textarea id="newproject_desc" class="required" name="description" maxlength="3000"></textarea>
+		</label>
+		<label class="big_radio" for="newproject_client-false">
+			<input id="newproject_client-false" type="radio" name="hasClient" value="false" /> I will be funding this project
+			<p>
+				You will act as both the project owner and the client. This means that you will be responsible 
+				for hiring others, assigning work, and paying your team for their completed tasks.
+			</p>
+		</label>
+		<label class="big_radio" for="newproject_client-true">
+			<input id="newproject_client-true" type="radio" name="hasClient" value="true" /> My client will be funding this project
+			<p>
+				You will be responsible for assembling your team and assigning tasks. When you bill your client, 
+				they will recieve a payment link and you and your team will be paid automatically.
+			</p>
+		</label>
+		<div class="group" id="newproject_client-info">
+			<label for="newproject_client">
+				<span>Client's Email: </span>
+				<input type="text" id="newproject_client" placeholder="" name="client" />
+			</label>
+			<label for="newproject_budget">
+				<span>Client's Budget: </span>
+				<input type="text" id="newproject_budget" placeholder="" name="budget" />
+			</label>
+		</div>
+		<div class="new_project_submit_wrapper gold-gradient">
+			<input type="submit" id="save_project" value="Create Project" />
+		</div>
+	</form>
 </div>
