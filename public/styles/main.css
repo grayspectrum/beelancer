@@ -448,3 +448,81 @@ p.desc {
 	font-size: 13px;
 	font-style: italic;
 }
+
+/*
+ * Navigation Styles
+ */
+
+.navigation {
+	padding: 0;
+	overflow: hidden;
+}
+
+.navigation ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	float: right;
+	border-left: 1px solid #ededed;
+}
+
+.navigation ul li {
+	float: right;
+}
+
+.navigation li a {
+	display: block;
+	padding: 14px 14px 14px 48px;
+	text-decoration: none;
+	border-left: 1px solid #fff;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+}
+
+.navigation li a:hover {
+	background-color: #fff !important;
+}
+
+/*
+ * Pagination
+ */
+.pagination {
+	text-align: center;
+	padding: 12px 0;
+}
+
+.pagination button {
+	padding: 12px 19px;
+	margin: 0 12px;
+	border-radius: 3px;
+	border: 1px solid #E2E2E2;
+	font-family: monospace;
+	font-size: 12px;
+	text-indent: -9999px;
+	background: #F9F9F9;
+}
+
+.pagination button:hover {
+	cursor: pointer;
+	background-color: #fff;
+}
+
+.pagination .pageLeft {
+	background: url('/assets/images/mono/black/arrow_left_icon&16.png') center center no-repeat #f9f9f9;
+}
+
+.pagination .pageLocation {
+	
+}
+
+.pagination .pageCurrent {
+	
+}
+
+.pagination .pageTotal {
+	
+}
+
+.pagination .pageRight {
+	background: url('/assets/images/mono/black/arrow_right_icon&16.png') center center no-repeat #f9f9f9;
+}

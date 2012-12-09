@@ -24,7 +24,7 @@
 			{},
 			function(res) {
 				bee.ui.loader.hide();
-				console.log(JSON.parse(res));
+				generateList(addDeadlineText(JSON.parse(res)));
 			},
 			function(err) {
 				bee.ui.loader.hide();
@@ -32,6 +32,32 @@
 			}
 		);
 	}
+	
+	function addDeadlineText(response) {
+		var projects = {
+			active : [],
+			closed : []
+		};
+		for (var proj = 0; proj < response.length; proj++) {
+			var project = response[proj];
+			project.deadlineText = 'Due in ' + bee.utils.daysUntil(new Date(), new Date(project.deadline)) + ' days.';
+			if (project.isActive) {
+				projects.active.push(project);
+			} else {
+				projects.closed.push(project);
+			}
+		}
+		return projects;
+	};
+	
+	function generateList(projects) {
+		var tmpl = $('#tmpl-projects_list').html()
+		  , source = Handlebars.compile(tmpl)
+		  , activeList = source(projects.active)
+		  , closedList = source(projects.closed);
+		$('#projects_active_list').html(activeList);
+		$('#projects_closed_list').html(closedList);
+	};
 	
 	function tryCreateProject(event) {
 		event.preventDefault();

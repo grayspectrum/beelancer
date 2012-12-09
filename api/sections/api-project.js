@@ -63,7 +63,7 @@ module.exports = function(app, db) {
 						{ client : user._id }, 
 						{ members : user._id } 
 					] 
-				}).exec(function(err, projects) {
+				}).sort('deadline').exec(function(err, projects) {
 					if (err) {
 						res.writeHead(500);
 						res.write('Could not retrieve projects.');

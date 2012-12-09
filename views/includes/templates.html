@@ -13,3 +13,20 @@
 		</div>
 	</div>
 </script>
+
+<script id="tmpl-projects_list" type="text/x-handlebars-template">
+	{{#if this.length}}
+		<ul>
+			{{#each this}}
+				<li>
+					<a href="/#!/projects?viewProject={{_id}}">
+						<strong>{{title}}</strong>
+						<span class="project_due">{{deadlineText}}</span>
+					</a>
+				</li>
+			{{/each}}
+		</ul>
+	{{else}}
+		<p class="no_projects">You have {{this.length}} projects.</p>
+	{{/if}}
+</script>

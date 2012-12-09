@@ -36,3 +36,24 @@
 #newproject_client-info {
 	display: none;
 }
+
+#projects_nav .new_project {
+	background: url('/assets/images/mono/black/folder_plus_icon&24.png') 12px center no-repeat;
+}
+
+#projects_active_list ul,
+#projects_closed_list ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+#projects_active_list ul li,
+#projects_closed_list ul li {
+	
+}
+
+#projects_active_list ul li a,
+#projects_closed_list ul li a {
+	
+}
