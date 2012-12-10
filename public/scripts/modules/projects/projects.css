@@ -3,7 +3,8 @@
  * Author: Gordon Hall
  */
 
-#projects_create {
+#projects_create,
+#project_view {
 	display: none;
 }
 

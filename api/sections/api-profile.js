@@ -25,7 +25,7 @@ module.exports = function(app, db) {
 			.populate('user', '_id')
 		.exec(function(err, profile) {
 			if (err || !profile) {
-				res.writeHead(500);
+				res.writeHead(404);
 				res.write('The requested profile could not be found.');
 				res.end();
 			} else {
@@ -54,7 +54,7 @@ module.exports = function(app, db) {
 								.findOne({ _id : profile.user })
 								.exec(function(err, targetUser) {
 									if (err || !targetUser) {
-										res.writeHead(500);
+										res.writeHead(404);
 										res.write('The user could not be found.');
 										res.end();
 									} else {
@@ -143,7 +143,7 @@ module.exports = function(app, db) {
 							}
 						});
 					} else {
-						res.writeHead(500);
+						res.writeHead(400);
 						res.write('First Name, Last Name, and Title are required fields.');
 						res.end();
 					}
@@ -172,7 +172,7 @@ module.exports = function(app, db) {
 				.findOne({ _id : user.profile._id })
 				.exec(function(err, profile) {
 					if (err || !profile) {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Could not locate profile.');
 						res.end();
 					} else {
@@ -247,7 +247,7 @@ module.exports = function(app, db) {
     			res.write(JSON.stringify(user.profile));
     			res.end();
     		} else {
-    			res.writeHead(500);
+    			res.writeHead(404);
     			res.write('Profile not found.');
     			res.end();
     		}
@@ -282,7 +282,7 @@ module.exports = function(app, db) {
 		    							}
 		    						});
 		    					} else {
-		    						res.writeHead(500);
+		    						res.writeHead(404);
 		    						res.write('Could not locate profile to update.');
 		    						res.end();
 		    					}
@@ -296,7 +296,7 @@ module.exports = function(app, db) {
 		    			}
 		    		});
 		    	} else {
-		    		res.writeHead(500);
+		    		res.writeHead(400);
 		    		res.write('No avatar file found or incorrect image format.');
 		    		res.end();
 	    		}

@@ -12,12 +12,28 @@
 	
 	if (newProject) {
 		$('#projects_create').show();
-		$('#projects_active, #projects_closed, #projects_nav').remove();
+		$('#projects_active, #projects_closed, #projects_nav, #project_view').remove();
 		$('#newproject_deadline').datepicker()
 		bee.ui.loader.hide();
 	} else if (viewProject) {
-		
+		$('#project_view').show();
+		$('#projects_active, #projects_closed, #projects_nav, #projects_create').remove();
+		// get project details
+		bee.api.send(
+			'GET',
+			'/project/' + viewProject,
+			{},
+			function(res) {
+				console.log(JSON.parse(res));
+				bee.ui.loader.hide();
+			},
+			function(err) {
+				location.href = '/#!/projects';
+				bee.ui.notifications.notify('err', err);
+			}
+		);
 	} else {
+		$('#project_view, #projects_create').remove();
 		$('#projects_closed').hide();
 		
 		bee.api.send(

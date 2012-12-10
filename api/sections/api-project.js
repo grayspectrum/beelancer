@@ -18,23 +18,21 @@ module.exports = function(app, db) {
 	app.get('/api/project/:projectId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
-				var id = req.params.id;
+				var id = req.params.projectId;
 				// return project
 				db.project
 					.findOne({ 
 						_id : id,
 						$or : [ 
 							{ owner : user._id }, 
-							{ client : user._id }, 
 							{ members : user._id } 
 						] 
 					})
 					.populate('owner', 'profile')
-					.populate('client', 'profile')
 					.populate('members', 'profile')
 				.exec(function(err, project) {
 					if (err || !project) {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Project not found.');
 						res.end();
 					} else {
@@ -113,12 +111,12 @@ module.exports = function(app, db) {
 						}
 					});
 				} else {
-					res.writeHead(500);
+					res.writeHead(400);
 					res.write('Missing required project information.');
 					res.end();
 				}
 			} else {
-				res.writeHead(500);
+				res.writeHead(401);
 				res.write('You must be logged in to create a project');
 				res.end();
 			}
@@ -135,7 +133,7 @@ module.exports = function(app, db) {
 				.findOne({ _id : req.params.projectId , owner : user._id})
 			.exec(function(err, project) {
 				if (err || !project) {
-					res.writeHead(500);
+					res.writeHead(404);
 					res.write('Could not find project.');
 					res.end();
 				} else {
@@ -167,7 +165,7 @@ module.exports = function(app, db) {
 				})
 			.exec(function(err, project) {
 				if (err || !project) {
-					res.writeHead(500);
+					res.writeHead(404);
 					res.write('Could not find project.');
 					res.end();
 				} else {
@@ -227,13 +225,13 @@ module.exports = function(app, db) {
 								}
 							});
 						} else {
-							res.writeHead(500);
+							res.writeHead(404);
 							res.write('Project not found or you are not the owner.');
 							res.end();
 						}
 					});
 				} else {
-					res.writeHead(500);
+					res.writeHead(400);
 					res.write('Missing required parameters.');
 					res.end();
 				}

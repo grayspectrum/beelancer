@@ -25,7 +25,7 @@ module.exports = function(app, db) {
 					.findOne({ _id : projectId })
 				.exec(function(err, project) {
 					if (err || !project) {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Could not find project.');
 						res.end();
 					} else {
@@ -36,7 +36,7 @@ module.exports = function(app, db) {
 						task.isPaid = false;
 						task.isComplete = false;
 						if (task.assignee && project.members.indexOf(task.assignee) === -1) {
-							res.writeHead(500);
+							res.writeHead(400);
 							res.write('Assignee is not a member of this project.');
 							res.end();
 						} else {
@@ -123,7 +123,7 @@ module.exports = function(app, db) {
 					.populate('assignee', 'profile')
 				.exec(function(err, tasks) {
 					if (err | !tasks) {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Could not get tasks.');
 						res.end();
 					} else {
@@ -154,7 +154,7 @@ module.exports = function(app, db) {
 					]
 				}).exec(function(err, task) {
 					if (err || !task) {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Could not find task to update.');
 						res.end();
 					} else {
@@ -237,7 +237,7 @@ module.exports = function(app, db) {
 						}
 					});
 				} else {
-					res.writeHead(500);
+					res.writeHead(404);
 					res.write('Could not find task.');
 					res.end();
 				}

@@ -36,7 +36,7 @@ module.exports = function(app, db) {
 							type : type
 						};
 					} else {
-						res.writeHead(500);
+						res.writeHead(400);
 						res.write('Invalid type parameter "' + where + '". Must be one of "sent" or "inbox".');
 						res.end();
 					}
@@ -64,7 +64,7 @@ module.exports = function(app, db) {
 				}
 			});
 		} else {
-			res.writeHead(500);
+			res.writeHead(400);
 			res.write('Missing required parameters.');
 			res.end();
 		}
@@ -98,18 +98,18 @@ module.exports = function(app, db) {
 									}
 								});
 							} else {
-								res.writeHead(500);
+								res.writeHead(400);
 								res.write('Invalid action parameter.');
 								res.end();
 							}
 						} else {
-							res.writeHead(500);
+							res.writeHead(404);
 							res.write('Invitation not found.');
 							res.end();
 						}
 					});
 				} else {
-					res.writeHead(500);
+					res.writeHead(400);
 					res.write('Missing required parameters.');
 					res.end();
 				}
@@ -148,7 +148,7 @@ module.exports = function(app, db) {
 							}
 						});
 					} else {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Could not get message.');
 						res.end();
 					}
@@ -179,7 +179,7 @@ module.exports = function(app, db) {
 						to : user.profile._id
 					};
 				} else {
-					res.writeHead(500);
+					res.writeHead(400);
 					res.write('Invalid "where" parameter. Must be "sent" or "inbox".');
 					res.end();
 				}
@@ -195,7 +195,7 @@ module.exports = function(app, db) {
 						res.write(JSON.stringify(messages));
 						res.end();
 					} else {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Could not get search messages.');
 						res.end();
 					}

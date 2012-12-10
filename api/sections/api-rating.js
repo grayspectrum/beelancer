@@ -40,7 +40,7 @@ module.exports = function(app, db) {
 					});
 					
 				} else {
-					res.writeHead(500);
+					res.writeHead(400);
 					res.write('Missing required data.');
 					res.end();
 				}
@@ -67,13 +67,13 @@ module.exports = function(app, db) {
 						res.write(JSON.stringify(ratings));
 						res.end();
 					} else {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Could not retrieve ratings.');
 						res.end();
 					}
 				});
 			} else {
-				res.writeHead(500);
+				res.writeHead(401);
 				res.write('You must be logged in to view your ratings.');
 				res.end();
 			}
@@ -92,7 +92,7 @@ module.exports = function(app, db) {
 					.find({ forUser : user.profile._id, _id : body.ratingId })
 				.exec(function(err, rating) {
 					if (err || !rating) {
-						res.writeHead(500);
+						res.writeHead(404);
 						res.write('Could not retrieve rating.');
 						res.end();
 					} else {

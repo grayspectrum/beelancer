@@ -57,7 +57,7 @@ module.exports = function(app, db) {
 						});
 					// otherwise, fail
 					} else {
-						res.writeHead(500);
+						res.writeHead(400);
 						res.write('The email supplied is already in use.');
 						res.end();
 					}
@@ -65,7 +65,7 @@ module.exports = function(app, db) {
 			});
 		// need more data
 		} else {
-			res.writeHead(500);
+			res.writeHead(400);
 			res.write('Missing required parameters.');
 			res.end();
 		}
@@ -89,7 +89,7 @@ module.exports = function(app, db) {
 					res.end();
 				} else {
 					if (user.isConfirmed) {
-						res.writeHead(500);
+						res.writeHead(400);
 						res.write('Account is already confirmed.');
 						res.end();
 					} else {
@@ -111,7 +111,7 @@ module.exports = function(app, db) {
 				}
 			});
 		} else {
-			res.writeHead(500);
+			res.writeHead(400);
 			res.write('Missing userId or confimCode.');
 			res.end();
 		}
@@ -152,7 +152,7 @@ module.exports = function(app, db) {
 							}
 						});
 					} else {
-						res.writeHead(500);
+						res.writeHead(403);
 						res.write('Account is not confirmed. Check your email for a confirmation link.');
 						res.end();
 					}
@@ -202,7 +202,7 @@ module.exports = function(app, db) {
 	app.post('/api/user/recover', function(req, res) {
 		var body = req.body;
 		if (!body.email && !body.user) {
-			res.writeHead(500);
+			res.writeHead(400);
 			res.write('No email address or user ID was supplied.');
 			res.end();
 		} else {
@@ -211,7 +211,7 @@ module.exports = function(app, db) {
 			.findOne(query)
 			.exec(function(err, user) {
 				if (err || !user) {
-					res.writeHead(500);
+					res.writeHead(404);
 					res.write('The account could not be found.');
 					res.end();
 				} else {
@@ -247,7 +247,7 @@ module.exports = function(app, db) {
 		.findOne({ email : body.email, recoveryKey : body.recoveryKey })
 		.exec(function(err, user) {
 			if (err || !user) {
-				res.writeHead(500);
+				res.writeHead(400);
 				res.write('Invalid email or recovery key.');
 				res.end();
 			} else {
