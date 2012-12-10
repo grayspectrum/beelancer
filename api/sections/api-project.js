@@ -93,13 +93,14 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				if (body.description && body.title && body.deadline) {
+					if (body.hasClient == 'false') {
+						body.client = user.email;
+						body.budget = null;
+					}
 					var project = new db.project(body);
 					project.isActive = true;
 					project.amountPaid = 0;
 					project.owner = user._id;
-					if (body.hasClient == 'false') {
-						project.client = user.email;
-					}
 					project.save(function(err) {
 						if (err) {
 							console.log(err);

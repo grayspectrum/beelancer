@@ -19,7 +19,7 @@
 		<ul>
 			{{#each this}}
 				<li>
-					<a href="/#!/projects?viewProject={{_id}}">
+					<a href="/#!/projects?viewProject={{_id}}" {{#if pastDue}}class="overdue"{{/if}}>
 						<strong>{{title}}</strong>
 						<span class="project_due">{{deadlineText}}</span>
 					</a>
@@ -27,6 +27,6 @@
 			{{/each}}
 		</ul>
 	{{else}}
-		<p class="no_projects">You have {{this.length}} projects.</p>
+		<p class="no_projects">No projects to display.</p>
 	{{/if}}
 </script>

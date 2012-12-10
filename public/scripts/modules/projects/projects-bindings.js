@@ -18,6 +18,8 @@
 	} else if (viewProject) {
 		
 	} else {
+		$('#projects_closed').hide();
+		
 		bee.api.send(
 			'GET',
 			'/projects',
@@ -39,8 +41,15 @@
 			closed : []
 		};
 		for (var proj = 0; proj < response.length; proj++) {
-			var project = response[proj];
-			project.deadlineText = 'Due in ' + bee.utils.daysUntil(new Date(), new Date(project.deadline)) + ' days.';
+			var project = response[proj]
+			  , daysBetween = bee.utils.daysUntil(new Date(), new Date(project.deadline));
+			  
+			if (new Date() < new Date(project.deadline)) {
+				project.deadlineText = 'Due in ' + daysBetween + ' days.';
+			} else {
+				project.deadlineText = 'Due ' + daysBetween + ' days ago.';
+				project.pastDue = true;
+			}
 			if (project.isActive) {
 				projects.active.push(project);
 			} else {
@@ -57,11 +66,28 @@
 		  , closedList = source(projects.closed);
 		$('#projects_active_list').html(activeList);
 		$('#projects_closed_list').html(closedList);
+		
+		var activePager = new bee.ui.paginator(
+			$('#projects_active .pagination'),
+			$('#projects_active_list ul li'),
+			10
+		);
+		activePager.init();
+		
+		var closedPager = new bee.ui.paginator(
+			$('#projects_closed .pagination'),
+			$('#projects_closed_list ul li'),
+			10
+		);
+		closedPager.init();
 	};
 	
 	function tryCreateProject(event) {
 		event.preventDefault();
 		if (validateProject()) {
+			// fix budget before sending
+			var numericBudget = parseFloat($('#newproject_budget').val().split(',').join('')).toString();
+			$('#newproject_budget').val(numericBudget);
 			bee.ui.loader.show();
 			bee.api.send(
 				'POST',
@@ -111,6 +137,14 @@
 				validity = false;
 				bee.ui.notifications.notify('err', 'Please specify client email.', true);
 			}
+			if (!_.validate.email($('#newproject_client').val())) {
+				validity = false;
+				bee.ui.notifications.notify('err', 'Client email is invalid.', true);
+			}
+			if (!parseFloat($('#newproject_budget').val().split(',').join(''))) {
+				validity = false;
+				bee.ui.notifications.notify('err', 'Budget must be numeric.', true);
+			}
 		}
 		
 		return validity;
@@ -125,4 +159,14 @@
 		$('#newproject_client-info').hide();
 	});
 	
+	$('#filter_projects select').bind('change', function() {
+		if ($(this).val() === 'active') {
+			$('#projects_active').show();
+			$('#projects_closed').hide();
+		}
+		if ($(this).val() === 'closed') {
+			$('#projects_active').hide();
+			$('#projects_closed').show();
+		}
+	});
 })();

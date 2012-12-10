@@ -526,3 +526,13 @@ p.desc {
 .pagination .pageRight {
 	background: url('/assets/images/mono/black/arrow_right_icon&16.png') center center no-repeat #f9f9f9;
 }
+
+.pagination button.disabled {
+	opacity: 0.3;
+}
+
+.pagination button.disabled:hover {
+	opacity: 0.3;
+	background-color: #f9f9f9;
+}
+

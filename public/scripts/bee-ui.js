@@ -182,7 +182,7 @@ bee.ui = (function() {
 	})();
 	
 	////
-	// Confirm Actio
+	// Confirm Action
 	////
 	function confirm(msg, callback) {
 		var tmpl = $('#tmpl-bee-ui_confirm').html()
@@ -215,6 +215,74 @@ bee.ui = (function() {
 		});
 	};
 	
+	var paginator = function(paginator, list, show) {
+		this.items = list.length;
+		this.list = list;
+		this.show = show;
+		this.ui = paginator;
+		this.page = 1;
+		this.pages = Math.ceil(this.items / this.show);
+	};
+	
+	paginator.prototype.next = function() {
+		if (this.page !== this.pages) {
+			$('.pageLeft', this.ui).removeClass('disabled');
+			this.page++;
+			var skip = (this.page - 1) * (this.show)
+			$(this.list).hide().slice(skip, skip + this.show).show();
+		} else {
+			$('.pageRight', this.ui).addClass('disabled');
+		}
+		if (this.page === this.pages) {
+			$('.pageRight', this.ui).addClass('disabled');
+		}
+		$('.pageCurrent', this.ui).html(this.page);
+	};
+	
+	paginator.prototype.prev = function() {
+		if (this.page !== 1) {
+			$('.pageRight', this.ui).removeClass('disabled');
+			this.page--;
+			var skip = (this.page - 1) * (this.show)
+			$(this.list).hide().slice(skip, skip + this.show).show();
+		} else {
+			$('.pageLeft', this.ui).addClass('disabled');
+		}
+		if (this.page === 1) {
+			$('.pageLeft', this.ui).addClass('disabled');
+		}
+		$('.pageCurrent', this.ui).html(this.page);
+	};
+	
+	paginator.prototype.init = function() {
+		var pager = this;
+		// are there anough items to page?
+		if (this.items <= this.show) {
+			this.ui.addClass('disabled');
+		} else {
+			// show only the first page
+			var items = this.list.slice(this.show, this.items).hide();
+			$('.pageLeft', this.ui).addClass('disabled');
+		}
+		$('.pageTotal', this.ui).html(this.pages || 1);
+		$('.pageLeft', this.ui).bind('click', function() {
+			if (!$(this).hasClass('disabled')) {
+				pager.prev();
+			}
+		});
+		$('.pageRight', this.ui).bind('click', function() {
+			if (!$(this).hasClass('disabled')) {
+				pager.next();
+			}
+		});
+		$('.pageLeft', this.ui).addClass('disabled');
+		
+		if (this.page === this.pages || !this.items) {
+			$('.pageLeft, .pageRight', this.ui).addClass('disabled');
+		}
+	};
+	
+	
 	return {
 		loader : loader,
 		refresh : refresh,
@@ -222,7 +290,8 @@ bee.ui = (function() {
 		notifications : notifications,
 		sanitized : sanitized,
 		help : help,
-		confirm : confirm
+		confirm : confirm,
+		paginator : paginator
 	};
 })();
 

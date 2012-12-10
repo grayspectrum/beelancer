@@ -46,14 +46,64 @@
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
+	border: 1px solid #e2e2e2;
+	border-bottom: none;
 }
 
 #projects_active_list ul li,
 #projects_closed_list ul li {
-	
+	border-top: 1px solid #fff;
 }
 
 #projects_active_list ul li a,
 #projects_closed_list ul li a {
-	
+	padding: 12px 24px;
+	display: block;
+	text-decoration: none;
+	border-bottom: 1px solid #e2e2e2;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+	font-size: 14px;
+}
+
+#projects_active_list ul li a:hover,
+#projects_closed_list ul li a:hover {
+	background-color: #fff;
+	border-left: 6px solid #FFC60B;
+	border-color: #FFC60B;
+	box-shadow: 0 0 12px #444;
+	-webkit-transform: scale(1.05);
+}
+
+#projects_active_list ul li a .project_due,
+#projects_closed_list ul li a .project_due {
+	float: right;
+}
+
+#projects_active_list ul li a.overdue {
+	color: red;
+}
+
+#projects_active_list ul li a.overdue:hover {
+	border-left: 6px solid red;
+	border-color: red;
+}
+
+p.no_projects {
+	margin: 12px;
+	padding: 12px;
+	text-align: center;
+	background: #E2E2E2;
+	border: 1px solid white;
+	border-radius: 3px;
+}
+
+#filter_projects {
+	float: left;
+	margin: 12px;
+}
+
+#filter_projects select {
+	font-size: 16px;
+	margin-left: 12px;
 }
