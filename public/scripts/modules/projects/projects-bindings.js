@@ -92,7 +92,7 @@
 			}
 		);
 	} else {
-		$('#project_view, #projects_create, #projects_nav .edit_project').remove();
+		$('#project_view, #projects_create, #projects_nav .edit_project, #projects_nav .bill_client,  #projects_nav .project_status').remove();
 		$('#projects_closed').hide();
 		
 		bee.api.send(
