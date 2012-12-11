@@ -14,6 +14,7 @@ module.exports = new Schema({
 	description : String,
 	title : String,
 	deadline : Date,
+	avatarUrl : String,
 	tasks : [{
 		type : ObjectId,
 		ref : 'task'

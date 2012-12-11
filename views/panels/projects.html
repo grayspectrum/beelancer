@@ -10,6 +10,15 @@
 		<li>
 			<a href="/#!/projects?newProject=true" class="new_project">New Project</a>
 		</li>
+		<li>
+			<a href="/#!/projects?newProject=true&projectId=" class="edit_project">Edit Project</a>
+		</li>
+		<li>
+			<a class="project_status close_project">Close Project</a>
+		</li>
+		<li>
+			<a href="/#!/invoice?projectId=" class="bill_client">Invoice Client</a>
+		</li>
 	</ul>
 </div>
 <div id="projects_active" class="light-gradient center-pane animated fadeInUp">
@@ -81,19 +90,10 @@
 			</label>
 		</div>
 		<div class="new_project_submit_wrapper gold-gradient">
-			<input type="submit" id="save_project" value="Create Project" />
+			<input type="submit" id="save_project" value="Save Project" />
 		</div>
 	</form>
 </div>
 <div id="project_view" class="animated fadeInUp">
-	<div class="light-gradient center-pane">
-		<h4 class="gold-gradient">Project</h4>
-		<h4 class="gold-gradient">Description</h4>
-	</div>
-	<div class="light-gradient center-pane">
-		<h4 class="gold-gradient">Tasks</h4>
-	</div>
-	<div class="light-gradient center-pane">
-		<h4 class="gold-gradient">Team</h4>
-	</div>
+	
 </div>

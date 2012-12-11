@@ -28,7 +28,7 @@ module.exports = function(app, db) {
 							{ members : user._id } 
 						] 
 					})
-					.populate('owner', 'profile')
+					.populate('owner', 'profile email')
 					.populate('members', 'profile')
 				.exec(function(err, project) {
 					if (err || !project) {
@@ -124,7 +124,7 @@ module.exports = function(app, db) {
 	});
 	
 	////
-	// PUT - /api/project/update:projectId
+	// PUT - /api/project/update/:projectId
 	// Updates a project
 	////
 	app.put('/api/project/update/:projectId', function(req, res) {
@@ -137,6 +137,12 @@ module.exports = function(app, db) {
 					res.write('Could not find project.');
 					res.end();
 				} else {
+					if (req.body.budget === NaN) {
+						req.body.budget = 0;
+					}
+					if (!req.body.client) {
+						req.body.client = user.email;
+					}
 					project.update(req.body, function(err) {
 						if (err) {
 							res.writeHead(500);

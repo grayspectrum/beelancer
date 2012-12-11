@@ -1,3 +1,9 @@
+<!--
+	beelancer - templates.html
+	Author: Gordon Hall
+-->
+
+<!-- Confirm Box -->
 <script id="tmpl-bee-ui_confirm" type="text/x-handlebars-template">
 	<div id="bee-ui_confirm">
 		<div class="light-gradient popup animated flipInY">
@@ -14,6 +20,7 @@
 	</div>
 </script>
 
+<!-- Projects List -->
 <script id="tmpl-projects_list" type="text/x-handlebars-template">
 	{{#if this.length}}
 		<ul>
@@ -29,4 +36,70 @@
 	{{else}}
 		<p class="no_projects">No projects to display.</p>
 	{{/if}}
+</script>
+
+<!-- Project Details -->
+<script id="tmpl-project_details" type="text/x-handlebars-template">
+	<div class="light-gradient center-pane animated fadeInUp">
+		<div id="project_details">
+			<h4 class="gold-gradient">{{title}}</h4>
+			<div class="viewproject_deadline">
+				{{#if isActive}}
+					{{#if isOverdue}}
+						Due <span class="calendardate">{{daysText}}</span> days ago.
+					{{else}}
+						Due in <span class="calendardate">{{daysText}}</span> days.
+					{{/if}}
+				{{else}}
+					<span class="closed">This project is closed.</span>
+				{{/if}}
+			</div>
+			<div class="viewproject_descriptions">{{description}}</div>
+			<div class="newproject_stats">
+				<a href="#!/team?project={{_id}}">{{members.length}} team members</a> working on <a href="/#!/tasks?project={{_id}}">{{tasks.length}} tasks</a>.
+			</div>
+			<div id="viewproject_team">
+				<h5 class="half-list-header">Team Members</h5>
+				{{#if members.length}}
+					<ul>
+						{{#each members}}
+							<li class="list-member" id="profile-{{this._id}}">
+								<span class="loading-list">Loading Member...</span>
+							</li>
+						{{/each}}
+					</ul>
+				{{else}}
+					<p class="none">You are the only member of this project.</p>
+				{{/if}}
+			</div>
+			<div id="viewproject_tasks">
+				<h5 class="half-list-header">Active Tasks</h5>
+				{{#if tasks.length}}
+					<ul>
+						{{#each tasks}}
+							{{#if this.isComplete}}
+							{{else}}
+								<a href="/#!/tasks?viewTask={{_id}}"
+								<li class="list-task" id="task-{{this._id}}">
+									<span class="task-list-title">{{this.title}}</span>
+									<span class="task-list-hours">{{this.hoursWorked}} hours.</span>
+								</li>
+							{{/if}}
+						{{/each}}
+					</ul>
+				{{else}}
+					<p class="none">You are the only member of this project.</p>
+				{{/if}}
+			</div>
+		</div>
+	</div>
+</script>
+
+<!-- Member List Item -->
+<script id="tmpl-list_member" type="text/x-handlebars-template">
+	<a href="/#!/team?viewProfile={{_id}}">
+		<img src="{{#if avatarUrl}}{{avatarUrl}}{{else}}/assets/images/default-avatar.jpg{{/if}}" width="32px" height="32px" />
+		<span class="member-name">{{firstName}} {{lastName}}</span>
+		<span class="member-title">{{title}}</span>
+	</a>
 </script>

@@ -42,6 +42,22 @@
 	background: url('/assets/images/mono/black/folder_plus_icon&24.png') 12px center no-repeat;
 }
 
+#projects_nav .edit_project {
+	background: url('/assets/images/mono/black/doc_edit_icon&24.png') 12px center no-repeat;
+}
+
+#projects_nav .bill_client {
+	background: url('/assets/images/mono/black/money_icon&24.png') 12px center no-repeat;
+}
+
+#projects_nav .close_project {
+	background: url('/assets/images/mono/black/round_minus_icon&24.png') 12px center no-repeat;
+}
+
+#projects_nav .reopen_project {
+	background: url('/assets/images/mono/black/round_checkmark_icon&24.png') 12px center no-repeat;
+}
+
 #projects_active_list ul,
 #projects_closed_list ul {
 	margin: 0;
