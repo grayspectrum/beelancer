@@ -68,6 +68,11 @@ h4 {
 	margin: 36px 0 0 0;
 }
 
+.rollout {
+	background: url('/assets/images/rollout-top.png') top left repeat-x #fff !important;
+	border-top: none !important;
+}
+
 #welcome {
 	
 }

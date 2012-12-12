@@ -55,7 +55,7 @@
 				{{/if}}
 			</div>
 			<div class="viewproject_description">
-				<div class="markdown">
+				<div class="markdown rollout">
 					{{{description}}}
 				</div>
 			</div>
@@ -66,7 +66,7 @@
 				<div id="viewproject_team" class="half_list">
 					<h5 class="half-list-header">Team Members</h5>
 					{{#if members.length}}
-						<ul>
+						<ul class="rollout">
 							{{#each members}}
 								<li class="list-member" id="profile-{{this._id}}">
 									<span class="loading-list">Loading Member...</span>
@@ -74,13 +74,13 @@
 							{{/each}}
 						</ul>
 					{{else}}
-						<p class="none">You are the only member of this project.</p>
+						<p class="rollout none">You are the only member of this project.</p>
 					{{/if}}
 				</div>
 				<div id="viewproject_tasks" class="half_list">
 					<h5 class="half-list-header">Active Tasks</h5>
 					{{#if tasks.length}}
-						<ul>
+						<ul class="rollout">
 							{{#each tasks}}
 								{{#if this.isComplete}}
 								{{else}}
@@ -93,7 +93,7 @@
 							{{/each}}
 						</ul>
 					{{else}}
-						<p class="none">You are the only member of this project.</p>
+						<p class="rollout none">You are the only member of this project.</p>
 					{{/if}}
 				</div>
 			</div>
