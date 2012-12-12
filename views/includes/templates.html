@@ -51,45 +51,51 @@
 						Due in <span class="calendardate">{{daysText}}</span> days.
 					{{/if}}
 				{{else}}
-					<span class="closed">This project is closed.</span>
+					<span class="closed green-gradient">This project is closed.</span>
 				{{/if}}
 			</div>
-			<div class="viewproject_descriptions">{{description}}</div>
-			<div class="newproject_stats">
-				<a href="#!/team?project={{_id}}">{{members.length}} team members</a> working on <a href="/#!/tasks?project={{_id}}">{{tasks.length}} tasks</a>.
+			<div class="viewproject_description">
+				<div class="markdown">
+					{{{description}}}
+				</div>
 			</div>
-			<div id="viewproject_team">
-				<h5 class="half-list-header">Team Members</h5>
-				{{#if members.length}}
-					<ul>
-						{{#each members}}
-							<li class="list-member" id="profile-{{this._id}}">
-								<span class="loading-list">Loading Member...</span>
-							</li>
-						{{/each}}
-					</ul>
-				{{else}}
-					<p class="none">You are the only member of this project.</p>
-				{{/if}}
+			<div class="viewproject_stats">
+				This project has <a href="#!/team?project={{_id}}">{{members.length}} members</a> working on <a href="/#!/tasks?project={{_id}}">{{tasks.length}} tasks</a>.
 			</div>
-			<div id="viewproject_tasks">
-				<h5 class="half-list-header">Active Tasks</h5>
-				{{#if tasks.length}}
-					<ul>
-						{{#each tasks}}
-							{{#if this.isComplete}}
-							{{else}}
-								<a href="/#!/tasks?viewTask={{_id}}"
-								<li class="list-task" id="task-{{this._id}}">
-									<span class="task-list-title">{{this.title}}</span>
-									<span class="task-list-hours">{{this.hoursWorked}} hours.</span>
+			<div class="float_wrap">
+				<div id="viewproject_team" class="half_list">
+					<h5 class="half-list-header">Team Members</h5>
+					{{#if members.length}}
+						<ul>
+							{{#each members}}
+								<li class="list-member" id="profile-{{this._id}}">
+									<span class="loading-list">Loading Member...</span>
 								</li>
-							{{/if}}
-						{{/each}}
-					</ul>
-				{{else}}
-					<p class="none">You are the only member of this project.</p>
-				{{/if}}
+							{{/each}}
+						</ul>
+					{{else}}
+						<p class="none">You are the only member of this project.</p>
+					{{/if}}
+				</div>
+				<div id="viewproject_tasks" class="half_list">
+					<h5 class="half-list-header">Active Tasks</h5>
+					{{#if tasks.length}}
+						<ul>
+							{{#each tasks}}
+								{{#if this.isComplete}}
+								{{else}}
+									<a href="/#!/tasks?viewTask={{_id}}"
+									<li class="list-task" id="task-{{this._id}}">
+										<span class="task-list-title">{{this.title}}</span>
+										<span class="task-list-hours">{{this.hoursWorked}} hours.</span>
+									</li>
+								{{/if}}
+							{{/each}}
+						</ul>
+					{{else}}
+						<p class="none">You are the only member of this project.</p>
+					{{/if}}
+				</div>
 			</div>
 		</div>
 	</div>

@@ -93,6 +93,25 @@ label.hasError input {
 	border-color: #c01219 !important;
 }
 
+.small_right {
+	float: right;
+}
+
+.markdown {
+	margin: 0;
+	font-size: 14px;
+	padding: 12px;
+	background: white;
+	border-radius: 0 0 3px 3px;
+	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+	border: 1px solid #E2E2E2;
+}
+
+.markdown_input {
+	font-family: Monaco, Courier, monospace;
+	line-height: 22px;
+}
+
 #notifications {
 
 }
@@ -223,6 +242,10 @@ h2#logo {
 	background: url('/assets/images/logo.png') center center no-repeat;
 	font-size: 48px;
 	margin-bottom: 12px;
+}
+
+.float_wrap {
+	overflow: hidden;
 }
 
 .center-pane {
@@ -559,3 +582,32 @@ p.desc {
 	background-color: #f9f9f9;
 }
 
+/*
+ * Split Lists
+ */
+.half_list {
+	width: 50%;
+	float: left;
+	margin: 12px 0;
+}
+
+.half-list-header {
+	margin: 0 24px;
+	padding: 12px 0;
+	font-size: 18px;
+	text-align: center;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+	color: #001E28;
+	border-bottom: 1px solid #c1c1c1;
+}
+
+.none {
+	margin: 0 24px 12px 24px;
+	font-size: 14px;
+	padding: 12px;
+	background: white;
+	border-radius: 0 0 3px 3px;
+	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+	border: 1px solid #E2E2E2;
+}

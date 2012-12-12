@@ -9,89 +9,78 @@
 	
 	var newProject = _.querystring.get('newProject')
 	  , viewProject = _.querystring.get('viewProject')
-	  , editProject = _.querystring.get('projectId');
+	  , editProject = _.querystring.get('projectId')
+	  , showCategory = _.querystring.get('show');
 	
 	if (newProject) {
-		$('#projects_create').show();
-		$('#projects_active, #projects_closed, #projects_nav, #project_view').remove();
-		$('#newproject_deadline').datepicker();
-		
+		new_project();
 		if (editProject) {
-			$('#projects_create > h4:first').html('Edit Project');
-			bee.api.send(
-				'GET',
-				'/project/' + editProject,
-				{},
-				function(res) {
-					var project = JSON.parse(res);
-					project.deadline = project.deadline.split('T')[0];
-					if (project.client === project.owner.email) {
-						$('#newproject_client-false').click();
-					} else {
-						$('#newproject_client-true').click();
-					}
-					$.each(project, function(key, val) {
-						$('#projects_create *[name="' + key + '"]').val(val);
-					});
-					bee.ui.loader.hide();
-				},
-				function(err) {
-					history.back();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
+			edit_project();
 		} else {
 			bee.ui.loader.hide();
 		}
 	} else if (viewProject) {
-		var action = {
-			close : _.querystring.get('close'),
-			reopen : _.querystring.get('reopen')
-		};
-		
-		$('#project_view').show();
-		$('#projects_active, #projects_closed, #filter_projects, #projects_create, #projects_nav .new_project').remove();
-		// get project details
+		view_project();
+	} else {
+		list_projects();
+		if (showCategory) {
+			$('#filter_projects select').val(showCategory);
+			if (showCategory === 'active') {
+				$('#projects_active').show();
+				$('#projects_closed').hide();
+			}
+			if (showCategory === 'closed') {
+				$('#projects_active').hide();
+				$('#projects_closed').show();
+			}
+		} else {
+			$('#projects_active').show();
+			$('#projects_closed').hide();
+		}
+	}
+	
+	////
+	// New Project
+	////
+	function new_project() {
+		$('#projects_create').show();
+		$('#projects_active, #projects_closed, #projects_nav, #project_view').remove();
+		$('#newproject_deadline').datepicker();
+	};
+	
+	////
+	// Edit Project
+	////
+	function edit_project() {
+		$('#projects_create > h4:first').html('Edit Project');
 		bee.api.send(
 			'GET',
-			'/project/' + viewProject,
+			'/project/' + editProject,
 			{},
 			function(res) {
-				var project = JSON.parse(res)
-				  , editurl = $('#projects_nav .edit_project').attr('href')
-				  , billurl = $('#projects_nav .bill_client').attr('href');
-				$('#projects_nav .edit_project').attr('href', editurl + project._id);
-				$('#projects_nav .bill_client').attr('href', billurl + project._id);
-				
-				if (project.isActive) {
-					$('#projects_nav .project_status').addClass('close_project').removeClass('reopen_project');
+				var project = JSON.parse(res);
+				project.deadline = project.deadline.split('T')[0];
+				if (project.client === project.owner.email) {
+					$('#newproject_client-false').click();
 				} else {
-					$('#projects_nav .project_status').addClass('reopen_project').removeClass('close_project');
+					$('#newproject_client-true').click();
 				}
-				var userid = _.cookies.get('userid');
-				if (userid !== project.owner._id) {
-					$('#filter_projects').remove();
-				}
-				
-				if (new Date() > new Date(project.deadline)) {
-					project.isOverdue = true;
-				}
-				project.daysText = bee.utils.daysUntil(new Date(), new Date(project.deadline));
-				
-				var tmpl = $('#tmpl-project_details').html()
-				  , source = Handlebars.compile(tmpl)
-				  , view = source(project);
-				
-				$('#project_view').html(view);
-				
+				$.each(project, function(key, val) {
+					$('#projects_create *[name="' + key + '"]').val(val);
+				});
 				bee.ui.loader.hide();
 			},
 			function(err) {
-				location.href = '/#!/projects';
+				history.back();
 				bee.ui.notifications.notify('err', err);
 			}
 		);
-	} else {
+	};
+	
+	////
+	// List Projects
+	////
+	function list_projects() {
 		$('#project_view, #projects_create, #projects_nav .edit_project, #projects_nav .bill_client,  #projects_nav .project_status').remove();
 		$('#projects_closed').hide();
 		
@@ -108,8 +97,67 @@
 				bee.ui.notifications.notify('err', err, true);
 			}
 		);
-	}
+	};
 	
+	////
+	// View Project
+	////
+	function view_project() {	
+		$('#project_view').show();
+		$('#projects_active, #projects_closed, #filter_projects, #projects_create, #projects_nav .new_project').remove();
+		// get project details
+		bee.api.send(
+			'GET',
+			'/project/' + viewProject,
+			{},
+			function(res) {
+				var project = JSON.parse(res)
+				  , editurl = $('#projects_nav .edit_project').attr('href')
+				  , billurl = $('#projects_nav .bill_client').attr('href');
+				$('#projects_nav .edit_project').attr('href', editurl + project._id);
+				$('#projects_nav .bill_client').attr('href', billurl + project._id);
+				
+				if (project.isActive) {
+					$('#projects_nav .project_status')
+						.addClass('close_project')
+						.removeClass('reopen_project')
+					.html('Close Project');
+				} else {
+					$('#projects_nav .project_status')
+						.addClass('reopen_project')
+						.removeClass('close_project')
+					.html('Reopen Project');
+				}
+				var userid = _.cookies.get('userid');
+				if (userid !== project.owner._id) {
+					$('#filter_projects').remove();
+				}
+				
+				if (new Date() > new Date(project.deadline)) {
+					project.isOverdue = true;
+				}
+				project.daysText = bee.utils.daysUntil(new Date(), new Date(project.deadline));
+				project.description = marked(project.description);
+				
+				var tmpl = $('#tmpl-project_details').html()
+				  , source = Handlebars.compile(tmpl)
+				  , view = source(project);
+				
+				$('#project_view').html(view);
+				
+				bee.ui.loader.hide();
+			},
+			function(err) {
+				location.href = '/#!/projects';
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	};
+	
+	
+	////
+	// Helpers
+	////
 	function addDeadlineText(response) {
 		var projects = {
 			active : [],
@@ -119,15 +167,16 @@
 			var project = response[proj]
 			  , daysBetween = bee.utils.daysUntil(new Date(), new Date(project.deadline));
 			  
-			if (new Date() < new Date(project.deadline)) {
-				project.deadlineText = 'Due in ' + daysBetween + ' days.';
-			} else {
-				project.deadlineText = 'Due ' + daysBetween + ' days ago.';
-				project.pastDue = true;
-			}
 			if (project.isActive) {
+				if (new Date() < new Date(project.deadline)) {
+					project.deadlineText = 'Due in ' + daysBetween + ' days.';
+				} else {
+					project.deadlineText = 'Due ' + daysBetween + ' days ago.';
+					project.pastDue = true;
+				}
 				projects.active.push(project);
 			} else {
+				project.deadlineText = 'Project closed.';
 				projects.closed.push(project);
 			}
 		}
@@ -189,6 +238,10 @@
 		var validity = true;
 		bee.ui.notifications.dismiss();
 		
+		$('#create_project input, #create_project textarea').each(function() {
+			$(this).val(bee.ui.sanitized($(this).val()));
+		});
+		
 		$('.required').each(function() {
 			if (!$(this).val()) {
 				validity = false;
@@ -230,6 +283,9 @@
 		return validity;
 	};
 	
+	////
+	// Bindings
+	////
 	$('#create_project').bind('submit', tryCreateProject);
 
 	$('#newproject_client-true').bind('click', function() {
@@ -239,14 +295,29 @@
 		$('#newproject_client-info').hide();
 	});
 	
+	$('#projects_nav .project_status').bind('click', function() {
+		var close = $(this).hasClass('close_project')
+		  , reopen = $(this).hasClass('reopen_project')
+		  , project = viewProject;
+		bee.ui.loader.show();
+		bee.api.send(
+			'PUT',
+			'/project/' + ((close) ? 'close' : 'reopen') + '/' + project,
+			{
+				isActive : (close) ? false : true
+			},
+			function(res) {
+				bee.ui.notifications.notify('success', 'Project ' + ((reopen) ? 'reopened.' : 'closed.'));
+				bee.ui.refresh();
+			},
+			function(err) {
+				bee.ui.notifications.notify('err', err, true);
+				bee.ui.loader.hide();
+			}
+		);
+	});
+	
 	$('#filter_projects select').bind('change', function() {
-		if ($(this).val() === 'active') {
-			$('#projects_active').show();
-			$('#projects_closed').hide();
-		}
-		if ($(this).val() === 'closed') {
-			$('#projects_active').hide();
-			$('#projects_closed').show();
-		}
+		location.href = '/#!/projects?show=' + $(this).val();
 	});
 })();

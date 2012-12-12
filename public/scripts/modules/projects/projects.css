@@ -124,3 +124,58 @@ p.no_projects {
 	font-size: 16px;
 	margin-left: 12px;
 }
+
+.viewproject_deadline {
+	float: right;
+	font-size: 14px;
+	margin: -60px 24px 0 0;
+	text-transform: uppercase;
+	font-weight: bold;
+	color: #333
+}
+
+.calendardate {
+	display: inline-block;
+	padding: 2px 12px 4px 12px;
+	border-radius: 3px;
+	background: white;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	margin: 0 12px;
+	border: 1px solid #cf0404;
+	border-top: 8px solid #cf0404;
+	font-weight: bold;
+	font-size: 18px;
+	color: #000;
+}
+
+.closed {
+	color: white;
+	padding: 6px 12px;
+	border-radius: 3px;
+	border: 1px solid #C9DE96;
+	text-shadow: 0 -1px 0 #398235;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+	margin: 6px -36px 0 0;
+	float: right;
+}
+
+.viewproject_description {
+	padding: 0;
+	margin: 12px 24px;
+	border-top: 1px solid #c1c1c1;
+	font-size: 14px;
+}
+
+.viewproject_stats {
+	text-align: center;
+	font-size: 14px;
+	padding: 6px 0;
+}
+
+.viewproject_stats a {
+	color: #001E28;
+}
+
+.viewproject_stats a:hover {
+	text-decoration: none;
+}

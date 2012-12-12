@@ -140,13 +140,73 @@ module.exports = function(app, db) {
 					if (req.body.budget === NaN) {
 						req.body.budget = 0;
 					}
-					if (!req.body.client) {
+					if (req.body.hasClient == 'false') {
 						req.body.client = user.email;
 					}
 					project.update(req.body, function(err) {
 						if (err) {
 							res.writeHead(500);
 							res.write('Could not update project.');
+							res.end();
+						} else {
+							res.write(JSON.stringify(project));
+							res.end();
+						}
+					});
+				}
+			});
+		});
+	});
+	
+	////
+	// PUT - /api/project/close/:projectId
+	// Closes a project
+	////
+	app.put('/api/project/close/:projectId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			db.project
+				.findOne({ _id : req.params.projectId , owner : user._id})
+			.exec(function(err, project) {
+				if (err || !project) {
+					res.writeHead(404);
+					res.write('Could not find project.');
+					res.end();
+				} else {
+					project.isActive = false;
+					project.save(function(err) {
+						if (err) {
+							res.writeHead(500);
+							res.write('Could not close project.');
+							res.end();
+						} else {
+							res.write(JSON.stringify(project));
+							res.end();
+						}
+					});
+				}
+			});
+		});
+	});
+	
+	////
+	// PUT - /api/project/reopen/:projectId
+	// Reopens a project
+	////
+	app.put('/api/project/reopen/:projectId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			db.project
+				.findOne({ _id : req.params.projectId , owner : user._id})
+			.exec(function(err, project) {
+				if (err || !project) {
+					res.writeHead(404);
+					res.write('Could not find project.');
+					res.end();
+				} else {
+					project.isActive = true;
+					project.save(function(err) {
+						if (err) {
+							res.writeHead(500);
+							res.write('Could not reopen project.');
 							res.end();
 						} else {
 							res.write(JSON.stringify(project));
