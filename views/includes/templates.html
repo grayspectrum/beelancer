@@ -93,7 +93,7 @@
 							{{/each}}
 						</ul>
 					{{else}}
-						<p class="rollout none">You are the only member of this project.</p>
+						<p class="rollout none">There are no tasks attached to this project.</p>
 					{{/if}}
 				</div>
 			</div>
@@ -108,4 +108,46 @@
 		<span class="member-name">{{firstName}} {{lastName}}</span>
 		<span class="member-title">{{title}}</span>
 	</a>
+</script>
+
+<!-- Team Populate -->
+<script id="tmpl-populate_team" type="text/x-handlebars-template">
+	{{#if this.length}}
+		<ul>
+			{{#each this}}
+				<li class="teammember" data-id="{{this._id}}">
+					<img src="{{this.avatarPath}}" width="32px" height="32px" alt="{{this.avatarPath}}" />
+					<span class="team_list_name">{{this.firstName}} {{this.lastName}}</span>
+				</li>
+			{{/each}}
+		</ul>
+	{{else}}	
+		<p>
+			You have no team members! Don't be shy, why not <a href="/#!/team?show=invite">invite a colleague</a>?
+		</p>
+	{{/if}}
+</script>
+
+<!-- Message List -->
+<script id="tmpl-message_list" type="text/x-handlebars-template">
+	{{#if this.length}}
+		<ul>
+			{{#each this}}
+				<li class="message" data-id="{{this._id}}">
+					<div class="msg_from">
+						<img src="{{this.avatarPath}}" width="24px" height="24px" alt="{{this.avatarPath}}" />
+						<span class="team_list_name">{{this.from.firstName}} {{this.from.lastName}}</span>
+					</div>
+					<p>{{this.concatBody}}</p>
+				</li>
+			{{/each}}
+		</ul>
+	{{else}}
+		<p>You have no messages.</p>
+	{{/if}}
+</script>
+
+<!-- User Profile -->
+<script id="tmpl-user_profile" type="text/x-handlebars-template">
+	
 </script>

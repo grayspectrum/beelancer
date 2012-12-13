@@ -7,6 +7,9 @@
 
 bee.ui = (function() {
 	
+	////
+	// Page Loader
+	////
 	var loader = (function() {
 		
 		var elm = $('#bee_loader');
@@ -27,6 +30,9 @@ bee.ui = (function() {
 		};
 	})();
 	
+	////
+	// Panel Refresh
+	////
 	function refresh() {
 		var view = (location.hash) ? location.hash.split('/')[1].split('?')[0] : false
 		  , isLoggedIn = _.cookies.get('userid') && _.cookies.get('apikey');
@@ -51,6 +57,9 @@ bee.ui = (function() {
 		}
 	};
 	
+	////
+	// Menu Bindings
+	////
 	var menu = (function() {
 		
 		function show() {
@@ -158,6 +167,9 @@ bee.ui = (function() {
 		
 	})();
 	
+	////
+	// Input Sanitizer
+	////
 	function sanitized(value) {
 		var ctr = document.createElement('div');
 		ctr.innerHTML = value;
@@ -165,6 +177,9 @@ bee.ui = (function() {
 		return ctr.innerText;
 	};
 	
+	////
+	// Help Overlay Tutorial
+	////
 	var help = (function() {
 		
 		function show() {
@@ -215,7 +230,10 @@ bee.ui = (function() {
 		});
 	};
 	
-	var paginator = function(paginator, list, show) {
+	////
+	// Pagination Constructor
+	////
+	var Paginator = function(paginator, list, show) {
 		this.items = list.length;
 		this.list = list;
 		this.show = show;
@@ -224,7 +242,7 @@ bee.ui = (function() {
 		this.pages = Math.ceil(this.items / this.show);
 	};
 	
-	paginator.prototype.next = function() {
+	Paginator.prototype.next = function() {
 		if (this.page !== this.pages) {
 			$('.pageLeft', this.ui).removeClass('disabled');
 			this.page++;
@@ -239,7 +257,7 @@ bee.ui = (function() {
 		$('.pageCurrent', this.ui).html(this.page);
 	};
 	
-	paginator.prototype.prev = function() {
+	Paginator.prototype.prev = function() {
 		if (this.page !== 1) {
 			$('.pageRight', this.ui).removeClass('disabled');
 			this.page--;
@@ -254,7 +272,7 @@ bee.ui = (function() {
 		$('.pageCurrent', this.ui).html(this.page);
 	};
 	
-	paginator.prototype.init = function() {
+	Paginator.prototype.init = function() {
 		var pager = this;
 		// are there anough items to page?
 		if (this.items <= this.show) {
@@ -282,6 +300,127 @@ bee.ui = (function() {
 		}
 	};
 	
+	////
+	// TeamList Widget
+	////
+	var TeamList = (function() {
+		
+		var teamlist = function(onSelect) {
+			this.ui = document.createElement('div');
+			this.ui.id = 'bee-ui_teamlist';
+			this.onSelect = onSelect || new Function();
+			this.team = null;
+		};
+		
+		teamlist.prototype.template = Handlebars.compile($('#tmpl-populate_team').html());
+		
+		teamlist.prototype.show = function(pos) {
+			$(this.ui).removeClass('animated fadeOutDown');
+			$(this.ui).addClass('animated fadeInUp');
+			if (pos) {
+				$(this.ui).css({
+					left : pos.x,
+					top : pos.y,
+					position : 'absolute',
+					zIndex : 998
+				});
+			}
+			return this;
+		};
+		
+		teamlist.prototype.hide = function() {
+			$(this.ui).removeClass('animated fadeInUp');
+			$(this.ui).addClass('animated fadeOutDown');
+			return this;
+		};
+		
+		teamlist.prototype.populate = function() {
+			var instance = this;
+			bee.api.send(
+				'GET',
+				'/user/team',
+				{},
+				function(res) {
+					var team = JSON.parse(res);
+					instance.team = team;
+					$(instance.ui).html(instance.template(team));
+					$('.teammember', instance.ui).bind('click', function() {
+						var id = $(this).attr('data-id')
+						  , index = $(this).index('.teammember');
+						instance.onSelect.call(instance, instance.team[index]);
+					});
+				},
+				function(err) {
+					instance.destroy();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+			return instance;
+		};
+		
+		teamlist.prototype.attach = function(container) {
+			$(container || 'body').append(this.ui);
+			return this;
+		};
+		
+		teamlist.prototype.destroy = function() {
+			$(this.ui).remove();
+			return this;
+		};
+		
+		teamlist.prototype.filter = function(name) {
+			if (name) {
+				$('.teammember', this.ui).hide();
+				for (var mem = 0; mem < this.team.length; mem++) {
+					var matchFirst = this.team[mem].firstName.indexOf(name.toLowerCase()) > -1
+					  , matchLast = this.team[mem].lastName.indexOf(name.toLowerCase()) > -1;
+					if (matchFirst || matchLast) {
+						$($('.teammember', this.ui)[mem]).show();
+					}
+				}
+			} else {
+				$('.teammember', this.ui).show();
+			}
+		};
+		
+		////
+		// jQuery TeamList Attachment Plugin
+		// 		`teamlist` instance must already be attach()'ed and populate()'ed
+		////
+		(function($) {
+			$.fn.bindTeamList = function(teamlist) {
+				this.bind('keyup', function() {
+					teamlist.filter(this.val());
+				});
+				this.bind('focus', function() {
+					var pos = {
+						x : this.position().left + this.outerWidth(),
+						y : this.position().top + this.outerHeight()
+					};
+					teamlist.show(pos);
+					tappa.on('up', function() {
+						$('.teammember', teamlist.ui).removeClass('selected');
+						$('.teammember:visible', teamlist.ui).prev().addClass('selected');
+					});
+					tappa.on('down', function() {
+						$('.teammember', teamlist.ui).removeClass('selected');
+						$('.teammember:visible', teamlist.ui).next().addClass('selected');
+					});
+					tappa.on('enter', function() {
+						$('.teammember.selected:visible', teamlist.ui).trigger('click');
+						this.blur();
+					});
+				});
+				this.bind('blur', function() {
+					teamlist.hide();
+					tappa.clear();
+				});
+			};
+		})(jQuery);
+		
+		return teamlist;
+	})();
+	
 	
 	return {
 		loader : loader,
@@ -291,7 +430,8 @@ bee.ui = (function() {
 		sanitized : sanitized,
 		help : help,
 		confirm : confirm,
-		paginator : paginator
+		Paginator : Paginator,
+		TeamList : TeamList
 	};
 })();
 

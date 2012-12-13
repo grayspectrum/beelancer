@@ -267,4 +267,29 @@ module.exports = function(app, db) {
 		});
 	});
 	
+	////
+	// GET - /api/user/team
+	// Returns the callers team
+	////
+	app.get('/api/user/team', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.user.findOne({ _id : user._id }).populate('team').exec(function(err, user) {
+					if (!err) {
+						res.write(JSON.stringify(user.team));
+						res.end();
+					} else {
+						res.writeHead(500);
+						res.write('Could not get team.');
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to view your team.');
+				res.end();
+			}
+		});
+	});
+	
 };

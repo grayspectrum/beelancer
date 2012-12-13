@@ -17,7 +17,7 @@ module.exports = new Schema({
 	},
 	team : [{
 		type : ObjectId,
-		ref : 'user'
+		ref : 'profile'
 	}],
 	projects : [{
 		type : ObjectId,

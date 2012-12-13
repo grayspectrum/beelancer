@@ -73,13 +73,49 @@ _.load([
 		}
 	});
 	
+	var messages = new bee.Module(app, {
+		name : 'messages',
+		container : 'main',
+		load : {
+			always : [
+				'/scripts/modules/messages/messages-bindings.js'
+			],
+			before : [
+			
+			],
+			once : [
+				'/scripts/modules/messages/messages.css'
+			]
+		}
+	});
+	
+	var team = new bee.Module(app, {
+		name : 'team',
+		container : 'main',
+		load : {
+			always : [
+				'/scripts/modules/team/team-bindings.js'
+			],
+			before : [
+			
+			],
+			once : [
+				'/scripts/modules/team/team.css'
+			]
+		}
+	});
+	
 	var not_found = new bee.Module(app, {
 		name : '404',
 		container : 'main',
 		load : {
-			always : [],
+			always : [
+				'/scripts/modules/404/404-bindings.js'
+			],
 			before : [],
-			once : []
+			once : [
+				'/scripts/modules/404/404.css'
+			]
 		}
 	});
 	

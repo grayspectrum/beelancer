@@ -43,7 +43,8 @@ module.exports = function(app, db) {
 					
 					db.message
 						.find(query)
-						.populate('profile')
+						.populate('to')
+						.populate('from')
 						.skip(params.skip)
 						.limit(params.limit)
 					.exec(function(err, messages) {

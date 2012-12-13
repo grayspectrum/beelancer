@@ -191,14 +191,14 @@
 		$('#projects_active_list').html(activeList);
 		$('#projects_closed_list').html(closedList);
 		
-		var activePager = new bee.ui.paginator(
+		var activePager = new bee.ui.Paginator(
 			$('#projects_active .pagination'),
 			$('#projects_active_list ul li'),
 			10
 		);
 		activePager.init();
 		
-		var closedPager = new bee.ui.paginator(
+		var closedPager = new bee.ui.Paginator(
 			$('#projects_closed .pagination'),
 			$('#projects_closed_list ul li'),
 			10
