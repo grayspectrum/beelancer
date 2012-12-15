@@ -334,27 +334,38 @@ bee.ui = (function() {
 			return this;
 		};
 		
-		teamlist.prototype.populate = function() {
+		teamlist.prototype.populate = function(team) {
 			var instance = this;
-			bee.api.send(
-				'GET',
-				'/user/team',
-				{},
-				function(res) {
-					var team = JSON.parse(res);
-					instance.team = team;
-					$(instance.ui).html(instance.template(team));
-					$('.teammember', instance.ui).bind('click', function() {
-						var id = $(this).attr('data-id')
-						  , index = $(this).index('.teammember');
-						instance.onSelect.call(instance, instance.team[index]);
-					});
-				},
-				function(err) {
-					instance.destroy();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
+			if (team) {
+				instance.team = team;
+				$(instance.ui).html(instance.template(team));
+				bindToList();
+			} else {
+				bee.api.send(
+					'GET',
+					'/user/team',
+					{},
+					function(res) {
+						var team = res;
+						instance.team = team;
+						$(instance.ui).html(instance.template(team));
+						bindToList();
+					},
+					function(err) {
+						instance.destroy();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			}
+			
+			function bindToList() {
+				$('.teammember', instance.ui).bind('click', function() {
+					var id = $(this).attr('data-id')
+					  , index = $(this).index('.teammember');
+					instance.onSelect.call(instance, instance.team[index]);
+				});
+			};
+			
 			return instance;
 		};
 		

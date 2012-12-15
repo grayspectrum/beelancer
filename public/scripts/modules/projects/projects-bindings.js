@@ -58,7 +58,7 @@
 			'/project/' + editProject,
 			{},
 			function(res) {
-				var project = JSON.parse(res);
+				var project = res;
 				project.deadline = project.deadline.split('T')[0];
 				if (project.client === project.owner.email) {
 					$('#newproject_client-false').click();
@@ -90,7 +90,7 @@
 			{},
 			function(res) {
 				bee.ui.loader.hide();
-				generateList(addDeadlineText(JSON.parse(res)));
+				generateList(addDeadlineText(res));
 			},
 			function(err) {
 				bee.ui.loader.hide();
@@ -111,7 +111,7 @@
 			'/project/' + viewProject,
 			{},
 			function(res) {
-				var project = JSON.parse(res)
+				var project = res
 				  , editurl = $('#projects_nav .edit_project').attr('href')
 				  , billurl = $('#projects_nav .bill_client').attr('href');
 				$('#projects_nav .edit_project').attr('href', editurl + project._id);

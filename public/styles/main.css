@@ -223,6 +223,10 @@ label.hasError input {
 	background: url('/assets/images/mono/white/case_icon&24.png') left center no-repeat;
 }
 
+#menu .invoice {
+	background: url('/assets/images/mono/white/money_icon&24.png') left center no-repeat;
+}
+
 #menu .settings {
 	background: url('/assets/images/mono/white/cog_icon&24.png') left center no-repeat;
 }

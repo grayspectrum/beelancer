@@ -1,0 +1,20 @@
+/*
+ * beelancer - team.css
+ * Author: Gordon Hall
+ */
+
+#team_nav .find_user {
+	background: url('/assets/images/mono/black/zoom_icon&24.png') 12px center no-repeat;
+}
+
+#team_nav .send_message {
+	background: url('/assets/images/mono/black/mail_2_icon&24.png') 12px center no-repeat;
+}
+
+#team_nav .invite_user {
+	background: url('/assets/images/mono/black/contact_card_icon&24.png') 12px center no-repeat;
+}
+
+#team_nav .rate_user {
+	background: url('/assets/images/mono/black/star_fav_empty_icon&24.png') 12px center no-repeat;
+}

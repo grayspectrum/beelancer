@@ -5,6 +5,6 @@
 
 (function() {
 	
-	
+	bee.ui.loader.hide();
 	
 })();

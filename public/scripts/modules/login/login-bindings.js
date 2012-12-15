@@ -79,7 +79,6 @@
 			},
 			function(data) {
 				bee.ui.loader.hide();
-				data = JSON.parse(data);
 				$('#confirmSuccess').html(data.message).addClass('animated bounceInUp').show();
 				$('#auth_email').val(data.email);
 			},

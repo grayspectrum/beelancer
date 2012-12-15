@@ -60,7 +60,7 @@
 				</div>
 			</div>
 			<div class="viewproject_stats">
-				This project has <a href="#!/team?project={{_id}}">{{members.length}} members</a> working on <a href="/#!/tasks?project={{_id}}">{{tasks.length}} tasks</a>.
+				This project has <a href="#!/team?projectId={{_id}}">{{members.length}} members</a> working on <a href="/#!/tasks?project={{_id}}">{{tasks.length}} tasks</a>.
 			</div>
 			<div class="float_wrap">
 				<div id="viewproject_team" class="half_list">
@@ -123,7 +123,7 @@
 		</ul>
 	{{else}}	
 		<p>
-			You have no team members! Don't be shy, why not <a href="/#!/team?show=invite">invite a colleague</a>?
+			No team members to show.
 		</p>
 	{{/if}}
 </script>

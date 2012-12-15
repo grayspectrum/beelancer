@@ -16,7 +16,7 @@
 			'/me', 
 			{},
 			function(data) {
-				bee.set('profile', JSON.parse(data));
+				bee.set('profile', data);
 				fillProfileFields();
 				bee.ui.loader.hide();
 			},
@@ -77,7 +77,7 @@
 						bee.ui.notifications.notify('info', 'Welcome to Beelancer!', true, bee.ui.help.show);
 					}
 					location.href = (newProfile) ? '/#!/projects' : '/#!/account';
-					bee.set('profile', JSON.parse(res));
+					bee.set('profile', res);
 				}, 
 				function(err) {
 					bee.ui.loader.hide();

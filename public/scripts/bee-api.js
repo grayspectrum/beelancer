@@ -25,6 +25,7 @@ bee.api = (function() {
 			type : method,
 			url : '/api' + endpoint,
 			data : data || '',
+			dataType : 'json',
 			beforeSend : function(req) {
 				if (creds().userId && creds().apiKey && !options.authAsHttpOnly && options.authAsHeaders) {
 					req.setRequestHeader('userid', creds().userId);
@@ -49,7 +50,6 @@ bee.api = (function() {
 				password : password
 			},
 			function(data) {
-				data = JSON.parse(data);
 				_.cookies.set({ name : 'userid', value : data.userId, HTTPOnly : options.authAsHttpOnly });
 				_.cookies.set({ name : 'apikey', value : data.apiKey, HTTPOnly : options.authAsHttpOnly });
 				var flags = {
