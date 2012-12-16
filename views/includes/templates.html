@@ -149,5 +149,32 @@
 
 <!-- User Profile -->
 <script id="tmpl-user_profile" type="text/x-handlebars-template">
+	<div class="profile_avatar">
+		<img src="{{avatarPath}}" height="80px" width="80px" alt="{{firstName}} {{lastName}}" />
+	</div>
+	<div class="profile_info">
+		<strong class="profile_name">{{firstName}} {{lastName}}</strong>
+		<em class="profile_title">{{title}} {{#if company}}at <span>{{company}}</span>{{/if}}</em>
+	</div>
+	<div class="profile_about">
+		{{about}}
+	</div>
+	<div class="profile_ratings">
+		Loading endorsements...
+	</div>
+</script>
+
+<!-- Ratings list -->
+<script id="tmpl-profile_ratings" type="text/x-handlebars-template">
+	{{#if user.ratings.length}}
+		<ul>
+			{{#each user.ratings}}
+				<li>
+					
+				</li>
+			{{/each}}
+		</ul>
+	{{else}}
 	
+	{{/if}}
 </script>
