@@ -121,7 +121,7 @@ module.exports = function(app, db) {
 						var profile = new db.profile(body);
 						profile.user = user._id;
 						profile.privacy = body.privacy || 0;
-						profile.avatarUrl = utils.gravatar(user.email);
+						profile.avatarPath = utils.gravatar(user.email);
 						// save ref to user
 						user.profile = profile._id;
 						profile.save(function(err) {
@@ -176,16 +176,18 @@ module.exports = function(app, db) {
 						res.write('Could not locate profile.');
 						res.end();
 					} else {
-						profile.avatarUrl = utils.gravatar(user.email);
-						profile.update(body, function(err) {
-							if (err) {
-								res.writeHead(500);
-								res.write('The profile could not be updated.');
-								res.end();
-							} else {
-								res.write(JSON.stringify(profile));
-								res.end();
-							}
+						profile.avatarPath = utils.gravatar(user.email);
+						profile.save(function(err) {
+							profile.update(body, function(err) {
+								if (err) {
+									res.writeHead(500);
+									res.write('The profile could not be updated.');
+									res.end();
+								} else {
+									res.write(JSON.stringify(profile));
+									res.end();
+								}
+							});
 						});
 					}
 				});

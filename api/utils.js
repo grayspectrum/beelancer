@@ -66,5 +66,6 @@ module.exports.verifyUser = function(req, db, callback) {
 };
 
 module.exports.gravatar = function(email) {
-	return crypto.createHash('md5').update(email).digest('hex');
+	var url = 'https://gravatar.com/avatar/';
+	return url + crypto.createHash('md5').update(email).digest('hex').toString();
 };
