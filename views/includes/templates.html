@@ -157,7 +157,7 @@
 		<em class="profile_title">{{title}} {{#if company}}at <span>{{company}}</span>{{/if}}</em>
 	</div>
 	<div class="profile_about">
-		{{about}}
+		<div class="bubble">{{about}}</div>
 	</div>
 	<div class="profile_ratings">
 		Loading endorsements...
@@ -170,11 +170,15 @@
 		<ul>
 			{{#each user.ratings}}
 				<li>
-					
+					<div class="rating_from">
+						<img src="{{fromUser.avatarPath}}" width="32px" height="32px" />
+						<strong>{{fromUser.firstName}} {{fromUser.lastName}}</strong>
+						<p>{{comment}}</p>
+					</div>
 				</li>
 			{{/each}}
 		</ul>
 	{{else}}
-	
+		<p class="emptyList">This user has no endorsements.</p>
 	{{/if}}
 </script>

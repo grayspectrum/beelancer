@@ -55,13 +55,44 @@ module.exports = function(app, db) {
 	
 	////
 	// GET - /api/ratings/
-	// Creates a rating for the specified user
+	// Returns the callers ratings
 	////
 	app.get('/api/ratings', function(req, res) {
-		utils.verfiyUser(req, db, function(err, user) {
+		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				db.rating
 					.find({ forUser : user.profile._id })
+				.exec(function(err, ratings) {
+					if (!err) {
+						res.write(JSON.stringify(ratings));
+						res.end();
+					} else {
+						res.writeHead(404);
+						res.write('Could not retrieve ratings.');
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to view your ratings.');
+				res.end();
+			}
+		});
+	});
+	
+	////
+	// GET - /api/ratings/public/:profileId
+	// Returns the specified profile's visible ratings
+	////
+	app.get('/api/ratings/public/:profileId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.rating.find({ 
+					forUser : req.params.profileId,
+					isVisible : true,
+					needsAction : false
+				})
+				.populate('fromUser')
 				.exec(function(err, ratings) {
 					if (!err) {
 						res.write(JSON.stringify(ratings));

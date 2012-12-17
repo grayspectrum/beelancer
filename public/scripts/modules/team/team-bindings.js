@@ -11,6 +11,17 @@
 	  , searchUsers = _.querystring.get('globalFind');
 	  
 	if (viewProfile) {
+		loadProfile();
+	} else if (searchUsers) {
+		loadSearch();
+	} else {
+		loadTeam();
+	}
+	
+	////
+	// Load Profile
+	////
+	function loadProfile() {
 		// load profile
 		$('#team_nav .find_user, #team_list, #team_find').remove();
 		bee.api.send(
@@ -26,6 +37,7 @@
 				$('#team_nav .send_message').attr('href', msgUrl + res._id);
 				  
 				$('#team_profile').html(profile);
+				loadEndorsements();
 				bee.ui.loader.hide();
 			},
 			function(err) {
@@ -33,11 +45,41 @@
 				history.back();
 			}
 		);
-	} else if (searchUsers) {
+		
+		function loadEndorsements() {
+			bee.api.send(
+				'GET',
+				'/ratings/public/' + viewProfile,
+				{},
+				function(res) {
+					var source = $('#tmpl-profile_ratings').html()
+					  , tmpl = Handlebars.compile(source)
+					  , ratings = tmpl(res);
+					$('#team_profile .profile_ratings').html(ratings);
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+					$('#profile_ratings').html('Failed to load endorsements.');
+				}
+			);
+		};
+		
+		
+	};
+	
+	////
+	// Load Search
+	////
+	function loadSearch() {
 		$('#team_nav, #team_profile, #team_list').remove();
 		// load search
 		bee.ui.loader.hide();
-	} else {
+	};
+	
+	////
+	// Load Team
+	////
+	function loadTeam() {
 		// load list
 		$('#team_nav .send_message, #team_nav .invite_user, #team_nav .rate_user, #team_find, #team_profile').remove();
 		
@@ -83,7 +125,7 @@
 				location.href = '/#!/team?projectId=' + $(this).val();
 			}
 		});
-	}
+	};
 	
 	// helpers
 	function getProjectById(projects, id) {
