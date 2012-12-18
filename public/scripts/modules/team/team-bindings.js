@@ -127,6 +127,28 @@
 		});
 	};
 	
+	////
+	// Send Team Invite
+	////
+	function inviteToTeam(profileId) {
+		bee.ui.loader.show();
+		bee.api.send(
+			'POST',
+			'/profile/invite',
+			{
+				invitee : profileId
+			},
+			function(res) {
+				bee.ui.loader.hide();
+				bee.ui.notifications.notify('success', 'Invitation sent!');
+			},
+			function(err) {
+				bee.ui.loader.hide();
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	};
+	
 	// helpers
 	function getProjectById(projects, id) {
 		for (var p = 0; p < projects.length; p++) {
@@ -135,4 +157,13 @@
 			}
 		}
 	};
+	
+	////
+	// Event Bindings
+	////
+	$('#team_nav .invite_user').bind('click', function() {
+		bee.ui.confirm('Invite this user to join your team?', function() {
+			inviteToTeam(viewProfile);
+		});
+	});
 })();

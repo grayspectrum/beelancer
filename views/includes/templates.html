@@ -149,16 +149,17 @@
 
 <!-- User Profile -->
 <script id="tmpl-user_profile" type="text/x-handlebars-template">
-	<div class="profile_avatar">
-		<img src="{{avatarPath}}" height="80px" width="80px" alt="{{firstName}} {{lastName}}" />
-	</div>
 	<div class="profile_info">
+		<div class="profile_avatar">
+			<img src="{{avatarPath}}" height="80px" width="80px" alt="{{firstName}} {{lastName}}" />
+		</div>
 		<strong class="profile_name">{{firstName}} {{lastName}}</strong>
 		<em class="profile_title">{{title}} {{#if company}}at <span>{{company}}</span>{{/if}}</em>
 	</div>
 	<div class="profile_about">
 		<div class="bubble">{{about}}</div>
 	</div>
+	<h4 class="gold-gradient">Endorsements</h4>
 	<div class="profile_ratings">
 		Loading endorsements...
 	</div>

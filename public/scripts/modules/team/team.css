@@ -18,3 +18,56 @@
 #team_nav .rate_user {
 	background: url('/assets/images/mono/black/star_fav_empty_icon&24.png') 12px center no-repeat;
 }
+
+#team_profile .profile_avatar {
+	margin: 12px;
+	border: 12px solid white;
+	float: left;
+	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.6);
+	height: 80px;
+	width: 80px;
+}
+
+#team_profile .profile_info {
+	overflow: hidden;
+}
+
+#team_profile .profile_name {
+	display: block;
+	margin: 24px 0 12px 12px;
+	font-size: 32px;
+	font-family: Raleway;
+	text-shadow: 0 1px 0 white;
+	float: left;
+}
+
+#team_profile .profile_title {
+	font-size: 18px;
+	margin-left: 12px;
+	float: left;
+	width: 420px;
+}
+
+.profile_about {
+	background: url('/assets/images/bubble-tick.png') 32px 0 no-repeat;
+	padding: 18px 12px 0 12px;
+}
+
+.profile_about .bubble {
+	background: #E2E2E2;
+	border-radius: 12px;
+	padding: 12px;
+	color: #333;
+	font-size: 16px;
+	line-height: 26px;
+	text-shadow: 0 1px 0 white;
+}
+
+.profile_ratings {
+	margin: 0 12px 24px 12px;
+}
+
+.profile_ratings .emptyList {
+	background: url('/assets/images/mono/black/emotion_sad_icon&24.png') left center no-repeat;
+	padding: 6px 0 6px 34px;
+}

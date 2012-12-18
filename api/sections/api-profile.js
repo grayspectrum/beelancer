@@ -203,32 +203,53 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				var invitee = req.body.invitee
-				  , body = req.body.message
+				  , body = user.profile.firstName + ' ' + user.profile.lastName + ' would like to invite you to join teams!'
 				  , invitation;
 				
-				invitation = new db.message({
-					from : user.profile._id,
-					to : invitee,
-					body : body,
-					type : 'invitation',
-					attachment : {
-						action : 'team_invite',
-						data : user.profile._id
-					},
-					sentOn : new Date().toString(),
-					isRead : false
-				});
-				
-				invitation.save(function(err) {
-					if (!err) {
-						res.write(JSON.stringify(invitation));
-						res.end();
-					} else {
-						res.writeHead(500);
-						res.write('Could not send invitation.');
-						res.end();
-					}
-				});
+				if (invitee == user.profile._id) {
+					res.writeHead(400);
+					res.write('You cannot invite yourself to join teams.');
+					res.end();
+				} else {
+					db.message.findOne({
+						from : user.profile._id,
+						to : invitee,
+						type : 'invitation',
+						attachment : {
+							action : 'team_invite'
+						}
+					}).exec(function(err, msg) {
+						if (!msg) {					
+							invitation = new db.message({
+								from : user.profile._id,
+								to : invitee,
+								body : body,
+								type : 'invitation',
+								attachment : {
+									action : 'team_invite',
+									data : user.profile._id
+								},
+								sentOn : new Date().toString(),
+								isRead : false
+							});
+							
+							invitation.save(function(err) {
+								if (!err) {
+									res.write(JSON.stringify(invitation));
+									res.end();
+								} else {
+									res.writeHead(500);
+									res.write('Could not send invitation.');
+									res.end();
+								}
+							});
+						} else {
+							res.writeHead(500);
+							res.write('You already have a pending invite for this user.');
+							res.end();
+						}
+					});
+				}
 			} else {
 				res.writeHead(401);
     			res.write('You must be logged in to send invites.');

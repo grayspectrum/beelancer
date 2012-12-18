@@ -197,7 +197,7 @@ module.exports = function(app, db) {
 						res.end();
 					} else {
 						res.writeHead(404);
-						res.write('Could not get search messages.');
+						res.write('Could not get messages.');
 						res.end();
 					}
 				});
