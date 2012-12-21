@@ -133,12 +133,12 @@
 	{{#if this.length}}
 		<ul>
 			{{#each this}}
-				<li class="message" data-id="{{this._id}}">
+				<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this._id}}">
 					<div class="msg_from">
-						<img src="{{this.avatarPath}}" width="24px" height="24px" alt="{{this.avatarPath}}" />
+						<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
 						<span class="team_list_name">{{this.from.firstName}} {{this.from.lastName}}</span>
 					</div>
-					<p>{{this.concatBody}}</p>
+					<p>{{this.body}}</p>
 				</li>
 			{{/each}}
 		</ul>
@@ -147,21 +147,30 @@
 	{{/if}}
 </script>
 
+<!-- Message View -->
+<script id="tmpl-message_view" type="text/x-handlebars-template">
+	<div class="light-gradient center-pane animated fadeInUp">
+
+	</div>
+</script>
+
 <!-- User Profile -->
 <script id="tmpl-user_profile" type="text/x-handlebars-template">
-	<div class="profile_info">
-		<div class="profile_avatar">
-			<img src="{{avatarPath}}" height="80px" width="80px" alt="{{firstName}} {{lastName}}" />
+	<div class="light-gradient center-pane animated fadeInUp">
+		<div class="profile_info">
+			<div class="profile_avatar">
+				<img src="{{avatarPath}}" height="80px" width="80px" alt="{{firstName}} {{lastName}}" />
+			</div>
+			<strong class="profile_name">{{firstName}} {{lastName}}</strong>
+			<em class="profile_title">{{title}} {{#if company}}at <span>{{company}}</span>{{/if}}</em>
 		</div>
-		<strong class="profile_name">{{firstName}} {{lastName}}</strong>
-		<em class="profile_title">{{title}} {{#if company}}at <span>{{company}}</span>{{/if}}</em>
-	</div>
-	<div class="profile_about">
-		<div class="bubble">{{about}}</div>
-	</div>
-	<h4 class="gold-gradient">Endorsements</h4>
-	<div class="profile_ratings">
-		Loading endorsements...
+		<div class="profile_about">
+			<div class="bubble">{{about}}</div>
+		</div>
+		<h4 class="gold-gradient">Endorsements</h4>
+		<div class="profile_ratings">
+			Loading endorsements...
+		</div>
 	</div>
 </script>
 

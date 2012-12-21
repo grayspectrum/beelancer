@@ -620,3 +620,18 @@ p.desc {
 	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 	border: 1px solid #E2E2E2;
 }
+
+#bee-ui_teamlist {
+	display: none;
+	background: #f1f1f1;
+	border: 1px solid #999;
+	padding: 0;
+	box-shadow: 0 3px 5px rgba(0,0,0,0.5);
+	width: 300px;
+}
+
+#bee-ui_teamlist p {
+	margin: 12px;
+	text-align: center;
+	font-size: 14px;
+}

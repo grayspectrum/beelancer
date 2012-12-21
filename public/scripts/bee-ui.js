@@ -316,7 +316,7 @@ bee.ui = (function() {
 		
 		teamlist.prototype.show = function(pos) {
 			$(this.ui).removeClass('animated fadeOutDown');
-			$(this.ui).addClass('animated fadeInUp');
+			$(this.ui).addClass('animated fadeInUp').show();
 			if (pos) {
 				$(this.ui).css({
 					left : pos.x,
@@ -330,7 +330,7 @@ bee.ui = (function() {
 		
 		teamlist.prototype.hide = function() {
 			$(this.ui).removeClass('animated fadeInUp');
-			$(this.ui).addClass('animated fadeOutDown');
+			$(this.ui).addClass('animated fadeOutDown').hide();
 			return this;
 		};
 		
@@ -401,12 +401,12 @@ bee.ui = (function() {
 		(function($) {
 			$.fn.bindTeamList = function(teamlist) {
 				this.bind('keyup', function() {
-					teamlist.filter(this.val());
+					teamlist.filter($(this).val());
 				});
 				this.bind('focus', function() {
 					var pos = {
-						x : this.position().left + this.outerWidth(),
-						y : this.position().top + this.outerHeight()
+						x : $(this).offset().left,
+						y : $(this).offset().top + $(this).outerHeight()
 					};
 					teamlist.show(pos);
 					tappa.on('up', function() {

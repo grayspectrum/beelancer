@@ -3,3 +3,118 @@
  * Author: Gordon Hall
  */
 
+#messages_nav .reply {
+	background: url('/assets/images/mono/black/redo_icon&24.png') 12px center no-repeat;
+}
+
+#messages_nav .mark_unread {
+	background: url('/assets/images/mono/black/star_icon&24.png') 12px center no-repeat;
+}
+
+#messages_nav .new_message {
+	background: url('/assets/images/mono/black/spechbubble_sq_line_icon&24.png') 12px center no-repeat;
+}
+
+#filter_messages {
+	float: left;
+	margin: 12px;
+}
+
+#filter_messages select {
+	font-size: 16px;
+	margin-left: 12px;
+}
+
+#messages_sent, #messages_inbox {
+	display: none;
+}
+
+#messages_sent ul, #messages_inbox ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	border-top: 1px solid #e2e2e2;
+}
+
+li.message {
+	border-bottom: 1px solid #e2e2e2;
+	background: #FFEFC6;
+}
+
+li.message.isRead {
+	background: #fff;
+}
+
+li.message:hover {
+	-webkit-transform: scale(1.02);
+	box-shadow: 0 0 12px rgba(0,0,0,0.5);
+	cursor: pointer;
+}
+
+li.message.isRead .msg_from {
+	background: none;
+}
+
+li.message p {
+	font-size: 14px;
+	margin: 0 12px 12px 12px;
+	height: 20px;
+	overflow: hidden;
+}
+
+.msg_from {
+	overflow: hidden;
+	background: url('/assets/images/mono/black/eye_icon&16.png') 532px center no-repeat;
+}
+
+.msg_from img {
+	margin: 12px;
+	float: left;
+}
+
+.msg_from span {
+	font-weight: bold;
+	margin-top: 12px;
+	display: block;
+}
+
+#newmessage_to, #newmessage_body {
+	display: block;
+	margin: 12px;
+	font-size: 14px;
+	padding: 6px 10px;
+	width: 306px;
+	border: 1px solid #ABABAB;
+	border-radius: 2px;
+}
+
+#newmessage_body {
+	height: 144px;
+	width: 512px;
+}
+
+.new_message_submit_wrapper {
+	border-radius: 6px;
+	margin: 24px auto;
+	width: 302px;
+}
+
+#send_message {
+	background: url('/assets/images/mono/black/paper_airplane_icon&32.png') 12px center no-repeat;
+	display: block;
+	width: 100%;
+	font-size: 28px;
+	font-family: Raleway;
+	font-weight: bold;
+	text-shadow: 0 1px 0 #FFC60B;
+	text-align: left;
+	text-indent: 48px;
+	padding: 12px;
+	border-radius: 6px;
+	border: 2px solid #FFC60B;
+}
+
+#send_message:hover {
+	background: url('/assets/images/mono/black/paper_airplane_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}

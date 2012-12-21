@@ -16,9 +16,9 @@ module.exports = function(app, db) {
 	// GET - /api/messages/:where/:type/:skip/:limit
 	// Returns the requested messages received
 	////
-	app.get('/api/messages/:where/:type/:skip/:limit', function(req, res) {
+	app.get('/api/messages/:where/:skip/:limit', function(req, res) {
 		var params = req.params;
-		if (params.type && params.to && params.from) {
+		if (params.skip && params.limit) {
 			utils.verifyUser(req, db, function(err, user) {
 				if (!err) {
 					var type = params.type
@@ -27,13 +27,11 @@ module.exports = function(app, db) {
 					  
 					if (where === 'inbox') {
 						query = {
-							to : user.profile._id,
-							type : type
+							to : user.profile._id
 						};
 					} else if (where === 'sent') {
 						query = {
-							from : user.profile._id,
-							type : type
+							from : user.profile._id
 						};
 					} else {
 						res.writeHead(400);
@@ -47,6 +45,7 @@ module.exports = function(app, db) {
 						.populate('from')
 						.skip(params.skip)
 						.limit(params.limit)
+						.sort({ sentOn : -1 })
 					.exec(function(err, messages) {
 						if (!err) {
 							res.write(JSON.stringify(messages));
@@ -70,6 +69,43 @@ module.exports = function(app, db) {
 			res.end();
 		}
 	});	
+	
+	////
+	// GET - /api/message/:id
+	// Retrieves a message by it's id
+	////
+	app.get('/api/message/:id', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.message
+					.findOne({
+						_id : req.params.id,
+						$or : [
+							{ from : user.profile._id },
+							{ to : user.profile._id }
+						]
+					})
+					.populate('from')
+					.populate('to')
+				.exec(function(err, message) {
+					if (err || !message) {
+						res.writeHead(500);
+						res.write(err || 'Message not found.');
+						res.end();
+					} else {
+						message.isRead = true;
+						message.save();
+						res.write(JSON.stringify(message));
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to view messages.');
+				res.end();
+			}
+		});
+	});
 	
 	////
 	// POST - /api/message/action
@@ -129,17 +165,19 @@ module.exports = function(app, db) {
 	app.put('/api/message/update', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
-				var id = req.params.id
-				  , isRead = req.params.isRead;
+				var id = req.body.id;
 				
-				db.message.find({
+				db.message.findOne({
 					 _id : id, 
 					 to : user.profile._id 
 				}).exec(function(err, message) {
+					console.log(message)
 					if (!err) {
-						message.isRead = isRead;
+						message.isRead = false;
+						console.log(message)
 						message.save(function(err) {
 							if (!err) {
+								console.log(message)
 								res.write(JSON.stringify(message));
 								res.end();
 							} else {
