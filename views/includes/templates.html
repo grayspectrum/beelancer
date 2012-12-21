@@ -136,7 +136,10 @@
 				<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this._id}}">
 					<div class="msg_from">
 						<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
-						<span class="team_list_name">{{this.from.firstName}} {{this.from.lastName}}</span>
+						<span class="team_list_name">
+							{{this.from.firstName}} {{this.from.lastName}}
+							<span class="msg_sentOn">{{this.sentOn}}</span>
+						</span>
 					</div>
 					<p>{{this.body}}</p>
 				</li>
@@ -150,7 +153,20 @@
 <!-- Message View -->
 <script id="tmpl-message_view" type="text/x-handlebars-template">
 	<div class="light-gradient center-pane animated fadeInUp">
-
+		<div class="messageview_from">
+			<a href="/#!/team?viewProfile={{from._id}}">
+				<img align="left" src="{{from.avatarPath}}" width="48px" height="48px" alt="{{avatarPath}}" />
+				<strong class="messageview_fromname">{{from.firstName}} {{from.lastName}}</strong>
+				<span class="messageview_sentOn">{{sentOn}}</span>
+			</a>
+		</div>
+		<div class="messageview_body">{{body}}</div>
+		{{#if attachment}}
+			<div class="msg_attachment">
+				<button class="light-gradient" id="msg_action_decline">Decline</button>
+				<button class="gold-gradient" id="msg_action_accept" data-action="{{attachment.action}}" data-data="{{attachment.data}}">Accept</button>
+			</div>
+		{{/if}}
 	</div>
 </script>
 

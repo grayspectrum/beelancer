@@ -71,3 +71,21 @@
 	background: url('/assets/images/mono/black/emotion_sad_icon&24.png') left center no-repeat;
 	padding: 6px 0 6px 34px;
 }
+
+#list_team #bee-ui_teamlist {
+	width: auto;
+	border: none;
+	box-shadow: none;
+}
+
+#team_list label {
+	padding: 12px 24px;
+	margin-bottom: 12px;
+	background: #e2e2e2;
+	display: block;
+}
+
+#team_list label select {
+	margin-left: 12px;
+	font-size: 16px;
+}

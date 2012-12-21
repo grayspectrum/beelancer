@@ -61,6 +61,7 @@
 			'/message/' + viewMessage,
 			{},
 			function(res) {
+				res.sentOn = new Date(res.sentOn).toDateString();
 				$('#messages_nav .reply')[0].href += res.from._id;
 				var tmpl = Handlebars.compile($('#tmpl-message_view').html())(res);
 				$('#message_view').html(tmpl);
@@ -85,6 +86,12 @@
 			'/messages/' + (showView || 'inbox') + '/0/100',
 			{},
 			function(res) {
+				$.each(res, function(key, val) {
+					if (val.body.length > 74) {
+						val.body = _.trim(val.body.substring(0, 71), 'right') + '...';
+					}
+					val.sentOn = val.sentOn.split('T')[0];
+				});
 				var tmpl = Handlebars.compile($('#tmpl-message_list').html())(res);
 				$('#messages_' + (showView || 'inbox') + '_list').html(tmpl);
 				displayList();
@@ -177,6 +184,52 @@
 					bee.ui.notifications.notify('err', err);
 				}
 			);
+		});
+		
+		// Accept Invite
+		$('#msg_action_accept').bind('click', function() {
+			bee.ui.confirm('Are you sure you want to accept this invitaion?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/message/action',
+					{
+						messageId : viewMessage,
+						accept : true
+					},
+					function(res) {
+						bee.ui.notifications.notify('success', res);
+						location.href = '/#!/messages?show=inbox';
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		});
+		
+		// Decline Invite
+		$('#msg_action_decline').bind('click', function() {
+			bee.ui.confirm('Are you sure you want to decline this invitaion?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/message/action',
+					{
+						messageId : viewMessage,
+						accept : false
+					},
+					function(res) {
+						bee.ui.notifications.notify('success', res);
+						location.href = '/#!/messages?show=inbox';
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
 		});
 	};
 	

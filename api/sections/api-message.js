@@ -117,16 +117,16 @@ module.exports = function(app, db) {
 				var body = req.body;
 				if (body.messageId && body.accept) {
 					db.message.findOne({
-						_id : messageId,
+						_id : body.messageId,
 						to : user.profile._id
 					}).exec(function(err, message) {
 						if (!err) {
 							var action = message.attachment.action
 							  , data = message.attachment.data;
 							if (actions[action]) {  
-								actions[action](db, message, body.accept, function(err) {
+								actions[action](db, message, body.accept, function(err, text) {
 									if (!err) {
-										res.write('Invitation accepted');
+										res.write(text);
 										res.end();
 									} else {
 										res.writeHead(500);
@@ -152,7 +152,7 @@ module.exports = function(app, db) {
 				}
 			} else {
 				res.writeHead(401);
-				res.write('Your must be logged in to perform message actions.');
+				res.write('Your must cannot accept an invitation that does not belong to you.');
 				res.end();
 			}
 		});
@@ -171,13 +171,10 @@ module.exports = function(app, db) {
 					 _id : id, 
 					 to : user.profile._id 
 				}).exec(function(err, message) {
-					console.log(message)
 					if (!err) {
 						message.isRead = false;
-						console.log(message)
 						message.save(function(err) {
 							if (!err) {
-								console.log(message)
 								res.write(JSON.stringify(message));
 								res.end();
 							} else {

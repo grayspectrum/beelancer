@@ -20,23 +20,23 @@ module.exports = (function() {
 			if (err) {
 				callback.call(this, 'Could not get "from" user.', null);
 			} else {
-				if (accept) {
-					fromUser.team.push(to._id);
+				if (accept == 'true') {
+					fromUser.team.push(to);
 					getUser(db, to, function(err, toUser) {
 						if (err) {
 							callback.call(this, 'Could not get "to" user.', null);
 						} else {
-							toUser.team.push(from._id);
+							toUser.team.push(from);
 							fromUser.save(function(err) {
 								toUser.save(function(err) {
-									callback.call(this, err);
+									callback.call(this, err, 'Invitation accepted.');
 								});
 							});
 						}
 					});
 				} else {
 					message.remove(function(err) {
-						callback.call(this, err);
+						callback.call(this, err, 'Invitation declined.');
 					});
 				}
 			}
@@ -81,7 +81,7 @@ module.exports = (function() {
 		db.profile.findOne({ _id : id })
 			.populate('user','_id team')
 		.exec(function(err, profile) {
-			if (err || !user) {
+			if (err || !profile) {
 				callback.call(this, true, null);
 			} else {
 				callback.call(this, false, profile.user);

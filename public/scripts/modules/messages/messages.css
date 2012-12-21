@@ -78,6 +78,13 @@ li.message p {
 	display: block;
 }
 
+.msg_sentOn {
+	font-size: 12px;
+	font-weight: normal;
+	float: right;
+	margin: 4px 48px 0 0 !important;
+}
+
 #newmessage_to, #newmessage_body {
 	display: block;
 	margin: 12px;
@@ -116,5 +123,89 @@ li.message p {
 
 #send_message:hover {
 	background: url('/assets/images/mono/black/paper_airplane_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+.messageview_from {
+	overflow: hidden;
+	padding: 24px;
+	background: url('/assets/images/bubble-tick.png') 36px bottom no-repeat;
+}
+
+.messageview_from img {
+	margin-right: 24px;
+	width: 48px;
+	height: 48px;
+	border-radius: 4px;
+	border: 1px solid #999;
+}
+
+.messageview_from a {
+	color: #001E28;
+	text-decoration: none;
+}
+
+.messageview_from a:hover {
+	text-decoration: underline !important;
+}
+
+.messageview_from a:hover img {
+	border: 1px solid #333;
+}
+
+.messageview_from strong {
+	display: block;
+	margin-top: 2px;
+}
+
+.messageview_from span {
+	display: block;
+	margin-top: 4px;
+	font-size: 14px;
+}
+
+.messageview_body {
+	margin: 0 24px 24px 24px;
+	padding: 12px;
+	font-size: 14px;
+	line-height: 23px;
+	background: #E2E2E2;
+	border-radius: 6px;
+	text-shadow: 0 1px 0 white;
+}
+
+/*
+ * Actions
+ */
+.msg_attachment {
+	text-align: right;
+	padding: 12px 24px;
+	border-top: 1px solid #e2e2e2;
+}
+
+.msg_attachment button {
+	font-size: 12px;
+	padding: 6px 12px;
+	font-weight: bold;
+	border-radius: 3px;
+}
+
+#msg_action_accept {
+	border: 1px solid #FFC60B;
+	text-shadow: 0 1px 0 #FFC60B;
+}
+
+#msg_action_accept:hover {
+	background: #FFC60B;
+	cursor: pointer;
+}
+
+#msg_action_decline {
+	border: 1px solid #fff;
+	text-shadow: 0 1px 0 #fff;
+}
+
+#msg_action_decline:hover {
+	background: #fff;
 	cursor: pointer;
 }
