@@ -60,11 +60,9 @@
 
 #projects_active_list ul,
 #projects_closed_list ul {
-	margin: 0;
+	margin: 3px;
 	padding: 0;
 	list-style-type: none;
-	border: 1px solid #e2e2e2;
-	border-bottom: none;
 }
 
 #projects_active_list ul li,
@@ -75,21 +73,21 @@
 #projects_active_list ul li a,
 #projects_closed_list ul li a {
 	padding: 12px 24px;
+	margin: 3px 0;
 	display: block;
 	text-decoration: none;
-	border-bottom: 1px solid #e2e2e2;
+	border-radius: 6px;
 	color: #333;
 	text-shadow: 0 1px 0 #fff;
 	font-size: 14px;
+	border: 1px solid transparent;
 }
 
 #projects_active_list ul li a:hover,
 #projects_closed_list ul li a:hover {
-	background-color: #fff;
-	border-left: 6px solid #FFC60B;
-	border-color: #FFC60B;
-	box-shadow: 0 0 12px #444;
-	-webkit-transform: scale(1.05);
+	background-color: #e2e2e2;
+	border: 1px solid #d2d2d2;
+	border-color: #d2d2d2;
 }
 
 #projects_active_list ul li a .project_due,
@@ -102,17 +100,10 @@
 }
 
 #projects_active_list ul li a.overdue:hover {
-	border-left: 6px solid red;
+	background-color: rgba(255, 0, 0, 0.2);
 	border-color: red;
-}
-
-p.no_projects {
-	margin: 12px;
-	padding: 12px;
-	text-align: center;
-	background: #E2E2E2;
-	border: 1px solid white;
-	border-radius: 3px;
+	color: #000;
+	text-shadow: none;
 }
 
 #filter_projects {
@@ -127,7 +118,7 @@ p.no_projects {
 
 .viewproject_deadline {
 	float: right;
-	font-size: 14px;
+	font-size: 12px;
 	margin: -60px 24px 0 0;
 	text-transform: uppercase;
 	font-weight: bold;

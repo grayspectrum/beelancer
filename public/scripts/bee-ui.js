@@ -383,8 +383,8 @@ bee.ui = (function() {
 			if (name) {
 				$('.teammember', this.ui).hide();
 				for (var mem = 0; mem < this.team.length; mem++) {
-					var matchFirst = this.team[mem].firstName.indexOf(name.toLowerCase()) > -1
-					  , matchLast = this.team[mem].lastName.indexOf(name.toLowerCase()) > -1;
+					var matchFirst = this.team[mem].firstName.toLowerCase().indexOf(name.toLowerCase().split(' ')[0]) > -1
+					  , matchLast = this.team[mem].lastName.toLowerCase().indexOf(name.toLowerCase().split(' ')[1]) > -1;
 					if (matchFirst || matchLast) {
 						$($('.teammember', this.ui)[mem]).show();
 					}
@@ -400,26 +400,42 @@ bee.ui = (function() {
 		////
 		(function($) {
 			$.fn.bindTeamList = function(teamlist) {
-				this.bind('keyup', function() {
-					teamlist.filter($(this).val());
+				var that = this;
+				this.bind('keyup', function(e) {
+					if (e.keyCode !== 38 && e.keyCode !== 40) {
+						teamlist.filter($(this).val());
+					}
 				});
 				this.bind('focus', function() {
 					var pos = {
 						x : $(this).offset().left,
 						y : $(this).offset().top + $(this).outerHeight()
 					};
+					
+					$('.teammember', teamlist.ui).bind('mousedown', function() {
+						$(this).trigger('click');
+					});
+
 					teamlist.show(pos);
 					tappa.on('up', function() {
-						$('.teammember', teamlist.ui).removeClass('selected');
-						$('.teammember:visible', teamlist.ui).prev().addClass('selected');
+						if ($('.teammember.selected:visible', teamlist.ui).prev().length) {
+							$('.teammember.selected:visible', teamlist.ui).prev().addClass('selected');
+							$('.teammember.selected', teamlist.ui).last().removeClass('selected');
+						} else {
+							$('.teammember', teamlist.ui).removeClass('selected');
+							$('.teammember', teamlist.ui).last().addClass('selected');
+						}
+						$('.teammember.selected:visible', teamlist.ui).trigger('mousedown');
 					});
 					tappa.on('down', function() {
-						$('.teammember', teamlist.ui).removeClass('selected');
-						$('.teammember:visible', teamlist.ui).next().addClass('selected');
-					});
-					tappa.on('enter', function() {
-						$('.teammember.selected:visible', teamlist.ui).trigger('click');
-						this.blur();
+						if ($('.teammember.selected:visible', teamlist.ui).next().length) {
+							$('.teammember.selected:visible', teamlist.ui).next().addClass('selected');
+							$('.teammember.selected', teamlist.ui).first().removeClass('selected');
+						} else {
+							$('.teammember', teamlist.ui).removeClass('selected');
+							$('.teammember', teamlist.ui).first().addClass('selected');
+						}
+						$('.teammember.selected:visible', teamlist.ui).trigger('mousedown');
 					});
 				});
 				this.bind('blur', function() {

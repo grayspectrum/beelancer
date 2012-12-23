@@ -19,6 +19,10 @@
 	background: url('/assets/images/mono/black/hand_pro_icon&24.png') 12px center no-repeat;
 }
 
+#team_nav .remove_user {
+	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+}
+
 #team_profile .profile_avatar {
 	margin: 12px;
 	border: 12px solid white;
@@ -72,6 +76,10 @@
 	padding: 6px 0 6px 34px;
 }
 
+#list_team {
+	margin-bottom: 24px;
+}
+
 #list_team #bee-ui_teamlist {
 	width: auto;
 	border: none;
@@ -88,4 +96,66 @@
 #team_list label select {
 	margin-left: 12px;
 	font-size: 16px;
+}
+
+#team_search {
+	display: block;
+	font-size: 16px;
+	padding: 8px 18px;
+	margin: 12px 24px 24px 24px;
+	border: 1px solid #999;
+	border-radius: 3px;
+	width: 468px;
+}
+
+#search_results ul {
+	list-style-type: none;
+	margin: 3px 3px 24px 3px;
+	padding: 0;
+}
+
+#search_results ul li {
+	
+}
+
+#which_team {
+	margin: 12px;
+	float: left;
+}
+
+#project_team {
+	font-size: 16px;
+	margin-left: 12px;
+}
+
+#search_results ul li a {
+	display: block;
+	text-decoration: none;
+	color: #333;
+	border: 1px solid transparent;
+	overflow: hidden;
+	padding: 4px 0;
+	border-radius: 6px;
+}
+
+#search_results ul li a:hover {
+	background: #e2e2e2;
+	text-shadow: 0 1px 0 #fff;
+	border: 1px solid #d2d2d2
+}
+
+#search_results ul li a .member-name {
+	float: left;
+	margin: 8px;
+	font-weight: bold;
+}
+
+#search_results ul li a .member-title {
+	float: right;
+	margin: 8px;
+}
+
+#search_results ul li a img {
+	float: left;
+	margin: 4px 12px;
 }

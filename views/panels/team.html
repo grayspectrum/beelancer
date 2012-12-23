@@ -1,28 +1,32 @@
 <div id="team_nav" class="navigation light-gradient center-pane animated fadeInUp">
-	<ul>
-		<li>
-			<a href="/#!/team?globalFind=true" class="find_user">Find Users</a>
-		</li>
-		<li>
-			<a href="/#!/messages?compose=true&reply=" class="send_message">Send Message</a>
-		</li>
-		<li>
-			<a class="invite_user">Invite To Team</a>
-		</li>
-		<li>
-			<a class="rate_user">Endorse User</a>
-		</li>
-	</ul>
-</div>
-<div id="team_list" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">My Team</h4>
-	<label for="project_team">
+	<label id="which_team" for="project_team">
 		Team For: 
 		<select id="project_team">
 			<option value="all">All Projects</option>
 		</select>
 	</label>
+	<ul>
+		<li>
+			<a href="/#!/team?globalFind=true" class="find_user">Find Users</a>
+		</li>
+		<li>
+			<a href="/#!/messages?compose=true&reply=" class="send_message">Message</a>
+		</li>
+		<li>
+			<a class="invite_user">Invite</a>
+		</li>
+		<li>
+			<a class="rate_user">Endorse</a>
+		</li>
+		<li>
+			<a class="remove_user">Remove</a>
+		</li>
+	</ul>
+</div>
+<div id="team_list" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">My Team</h4>
 	<div id="list_team"></div>
+<!--
 	<div class="pagination">
 		<button class="pageLeft">&laquo;</button>
 		<span class="pageLocation">
@@ -30,10 +34,13 @@
 		</span>
 		<button class="pageRight">&raquo;</button>
 	</div>
+-->
 </div>
 <div id="team_profile"></div>
 <div id="team_find" class="light-gradient center-pane animated fadeInUp">
 	<h4 class="gold-gradient">
 		Search Beelancer
 	</h4>
+	<input type="text" placeholder="Start typing a user's name or email address..." id="team_search" />
+	<div id="search_results"></div>
 </div>

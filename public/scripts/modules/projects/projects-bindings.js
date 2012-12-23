@@ -121,12 +121,12 @@
 					$('#projects_nav .project_status')
 						.addClass('close_project')
 						.removeClass('reopen_project')
-					.html('Close Project');
+					.html('Close');
 				} else {
 					$('#projects_nav .project_status')
 						.addClass('reopen_project')
 						.removeClass('close_project')
-					.html('Reopen Project');
+					.html('Reopen');
 				}
 				var userid = _.cookies.get('userid');
 				if (userid !== project.owner._id) {

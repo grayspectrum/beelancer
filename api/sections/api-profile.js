@@ -92,7 +92,9 @@ module.exports = function(app, db) {
 	app.get('/api/me', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
-				res.write(JSON.stringify(user.profile));
+				var me = user.toObject().profile;
+				me.team = user.team;
+				res.write(JSON.stringify(me));
 				res.end();
 			} else {
 				res.writeHead(401);
@@ -169,7 +171,7 @@ module.exports = function(app, db) {
 			} else {
 				var body = req.body;
 				db.profile
-				.findOne({ _id : user.profile._id })
+				.find({ _id : user.profile._id })
 				.exec(function(err, profile) {
 					if (err || !profile) {
 						res.writeHead(404);
@@ -203,7 +205,7 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				var invitee = req.body.invitee
-				  , body = user.profile.firstName + ' ' + user.profile.lastName + ' would like to invite you to join teams!'
+				  , body = 'I would like to invite you to join teams!'
 				  , invitation;
 				
 				if (invitee == user.profile._id) {
@@ -214,34 +216,35 @@ module.exports = function(app, db) {
 					db.message.findOne({
 						from : user.profile._id,
 						to : invitee,
-						type : 'invitation',
-						attachment : {
-							action : 'team_invite'
-						}
+						'attachment.action' : 'team_invite'
 					}).exec(function(err, msg) {
-						if (!msg) {					
-							invitation = new db.message({
-								from : user.profile._id,
-								to : invitee,
-								body : body,
-								type : 'invitation',
-								attachment : {
-									action : 'team_invite',
-									data : user.profile._id
-								},
-								sentOn : new Date().toString(),
-								isRead : false
-							});
-							
-							invitation.save(function(err) {
-								if (!err) {
-									res.write(JSON.stringify(invitation));
-									res.end();
-								} else {
-									res.writeHead(500);
-									res.write('Could not send invitation.');
-									res.end();
-								}
+				
+						if (!msg) {
+							db.profile.findOne({ _id : invitee }).exec(function(err, profile) {
+								invitation = new db.message({
+									from : user.profile._id,
+									to : invitee,
+									body : body,
+									type : 'invitation',
+									attachment : {
+										action : 'team_invite',
+										data : user.profile._id
+									},
+									sentOn : new Date().toString(),
+									isRead : false,
+									belongsTo : profile.user
+								});
+								
+								invitation.save(function(err) {
+									if (!err) {
+										res.write(JSON.stringify(invitation));
+										res.end();
+									} else {
+										res.writeHead(500);
+										res.write('Could not send invitation.');
+										res.end();
+									}
+								});
 							});
 						} else {
 							res.writeHead(500);
@@ -266,7 +269,7 @@ module.exports = function(app, db) {
     	db.user.findOne({
 			email : req.params.email
     	}).populate('profile').exec(function(err, user) {
-    		if (!err) {
+    		if (!err && user) {
     			res.write(JSON.stringify(user.profile));
     			res.end();
     		} else {
@@ -276,6 +279,79 @@ module.exports = function(app, db) {
     		}
     	});
     });
+    
+    ////
+    // GET - /api/profile/search/:term
+    // Searches profile based on privacy level by name and company
+    ////
+    app.get('/api/profile/search/:text', function(req, res) {
+    	utils.verifyUser(req, db, function(err, user) {
+    		var privacy = (user) ? 1 : 0
+    		  , text = {
+    		  		firstName : req.params.text.split(' ')[0],
+    		  		lastName : req.params.text.split(' ')[1],
+    		  		company : req.params.text
+    		  };
+    		  
+    		db.profile.find({
+    			$or : [
+	    			{ 
+	    				firstName : new RegExp('^' + text.firstName + '$', 'i'),
+	    				lastName : new RegExp('^' + text.lastName + '$', 'i')
+	    			},
+	    			{ company : new RegExp('^' + text.company + '$', 'i') }
+    			]
+    		}).exec(function(err, profiles) {
+    			if (!err) {
+    				res.write(JSON.stringify(profiles));
+    				res.end();
+    			} else {
+    				res.writeHead(500);
+    				res.write('No results found.');
+    				res.end();
+    			}
+    		});
+    		
+    		
+    	});
+    });
+    
+    ////
+	// DELETE - /api/profile/:id
+	// Removes user from team
+	////
+	app.del('/api/profile', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				user.team.remove(req.body.member);
+				user.save(function(err) {
+					if (!err) {
+						res.write(JSON.stringify(user.team));
+						res.end();
+						
+						// remove caller from target user
+						db.user.findOne({
+							profile : req.body.member
+						}).exec(function(err, target) {
+							target.team.remove(user.profile._id);
+							target.save(function(err) {
+								if (err) console.log(err);
+							});
+						});
+						
+					} else {
+						res.writeHead(500);
+						res.write('Could not remove member.');
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to remove team members.');
+				res.end();
+			}
+		});
+	});
     
     ////
     // POST - /api/profile/avatar

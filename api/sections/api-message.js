@@ -27,11 +27,13 @@ module.exports = function(app, db) {
 					  
 					if (where === 'inbox') {
 						query = {
-							to : user.profile._id
+							to : user.profile._id,
+							belongsTo : user._id
 						};
 					} else if (where === 'sent') {
 						query = {
-							from : user.profile._id
+							from : user.profile._id,
+							belongsTo : user._id
 						};
 					} else {
 						res.writeHead(400);
@@ -83,7 +85,8 @@ module.exports = function(app, db) {
 						$or : [
 							{ from : user.profile._id },
 							{ to : user.profile._id }
-						]
+						],
+						belongsTo : user._id
 					})
 					.populate('from')
 					.populate('to')
@@ -124,9 +127,10 @@ module.exports = function(app, db) {
 							var action = message.attachment.action
 							  , data = message.attachment.data;
 							if (actions[action]) {  
-								actions[action](db, message, body.accept, function(err, text) {
+								actions[action](db, message, body.accept, function(err, msg) {
 									if (!err) {
-										res.write(text);
+										res.write(JSON.stringify(msg));
+										msg.remove();
 										res.end();
 									} else {
 										res.writeHead(500);
@@ -169,7 +173,7 @@ module.exports = function(app, db) {
 				
 				db.message.findOne({
 					 _id : id, 
-					 to : user.profile._id 
+					belongsTo : user._id
 				}).exec(function(err, message) {
 					if (!err) {
 						message.isRead = false;
@@ -252,14 +256,18 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			var body = req.body;
 			if (!err && body.to && body.body){
+				// recipient's copy
 				var message = new db.message({
 					from : user.profile._id,
 					to : body.to,
 					body : body.body,
-					isRead : false,
+					isRead : true,
+					isSent : true,
 					type : 'message',
-					sentOn : new Date().toString()
+					sentOn : new Date().toString(),
+					belongsTo : user._id
 				});
+				
 				message.save(function(err) {
 					if (!err) {
 						res.write(JSON.stringify(message));
@@ -270,6 +278,25 @@ module.exports = function(app, db) {
 						res.end();
 					}
 				});
+				
+				// save a copy to sent
+				db.profile.findOne({
+					_id : body.to
+				}).exec(function(err, profile) {
+					if (!err && profile) {
+						var message2 = new db.message({
+							from : user.profile._id,
+							to : body.to,
+							body : body.body,
+							isRead : false,
+							type : 'message',
+							sentOn : new Date().toString(),
+							belongsTo : profile.user
+						});
+						message2.save();
+					}
+				});
+				
 			} else {
 				res.writeHead(401);
 				res.write('You must be logged in to send messages.');
@@ -277,5 +304,51 @@ module.exports = function(app, db) {
 			}
 		});
 	});
+	
+	////
+	// DELETE - /api/message/:id
+	// Deletes a message
+	////
+	app.del('/api/message/:id', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.message.find({
+					belongsTo : user._id,
+					_id : req.params.id
+				}).remove(function(err) {
+					if (!err) {
+						res.write(JSON.stringify({}));
+						res.end();
+					} else {
+						res.writeHead(400);
+						res.write('Could not delete message.');
+						res.end();
+					}
+				});
+			}
+		});
+	});
 
+	////
+	// GET - /api/messages/pollUnread
+	// Returns number of unread messages
+	////
+	app.get('/api/messages/pollUnread', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.message.find({
+					belongsTo : user._id,
+					isRead : false,
+					to : user.profile._id
+				}).exec(function(err, messages) {
+					res.write(JSON.stringify({ unread : messages.length }));
+					res.end();
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You are not logged in.');
+				res.end();
+			}
+		});
+	});
 };

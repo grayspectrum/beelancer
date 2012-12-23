@@ -41,6 +41,8 @@ html, body {
 	display: none;
 	margin-left: 360px;
 	z-index: 997;
+	overflow: auto;
+	height: 100%;
 }
 
 h1.logo {
@@ -627,11 +629,72 @@ p.desc {
 	border: 1px solid #999;
 	padding: 0;
 	box-shadow: 0 3px 5px rgba(0,0,0,0.5);
-	width: 300px;
+	width: 350px;
+	max-height: 300px;
+	overflow: auto;
+}
+
+#bee-ui_teamlist ul {
+	list-style-type: none;
+	margin: 6px;
+	padding: 0;
+}
+
+#bee-ui_teamlist ul li.teammember {
+	margin-bottom: 3px;
+	padding: 6px 12px;
+	display: block;
+	overflow: hidden;
+	border: 1px solid transparent;
+}
+
+#bee-ui_teamlist ul li.teammember img {
+	float: left;
+	margin-right: 8px;
+}
+
+#bee-ui_teamlist ul li.teammember span {
+	float: left;
+	margin-top: 4px;
+}
+
+#bee-ui_teamlist ul li.teammember.selected, #bee-ui_teamlist ul li.teammember:hover {
+	background: #e2e2e2;
+	border-radius: 6px;
+	cursor: pointer;
+	border: 1px solid #d2d2d2;
 }
 
 #bee-ui_teamlist p {
 	margin: 12px;
 	text-align: center;
 	font-size: 14px;
+}
+
+p.no_projects {
+	margin: 12px;
+	padding: 12px;
+	text-align: center;
+	background: #E2E2E2;
+	border: 1px solid white;
+	border-radius: 3px;
+}
+
+#view_my_profile .view_profile {
+	background: url('/assets/images/mono/black/user_icon&24.png') 12px center no-repeat;
+}
+
+#whoami {
+	float: left;
+	height: 50px;
+}
+
+#whoami img {
+	margin: 10px;
+	float: left;
+}
+
+#whoami .my_name {
+	float: left;
+	margin-top: 14px;
 }

@@ -15,6 +15,10 @@
 	background: url('/assets/images/mono/black/spechbubble_sq_line_icon&24.png') 12px center no-repeat;
 }
 
+#messages_nav .delete_message {
+	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+}
+
 #filter_messages {
 	float: left;
 	margin: 12px;
@@ -30,15 +34,16 @@
 }
 
 #messages_sent ul, #messages_inbox ul {
-	margin: 0;
+	margin: 3px;
 	padding: 0;
 	list-style-type: none;
-	border-top: 1px solid #e2e2e2;
 }
 
 li.message {
-	border-bottom: 1px solid #e2e2e2;
+	border: 1px solid #e2e2e2;
 	background: #FFEFC6;
+	margin: 3px 0;
+	border-radius: 6px;
 }
 
 li.message.isRead {
@@ -46,9 +51,9 @@ li.message.isRead {
 }
 
 li.message:hover {
-	-webkit-transform: scale(1.02);
-	box-shadow: 0 0 12px rgba(0,0,0,0.5);
 	cursor: pointer;
+	background: #e2e2e2;
+	border: 1px solid #d2d2d2;
 }
 
 li.message.isRead .msg_from {
@@ -64,7 +69,7 @@ li.message p {
 
 .msg_from {
 	overflow: hidden;
-	background: url('/assets/images/mono/black/eye_icon&16.png') 532px center no-repeat;
+	background: url('/assets/images/mono/black/invisible_light_icon&16.png') 522px center no-repeat;
 }
 
 .msg_from img {

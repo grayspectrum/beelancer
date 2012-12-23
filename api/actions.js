@@ -29,14 +29,14 @@ module.exports = (function() {
 							toUser.team.push(from);
 							fromUser.save(function(err) {
 								toUser.save(function(err) {
-									callback.call(this, err, 'Invitation accepted.');
+									callback.call(this, err, message);
 								});
 							});
 						}
 					});
 				} else {
 					message.remove(function(err) {
-						callback.call(this, err, 'Invitation declined.');
+						callback.call(this, err, message);
 					});
 				}
 			}

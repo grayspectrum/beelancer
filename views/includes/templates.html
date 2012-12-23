@@ -103,11 +103,29 @@
 
 <!-- Member List Item -->
 <script id="tmpl-list_member" type="text/x-handlebars-template">
-	<a href="/#!/team?viewProfile={{_id}}">
-		<img src="{{#if avatarUrl}}{{avatarUrl}}{{else}}/assets/images/default-avatar.jpg{{/if}}" width="32px" height="32px" />
-		<span class="member-name">{{firstName}} {{lastName}}</span>
-		<span class="member-title">{{title}}</span>
-	</a>
+	{{#if this.length}}
+		<ul>
+			{{#each this}}
+				<li>
+					<a href="/#!/team?viewProfile={{_id}}">
+						<img src="{{avatarPath}}" width="32px" height="32px" />
+						<span class="member-name">{{firstName}} {{lastName}}</span>
+						<span class="member-title">{{title}}</span>
+					</a>
+				</li>
+			{{/each}}
+		</ul>
+	{{else}}
+		{{#if this.firstName}}
+			<a href="/#!/team?viewProfile={{_id}}">
+				<img src="{{#if avatarPath}}{{avatarPath}}{{else}}/assets/images/default-avatar.jpg{{/if}}" width="32px" height="32px" />
+				<span class="member-name">{{firstName}} {{lastName}}</span>
+				<span class="member-title">{{title}}</span>
+			</a>
+		{{else}}
+			<p class="no_projects">No users found.</p>
+		{{/if}}
+	{{/if}}
 </script>
 
 <!-- Team Populate -->
@@ -122,8 +140,8 @@
 			{{/each}}
 		</ul>
 	{{else}}	
-		<p>
-			No team members to show.
+		<p class="no_projects">
+			No teammates to display.
 		</p>
 	{{/if}}
 </script>
@@ -135,9 +153,17 @@
 			{{#each this}}
 				<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this._id}}">
 					<div class="msg_from">
-						<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
+						{{#if isSent}}
+							<img src="{{this.to.avatarPath}}" width="24px" height="24px" alt="{{this.to.avatarPath}}" />
+						{{else}}
+							<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
+						{{/if}}
 						<span class="team_list_name">
-							{{this.from.firstName}} {{this.from.lastName}}
+							{{#if isSent}}
+								{{this.to.firstName}} {{this.to.lastName}}
+							{{else}}
+								{{this.from.firstName}} {{this.from.lastName}}
+							{{/if}}
 							<span class="msg_sentOn">{{this.sentOn}}</span>
 						</span>
 					</div>
@@ -146,7 +172,7 @@
 			{{/each}}
 		</ul>
 	{{else}}
-		<p>You have no messages.</p>
+		<p class="no_projects">You have no messages.</p>
 	{{/if}}
 </script>
 
@@ -180,9 +206,11 @@
 			<strong class="profile_name">{{firstName}} {{lastName}}</strong>
 			<em class="profile_title">{{title}} {{#if company}}at <span>{{company}}</span>{{/if}}</em>
 		</div>
-		<div class="profile_about">
-			<div class="bubble">{{about}}</div>
-		</div>
+		{{#if about}}
+			<div class="profile_about">
+				<div class="bubble">{{about}}</div>
+			</div>
+		{{/if}}
 		<h4 class="gold-gradient">Endorsements</h4>
 		<div class="profile_ratings">
 			Loading endorsements...

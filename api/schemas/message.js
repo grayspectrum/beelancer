@@ -16,9 +16,14 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'profile'
 	},
+	belongsTo : {
+		type : ObjectId,
+		ref : 'user'
+	},
 	sentOn : Date,
 	body : String,
 	isRead : Boolean,
+	isSent : Boolean,
 	type : String,
 	attachment : {
 		action : String,

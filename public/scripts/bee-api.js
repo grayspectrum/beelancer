@@ -37,6 +37,10 @@ bee.api = (function() {
 			},
 			error : function(err) {
 				error.call(this, err.responseText);
+				if (err.status === 401 && creds().userId) {
+					logout();
+					location.href = '/#!/login';
+				}
 			}
 		});
 	};

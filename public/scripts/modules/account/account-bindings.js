@@ -10,21 +10,15 @@
 	if (!newProfile) {
 		// kill welcome stuff
 		$('.welcome').remove();
-		
-		bee.api.send(
-			'GET', 
-			'/me', 
-			{},
-			function(data) {
-				bee.set('profile', data);
-				fillProfileFields();
-				bee.ui.loader.hide();
-			},
-			function(err) {
-				bee.ui.notifications.notify('err', err, true);
-				bee.ui.loader.hide();
-			}
-		);
+
+		if (!bee.get('profile')) {
+			$(window).trigger('hashchange');
+		} else {
+			fillProfileFields();
+			bee.ui.loader.hide();
+		}
+
+			
 		
 		// Bind Account Recovery
 		function recoverAccount() {
@@ -51,7 +45,7 @@
 		$('#recover_account').bind('click', recoverAccount);
 		
 	} else {
-		$('#security').remove();
+		$('#security, #view_my_profile').remove();
 		bee.ui.loader.hide();
 	}
 	
@@ -139,6 +133,9 @@
 			}
 		});
 		$('label[for="np_privacy' + profile.privacy + '"]').click();
+		$('#whoami .my_avatar').attr('src', profile.avatarPath);
+		$('#whoami .my_name').html('Hi, ' + profile.firstName + ' ' + profile.lastName + '!');
+		$('#view_my_profile .view_profile')[0].href += profile._id;
 	};
 	
 })();

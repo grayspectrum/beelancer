@@ -14,11 +14,14 @@ var bee = new spi.App({
 // Load API Library
 _.load([
 	'/scripts/bee-api.js',
-	'/scripts/bee-ui.js'
+	'/scripts/bee-ui.js',
+	'/scripts/bee-utils.js'
 ], function() {
-	// render intial view
-	bee.ui.refresh();
-	bee.ui.menu.update();
+	bee.utils.updateContextAndRenderView(true);
+	// begin message poll
+	setInterval(function() {
+		bee.utils.checkMessages();
+	}, 6000);
 });
 
 // Register Modules
@@ -124,7 +127,5 @@ _.load([
 // view routing
 $(window).bind('hashchange', function(event) {
 	event.preventDefault();
-	bee.ui.loader.show();
-	bee.ui.refresh();
-	bee.ui.menu.update();
+	bee.utils.updateContextAndRenderView();
 });
