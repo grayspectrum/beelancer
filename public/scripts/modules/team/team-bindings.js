@@ -110,7 +110,6 @@
 		};
 		
 		function populateResults(results) {
-			console.log(results);
 			var resultUi = Handlebars.compile($('#tmpl-list_member').html())(results || {});
 			$('#search_results').html(resultUi);
 		};

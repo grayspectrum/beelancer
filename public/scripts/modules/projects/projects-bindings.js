@@ -105,6 +105,7 @@
 	function view_project() {	
 		$('#project_view').show();
 		$('#projects_active, #projects_closed, #filter_projects, #projects_create, #projects_nav .new_project').remove();
+		
 		// get project details
 		bee.api.send(
 			'GET',
@@ -116,6 +117,8 @@
 				  , billurl = $('#projects_nav .bill_client').attr('href');
 				$('#projects_nav .edit_project').attr('href', editurl + project._id);
 				$('#projects_nav .bill_client').attr('href', billurl + project._id);
+				
+				
 				
 				if (project.isActive) {
 					$('#projects_nav .project_status')
@@ -144,6 +147,26 @@
 				  , view = source(project);
 				
 				$('#project_view').html(view);
+				bindProjectActions();
+				loadTeamList();
+				
+				if (bee.get('profile')._id !== project.owner.profile) {
+					$('.project_status, .edit_project, #project_add_team').remove();
+				}
+				
+				bee.api.send(
+					'GET',
+					'/profile/' + project.owner.profile,
+					{},
+					function(profile) {
+						var html = Handlebars.compile($('#tmpl-user_showcase').html())(profile);
+						$('.viewproject_ownedby > div').html(html);
+					},
+					function(err) {
+						$('#viewproject_ownedby').remove();
+						bee.ui.notifications.notify('err', 'Could not load owner profile.');
+					}
+				);
 				
 				bee.ui.loader.hide();
 			},
@@ -152,6 +175,65 @@
 				bee.ui.notifications.notify('err', err);
 			}
 		);
+	};
+	
+	function loadTeamList() {
+		$('.list-member').each(function() {
+			var id = $(this).attr('data-profile')
+			  , ui = $(this)
+			  , tmpl = Handlebars.compile($('#tmpl-list_member').html());
+			bee.api.send(
+				'GET',
+				'/profile/' + id,
+				{},
+				function(res) {
+					ui.html(tmpl(res));
+				},
+				function(err) {
+					ui.html('Failed to load member.');
+				}
+			)
+		});
+	};
+	
+	function bindProjectActions() {
+		var addTeamMember = $('#project_add_team')
+		  , addTask = $('#project_add_task');
+		
+		var team = new bee.ui.TeamList(function(memb) {
+			var that = this;
+			bee.ui.confirm('Add ' + memb.firstName + ' ' + memb.lastName + ' to this project?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/project/invite',
+					{
+						projectId : viewProject,
+						profileId : memb._id
+					},
+					function(res) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('success', 'Invited to project!');
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);				
+			});
+			// fix weird incremental binding
+			that.populate(that.team);
+		}).populate().attach();
+		
+		addTeamMember.bindTeamList(team);
+		  
+		addTeamMember.bind('click', function() {
+			$(this).focus();
+		});
+		
+		addTask.bind('click', function() {
+			location.href = '/#!/tasks?newTask=true&projectId=' + viewProject;
+		});
 	};
 	
 	

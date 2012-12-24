@@ -58,14 +58,14 @@ module.exports = (function() {
 		});
 		
 		function dispatchInvite(inviteeId, callback) {
-			getProject(db, from, id, function(err, project) {
+			getProject(db, id, function(err, project) {
 				if (err) {
 					callback.call(this, 'Could not get project.', null);
 				} else {
 					if (accept) {
 						project.members.push(inviteeId);
 						project.save(function(err) {
-							callback.call(this, err);
+							callback.call(this, err, message);
 						});
 					} else {
 						message.remove(function(err) {

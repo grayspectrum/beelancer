@@ -257,10 +257,10 @@ module.exports = function(app, db) {
 	// Params => projectId, profileId
 	////
 	app.post('/api/project/invite', function(req, res) {
-		utils.verfiyUser(req, db, function(err, user) {
+		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				var body = req.body;
-				if (body.userId && body.projectId) {
+				if (body.profileId && body.projectId) {
 					db.project
 						.findOne({ 
 							_id : body.projectId,
@@ -268,28 +268,62 @@ module.exports = function(app, db) {
 						})
 					.exec(function(err, project) {
 						if (!err) {
-							var invitation = new db.message({
-								body : body.message,
-								from : user.profile._id,
-								to : body.profileId,
-								sentOn : new Date().toString(),
-								isRead : false,
+							
+							db.message.findOne({
 								type : 'project_invite',
 								attachment : {
 									action : 'project_invite',
-									data : body.project._id
-								}
-							});
-							invitation.save(function(err) {
-								if (!err) {
-									res.write(JSON.stringify(invitation));
+									data : body.projectId
+								},
+								to : body.profileId
+							}).exec(function(err, existingInvite) {
+								if (err || existingInvite) {
+									res.writeHead(400);
+									res.write('There is already a pending invite.');
 									res.end();
 								} else {
-									res.writeHead(500);
-									res.write('Could not send invitation.');
-									res.end();
+									sendInvite();
 								}
 							});
+							
+							function sendInvite() {
+								db.profile.findOne({ _id : body.profileId }).exec(function(err, profile) {
+									if (project.members.indexOf(profile.user) > -1) {
+										res.writeHead(400);
+										res.write('User is already a member of the project.');
+										res.end();
+									} else if (!err && profile) {
+										var invitation = new db.message({
+											body : user.profile.firstName + ' ' + user.profile.lastName + ' has invited you to work on a project!',
+											from : user.profile._id,
+											to : body.profileId,
+											sentOn : new Date().toString(),
+											belongsTo : profile.user,
+											isRead : false,
+											type : 'project_invite',
+											attachment : {
+												action : 'project_invite',
+												data : body.projectId
+											}
+										});
+										invitation.save(function(err) {
+											if (!err) {
+												res.write(JSON.stringify(invitation));
+												res.end();
+											} else {
+												res.writeHead(500);
+												res.write('Could not send invitation.');
+												res.end();
+											}
+										});
+									} else {
+										res.writeHead(404);
+										res.write('Could not find user.');
+										res.end();
+									}
+								});
+							};
+							
 						} else {
 							res.writeHead(404);
 							res.write('Project not found or you are not the owner.');

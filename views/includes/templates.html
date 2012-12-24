@@ -39,6 +39,16 @@
 </script>
 
 <!-- Project Details -->
+<script id="tmpl-user_showcase" type="text/x-handlebars-template">
+	<div class="user_showcase">
+		<img src="{{avatarPath}}" width="48px" height="48px" />
+		<strong>{{firstName}} {{lastName}}</strong>
+		<em>{{title}} {{#if company}}at {{company}}{{/if}}</em>
+		<a href="/#!/team?viewProfile={{_id}}">View Profile</a>
+	</div>
+</script>
+
+<!-- Project Details -->
 <script id="tmpl-project_details" type="text/x-handlebars-template">
 	<div class="light-gradient center-pane animated fadeInUp">
 		<div id="project_details">
@@ -54,6 +64,10 @@
 					<span class="closed green-gradient">This project is closed.</span>
 				{{/if}}
 			</div>
+			<div class="viewproject_ownedby">
+				<strong>This project is owned by:</strong>
+				<div></div>
+			</div>
 			<div class="viewproject_description">
 				<div class="markdown rollout">
 					{{{description}}}
@@ -64,11 +78,14 @@
 			</div>
 			<div class="float_wrap">
 				<div id="viewproject_team" class="half_list">
-					<h5 class="half-list-header">Team Members</h5>
+					<h5 class="half-list-header">
+						Team Members
+						<button class="btn-add" id="project_add_team">Add a Teammate</button>
+					</h5>
 					{{#if members.length}}
-						<ul class="rollout">
+						<ul class="rollout none">
 							{{#each members}}
-								<li class="list-member" id="profile-{{this._id}}">
+								<li class="list-member" data-profile="{{this.profile}}">
 									<span class="loading-list">Loading Member...</span>
 								</li>
 							{{/each}}
@@ -78,9 +95,12 @@
 					{{/if}}
 				</div>
 				<div id="viewproject_tasks" class="half_list">
-					<h5 class="half-list-header">Active Tasks</h5>
+					<h5 class="half-list-header">
+						Active Tasks
+						<button class="btn-add" id="project_add_task">Add a Task</button>
+					</h5>
 					{{#if tasks.length}}
-						<ul class="rollout">
+						<ul class="rollout none">
 							{{#each tasks}}
 								{{#if this.isComplete}}
 								{{else}}

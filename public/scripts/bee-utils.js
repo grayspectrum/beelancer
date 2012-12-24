@@ -18,6 +18,9 @@ bee.utils = (function() {
 	};
 	
 	function updateContextAndRenderView(firstTime) {
+		// remove team list widget
+		$('#bee-ui_teamlist').remove();
+		
 		if (location.hash.indexOf('login') === -1 &&
 			_.cookies.get('userid') && _.cookies.get('apikey')) {
 			bee.api.send(

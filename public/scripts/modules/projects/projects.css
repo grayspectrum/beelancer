@@ -170,3 +170,14 @@
 .viewproject_stats a:hover {
 	text-decoration: none;
 }
+
+.viewproject_ownedby {
+	margin: 0 24px;
+	border-radius: 4px;
+}
+
+.viewproject_ownedby > strong {
+	display: block;
+	margin-bottom: 8px;
+	font-size: 14px;
+}
