@@ -22,6 +22,7 @@ bee.utils = (function() {
 		$('#bee-ui_teamlist').remove();
 		
 		if (location.hash.indexOf('login') === -1 &&
+			_.querystring.get('newProfile') != 'true' &&
 			_.cookies.get('userid') && _.cookies.get('apikey')) {
 			bee.api.send(
 				'GET',
@@ -47,26 +48,28 @@ bee.utils = (function() {
 	};
 	
 	function checkMessages() {
-		bee.api.send(
-			'GET',
-			'/messages/pollUnread',
-			{},
-			function(data) {
-				if (data.unread && data.unread > bee.get('unread')) {
-					bee.ui.notifications.dismiss();
-					bee.set('unread', data.unread);
-					bee.ui.notifications.notify('info', 'You have ' + data.unread + ' unread messages!', true, function() {
-						if (location.href = '#!/messages?show=inbox') {
-							bee.ui.refresh();
-						}
-						location.href = '/#!/messages?show=inbox';
-					});
+		if (_.cookies.get('apikey') && _.cookies.get('userid') && bee.get('profile')) {
+			bee.api.send(
+				'GET',
+				'/messages/pollUnread',
+				{},
+				function(data) {
+					if (data.unread && data.unread > bee.get('unread')) {
+						bee.ui.notifications.dismiss();
+						bee.set('unread', data.unread);
+						bee.ui.notifications.notify('info', 'You have ' + data.unread + ' unread messages!', true, function() {
+							if (location.href = '#!/messages?show=inbox') {
+								bee.ui.refresh();
+							}
+							location.href = '/#!/messages?show=inbox';
+						});
+					}
+				},
+				function(err) {
+					// fail silently
 				}
-			},
-			function(err) {
-				// fail silently
-			}
-		);
+			);
+		}
 	};
 	
 	return {
