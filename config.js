@@ -13,9 +13,9 @@ module.exports = (function(env) {
 			env : 'DEVELOPMENT',
 			app_port : 1337,
 			useSSL : false,
-			domain : 'http://localhost:1337/',
+			domain : 'http://beelancer.com:1337/',
 			uploadDir : __dirname + '/public/assets/users/avatars',
-			mediaUrl : 'http://localhost:1337'
+			mediaUrl : 'http://beelancer.com:1337'
 		},
 		
 		// qa config
