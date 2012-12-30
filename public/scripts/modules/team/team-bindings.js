@@ -151,7 +151,8 @@
 					$('#project_team').val(filterProject);
 					getTeamList(filterProject, function(err, projectTeam) {
 						if (err) {
-							bee.ui.notifications.notify('err', err);
+						//	bee.ui.notifications.notify('err', err);
+							location.href = '/#!/team';
 						} else {
 							teamList.populate(projectTeam).attach('#list_team').show();
 							bindMemberOptions('#list_team');
