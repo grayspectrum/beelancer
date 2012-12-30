@@ -334,7 +334,7 @@ module.exports = function(app, db) {
 	////
 	app.get('/api/messages/pollUnread', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
-			if (!err && user) {
+			if (!err && user.profile) {
 				db.message.find({
 					belongsTo : user._id,
 					isRead : false,
