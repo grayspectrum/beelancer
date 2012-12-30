@@ -178,16 +178,16 @@ var tappa = (function() {
 	
 	
 	// capture keypresses
-	function capture() {
-		keyboard_state.push(window.event.keyCode);
+	function capture(e) {
+		keyboard_state.push(e.keyCode);
 	}
 	
 	// release captured keys
-	function release() {
+	function release(e) {
 		var match = keyboard_state.join('.');
 		keyboard_state = [];
 		if (event_map[match]) {
-			event_map[match].call(this, event);
+			event_map[match].call(this, e);
 		}
 	}
 	
