@@ -92,7 +92,7 @@ module.exports = function(app, db) {
 	app.get('/api/me', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
-				var me = user.toObject().profile;
+				var me = user.toObject().profile || {};
 				me.team = user.team;
 				res.write(JSON.stringify(me));
 				res.end();
