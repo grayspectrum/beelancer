@@ -58,6 +58,10 @@
 	background: url('/assets/images/mono/black/round_checkmark_icon&24.png') 12px center no-repeat;
 }
 
+#projects_nav .delete_project {
+	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+}
+
 #projects_active_list ul,
 #projects_closed_list ul {
 	margin: 3px;

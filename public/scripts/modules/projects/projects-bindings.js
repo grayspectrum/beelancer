@@ -81,7 +81,7 @@
 	// List Projects
 	////
 	function list_projects() {
-		$('#project_view, #projects_create, #projects_nav .edit_project, #projects_nav .bill_client,  #projects_nav .project_status').remove();
+		$('#project_view, #projects_create, #projects_nav .edit_project, #projects_nav .bill_client,  #projects_nav .project_status, #projects_nav .delete_project').remove();
 		$('#projects_closed').hide();
 		
 		bee.api.send(
@@ -151,7 +151,7 @@
 				loadTeamList();
 				
 				if (bee.get('profile')._id !== project.owner.profile) {
-					$('.project_status, .edit_project, #project_add_team').remove();
+					$('.project_status, .edit_project, #project_add_team, #projects_nav .delete_project').remove();
 				}
 				
 				bee.api.send(
@@ -401,5 +401,24 @@
 	
 	$('#filter_projects select').bind('change', function() {
 		location.href = '/#!/projects?show=' + $(this).val();
+	});
+	
+	$('#projects_nav .delete_project').bind('click', function() {
+		bee.ui.confirm('Are you sure you want to delete this project? This cannot be undone.', function() {
+			bee.ui.loader.show();
+			bee.api.send(
+				'DELETE',
+				'/project/delete/' + viewProject,
+				{},
+				function(res) {
+					history.back();
+					bee.ui.notifications.notify('success', 'Project deleted!');
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
 	});
 })();

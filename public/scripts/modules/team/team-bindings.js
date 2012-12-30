@@ -149,7 +149,13 @@
 				});
 				if (filterProject) {
 					$('#project_team').val(filterProject);
-					teamList.populate(getProjectById(res, filterProject).members).attach('#list_team').show();
+					getTeamList(filterProject, function(err, projectTeam) {
+						if (err) {
+							bee.ui.notifications.notify('err', err);
+						} else {
+							teamList.populate(projectTeam).attach('#list_team').show();
+						}
+					});
 				} else {
 					teamList.populate().attach('#list_team').show();
 				}
@@ -168,6 +174,23 @@
 				location.href = '/#!/team?projectId=' + $(this).val();
 			}
 		});
+	};
+	
+	////
+	// Get Team List
+	////
+	function getTeamList(id, callback) {
+		bee.api.send(
+			'GET',
+			'/project/team/' + id,
+			{},
+			function(res) {
+				callback.call(this, null, res);
+			},
+			function(err) {
+				callback.call(this, err, null);
+			}
+		);
 	};
 	
 	////
@@ -271,6 +294,10 @@
 		bee.ui.confirm('Remove this user from your team?', function() {
 			removeFromTeam(viewProfile);
 		});
+	});
+	
+	$('.rate_user').bind('click', function() {
+		bee.ui.notifications.notify('err', 'Feature not yet available.');
 	});
 	
 })();

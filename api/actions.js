@@ -62,10 +62,11 @@ module.exports = (function() {
 				if (err) {
 					callback.call(this, 'Could not get project.', null);
 				} else {
-					if (accept) {
+					if (accept == 'true') {
 						project.members.push(inviteeId);
 						project.save(function(err) {
 							callback.call(this, err, message);
+							message.remove();
 						});
 					} else {
 						message.remove(function(err) {

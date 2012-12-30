@@ -224,7 +224,7 @@
 						accept : false
 					},
 					function(res) {
-						bee.ui.notifications.notify('success', res);
+						bee.ui.notifications.notify('success', 'Invitation declined.');
 						location.href = '/#!/messages?show=inbox';
 					},
 					function(err) {

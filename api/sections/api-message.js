@@ -123,18 +123,17 @@ module.exports = function(app, db) {
 						_id : body.messageId,
 						to : user.profile._id
 					}).exec(function(err, message) {
-						if (!err) {
+						if (!err && message) {
 							var action = message.attachment.action
 							  , data = message.attachment.data;
 							if (actions[action]) {  
 								actions[action](db, message, body.accept, function(err, msg) {
 									if (!err) {
-										res.write(JSON.stringify(msg));
-										msg.remove();
+										res.write(JSON.stringify(msg || {}));
 										res.end();
 									} else {
 										res.writeHead(500);
-										res.write('Could not accept invitation.');
+										res.write('The action failed.');
 										res.end();
 									}
 								});

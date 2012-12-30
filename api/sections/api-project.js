@@ -8,7 +8,9 @@
 // Get Models
 var crypto = require('crypto')
   , mailer = require('../email/mailer.js')
-  , utils = require('../utils.js');
+  , utils = require('../utils.js')
+  , handlebars = require('handlebars')
+  , fs = require('fs');
 
 module.exports = function(app, db) {
 	////
@@ -61,7 +63,7 @@ module.exports = function(app, db) {
 						{ client : user._id }, 
 						{ members : user._id } 
 					] 
-				}).populate('members').sort('deadline').exec(function(err, projects) {
+				}).populate('members', 'profile').sort('deadline').exec(function(err, projects) {
 					if (err) {
 						res.writeHead(500);
 						res.write('Could not retrieve projects.');
@@ -75,6 +77,54 @@ module.exports = function(app, db) {
 				console.log(err);
 				res.writeHead(401);
 				res.write('You must be registered and logged in to view your projects.');
+				res.end();
+			}
+		});
+	});
+	
+	////
+	// GET - /api/project/team/:projectId
+	// Returns the members of a specific project
+	////
+	app.get('/api/project/team/:projectId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				var id = req.params.projectId
+				  , team = [];
+				db.project.findOne({
+					_id : id,
+					$or : [
+						{ owner : user._id },
+						{ members : user._id }
+					]
+				}).exec(function(err, project) {
+					if (!err && project) {
+						team.push({ user : project.owner });
+						for (var mem = 0; mem < project.members.length; mem++) {
+							team.push({ user : project.members[mem] })
+						}
+						
+						db.profile.find({
+							$or : team
+						}).exec(function(err, profiles) {
+							if (!err) {
+								res.write(JSON.stringify(profiles));
+								res.end();
+							} else {
+								res.writeHead(500);
+								res.write('There was an error retrieving the project team.');
+								res.end();
+							}
+						});
+					} else {
+						res.writeHead(404);
+						res.write('Project could not be found.');
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to view project team.');
 				res.end();
 			}
 		});
@@ -241,7 +291,7 @@ module.exports = function(app, db) {
 							res.write('Could not delete project.');
 							res.end();
 						} else {
-							res.write('Project deleted.');
+							res.write(JSON.stringify(project));
 							res.end();
 						}
 					});
@@ -293,29 +343,44 @@ module.exports = function(app, db) {
 										res.write('User is already a member of the project.');
 										res.end();
 									} else if (!err && profile) {
-										var invitation = new db.message({
-											body : user.profile.firstName + ' ' + user.profile.lastName + ' has invited you to work on a project!',
-											from : user.profile._id,
-											to : body.profileId,
-											sentOn : new Date().toString(),
-											belongsTo : profile.user,
-											isRead : false,
-											type : 'project_invite',
-											attachment : {
-												action : 'project_invite',
-												data : body.projectId
-											}
-										});
-										invitation.save(function(err) {
-											if (!err) {
-												res.write(JSON.stringify(invitation));
-												res.end();
+										
+										db.project.findOne({ _id : body.projectId }).exec(function(err, project) {
+											if (!err && project) {
+												var inv = {
+													sender : user.profile,
+													project : project
+												};
+												
+												var invitation = new db.message({
+													body : inv.sender.firstName + ' ' + inv.sender.lastName + ' has invited you to project "' + inv.project.title + '".',
+													from : user.profile._id,
+													to : body.profileId,
+													sentOn : new Date().toString(),
+													belongsTo : profile.user,
+													isRead : false,
+													type : 'project_invite',
+													attachment : {
+														action : 'project_invite',
+														data : body.projectId
+													}
+												});
+												invitation.save(function(err) {
+													if (!err) {
+														res.write(JSON.stringify(invitation));
+														res.end();
+													} else {
+														res.writeHead(500);
+														res.write('Could not send invitation.');
+														res.end();
+													}
+												});
 											} else {
 												res.writeHead(500);
-												res.write('Could not send invitation.');
+												res.write('Project not found!');
 												res.end();
 											}
 										});
+										
 									} else {
 										res.writeHead(404);
 										res.write('Could not find user.');
