@@ -137,11 +137,15 @@
 		</ul>
 	{{else}}
 		{{#if this.firstName}}
-			<a href="/#!/team?viewProfile={{_id}}">
-				<img src="{{#if avatarPath}}{{avatarPath}}{{else}}/assets/images/default-avatar.jpg{{/if}}" width="32px" height="32px" />
-				<span class="member-name">{{firstName}} {{lastName}}</span>
-				<span class="member-title">{{title}}</span>
-			</a>
+			<ul>
+				<li>
+					<a href="/#!/team?viewProfile={{_id}}">
+						<img src="{{#if avatarPath}}{{avatarPath}}{{else}}/assets/images/default-avatar.jpg{{/if}}" width="32px" height="32px" />
+						<span class="member-name">{{firstName}} {{lastName}}</span>
+						<span class="member-title">{{title}}</span>
+					</a>
+				</li>
+			</ul>
 		{{else}}
 			<p class="no_projects">No users found.</p>
 		{{/if}}
