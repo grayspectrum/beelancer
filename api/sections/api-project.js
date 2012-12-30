@@ -408,4 +408,76 @@ module.exports = function(app, db) {
 		});
 	});
 	
+	////
+	// PUT - /api/project/removeMember
+	// Removes the specified member from the project
+	////
+	app.put('/api/project/removeMember', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				if (req.body.projectId && req.body.memberId) {
+					db.project.findOne({
+						_id : req.body.projectId
+					}).exec(function(err, project) {
+						if (!err) {
+							if (project.owner.toString() == user._id) {
+								if (req.body.memberId != user.profile._id) {
+									// get user id from profile id
+									leaveProject(project);
+								} else {
+									res.writeHead(500);
+									res.write('Cannot remove yourself if you are the owner.');
+									res.end();
+								}
+							} else if (user.profile._id == req.body.memberId) {
+								leaveProject(project);
+							} else {
+								res.writeHead(400);
+								res.write('You are not the project owner.');
+								res.end();
+							}
+						} else {
+							res.writeHead(500);
+							res.write(err);
+							res.end();
+						}
+					});
+				} else {
+					res.writeHead(400);
+					res.write('Missing required parameters.');
+					res.end();
+				}
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to administer projects.');
+				res.end();
+			}
+		});
+		
+		function leaveProject(project) {
+			db.user.findOne({
+				profile : req.body.memberId
+			}).exec(function(err, user) {
+				if (!err && user) {
+					project.members.remove(user._id);
+					project.save(function(err) {
+						if (!err) {
+							res.write(JSON.stringify(project));
+							res.end();
+						} else {
+							res.writeHead(500);
+							res.write(err);
+							res.end();
+						}
+					});
+				} else {
+					res.writeHead(500);
+					res.write(err || 'User not found.');
+					res.end();
+				}
+			});
+		};
+		
+	});
+	
 };

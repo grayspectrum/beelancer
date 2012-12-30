@@ -30,6 +30,7 @@ module.exports = (function() {
 							fromUser.save(function(err) {
 								toUser.save(function(err) {
 									callback.call(this, err, message);
+									message.remove();
 								});
 							});
 						}

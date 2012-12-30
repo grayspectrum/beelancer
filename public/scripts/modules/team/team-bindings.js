@@ -154,6 +154,7 @@
 							bee.ui.notifications.notify('err', err);
 						} else {
 							teamList.populate(projectTeam).attach('#list_team').show();
+							bindMemberOptions('#list_team');
 						}
 					});
 				} else {
@@ -279,6 +280,38 @@
 				return projects[p];
 			}
 		}
+	};
+
+	function bindMemberOptions(list) {
+		$('li', list || document).hover(function() {
+			$(this).append(Handlebars.compile($('#tmpl-removefromproject').html()));
+			var that = this
+			  , projectTitle = $('#project_team option:selected').html();
+			$('.removefromproject', this).bind('click', function(e) {
+				e.stopPropagation();
+				var memberId = $(this).parent().attr('data-id');
+				bee.ui.confirm('Remove ' + $('.team_list_name', that).html() + ' from project "' + projectTitle + '"?', function() {
+					bee.api.send(
+						'PUT',
+						'/project/removeMember',
+						{
+							projectId : filterProject,
+							memberId : memberId
+						},
+						function(res) {
+							bee.ui.notifications.notify('success', 'Member removed!');
+							bee.ui.refresh();
+						},
+						function(err) {
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('err', err);
+						}
+					);
+				});
+			});
+		}, function() {
+			$('.removefromproject', this).remove();
+		});
 	};
 	
 	////

@@ -81,7 +81,7 @@
 	// List Projects
 	////
 	function list_projects() {
-		$('#project_view, #projects_create, #projects_nav .edit_project, #projects_nav .bill_client,  #projects_nav .project_status, #projects_nav .delete_project').remove();
+		$('#projects_nav .leave_project, #project_view, #projects_create, #projects_nav .edit_project, #projects_nav .bill_client,  #projects_nav .project_status, #projects_nav .delete_project').remove();
 		$('#projects_closed').hide();
 		
 		bee.api.send(
@@ -132,8 +132,9 @@
 					.html('Reopen');
 				}
 				var userid = _.cookies.get('userid');
-				if (userid !== project.owner._id) {
-					$('#filter_projects').remove();
+				console.log(project.owner._id)
+				if (userid === project.owner._id) {
+					$('#projects_nav .leave_project').remove();
 				}
 				
 				if (new Date() > new Date(project.deadline)) {
@@ -413,6 +414,28 @@
 				function(res) {
 					history.back();
 					bee.ui.notifications.notify('success', 'Project deleted!');
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
+	});
+	
+	$('#projects_nav .leave_project').bind('click', function() {
+		bee.ui.confirm('Are you sure you want to leave this project?', function() {
+			bee.ui.loader.show();
+			bee.api.send(
+				'PUT',
+				'/project/removeMember',
+				{
+					projectId : viewProject,
+					memberId : bee.get('profile')._id
+				},
+				function(res) {
+					bee.ui.notifications.notify('success', 'Left project!');
+					location.href = '/#!/projects';
 				},
 				function(err) {
 					bee.ui.loader.hide();
