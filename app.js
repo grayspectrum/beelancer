@@ -13,6 +13,8 @@ var fs = require('fs')
   , spi = require('spijs')
   , app;
 
+console.log(fs.readFileSync(__dirname + '/logo.txt').toString());
+console.log('Version: ' + JSON.parse(fs.readFileSync(__dirname + '/package.json').toString()).version + '\n');
 
 // Build Certificate Object if needed
 if (config.useSSL) {
@@ -81,16 +83,14 @@ app.configure('prod', function(){
 ////
 // Connect DB and Initialize HTTP Routing
 ////
-routes(app);
-
-spi.config({
-	viewDir : __dirname + '/views/panels'
-}).init(app);
-
-////
-// Start Server
-////
-app.listen(config.app_port, function() {
-	console.log('Beelancer initialized in ' + config.env + ' mode.');
-	console.log('Beelancer listening on port ' + config.app_port + '.');
+routes(app, function() {
+	// initialize SPI
+	spi.config({
+		viewDir : __dirname + '/views/panels'
+	}).init(app);
+	// start server
+	app.listen(config.app_port, function() {
+		console.log('Beelancer initialized in ' + config.env + ' mode.');
+		console.log('Beelancer listening on port ' + config.app_port + '.');
+	});
 });

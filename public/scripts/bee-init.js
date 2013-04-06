@@ -108,6 +108,22 @@ _.load([
 		}
 	});
 	
+	var tasks = new bee.Module(app, {
+		name : 'tasks',
+		container : 'main',
+		load : {
+			always : [
+				'/scripts/modules/tasks/task-bindings.js'
+			],
+			before : [
+			
+			],
+			once : [
+				'/scripts/modules/tasks/tasks.css'
+			]
+		}
+	});
+	
 	var not_found = new bee.Module(app, {
 		name : '404',
 		container : 'main',

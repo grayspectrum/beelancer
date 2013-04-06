@@ -1,0 +1,39 @@
+/*
+ * beelancer - tasks.css
+ * Author: Gordon Hall
+ */
+
+#tasks_create,
+#task_view {
+	display: none;
+}
+
+#filter_tasks {
+	float: left;
+	margin: 12px;
+}
+
+#filter_tasks select {
+	font-size: 16px;
+	margin-left: 12px;
+}
+
+#tasks_nav .new_task {
+	background: url('/assets/images/mono/black/doc_plus_icon&24.png') 12px center no-repeat;
+}
+
+#tasks_nav .edit_task {
+	background: url('/assets/images/mono/black/doc_edit_icon&24.png') 12px center no-repeat;
+}
+
+#tasks_nav .close_task {
+	background: url('/assets/images/mono/black/checkbox_checked_icon&24.png') 12px center no-repeat;
+}
+
+#tasks_nav .delete_task {
+	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+}
+
+#tasks_nav .reopen_task {
+	background: url('/assets/images/mono/black/doc_new_icon&24.png') 12px center no-repeat;
+}

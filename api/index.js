@@ -5,9 +5,10 @@
  * Exposes API methods and attaches to "app" server instance
  */
 
-var db = require('./db-connect.js')();
-
-module.exports = function(app) {
+module.exports = function(app, callback) {
+	// connect to database
+	var db = require('./db-connect.js')(callback);
+	// bind routes
 	require('./sections/api-user.js')(app, db); // user endpoints
 	require('./sections/api-profile.js')(app, db); // profile endpoints
 	require('./sections/api-project.js')(app, db); // project endpoints

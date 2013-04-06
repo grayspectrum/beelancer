@@ -1,0 +1,54 @@
+<div id="tasks_nav" class="navigation light-gradient center-pane animated fadeInUp">
+	<div id="filter_tasks">
+		Show: 
+		<select>
+			<option value="active" selected="selected">Open Tasks</option>
+			<option value="closed">Completed Tasks</option>
+		</select>
+	</div>
+	<ul>
+		<li>
+			<a href="/#!/tasks?newTask=true" class="new_task">New Task</a>
+		</li>
+		<li>
+			<a href="/#!/tasks?newTask=true&taskId=" class="edit_task">Edit</a>
+		</li>
+		<li>
+			<a class="task_status close_task">Complete Task</a>
+		</li>
+		<li>
+			<a class="delete_task">Delete</a>
+		</li>
+	</ul>
+</div>
+<div id="tasks_active" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">Open Tasks</h4>
+	<div id="tasks_active_list"></div>
+	<div class="pagination">
+		<button class="pageLeft">&laquo;</button>
+		<span class="pageLocation">
+			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+		</span>
+		<button class="pageRight">&raquo;</button>
+	</div>
+</div>
+<div id="tasks_closed" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">Completed Tasks</h4>
+	<div id="tasks_closed_list"></div>
+	<div class="pagination">
+		<button class="pageLeft">&laquo;</button>
+		<span class="pageLocation">
+			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+		</span>
+		<button class="pageRight">&raquo;</button>
+	</div>
+</div>
+<div id="tasks_create" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">New Task</h4>
+	<form id="create_task">
+		
+	</form>
+</div>
+<div id="task_view" class="animated fadeInUp">
+	
+</div>

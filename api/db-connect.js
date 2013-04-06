@@ -5,7 +5,9 @@
  * Opens connection to DB
  */
 
-module.exports = function() {
+module.exports = function(onConnect) {
+	console.log('Beelancer connecting to database...');
+	
 	var mongoose = require('mongoose')
 	  , conf = require('./db-config.js')
 	  , creds = (conf.user && conf.pass) ? conf.user + ':' + conf.pass + '@' : ''
@@ -16,6 +18,7 @@ module.exports = function() {
 	
 	db.once('open', function() {
 		console.log('Beelancer connected to database "' + conf.name + '".');
+		if (onConnect) onConnect.call(this);
 	});
 	
 	return require('./models.js')(db);

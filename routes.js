@@ -5,7 +5,7 @@
  * Handles request routing for app rendering and api calls
  */
 
-module.exports = function(app) {
+module.exports = function(app, callback) {
 	
 	// render app
 	app.get('/', function(req, res) {
@@ -13,11 +13,6 @@ module.exports = function(app) {
 	});
 	
 	// Initialize API
-	require('./api')(app);
-	
-	
-	
-	// return boolean if everything is good
-	return true;
+	require('./api')(app, callback);
 	
 };
