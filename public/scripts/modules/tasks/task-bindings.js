@@ -43,6 +43,7 @@
 	function new_task() {
 		$('.center-pane, #tasks_nav, #task_view').not('#tasks_create').remove();
 		$('#tasks_create').show();
+		populateNewTaskProjectList();
 	};
 	
 	// Edit Task
@@ -54,8 +55,21 @@
 	function list_tasks() {
 		// kill irrelevant menus items
 		$('#tasks_nav li a').not('li .new_task').remove();
+		bee.ui.loader.show();
 		// get tasks from api
-		
+		bee.api.send(
+			'GET',
+			'/tasks',
+			{},
+			function(tasks) {
+				bee.ui.loader.hide();
+				generateTaskList(parseTasks(tasks));
+			},
+			function(err) {
+				bee.ui.loader.hide();
+				bee.ui.notifications.notify('err', err, true);
+			}
+		);
 	};
 	
 	// View Task
@@ -84,9 +98,163 @@
 		}; 
 	};
 	
+	// Helpers
+	function divideTasksByAssignee(tasks) {
+		var divided = {
+			assignedToMe : [],
+			assignedToOthers : []
+		};
+		// match them up
+		var userid = _.cookies.get('userid');
+		$.each(tasks, function(key, val) {
+			if (val.assignee._id === userid) {
+				divided.assignedToMe.push(val);
+			}
+			else {
+				divided.assignedToOthers.push(val);
+			}
+		});
+		return divided;
+	};
+	
+	function parseTasks(tasks) {
+		var status = {
+			active : [],
+			closed : []
+		};
+		$.each(tasks, function(key, val) {
+			if (val.isComplete) {
+				status.closed.push(val);
+			}
+			else {
+				status.active.push(val);
+			}
+		});
+		return {
+			active : divideTasksByAssignee(status.active),
+			closed : divideTasksByAssignee(status.closed)
+		};
+	};
+	
+	function generateTaskList(tasks) {
+		var tmpl = $('#tmpl-tasks_list').html()
+		  , source = Handlebars.compile(tmpl)
+		  , activeList = source({ tasks : tasks.active, active : true })
+		  , closedList = source({ tasks : tasks.closed, active : false });
+		$('#tasks_active_list').html(activeList);
+		$('#tasks_closed_list').html(closedList);
+		
+		var activePager = new bee.ui.Paginator(
+			$('#tasks_active .pagination'),
+			$('#tasks_active_list ul li'),
+			10
+		);
+		activePager.init();
+		
+		var closedPager = new bee.ui.Paginator(
+			$('#tasks_closed .pagination'),
+			$('#tasks_closed_list ul li'),
+			10
+		);
+		closedPager.init();
+	};
+	
+	function populateNewTaskProjectList() {
+		var list = $('#newtask_project')
+		  , tmpl = $('#tmpl-projectForTask').html()
+		  , source = Handlebars.compile(tmpl);
+		bee.api.send(
+			'GET',
+			'/projects',
+			{},
+			function(proj) {
+				var defaultProj = _.querystring.get('projectId');
+				list.html(source(proj));
+				if (defaultProj) {
+					list.val(defaultProj);
+				}
+				list.trigger('change');
+			},
+			function(err) {
+				bee.ui.notifications.notify('err', err, true);
+			}
+		);
+	};
+	
+	function taskDataIsValid() {
+		var required = $('#create_task .required')
+		  , isValid = true;
+		
+		bee.ui.notifications.dismiss();
+		  
+		required.each(function() {
+			var val = $(this).val();
+			$(this).parent().removeClass('hasError');
+			if (!val) {
+				isValid = false;
+				$(this).parent().addClass('hasError');
+				bee.ui.notifications.notify('err', $(this).attr('name') + ' is required.', true, function() {
+					$(window).scrollTop($(this).position().top);
+				});
+			}
+		});
+		return isValid;
+	};
+	
+	function saveTask(update) {
+		if (taskDataIsValid()) {
+			var taskData = $('#create_task').serialize();
+			bee.api.send(
+				(update) ? 'PUT' : 'POST',
+				(update) ? '/task/update/' + update : '/task/create',
+				taskData,
+				function(task) {
+					bee.ui.notifications.notify(
+						'success',
+						(update) ? 'Task Updated!' : 'Task Created!'
+					);
+					location.href = '/#!/tasks';
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		}
+	};
+	
 	// Event Listeners
 	$('#filter_tasks select').bind('change', function() {
 		location.href = '/#!/tasks?show=' + $(this).val();
+	});
+	
+	$('#newtask_project').bind('change', function() {
+		var projectId = $(this).val()
+		  , list = $('#newtask_assignee')
+		  , tmpl = $('#tmpl-assigneeForTask').html()
+		  , source = Handlebars.compile(tmpl);
+		list.html('<option value="null">Loading team...</option>');
+		if (projectId) {
+			bee.api.send(
+				'GET',
+				'/project/team/' + projectId,
+				{},
+				function(team) {
+					list.html(source(team));
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err, true);
+				}
+			);
+		} 
+		else {
+			list.html(source([]));
+		}
+	});
+	
+	$('#create_task').bind('submit', function(e) {
+		e.preventDefault();
+		var updateTask = _.querystring.get('taskId');
+		saveTask(updateTask || null);
 	});
 	
 })();

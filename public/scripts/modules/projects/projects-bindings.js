@@ -132,7 +132,7 @@
 					.html('Reopen');
 				}
 				var userid = _.cookies.get('userid');
-				console.log(project.owner._id)
+				
 				if (userid === project.owner._id) {
 					$('#projects_nav .leave_project').remove();
 				}

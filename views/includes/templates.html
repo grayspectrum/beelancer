@@ -270,3 +270,61 @@
 		</div>
 	</div>
 </script>
+
+<!-- Tasks List -->
+<script id="tmpl-tasks_list" type="text/x-handlebars-template">
+	<h3 class="light-gradient">
+		<span class="user">{{#if this.active}}Assigned To{{else}}Completed By{{/if}} You</span>
+	</h3>
+	{{#if this.tasks.assignedToMe.length}}
+		<ul>
+			{{#each this.tasks.assignedToMe}}
+				<li>
+					<a href="/#!/tasks?viewTask={{_id}}">
+						<strong>{{title}}</strong>
+					</a>
+				</li>
+			{{/each}}
+		</ul>
+	{{else}}
+		<p class="no_projects">No tasks are {{#if this.active}}assigned to{{else}}completed by{{/if}} you.</p>
+	{{/if}}
+	<h3 class="light-gradient">
+		<span class="users">{{#if this.active}}Assigned To{{else}}Completed By{{/if}} Others</span>
+	</h3>
+	{{#if this.tasks.assignedToOthers.length}}
+		<ul>
+			{{#each this.tasks.assignedToOthers}}
+				<li>
+					<a href="/#!/tasks?viewTask={{_id}}">
+						<strong>{{title}}</strong>
+					</a>
+				</li>
+			{{/each}}
+		</ul>
+	{{else}}
+		<p class="no_projects">No tasks are {{#if this.active}}assigned to{{else}}completed by{{/if}} others.</p>
+	{{/if}}
+</script>
+
+<!-- Task Project List -->
+<script id="tmpl-projectForTask" type="text/x-handlebars-template">
+	{{#if this.length}}
+		{{#each this}}
+			<option value="{{this._id}}">{{this.title}}</option>
+		{{/each}}
+	{{else}}
+		<option>No Projects</option>
+	{{/if}}
+</script>
+
+<!-- Assignee For Task -->
+<script id="tmpl-assigneeForTask" type="text/x-handlebars-template">
+	{{#if this.length}}
+		{{#each this}}
+			<option value="{{this.user}}">{{this.firstName}} {{this.lastName}}</option>
+		{{/each}}
+	{{else}}
+		<option>No Team Members</option>
+	{{/if}}
+</script>
