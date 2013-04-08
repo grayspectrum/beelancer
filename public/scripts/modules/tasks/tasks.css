@@ -63,3 +63,50 @@
 	cursor: pointer;
 	background: url('/assets/images/mono/black/doc_plus_icon&32.png') 12px center no-repeat #FFC60B;
 }
+
+#tasks_active ul,
+#tasks_closed ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+li.task a {
+	padding: 12px 24px;
+	margin: 3px 0;
+	display: block;
+	text-decoration: none;
+	border-radius: 6px;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+	font-size: 14px;
+	border: 1px solid transparent;
+}
+
+li.task a:hover {
+	background-color: #e2e2e2;
+	border: 1px solid #d2d2d2;
+	border-color: #d2d2d2;
+}
+
+li.task a em {
+	float: right;
+	font-size: 12px;
+	width: 204px;
+	padding: 2px;
+}
+
+li.task a em strong {
+	color: #002A38;
+}
+
+li.task a em img{
+	height: 18px;
+	width: 18px;
+	float: left;
+	margin-right: 8px;
+}
+
+li.task a em strong span {
+	
+}

@@ -144,19 +144,52 @@
 		$('#tasks_active_list').html(activeList);
 		$('#tasks_closed_list').html(closedList);
 		
-		var activePager = new bee.ui.Paginator(
-			$('#tasks_active .pagination'),
-			$('#tasks_active_list ul li'),
-			10
+		var mine = new bee.ui.Paginator(
+			$('.pagination.pag-task-mine'),
+			$('ul.task-mine li'),
+			5
 		);
-		activePager.init();
+		mine.init();
 		
-		var closedPager = new bee.ui.Paginator(
-			$('#tasks_closed .pagination'),
-			$('#tasks_closed_list ul li'),
-			10
+		var others = new bee.ui.Paginator(
+			$('.pagination.pag-task-others'),
+			$('ul.task-others li'),
+			5
 		);
-		closedPager.init();
+		others.init();
+		
+		// get owner/assignee profiles
+		var tasks = $('.task-mine li a, .task-others li a');
+		  
+		tasks.each(function(key, val) {
+			var owner = $(this).attr('data-owner')
+			  , assignee = $(this).attr('data-assignee')
+			  , task = $(this);
+			bee.api.send(
+				'GET',
+				'/profile/' + (owner || assignee),
+				{},
+				function(profile) {
+					$('.assignee_name, .owner_name', task).html(
+						avatar(profile.avatarPath) + 
+						'<span>' + profile.firstName + ' ' + profile.lastName + '</span>'
+					);
+				},
+				function(err) {
+					$('.assignee_name, .owner_name', task).html(err);
+				}
+			);
+		});
+	};
+	
+	function avatar(path, w, h) {
+		var img = $(document.createElement('img'));
+		img.attr('src', path);
+		img.attr('width', w || 20);
+		img.attr('height', h || 20);
+		img.addClass('avatar');
+		
+		return $('<div/>').append(img).html();
 	};
 	
 	function populateNewTaskProjectList() {
