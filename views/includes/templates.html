@@ -74,7 +74,7 @@
 				</div>
 			</div>
 			<div class="viewproject_stats">
-				This project has <a href="#!/team?projectId={{_id}}">{{members.length}} members</a> working on <a href="/#!/tasks?project={{_id}}">{{tasks.length}} tasks</a>.
+				This project has <a href="#!/team?projectId={{_id}}">{{members.length}} members</a> working on <a href="/#!/tasks?projectId={{_id}}">{{tasks.length}} tasks</a>.
 			</div>
 			<div class="float_wrap">
 				<div id="viewproject_team" class="half_list">
@@ -96,21 +96,12 @@
 				</div>
 				<div id="viewproject_tasks" class="half_list">
 					<h5 class="half-list-header">
-						Active Tasks
+						Open Tasks
 						<button class="btn-add" id="project_add_task">Add a Task</button>
 					</h5>
 					{{#if tasks.length}}
-						<ul class="rollout none">
-							{{#each tasks}}
-								{{#if this.isComplete}}
-								{{else}}
-									<a href="/#!/tasks?viewTask={{_id}}"
-									<li class="list-task" id="task-{{this._id}}">
-										<span class="task-list-title">{{this.title}}</span>
-										<span class="task-list-hours">{{this.hoursWorked}} hours.</span>
-									</li>
-								{{/if}}
-							{{/each}}
+						<ul id="project_tasks" class="rollout none">
+							<li>Loading tasks...</li>
 						</ul>
 					{{else}}
 						<p class="rollout none">There are no tasks attached to this project.</p>
@@ -119,6 +110,19 @@
 			</div>
 		</div>
 	</div>
+</script>
+
+<!-- Project Tasks List -->
+<script id="tmpl-project_tasks" type="text/x-handlebars-template">
+{{#if isComplete}}
+{{else}}
+	<li class="list-task" id="task-{{this._id}}">
+		<a href="/#!/tasks?viewTask={{_id}}">
+			<span class="task-list-title">{{title}}</span>
+			<span class="task-list-hours">{{hoursWorked}} hours tracked.</span>
+		</a>
+	</li>
+{{/if}}
 </script>
 
 <!-- Member List Item -->
@@ -263,10 +267,33 @@
 </script>
 
 <!-- Task Details -->
-<script id="tmpl-project_details" type="text/x-handlebars-template">
+<script id="tmpl-task_details" type="text/x-handlebars-template">
 	<div class="light-gradient center-pane animated fadeInUp">
 		<div id="task_details">
 			<h4 class="gold-gradient">{{title}}</h4>
+			<div class="hours-worked-clock">
+				<span class="time"></span>
+				<em>hours worked</em>
+			</div>
+			<div id="task-assigned-to"></div>
+			<div class="task-billed-at">
+				Billed at ${{rate}} {{#if isFixed}}(fixed){{else}}per hour{{/if}}
+			</div>
+			<div id="task_timer_controls"></div>
+			<h3 class="light-gradient">
+				<span class="worklog">Work Log</span>
+			</h3>
+			{{#if this.worklog.length}}
+				<ul class="work_log">
+					{{#each this.worklog}}
+						<li>
+							{{message}}
+						</li>
+					{{/each}}
+				</ul>
+			{{else}}
+				<p class="no_projects">This task has no work history yet.</p>
+			{{/if}}
 		</div>
 	</div>
 </script>

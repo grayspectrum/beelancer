@@ -172,3 +172,7 @@
 	background: url('/assets/images/mono/white/delete_icon&16.png') center center no-repeat #333;
 	border-radius: 6px;
 }
+
+#list_team #bee-ui_teamlist {
+	background: none;
+}

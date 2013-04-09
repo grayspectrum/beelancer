@@ -150,6 +150,7 @@
 				$('#project_view').html(view);
 				bindProjectActions();
 				loadTeamList();
+				loadTaskListByIds(project.tasks);
 				
 				if (bee.get('profile')._id !== project.owner.profile) {
 					$('.project_status, .edit_project, #project_add_team, #projects_nav .delete_project').remove();
@@ -176,6 +177,29 @@
 				bee.ui.notifications.notify('err', err);
 			}
 		);
+	};
+	
+	function loadTaskListByIds(taskIds) {
+		var source = $('#tmpl-project_tasks').html()
+		  , tmpl = Handlebars.compile(source)
+		  , target = $('#project_tasks')
+		  , loaded = false;
+		// get tasks and populate them
+		$.each(taskIds, function(key, val) {
+			bee.api.send(
+				'GET',
+				'/task/' + val,
+				{},
+				function(task) {
+					if (!loaded) target.html('');
+					target.append(tmpl(task));
+					loaded = true;
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
 	};
 	
 	function loadTeamList() {

@@ -81,6 +81,12 @@ li.task a {
 	text-shadow: 0 1px 0 #fff;
 	font-size: 14px;
 	border: 1px solid transparent;
+	overflow: hidden;
+}
+
+li.task a > strong {
+	width: 286px;
+	float: left;
 }
 
 li.task a:hover {

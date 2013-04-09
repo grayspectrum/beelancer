@@ -189,3 +189,24 @@
 	margin-bottom: 8px;
 	font-size: 14px;
 }
+
+.list-task a {
+	text-decoration: none !important;
+}
+
+.task-list-title {
+	display: block;
+	float: none !important;
+	margin-top: 0 !important;
+	font-size: 12px;
+}
+
+.task-list-hours {
+	display: block;
+	float: none !important;
+	font-size: 12px;
+	font-style: italic;
+	font-weight: normal !important;
+	padding-left: 22px;
+	background: url('/assets/images/mono/black/clock_icon&16.png') left center no-repeat;
+}

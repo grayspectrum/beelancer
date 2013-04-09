@@ -74,12 +74,31 @@
 	
 	// View Task
 	function view_task() {
+		bee.ui.loader.show();
 		$('#filter_tasks, .new_task').remove();
 		$('#task_view').show();
 		$('.center-pane').not('#tasks_view, #tasks_nav').remove();
 		
 		// retrieve task from api
-		var taskId = viewTask;
+		var taskId = viewTask
+		  , source = $('#tmpl-task_details').html()
+		  , tmpl = Handlebars.compile(source);
+		
+		bee.api.send(
+			'GET',
+			'/task/' + taskId,
+			{},
+			function(task) {
+				var view = tmpl(task);
+				// append view
+				$('#task_view').html(view);
+				bee.ui.loader.hide();
+			},
+			function(err) {
+				bee.ui.notifications.notify('err', err);
+				bee.ui.loader.hide();
+			}
+		);
 		
 		// make sure we give the user the right options
 		// for task status

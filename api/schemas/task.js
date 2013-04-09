@@ -22,5 +22,9 @@ module.exports = new Schema({
 	assignee : {
 		type : ObjectId,
 		ref : 'user'
-	}
+	},
+	worklog : [{
+		type : ObjectId,
+		ref : 'worklog'
+	}]
 });

@@ -87,6 +87,7 @@ module.exports = function(app, db) {
 					})
 					.populate('owner', 'profile')
 					.populate('assignee', 'profile')
+					.populate('worklog', 'started ended message')
 				.exec(function(err, task) {
 					if (err || !task) {
 						res.writeHead(500);
@@ -245,4 +246,19 @@ module.exports = function(app, db) {
 		});
 	});
 	
+	////
+	// POST - /api/task/start/:taskId
+	// Creates an open worklog entry for the task
+	////
+	app.post('/api/task/start/:taskId', function(req, res) {
+		
+	});
+	
+	////
+	// POST - /api/task/start/:taskId
+	// Creates an open worklog entry for the task
+	////
+	app.put('/api/task/stop/:taskId', function(req, res) {
+		
+	});
 };
