@@ -32,10 +32,13 @@ module.exports = function(app, db) {
 						var task = new db.task(body);
 						task.isBilled = false;
 						task.owner = user._id;
-						task.hoursWorked = 0;
 						task.isPaid = false;
 						task.isComplete = false;
-						if (task.assignee && project.members.indexOf(task.assignee) === -1) {
+						// make sure that there is an assignee
+						// they must be either a member of the project
+						// or the owner of the project
+						if (task.assignee && 
+						(project.members.indexOf(task.assignee) === -1) && (project.owner.toString() !== task.assignee.toString())) {
 							res.writeHead(400);
 							res.write('Assignee is not a member of this project.');
 							res.end();
@@ -145,7 +148,7 @@ module.exports = function(app, db) {
 	// Updates the task specified
 	////
 	app.put('/api/task/update/:taskId', function(req, res) {
-		utils.verifyUser(rew, db, function(err, user) {
+		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				db.task.findOne({
 					_id : req.params.taskId,
@@ -171,7 +174,7 @@ module.exports = function(app, db) {
 						// if user is owner
 						// ---
 						// isFixed, rate, title, assignee, isComplete
-						if (task.owner === user._id) {
+						if (task.owner.toString() === user._id.toString()) {
 							var allowed = [
 								'isFixed',
 								'rate',
@@ -185,7 +188,7 @@ module.exports = function(app, db) {
 						// if user is assignee
 						// ---
 						// hoursWorked, isComplete
-						if (task.assignee === user._id) {
+						if (task.assignee.toString() === user._id.toString()) {
 							var allowed = [
 								'hoursWorked',
 								'isComplete'
@@ -251,7 +254,55 @@ module.exports = function(app, db) {
 	// Creates an open worklog entry for the task
 	////
 	app.post('/api/task/start/:taskId', function(req, res) {
-		
+		utils.verifyUser(req, db, function(err, user) {
+			db.task
+				.findOne({
+					_id : req.params.taskId,
+					assignee : user._id
+				})
+			.populate('worklog')
+			.exec(function(err, task) {
+				if (!err) {
+					// worklog is still active
+					if (!task.worklog[task.worklog.length - 1].ended) {
+						res.writeHead(409); // conflict
+						res.write('Task must be stopped before starting again.');
+						res.end();
+					}
+					else {
+						var worklog = new db.worklog();
+						worklog.started = req.body.started || new Date();
+						worklog.user = task.assignee;
+						worklog.task = task._id;
+						worklog.save(function(err) {
+							if (!err) {
+								task.worklog.push(worklog._id);
+								task.save(function(err) {
+									if (!err) {
+										res.write(JSON.stringify(task));
+										res.end();
+									}
+									else {
+										res.writeHead(500);
+										res.write('Failed to save worklog to task.');
+										res.end();
+									}
+								});
+							}
+							else {
+								res.writeHead(500);
+								res.write('Failed to create worklog.');
+								res.end();
+							}
+						});
+					}
+				} else {
+					res.writeHead(404);
+					res.write('Could not find task or it is not assigned to you.');
+					res.end();
+				}
+			});
+		});
 	});
 	
 	////
@@ -259,6 +310,76 @@ module.exports = function(app, db) {
 	// Creates an open worklog entry for the task
 	////
 	app.put('/api/task/stop/:taskId', function(req, res) {
-		
+		utils.verifyUser(req, db, function(err, user) {
+			db.task
+				.findOne({
+					_id : req.params.taskId,
+					assignee : user._id
+				})
+			.populate('worklog')
+			.exec(function(err, task) {
+				if (!err && task) {
+					var worklog = task.worklog[task.worklog.length - 1];
+					if (worklog.ended) {
+						res.writeHead(409); // conflict
+						res.write('Task must be started before it can be stopped.');
+						res.end();
+					}
+					else {
+						worklog.ended = req.body.ended || new Date();
+						worklog.message = req.body.message;
+						worklog.save(function(err) {
+							if (!err) {
+								res.write(JSON.stringify(task));
+								res.end();
+							}
+							else {
+								res.writeHead(500);
+								res.write('Failed to update worklog.');
+								res.end();
+							}
+						});
+					}
+				} else {
+					res.writeHead(404);
+					res.write('Could not find task or it is not assigned to you.');
+					res.end();
+				}
+			});
+		});
 	});
+	
+	////
+	// PUT - /api/task/worklog
+	// Updates a worklog object
+	////
+	app.put('/api/task/worklog', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			db.worklog.findOne({
+				_id : req.body.worklogId,
+				assignee : user._id
+			}).exec(function(err, log) {
+				if (!err && log) {
+					log.set(req.body);
+					log.save(function(err) {
+						if (!err) {
+							res.write(JSON.stringify(log));
+							res.end();
+						}
+						else {
+							res.writeHead(500);
+							res.write('Failed to update worklog.');
+							res.end();
+						}
+					});
+				}
+				else {
+					res.writeHead(404);
+					res.write('Could not find log entry');
+					res.end();
+				}
+			});
+		});
+	});
+	
 };

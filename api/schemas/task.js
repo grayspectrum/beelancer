@@ -16,7 +16,6 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'user'
 	},
-	hoursWorked : Number,
 	isComplete : Boolean,
 	isPaid : Boolean,
 	assignee : {

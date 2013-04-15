@@ -49,6 +49,14 @@
 </script>
 
 <!-- Project Details -->
+<script id="tmpl-user" type="text/x-handlebars-template">
+	<a class="bee_user" href="/#!/team?viewProfile={{_id}}">
+		<img src="{{avatarPath}}" width="16px" height="16px" />
+		<strong>{{firstName}} {{lastName}}</strong>
+	</a>
+</script>
+
+<!-- Project Details -->
 <script id="tmpl-project_details" type="text/x-handlebars-template">
 	<div class="light-gradient center-pane animated fadeInUp">
 		<div id="project_details">
@@ -269,15 +277,14 @@
 <!-- Task Details -->
 <script id="tmpl-task_details" type="text/x-handlebars-template">
 	<div class="light-gradient center-pane animated fadeInUp">
-		<div id="task_details">
+		<div id="task_details" data-id="{{_id}}">
 			<h4 class="gold-gradient">{{title}}</h4>
 			<div class="hours-worked-clock">
-				<span class="time"></span>
-				<em>hours worked</em>
+				<strong>Hours worked:</strong> <span class="time"></span>
 			</div>
 			<div id="task-assigned-to"></div>
 			<div class="task-billed-at">
-				Billed at ${{rate}} {{#if isFixed}}(fixed){{else}}per hour{{/if}}
+				<strong>Billed at:</strong> ${{rate}} {{#if isFixed}}(fixed){{else}}per hour{{/if}}
 			</div>
 			<div id="task_timer_controls"></div>
 			<h3 class="light-gradient">
@@ -286,8 +293,13 @@
 			{{#if this.worklog.length}}
 				<ul class="work_log">
 					{{#each this.worklog}}
-						<li>
-							{{message}}
+						<li data-id="{{_id}}">
+							<strong>
+								<span class="wlog-started">{{started}}</span> to 
+								<span class="wlog-ended">{{ended}}</span>
+							</strong>
+							<p>{{message}}</p>
+							<button class="wlog edit">Edit Entry</button>
 						</li>
 					{{/each}}
 				</ul>
@@ -296,6 +308,21 @@
 			{{/if}}
 		</div>
 	</div>
+</script>
+
+<!-- Task Timer -->
+<script id="tmpl-task_timer" type="text/x-handlebars-template">
+	<!-- Compile With Last WorkLog Entry in worklog -->
+	{{#if ended}}
+		<strong>Status: </strong>Paused
+		<br />
+		<button class="timer start">Start Working</button>
+		<div class="divider">or</div>
+		<button class="timer entry">Add Entry</button>
+	{{else}}
+		<strong>Status: </strong>Timing
+		<button class="timer stop">Stop Working</button>
+	{{/if}}	
 </script>
 
 <!-- Tasks List -->

@@ -30,5 +30,8 @@
 	"analyze": false,
 	"engines": {
 		"node": ">=0.8"
-	}
+	},
+	"bin": {
+	    "bee": "./bee.js"
+	  }
 }
