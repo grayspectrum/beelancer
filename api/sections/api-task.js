@@ -264,7 +264,7 @@ module.exports = function(app, db) {
 			.exec(function(err, task) {
 				if (!err) {
 					// worklog is still active
-					if (!task.worklog[task.worklog.length - 1].ended) {
+					if (task.worklog.length !== 0 && (!task.worklog[task.worklog.length - 1].ended)) {
 						res.writeHead(409); // conflict
 						res.write('Task must be stopped before starting again.');
 						res.end();

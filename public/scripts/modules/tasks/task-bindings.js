@@ -142,6 +142,8 @@
 				if (!(task.owner.profile === bee.get('profile')._id)) {
 					$('.edit_task, .delete_task').remove();
 				}
+				
+				bindTaskWorkLogEditor();
 			},
 			function(err) {
 				bee.ui.notifications.notify('err', err);
@@ -368,5 +370,13 @@
 		var updateTask = _.querystring.get('taskId');
 		saveTask(updateTask || null);
 	});
+	
+	function bindTaskWorkLogEditor() {
+		$('#task_details .timer.entry').bind('click', function() {
+			var taskId = $('#task_details').attr('data-id')
+			  , logEntry = new bee.ui.WorkLogEditor();
+			logEntry.renderFor(taskId);
+		});
+	};
 	
 })();

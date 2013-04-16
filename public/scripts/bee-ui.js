@@ -301,6 +301,112 @@ bee.ui = (function() {
 	};
 	
 	////
+	// Worklog Widget
+	////
+	var WorkLogEditor = (function() {
+		
+		var worklog = function(entry) {
+			this.data = entry || {};
+			this.ui = Handlebars.compile(
+				$('#tmpl-add_worklog_entry').html()
+			)(this.data);
+		};
+		
+		worklog.prototype.renderFor = function(taskId) {
+			$('body').append(this.ui);
+			
+			var ui = $(this.ui)
+			  , log = this;
+			// bind events
+			var form = $('#bee-ui_add_worklog_entry > form')
+			  , updateExisting = !(!form.attr('data-id'));
+			
+			form.parent().bind('click', function() {
+				log.destroy();
+			});
+			form.bind('click', function(event) {
+				event.stopPropagation();
+			});
+			
+			$('#wlog_startTime, #wlog_endTime', form).datetimepicker({
+				timeFormat: "hh:mm tt"
+			});
+			
+			form.bind('submit', function(event) {
+				var data = {
+					worklogId : form.attr('data-id'),
+					started : $('#wlog_startTime', form).val(),
+					ended : $('#wlog_endTime', form).val(),
+					message : $('#wlog_message', form).val()
+				};
+				event.preventDefault();
+				if (updateExisting && log.isValid(data)) {
+					bee.ui.loader.show();
+					bee.api.send(
+						'PUT',
+						'/task/worklog',
+						data,
+						function(success) {
+							bee.ui.loader.hide();
+							if (callback) {
+								callback.call(log, success);
+							}
+						},
+						function(err) {
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('err', err);
+						}
+					);
+				}
+				else if (log.isValid(data) && taskId) {
+					bee.ui.loader.show();
+					// start task
+					bee.api.send('POST', '/task/start/' + taskId, data, function(success) {
+						// stop task
+						bee.api.send('PUT', '/task/stop/' + taskId, data, function(success) {
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('success', 'Entry Saved!');
+							log.destroy();
+							$(window).trigger('hashchange')
+						}, function(err) {
+							log.destroy();
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('err', err);
+						});
+					}, function(err) {
+						log.destroy();
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					});
+				}
+				else {
+					
+				}
+				
+			});
+			return this;
+		};
+		
+		worklog.prototype.destroy = function() {
+			$('#bee-ui_add_worklog_entry').remove();
+			return this;
+		};
+		
+		worklog.prototype.isValid = function() {
+			var start = $('#wlog_startTime').val()
+			  , end = $('#wlog_endTime').val();
+			try {
+				var datesAreValid = ((new Date(start)).getTime() < (new Date(end)).getTime());
+			} catch(e) {
+				var datesAreValid = false;
+			}
+			return (start && end && datesAreValid);
+		};
+		
+		return worklog;
+	})();
+	
+	////
 	// TeamList Widget
 	////
 	var TeamList = (function() {
@@ -458,7 +564,8 @@ bee.ui = (function() {
 		help : help,
 		confirm : confirm,
 		Paginator : Paginator,
-		TeamList : TeamList
+		TeamList : TeamList,
+		WorkLogEditor : WorkLogEditor
 	};
 })();
 

@@ -20,6 +20,27 @@
 	</div>
 </script>
 
+<!-- Worklog Add/Edit Entry -->
+<script id="tmpl-add_worklog_entry" type="text/x-handlebars-template">
+	<div id="bee-ui_add_worklog_entry">
+		<form data-id="{{_id}}" class="light-gradient popup animated fadeInUp">
+			<label for="wlog_startTime">
+				<strong>Started:</strong>
+				<input type="text" name="started" value="{{log.started}}" id="wlog_startTime" />
+			</label>
+			<label for="wlog_endTime">
+				<strong>Ended:</strong>
+				<input type="text" name="ended" value="{{log.ended}}" id="wlog_endTime" />
+			</label>
+			<label for="wlog_message">
+				<strong>Notes:</strong>
+				<textarea id="wlog_message" name="message">{{message}}</textarea>
+			</label>
+			<input type="submit" id="save_worklog" value="Save Worklog Entry" />
+		</form>
+	</div>
+</script>
+
 <!-- Projects List -->
 <script id="tmpl-projects_list" type="text/x-handlebars-template">
 	{{#if this.length}}
