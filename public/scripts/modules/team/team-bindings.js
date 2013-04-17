@@ -98,7 +98,6 @@
 					});
 				} else {
 					findProfileByName(text, function(err, profiles) {
-							console.log(err)
 						if (err) {
 						//	bee.ui.notifications.notify('err', err);
 						} else {

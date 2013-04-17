@@ -819,13 +819,3 @@ p.no_projects {
 .user_showcase a:hover {
 	background: url('/assets/images/mono/black/export_icon&32.png') center center no-repeat;
 }
-
-#bee-ui_add_worklog_entry {
-	z-index: 997;
-	position: fixed;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(0,0,0,0.4);
-}

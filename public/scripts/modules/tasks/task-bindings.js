@@ -101,7 +101,7 @@
 		var hours = time / (1000 * 60 * 60)
 		  , minutes = (time % (1000 * 60 * 60)) / (1000 * 60)
 		  , seconds =  ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
-		parsedTime = hours + ' hours ' + minutes + ' minutes';
+		parsedTime = hours.toFixed() + ' hours ' + minutes.toFixed() + ' minutes';
 		return parsedTime;
 	};
 	
@@ -130,7 +130,7 @@
 				var timerCtr = $('#task_timer_controls')
 				  , timerSrc = $('#tmpl-task_timer').html()
 				  , timerTmpl = Handlebars.compile(timerSrc)
-				  , timerView = timerTmpl((log.length) ? log[log.length - 1] : { ended : true });
+				  , timerView = timerTmpl((log.length) ? log[0] : { ended : true });
 				timerCtr.html(timerView);
 				$('.hours-worked-clock .time').html(getTimeWorked(task.worklog));
 				// update nav url
@@ -142,8 +142,16 @@
 				if (!(task.owner.profile === bee.get('profile')._id)) {
 					$('.edit_task, .delete_task').remove();
 				}
-				
 				bindTaskWorkLogEditor();
+				bindTimerControls();
+				
+				// init pager for worklog
+				var logPager = new bee.ui.Paginator(
+					$('#task_details .pagination'),
+					$('#task_details ul.work_log li'),
+					5
+				);
+				logPager.init();
 			},
 			function(err) {
 				bee.ui.notifications.notify('err', err);
@@ -328,6 +336,34 @@
 		}
 	};
 	
+	function bindTimerControls() {
+		$('#task_timer_controls .start').bind('click', function() {
+			bee.ui.loader.show();
+			// start timer
+			var taskId = $('#task_details').attr('data-id');
+			bee.api.send('POST', '/task/start/' + taskId, {}, function(success) {
+				bee.ui.notifications.notify('info', 'Task Started');
+				view_task();
+			}, function(err) {
+				bee.ui.notifications.notify('err', err);
+				bee.ui.loader.hide();
+			});
+		});
+		
+		$('#task_timer_controls .stop').bind('click', function() {
+			bee.ui.loader.show();
+			// collect message and stop timer
+			var taskId = $('#task_details').attr('data-id');
+			bee.api.send('PUT', '/task/stop/' + taskId, {}, function(success) {
+				bee.ui.notifications.notify('info', 'Task Stopped');
+				view_task();
+			}, function(err) {
+				bee.ui.notifications.notify('err', err);
+				bee.ui.loader.hide();
+			});
+		});
+	};
+	
 	// Event Listeners
 	$('#filter_tasks select').bind('change', function() {
 		location.href = '/#!/tasks?show=' + $(this).val();
@@ -355,14 +391,6 @@
 		else {
 			list.html(source([]));
 		}
-	});
-	
-	$('#task_timer_controls .start').bind('click', function() {
-		// start timer
-	});
-	
-	$('#task_timer_controls .stop').bind('click', function() {
-		// collect message and stop timer
 	});
 	
 	$('#create_task').bind('submit', function(e) {

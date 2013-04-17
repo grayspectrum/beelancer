@@ -97,6 +97,10 @@ module.exports = function(app, db) {
 						res.write('Cannot view this task.');
 						res.end();
 					} else {
+						// send back worklog from latest to oldest
+						if (task.worklog && task.worklog.length) {
+							task.worklog.reverse();
+						}
 						res.write(JSON.stringify(task));
 						res.end();
 					}
