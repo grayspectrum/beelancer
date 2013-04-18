@@ -317,14 +317,17 @@
 			{{#if this.worklog.length}}
 				<ul class="work_log">
 					{{#each this.worklog}}
-						<li data-id="{{_id}}">
-							<strong>
-								<span class="wlog-started">{{started}}</span> to 
-								<span class="wlog-ended">{{ended}}</span>
-							</strong>
-							<p>{{message}}</p>
-							<button class="wlog edit">Edit Entry</button>
-						</li>
+						{{#if ended}}
+							<li data-id="{{_id}}">
+								<strong class="wlog-time">
+									<span class="wlog-started">{{started}}</span>
+									<span class="wlog-ended">{{ended}}</span>
+									<span class="wlog-hours"></span> on <span class="wlog-day"></span>
+								</strong>
+								<p>{{message}}</p>
+								<button class="wlog edit">Edit Entry</button>
+							</li>
+						{{/if}}
 					{{/each}}
 				</ul>
 				<div class="pagination">

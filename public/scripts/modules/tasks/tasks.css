@@ -149,3 +149,7 @@ li.task a em strong span {
 	background: #ffc60b;
 	cursor: pointer;
 }
+
+.wlog-time, .wlog-ended, .wlog-started {
+	display: none;
+}

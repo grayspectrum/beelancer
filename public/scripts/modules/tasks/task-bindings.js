@@ -105,6 +105,16 @@
 		return parsedTime;
 	};
 	
+	function timeBetween(startDate, endDate) {
+		var time = (endDate.getTime() - startDate.getTime());
+		
+		var hours = time / (1000 * 60 * 60)
+		  , minutes = (time % (1000 * 60 * 60)) / (1000 * 60)
+		  , seconds =  ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000
+		  , parsedTime = hours.toFixed() + ' hours ' + minutes.toFixed() + ' minutes';
+		return parsedTime;
+	};
+	
 	// View Task
 	function view_task() {
 		bee.ui.loader.show();
@@ -144,6 +154,7 @@
 				}
 				bindTaskWorkLogEditor();
 				bindTimerControls();
+				updateWorklogListView();
 				
 				// init pager for worklog
 				var logPager = new bee.ui.Paginator(
@@ -158,6 +169,27 @@
 				bee.ui.loader.hide();
 			}
 		);
+		
+		// convert json date strings to human readable
+		function updateWorklogListView() {
+			var worklogs = $('.work_log li');
+			// iterate over all the logs
+			worklogs.each(function() {
+				var log = this
+				  , time = $('.wlog-hours', log)
+				  , day = $('.wlog-day', log)
+				  , startedD = $('.wlog-started', log).html()
+				  , endedD = $('.wlog-ended', log).html();
+				
+				// set day
+				day.html(new Date(endedD).toDateString())
+				time.html(timeBetween(
+					new Date(startedD),
+					new Date(endedD)
+				)).show();
+				$('.wlog-time', log).show();
+			});
+		};
 		
 		// make sure we give the user the right options
 		// for task status
