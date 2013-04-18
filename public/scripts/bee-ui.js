@@ -312,7 +312,7 @@ bee.ui = (function() {
 			)(this.data);
 		};
 		
-		worklog.prototype.renderFor = function(taskId) {
+		worklog.prototype.renderFor = function(taskId, callback) {
 			$('body').append(this.ui);
 			
 			var ui = $(this.ui)
@@ -344,7 +344,7 @@ bee.ui = (function() {
 					bee.ui.loader.show();
 					bee.api.send(
 						'PUT',
-						'/task/worklog',
+						'/task/worklog/' + data.worklogId,
 						data,
 						function(success) {
 							bee.ui.loader.hide();
@@ -380,7 +380,7 @@ bee.ui = (function() {
 					});
 				}
 				else {
-					
+					console.log('oops')
 				}
 				
 			});

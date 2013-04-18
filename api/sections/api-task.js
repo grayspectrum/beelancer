@@ -266,7 +266,7 @@ module.exports = function(app, db) {
 				})
 			.populate('worklog')
 			.exec(function(err, task) {
-				if (!err) {
+				if (!err && task) {
 					// worklog is still active
 					if (task.worklog.length !== 0 && (!task.worklog[task.worklog.length - 1].ended)) {
 						res.writeHead(409); // conflict
@@ -357,11 +357,11 @@ module.exports = function(app, db) {
 	// PUT - /api/task/worklog
 	// Updates a worklog object
 	////
-	app.put('/api/task/worklog', function(req, res) {
+	app.put('/api/task/worklog/:worklogId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			db.worklog.findOne({
-				_id : req.body.worklogId,
-				assignee : user._id
+				_id : req.params.worklogId,
+				user : user._id
 			}).exec(function(err, log) {
 				if (!err && log) {
 					log.set(req.body);
@@ -373,6 +373,41 @@ module.exports = function(app, db) {
 						else {
 							res.writeHead(500);
 							res.write('Failed to update worklog.');
+							res.end();
+						}
+					});
+				}
+				else {
+					res.writeHead(404);
+					res.write('Could not find log entry');
+					res.end();
+				}
+			});
+		});
+	});
+	
+	////
+	// DELETE - /api/task/worklog
+	// Deletes a worklog object
+	////
+	app.del('/api/task/worklog/:worklogId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			db.worklog.findOne({
+				_id : req.params.worklogId,
+				user : user._id
+			})
+			.populate('task').exec(function(err, log) {
+				if (!err && log) {
+					log.task.worklog.splice(log.task.worklog.indexOf(log._id), 1);
+					log.task.save(function(err) {
+						if (!err) {
+							log.remove();
+							res.write(JSON.stringify(log));
+							res.end();
+						}
+						else {
+							res.writeHead(500);
+							res.write('Failed to delete worklog.');
 							res.end();
 						}
 					});

@@ -437,6 +437,52 @@
 			  , logEntry = new bee.ui.WorkLogEditor();
 			logEntry.renderFor(taskId);
 		});
+		$('.wlog.edit').bind('click', function() {
+			var taskId = $('#task_details').attr('data-id')
+			  , logEntry
+			  , prev = $(this).prev().prev()
+			  , start = $('.wlog-started', prev).html()
+			  , ended = $('.wlog-ended', prev).html()
+			  , message = $(this).next().html()
+			  , worklogId = $(this).parent().attr('data-id')
+			  , data;
+			  
+			data = {
+				_id : worklogId,
+				started : start,
+				ended : ended,
+				message : message
+			};
+			logEntry = new bee.ui.WorkLogEditor(data);
+			logEntry.renderFor(taskId, function() {
+				logEntry.destroy();
+				$(window).trigger('hashchange');
+			});
+			$('#wlog_startTime').val(new Date(start).toLocaleDateString() + ' ' + new Date(start).toLocaleTimeString());
+			$('#wlog_endTime').val(new Date(ended).toLocaleDateString() + ' ' + new Date(ended).toLocaleTimeString());
+			$('#wlog_message').val(message);
+		});
+		$('.wlog.delete').bind('click', function() {
+			var worklogId = $(this).parent().attr('data-id')
+			  , logUI = $(this).parent();
+			bee.ui.confirm('Are you sure you want to delete this log entry?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'DELETE',
+					'/task/worklog/' + worklogId,
+					{},
+					function(success) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('success','Log entry deleted!');
+						$(window).trigger('hashchange');
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		});
 	};
 	
 })();

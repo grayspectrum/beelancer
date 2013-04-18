@@ -73,10 +73,10 @@ bee.utils = (function() {
 	};
 	
 	function stdTime(fourDigitTime) {
-	    var hours24 = parseInt(fourDigitTime.substring(0, 2),10);
-	    var hours = ((hours24 + 11) % 12) + 1;
-	    var amPm = hours24 > 11 ? 'pm' : 'am';
-	    var minutes = fourDigitTime.substring(2);
+	    var hours24 = parseInt(fourDigitTime.substring(0, 2),10)
+		  , hours = ((hours24 + 11) % 12) + 1
+		  , amPm = hours24 > 11 ? 'pm' : 'am'
+		  , minutes = fourDigitTime.substring(2);
 	
 	    return hours + ':' + minutes + amPm;
 	};
