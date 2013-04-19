@@ -34,6 +34,7 @@ module.exports = function(app, db) {
 						task.owner = user._id;
 						task.isPaid = false;
 						task.isComplete = false;
+						task.project = projectId;
 						// make sure that there is an assignee
 						// they must be either a member of the project
 						// or the owner of the project
@@ -232,12 +233,18 @@ module.exports = function(app, db) {
 					_id : req.params.taskId,
 					owner : user._id
 				})
+			.populate('project')
 			.exec(function(err, task) {
 				if (!err) {
 					task.remove(function(err) {
 						if (!err) {
 							res.write('Task deleted.');
 							res.end();
+							// remove from project
+							task.project.tasks.splice(
+								task.project.tasks.indexOf(task._id), 1
+							);
+							task.project.save();
 						} else {
 							res.writeHead(500);
 							res.write('Could not delete task.');
@@ -246,7 +253,7 @@ module.exports = function(app, db) {
 					});
 				} else {
 					res.writeHead(404);
-					res.write('Could not find task.');
+					res.write('Could not find task or you are not the owner.');
 					res.end();
 				}
 			});

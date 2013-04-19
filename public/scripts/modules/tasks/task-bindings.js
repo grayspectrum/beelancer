@@ -101,7 +101,7 @@
 		var hours = time / (1000 * 60 * 60)
 		  , minutes = (time % (1000 * 60 * 60)) / (1000 * 60)
 		  , seconds =  ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
-		parsedTime = hours.toFixed() + ' hours ' + minutes.toFixed() + ' minutes';
+		parsedTime = hours.toFixed() + '<em>h</em> : ' + minutes.toFixed() + '<em>m</em>';
 		return parsedTime;
 	};
 	
@@ -155,7 +155,7 @@
 				bindTaskWorkLogEditor();
 				bindTimerControls();
 				updateWorklogListView();
-				
+
 				// init pager for worklog
 				var logPager = new bee.ui.Paginator(
 					$('#task_details .pagination'),
@@ -429,6 +429,25 @@
 		e.preventDefault();
 		var updateTask = _.querystring.get('taskId');
 		saveTask(updateTask || null);
+	});
+	
+	$('#tasks_nav .delete_task').bind('click', function() {
+		bee.ui.confirm('Are you sure you want to delete this task?', function() {
+			bee.ui.loader.show();
+			bee.api.send(
+				'DELETE',
+				'/task/' + $('#task_details').attr('data-id'),
+				{},
+				function(success) {
+					location.href = '/#!/tasks';
+					bee.ui.notifications.notify('success', 'Task Deleted!');
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
 	});
 	
 	function bindTaskWorkLogEditor() {

@@ -303,16 +303,20 @@
 	<div class="light-gradient center-pane animated fadeInUp">
 		<div id="task_details" data-id="{{_id}}">
 			<h4 class="gold-gradient">{{title}}</h4>
-			<div class="hours-worked-clock">
-				<strong>Hours worked:</strong> <span class="time"></span>
+			<div class="float_wrap">
+				<div class="hours-worked-clock">
+					<strong class="light-gradient">Time Worked:</strong> <span class="time"></span>
+				</div>
+				<div id="task-assigned-to"></div>
+				<div class="task-billed-at">
+					<strong class="light-gradient">Billed Rate:</strong> 
+					<span class="rate">${{rate}}</span>
+					<em class="rate-type">{{#if isFixed}}(fixed){{else}}per hour{{/if}}</em>
+				</div>
+				<div id="task_timer_controls"></div>
 			</div>
-			<div id="task-assigned-to"></div>
-			<div class="task-billed-at">
-				<strong>Billed at:</strong> ${{rate}} {{#if isFixed}}(fixed){{else}}per hour{{/if}}
-			</div>
-			<div id="task_timer_controls"></div>
 			<h3 class="light-gradient">
-				<span class="worklog">Work Log</span>
+				<span class="worklog">Work Log<button class="timer entry">Add Entry</button></span>
 			</h3>
 			{{#if this.worklog.length}}
 				<ul class="work_log">
@@ -349,13 +353,12 @@
 <script id="tmpl-task_timer" type="text/x-handlebars-template">
 	<!-- Compile With Last WorkLog Entry in worklog -->
 	{{#if ended}}
-		<strong>Status: </strong>Paused
-		<br />
+		<strong class="light-gradient">Status: </strong>
+		<span class="status">Paused</span>
 		<button class="timer start">Start Working</button>
-		<div class="divider">or</div>
-		<button class="timer entry">Add Entry</button>
 	{{else}}
-		<strong>Status: </strong>Timing
+		<strong>Status: </strong>
+		<span class="status">Timing</span>
 		<button class="timer stop">Stop Working</button>
 	{{/if}}	
 </script>

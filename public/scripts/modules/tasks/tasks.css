@@ -219,3 +219,103 @@ button.wlog.delete {
 	cursor: pointer;
 	opacity: 1;
 }
+
+.hours-worked-clock,
+.task-billed-at,
+#task_timer_controls {
+	float: left;
+	width: 164px;
+	margin: 0 8px;
+	border-radius: 6px;
+	height: 100px;
+	border: 1px solid #ededed;
+	background: #f6f6f6;
+	text-align: center;
+}
+
+.hours-worked-clock strong,
+.task-billed-at strong,
+#task_timer_controls strong {
+	color: #555;
+	padding: 4px 0;
+	text-shadow: 0 1px 0 #fff;
+	font-size: 14px;
+	display: block;
+	text-align: center;
+	border-radius: 6px 6px 0 0;
+	border: 1px solid #ededed;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.time {
+	font-family: Digital7;
+	display: block;
+	text-align: center;
+	font-size: 38px;
+	margin-top: 16px;
+}
+
+.time em {
+	font-size: 20px;
+	font-style: normal;
+}
+
+.timer.entry {
+	float: right;
+}
+
+.rate {
+	display: block;
+	text-align: center;
+	margin: 8px 0 0 0;
+	font-size: 24px;
+	color: green;
+}
+
+.rate-type {
+	display: block;
+	text-align: center;
+	text-transform: uppercase;
+	font-style: normal;
+	font-size: 10px;
+	padding: 3px 8px;
+	border-radius: 4px;
+	background-color: rgba(0,100,0,0.7);
+	width: 68px;
+	margin: auto;
+	font-weight: bold;
+	color: #fff;
+}
+
+button.timer {
+	border: 1px solid #d2d2d2;
+	border-radius: 3px;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	padding: 4px 8px 4px 32px;
+}
+
+button.timer.start {
+	background: url('/assets/images/mono/black/playback_play_icon&16.png') 8px center no-repeat #e9e9e9;
+}
+
+button.timer.stop {
+	background: url('/assets/images/mono/black/playback_pause_icon&16.png') 8px center no-repeat #e9e9e9;
+}
+
+button.timer.entry {
+	background: url('/assets/images/mono/black/doc_plus_icon&16.png') 8px center no-repeat #e9e9e9;
+	position: relative;
+	top: -4px;
+}
+
+button.timer:hover {
+	background-color: #fff;
+	cursor: pointer;
+}
+
+.status {
+	display: block;
+	margin: 8px;
+	font-size: 14px;
+	font-style: italic;
+}
