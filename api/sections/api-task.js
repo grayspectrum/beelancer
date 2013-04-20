@@ -35,6 +35,7 @@ module.exports = function(app, db) {
 						task.isPaid = false;
 						task.isComplete = false;
 						task.project = projectId;
+						task.projectOwner = project.owner
 						// make sure that there is an assignee
 						// they must be either a member of the project
 						// or the owner of the project
@@ -86,7 +87,8 @@ module.exports = function(app, db) {
 						_id : req.params.taskId,
 						$or : [ 
 							{ owner : user._id }, 
-							{ assignee : user._id }
+							{ assignee : user._id },
+							{ projectOwner : user._id }
 						]
 					})
 					.populate('owner', 'profile')
@@ -240,7 +242,6 @@ module.exports = function(app, db) {
 				if (!err) {
 					task.remove(function(err) {
 						if (!err) {
-							res.write('Task deleted.');
 							res.end();
 							// remove from project
 							task.project.tasks.splice(

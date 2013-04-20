@@ -26,8 +26,8 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'worklog'
 	}],
-	project : [{
+	project : {
 		type : ObjectId,
 		ref : 'project'
-	}]
+	}
 });

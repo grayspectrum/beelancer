@@ -446,6 +446,7 @@
 					bee.ui.notifications.notify('success', 'Task Deleted!');
 				},
 				function(err) {
+					console.log(err)
 					bee.ui.loader.hide();
 					bee.ui.notifications.notify('err', err);
 				}
