@@ -146,6 +146,9 @@
 				// update nav url
 				var base_url = $('#tasks_nav .edit_task').attr('href');
 				$('#tasks_nav .edit_task').attr('href', base_url + task._id);
+				$('#tasks_nav .task_status').addClass(
+					(task.isComplete) ? 'reopen_task' : 'close_task'
+				).css({ display : 'block' }).html((task.isComplete) ? 'Reopen Task' : 'Complete Task');
 				bee.ui.loader.hide();
 				
 				// don't show edit option to non-owner
@@ -441,6 +444,28 @@
 				function(success) {
 					location.href = '/#!/tasks';
 					bee.ui.notifications.notify('success', 'Task Deleted!');
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
+	});
+	
+	$('#tasks_nav .task_status').bind('click', function() {
+		var isComplete = $(this).hasClass('close_task');
+		bee.ui.confirm(((isComplete) ? ' Complete' : 'Reopen') + ' this task?', function() {
+			bee.api.send(
+				'PUT',
+				'/task/update/' + $('#task_details').attr('data-id'),
+				(isComplete) ? {
+					isComplete : isComplete
+				} : { },
+				function(success) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('success', (isComplete) ? 'Task completed!' : 'Task reopened!');
+					$(window).trigger('hashchange');
 				},
 				function(err) {
 					bee.ui.loader.hide();

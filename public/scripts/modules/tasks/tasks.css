@@ -319,3 +319,7 @@ button.timer:hover {
 	font-size: 14px;
 	font-style: italic;
 }
+
+#tasks_nav .task_status {
+	display: none;
+}

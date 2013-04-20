@@ -171,7 +171,7 @@ module.exports = function(app, db) {
 						function updateAllowed(task, allowed) {
 							for (var prop = 0; prop < allowed.length; prop++) {
 								if (req.body[allowed[prop]]) {
-									task[allowed[prop]] = req.body[allowed[prop]];
+									task[allowed[prop]] = req.body[allowed[prop]] || false;
 								}
 							}
 						};
@@ -201,6 +201,8 @@ module.exports = function(app, db) {
 							updateAllowed(task, allowed);
 						}
 						
+						task.isComplete = (req.body.isComplete) ? true : false;
+										
 						task.save(function(err) {
 							if (!err) {
 								res.write(JSON.stringify(task));
