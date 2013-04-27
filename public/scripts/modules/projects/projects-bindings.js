@@ -45,7 +45,7 @@
 	function new_project() {
 		$('#projects_create').show();
 		$('#projects_active, #projects_closed, #projects_nav, #project_view').remove();
-		$('#newproject_deadline').datepicker();
+		$('#newproject_deadline').datepicker({minDate : new Date()});
 	};
 	
 	////
