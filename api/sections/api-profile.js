@@ -171,8 +171,7 @@ module.exports = function(app, db) {
 			} else {
 				var body = req.body;
 				db.profile
-				.find({ _id : user.profile._id })
-				.exec(function(err, profile) {
+				.findOne({ _id : user.profile._id }, function(err, profile){
 					if (err || !profile) {
 						res.writeHead(404);
 						res.write('Could not locate profile.');
@@ -186,6 +185,7 @@ module.exports = function(app, db) {
 									res.write('The profile could not be updated.');
 									res.end();
 								} else {
+									console.log(profile);
 									res.write(JSON.stringify(profile));
 									res.end();
 								}
