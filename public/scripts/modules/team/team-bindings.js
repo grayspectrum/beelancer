@@ -85,11 +85,12 @@
 		var search_input = $('#team_search');
 		
 		function doSearch(event) {
-			var text = $(this).val();
-			if (text) {
+			var text = $(this).val()
+			  , key = event.which;
+
+			if (text && ((text.length % 4 === 0) || key === 13)) {	// run this on every fourth key stroke
 				if (_.validate.email(text)) {
 					findProfileByEmail(text, function(err, profile) {
-						console.log(err)
 						if (err) {
 						//	bee.ui.notifications.notify('err', err);
 						} else {
@@ -105,6 +106,11 @@
 						}
 					});
 				}
+			} else {
+				// clear out results when empty
+				if(text.length === 0){
+					$('#search_results').html('');
+				}
 			}
 		};
 		
@@ -113,7 +119,7 @@
 			$('#search_results').html(resultUi);
 		};
 		
-		search_input.bind('keyup', doSearch);
+		search_input.bind('keypress', doSearch);
 		
 		// load search
 		bee.ui.loader.hide();

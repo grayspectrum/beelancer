@@ -288,16 +288,16 @@ module.exports = function(app, db) {
     	utils.verifyUser(req, db, function(err, user) {
     		var privacy = (user) ? 1 : 0
     		  , text = {
-    		  		firstName : req.params.text.split(' ')[0],
-    		  		lastName : req.params.text.split(' ')[1],
+    		  		firstName : (req.params.text.indexOf(' ') > 0) ? req.params.text.split(' ')[0] : req.params.text,
+    		  		lastName : (req.params.text.indexOf(' ') > 0) ? req.params.text.split(' ')[1] : '',
     		  		company : req.params.text
     		  };
     		  
     		db.profile.find({
     			$or : [
 	    			{ 
-	    				firstName : new RegExp('^' + text.firstName + '$', 'i'),
-	    				lastName : new RegExp('^' + text.lastName + '$', 'i')
+	    				firstName : new RegExp(text.firstName, 'i'),
+	    				lastName : new RegExp(text.lastName, 'i')
 	    			},
 	    			{ company : new RegExp('^' + text.company + '$', 'i') }
     			]
