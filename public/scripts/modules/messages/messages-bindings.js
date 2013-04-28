@@ -22,7 +22,7 @@
 	// Compose New Message or Reply
 	////
 	function showComposePanel(isReply) {
-		$('#messages_nav, #messages_inbox, #messages_sent, #message_view').remove();
+		$('#messages_nav, #messages_inbox, #messages_sent').remove();
 		
 		if (isReply) {
 			bee.api.send(
@@ -32,6 +32,7 @@
 				function(res) {
 					$('#newmessage_to').attr('disabled', 'disabled').val(res.firstName + ' ' + res.lastName);
 					$('#newmessage_to').next('input[name="to"]').val(res._id);
+					showViewMessage();
 					bee.ui.loader.hide();
 				},
 				function(err) {
@@ -54,7 +55,10 @@
 	// View Message
 	////
 	function showViewMessage() {
-		$('#messages_nav .new_message, #filter_messages, #messages_inbox, #messages_sent, #message_compose').remove();
+		$('#messages_nav .new_message, #filter_messages, #messages_inbox, #messages_sent').remove();
+		if(!isReply){	// don't remove this if this is a reply
+			$('#message_compose').remove();
+		}
 		
 		bee.api.send(
 			'GET',
@@ -62,7 +66,9 @@
 			{},
 			function(res) {
 				res.sentOn = new Date(res.sentOn).toDateString();
-				$('#messages_nav .reply')[0].href += res.from._id;
+				if(!isReply){	// nav isn't displayed if this is a reply
+					$('#messages_nav .reply')[0].href += res.from._id + '&viewMessage=' + viewMessage;
+				}
 				var tmpl = Handlebars.compile($('#tmpl-message_view').html())(res);
 				$('#message_view').html(tmpl);
 				if (res.isSent) {
