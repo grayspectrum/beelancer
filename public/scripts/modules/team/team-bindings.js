@@ -88,7 +88,7 @@
 			var text = $(this).val()
 			  , key = event.which;
 
-			if (text && ((text.length % 4 === 0) || key === 13)) {	// run this on every fourth key stroke
+			if (text && ((text.length % 3 === 0) || key === 13)) {	// run this on every fourth key stroke
 				if (_.validate.email(text)) {
 					findProfileByEmail(text, function(err, profile) {
 						if (err) {
@@ -106,11 +106,6 @@
 						}
 					});
 				}
-			} else {
-				// clear out results when empty
-				if(text.length === 0){
-					$('#search_results').html('');
-				}
 			}
 		};
 		
@@ -120,6 +115,11 @@
 		};
 		
 		search_input.bind('keypress', doSearch);
+		search_input.bind('keyup', function(){
+			if($(this).val().length === 0){
+				$('#search_results').html('');
+			}
+		});
 		
 		// load search
 		bee.ui.loader.hide();

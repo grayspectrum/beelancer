@@ -290,7 +290,8 @@ module.exports = function(app, db) {
     		  , text = {
     		  		firstName : (req.params.text.indexOf(' ') > 0) ? req.params.text.split(' ')[0] : req.params.text,
     		  		lastName : (req.params.text.indexOf(' ') > 0) ? req.params.text.split(' ')[1] : '',
-    		  		company : req.params.text
+    		  		company : req.params.text,
+    		  		title : req.params.text
     		  };
     		  
     		db.profile.find({
@@ -299,7 +300,8 @@ module.exports = function(app, db) {
 	    				firstName : new RegExp(text.firstName, 'i'),
 	    				lastName : new RegExp(text.lastName, 'i')
 	    			},
-	    			{ company : new RegExp('^' + text.company + '$', 'i') }
+	    			{ company : new RegExp('^' + text.company + '$', 'i') },
+	    			{ title : new RegExp(text.title, 'i') }
     			]
     		}).exec(function(err, profiles) {
     			if (!err) {
