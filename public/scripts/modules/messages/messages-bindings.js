@@ -56,7 +56,7 @@
 	////
 	function showViewMessage() {
 		$('#messages_nav .new_message, #filter_messages, #messages_inbox, #messages_sent').remove();
-		if(!isReply){	// don't remove this if this is a reply
+		if (!isReply) {	// don't remove this if this is a reply
 			$('#message_compose').remove();
 		}
 		
@@ -66,7 +66,7 @@
 			{},
 			function(res) {
 				res.sentOn = new Date(res.sentOn).toDateString();
-				if(!isReply){	// nav isn't displayed if this is a reply
+				if (!isReply) {	// nav isn't displayed if this is a reply
 					$('#messages_nav .reply')[0].href += res.from._id + '&viewMessage=' + viewMessage;
 				}
 				var tmpl = Handlebars.compile($('#tmpl-message_view').html())(res);
