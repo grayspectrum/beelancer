@@ -31,6 +31,8 @@ module.exports = new Schema({
 		owner : Boolean,
 		assignee : Boolean
 	},
+	category : String,
+	tags : [String],
 	////
 	// Options for Job.status:
 	// ----------------------
