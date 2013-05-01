@@ -366,13 +366,14 @@
 			}
 		});
 
-		if (!alreadyExists) {		// only submit if they haven't already rated member
+		if (!alreadyEndorsed) {		// only submit if they haven't already rated member
 			bee.api.send(
 				'POST',
 				'/rating/create/' + viewProfile,
 				{
-					comment: $('#endorse_user #comment').val(),
-					rating: rating
+					comment : $('#endorse_user #comment').val(),
+					rating : rating,
+					needsAction : true
 				},
 				function(res) {
 					bee.ui.notifications.notify('success', 'Endorsement submitted!');
@@ -397,8 +398,9 @@
 			'PUT',
 			'/rating/update/' + viewProfile,
 			{
-				comment: $('#endorse_user #comment').val(),
-				rating: rating
+				comment : $('#endorse_user #comment').val(),
+				rating : rating,
+				needsAction : true
 			},
 			function(res) {
 				bee.ui.notifications.notify('success', 'Endorsement submitted!');

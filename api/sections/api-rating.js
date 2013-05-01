@@ -24,6 +24,7 @@ module.exports = function(app, db) {
 					var rating = new db.rating({
 						forUser : req.params.profileId,
 						fromUser : user.profile._id,
+						needsAction : body.needsAction,
 						isVisible : false,
 						rating : body.rating,
 						comment : body.comment
