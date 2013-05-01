@@ -15,16 +15,17 @@ module.exports = function(app, db) {
 	// POST - /api/rating/create
 	// Creates a rating for the specified user
 	////
-	app.post('/api/rating/create', function(req, res) {
+	app.post('/api/rating/create/:profileId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				var body = req.body;
 				
-				if (body.forUser && body.comment) {
+				if (req.params.profileId && body.comment) {
 					var rating = new db.rating({
-						forUser : body.forUser,
+						forUser : req.params.profileId,
 						fromUser : user.profile._id,
 						isVisible : false,
+						rating : body.rating,
 						comment : body.comment
 					});
 					
@@ -110,33 +111,66 @@ module.exports = function(app, db) {
 			}
 		});
 	});
+
+	////
+	// GET - /api/ratings/user/:profileId
+	// Returns the current user's rating of the specified profile
+	////
+	app.get('/api/ratings/user/:profileId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.rating.find({ 
+					forUser : req.params.profileId,
+					fromUser : user.profile._id
+				})
+				.exec(function(err, ratings) {
+					if (!err) {
+						res.write(JSON.stringify(ratings));
+						res.end();
+					} else {
+						res.writeHead(404);
+						res.write('Could not retrieve ratings.');
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to view your ratings.');
+				res.end();
+			}
+		});
+	});
 	
 	////
 	// PUT - /api/rating/update
 	// Updates the specified rating
 	////
-	app.put('/api/rating/update', function(req, res) {
+	app.put('/api/rating/update/:profileId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				var body = req.body;
-				db.rating
-					.find({ forUser : user.profile._id, _id : body.ratingId })
+				db.rating.find({ 
+					forUser : req.params.profileId,
+					fromUser : user.profile._id
+				})
 				.exec(function(err, rating) {
 					if (err || !rating) {
 						res.writeHead(404);
 						res.write('Could not retrieve rating.');
 						res.end();
 					} else {
-						rating.isVisible = body.isVisible;
-						rating.needsAction = false;
+						rating = rating[0];
 						rating.save(function(err) {
-							if (!err) {
-								res.write(JSON.stringify(rating));
-							} else {
-								res.writeHead(500);
-								res.write('Could not update rating.');
-								res.end();
-							}
+							rating.update(body, function(err){
+								if (!err) {
+									res.write(JSON.stringify(rating));
+									res.end();
+								} else {
+									res.writeHead(500);
+									res.write('Could not update rating.');
+									res.end();
+								}
+							});
 						});
 					}
 				});

@@ -185,7 +185,6 @@ module.exports = function(app, db) {
 									res.write('The profile could not be updated.');
 									res.end();
 								} else {
-									console.log(profile);
 									res.write(JSON.stringify(profile));
 									res.end();
 								}

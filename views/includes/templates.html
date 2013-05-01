@@ -254,6 +254,24 @@
 
 <!-- User Profile -->
 <script id="tmpl-user_profile" type="text/x-handlebars-template">
+	<div id="endorse_compose" class="light-gradient center-pane animated fadeInUp">
+		<h4 class="gold-gradient">Endorse {{firstName}} {{lastName}}</h4>
+		<form id="endorse_user">
+			<label for="comment">
+				<textarea id="comment" name="comment" placeholder="Type your endorsement here..."></textarea>
+			</label>
+			<ul class="stars">
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+			<div class="new_message_submit_wrapper gold-gradient">
+				<input type="submit" class="send_endorsement" value="Endorse!" />
+			</div>
+		</form>
+	</div>
 	<div class="light-gradient center-pane animated fadeInUp">
 		<div class="profile_info">
 			<div class="profile_avatar">

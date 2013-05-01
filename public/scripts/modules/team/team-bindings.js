@@ -8,7 +8,8 @@
 	// determine context
 	var viewProfile = _.querystring.get('viewProfile')
 	  , filterProject = _.querystring.get('projectId')
-	  , searchUsers = _.querystring.get('globalFind');
+	  , searchUsers = _.querystring.get('globalFind')
+	  , alreadyEndorsed = false;
 	  
 	if (viewProfile) {
 		loadProfile();
@@ -47,6 +48,8 @@
 				}
 				  
 				$('#team_profile').html(profile);
+				
+				currentEndorsement();
 				loadEndorsements();
 				bee.ui.loader.hide();
 			},
@@ -65,6 +68,8 @@
 					var source = $('#tmpl-profile_ratings').html()
 					  , tmpl = Handlebars.compile(source)
 					  , ratings = tmpl(res);
+
+
 					$('#team_profile .profile_ratings').html(ratings);
 				},
 				function(err) {
@@ -73,8 +78,41 @@
 				}
 			);
 		};
-		
-		
+
+		////
+		// check if user has rated this member
+		////
+		function currentEndorsement(){
+			bee.api.send(
+				'GET',
+				'/ratings/user/' + viewProfile,
+				{},
+				function(res) {
+					if(res.length > 0){
+						$('#endorse_user #comment').val(res[0].comment);
+						$.each($('.stars li'), function(index, value){
+							if(index === (res[0].rating)){
+								return false;
+							} else {
+								$(this).addClass('marked');
+							}
+						});
+						$('#endorse_user .send_endorsement')
+							.removeClass('send_endorsement')
+							.addClass('update_endorsement')
+							.bind('click', function(e){
+								e.preventDefault();
+								updateEndorsement();
+							});
+
+						alreadyEndorsed = true;
+					}
+				},
+				function(err) {
+					console.log('fail', res);
+				}
+			);
+		};	
 	};
 	
 	////
@@ -319,6 +357,58 @@
 			$('.removefromproject', this).remove();
 		});
 	};
+
+	function submitEndorsement(){
+		var rating = 0;
+		$.each($('.stars li'), function(){
+			if($(this).hasClass('marked')){
+				rating++;
+			}
+		});
+
+		if(!alreadyExists){		// only submit if they haven't already rated member
+			bee.api.send(
+				'POST',
+				'/rating/create/' + viewProfile,
+				{
+					comment: $('#endorse_user #comment').val(),
+					rating: rating
+				},
+				function(res) {
+					bee.ui.notifications.notify('success', 'Endorsement submitted!');
+					$('#endorse_compose').hide();
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		}
+	};
+
+	function updateEndorsement(){
+		var rating = 0;
+		$.each($('.stars li'), function(){
+			if($(this).hasClass('marked')){
+				rating++;
+			}
+		});
+
+		bee.api.send(
+			'PUT',
+			'/rating/update/' + viewProfile,
+			{
+				comment: $('#endorse_user #comment').val(),
+				rating: rating
+			},
+			function(res) {
+				bee.ui.notifications.notify('success', 'Endorsement submitted!');
+				$('#endorse_compose').hide();
+			},
+			function(err) {
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	};
 	
 	////
 	// Event Bindings
@@ -336,7 +426,45 @@
 	});
 	
 	$('.rate_user').bind('click', function() {
-		bee.ui.notifications.notify('err', 'Feature not yet available.');
+		//bee.ui.notifications.notify('err', 'Feature not yet available.');
+		$('#endorse_compose').show();
+
+		$('.stars li').bind('click', function(){
+			// mark all as empty
+			$.each($('.stars li'), function(){
+				$(this).removeClass('marked');
+			});
+			$(this).addClass('marked');
+			$.each($('.stars li'), function(){
+				if(!$(this).hasClass('marked')){
+					$(this).addClass('marked');
+				} else {
+					return false;
+				}
+			});
+		})
+		.bind('mouseover', function(){
+			$.each($('.stars li'), function(){
+				$(this).removeClass('hovered');
+			});
+			$(this).addClass('hovered');
+			$.each($('.stars li'), function(){
+				if(!$(this).hasClass('hovered')){
+					$(this).addClass('hovered');
+				} else {
+					return false;
+				}
+			});
+		})
+		.bind('mouseout', function(){
+			$.each($('.stars li'), function(){
+				$(this).removeClass('hovered');
+			});
+		});
+
+		$('.send_endorsement').bind('click', function(e){
+			e.preventDefault();
+			submitEndorsement();
+		});
 	});
-	
 })();

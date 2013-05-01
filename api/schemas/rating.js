@@ -17,6 +17,7 @@ module.exports = new Schema({
 		ref : 'profile'
 	},
 	comment : String,
+	rating : Number,
 	isVisible : Boolean,
 	needsAction : Boolean
 });

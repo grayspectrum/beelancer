@@ -23,6 +23,26 @@
 	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
 }
 
+#team_profile #endorse_compose {
+	display: none;
+}
+
+#team_profile #endorse_compose li {
+	background: url('/assets/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat;
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+}
+
+#team_profile #endorse_compose li.hovered {
+	background: url('/assets/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat;
+	cursor: pointer;
+}
+
+#team_profile #endorse_compose li.marked {
+	background: url('/assets/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat;
+}
+
 #team_profile .profile_avatar {
 	margin: 12px;
 	border: 12px solid white;
