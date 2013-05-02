@@ -152,7 +152,7 @@ module.exports = function(app, db) {
 				var body = req.body;
 				db.rating.find({ 
 					forUser : req.params.profileId,
-					fromUser : user.profile._id
+					fromUser : (body.fromUser) ? body.fromUser : user.profile._id
 				})
 				.exec(function(err, rating) {
 					if (err || !rating) {
@@ -161,6 +161,12 @@ module.exports = function(app, db) {
 						res.end();
 					} else {
 						rating = rating[0];
+
+						// this isn't converting to a boolean for some reason
+						if(body.needsAction && body.needsAction === 'false') {
+							rating.needsAction = false;
+						}
+						
 						rating.save(function(err) {
 							rating.update(body, function(err){
 								if (!err) {

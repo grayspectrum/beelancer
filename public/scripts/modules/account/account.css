@@ -58,3 +58,67 @@
 	background: url('/assets/images/mono/black/padlock_closed_icon&32.png') 12px center no-repeat #FFC60B;
 	cursor: pointer;
 }
+
+#endorsement_section {
+	display : none;
+}
+
+#endorsement_section ul {
+	padding: 0 20px;
+}
+
+#endorsement_section li.endorse {
+	border: 1px solid #e2e2e2;
+	background: #fff;
+	margin: 3px 0;
+	border-radius: 6px;
+}
+
+#endorsement_section li.endorse.needsAction {
+	background: #FFEFC6;
+}
+
+#endorsement_section li.endorse:hover {
+	cursor: pointer;
+	background: #e2e2e2;
+	border: 1px solid #d2d2d2;
+}
+
+#endorsement_section li.endorse.needsAction .msg_from {
+	/*background: none;*/
+}
+
+#endorsement_section li.endorse p {
+	font-size: 14px;
+	margin: 0 12px 12px 12px;
+	height: 20px;
+	overflow: hidden;
+}
+
+#endorsement_section li.endorse .view_endorse {
+	cursor: pointer;
+	float: right;
+	margin-top: 12px;
+	padding-right: 20px;
+}
+
+#endorsement_section li.endorse .rating_content {
+	display: none;
+}
+
+#endorsement_section .msg_from {
+	overflow: hidden;
+	background: url('/assets/images/mono/black/invisible_light_icon&16.png') 522px center no-repeat;
+}
+
+#endorsement_section .msg_from img {
+	margin: 12px;
+	float: left;
+}
+
+#endorsement_section .msg_from span {
+	font-weight: bold;
+	margin-top: 12px;
+	display: block;
+	width: 80%;
+}

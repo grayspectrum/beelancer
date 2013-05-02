@@ -458,3 +458,25 @@
 		<option>No Team Members</option>
 	{{/if}}
 </script>
+
+<!-- Account Endorsement Template -->
+<script id="tmpl-accountEndorsement" type="text/x-handlebars-template">
+	<li class="endorse {{#if this.needsAction}}needsAction{{/if}}" data-id="{{this._id}}">
+		<div class="msg_from">
+			<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
+			<div class="view_endorse" data-id="{{this._id}}">View</div>
+			<span class="team_list_name">
+				{{this.from.firstName}} {{this.from.lastName}}
+			</span>
+		</div>
+		<div class="rating_content">
+			<div class="left">
+				<p>{{this.comment}}</p>
+				<p>{{this.rating}}</p>
+			</div>
+			<div class="right">
+				<a href="#">Show In Profile</a>
+			</div>
+		</div>
+	</li>
+</script>

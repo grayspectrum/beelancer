@@ -15,10 +15,11 @@
 			$(window).trigger('hashchange');
 		} else {
 			fillProfileFields();
+			getRatings();
 			bee.ui.loader.hide();
 		}
 
-			
+		
 		
 		// Bind Account Recovery
 		function recoverAccount() {
@@ -136,6 +137,66 @@
 		$('#whoami .my_avatar').attr('src', profile.avatarPath);
 		$('#whoami .my_name').html('Hi, ' + profile.firstName + ' ' + profile.lastName + '!');
 		$('#view_my_profile .view_profile')[0].href += profile._id;
+	};
+
+	function getRatings() {
+		bee.api.send(
+			'GET',
+			'/ratings',
+			{},
+			function(res) {
+				if(res.length > 0) {
+					getFromUserInfo(res);
+					$('#endorsement_section').show();
+				}
+			},
+			function(err) {
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+
+		function getFromUserInfo(rating) {
+			$.each(rating, function(key, val) {
+				bee.api.send(
+					'GET',
+					'/profile/' + val.fromUser,
+					{},
+					function(response) {
+						val.from = response;
+						var tmpl = Handlebars.compile($('#tmpl-accountEndorsement').html())(val);
+						$('#endorsement_list').append(tmpl);
+
+						$('#endorsement_list li').bind('click', function() {
+							// if needs action, set to false when user views endorsement
+							if(val.needsAction) {
+								setRatingAction(val);
+							}
+							$('.rating_content', this).show();
+						});
+					},
+					function(error) {
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+
+			function setRatingAction(endorse) {
+				bee.api.send(
+					'PUT',
+					'/rating/update/' + endorse.forUser,
+					{
+						fromUser : endorse.fromUser,
+						needsAction : false
+					},
+					function(res) {
+						// fire and forget
+					},
+					function(err) {
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			};
+		};
 	};
 	
 })();
