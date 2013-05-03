@@ -90,6 +90,7 @@
 				function(res) {
 					if (res.length > 0) {
 						$('#endorse_user #comment').val(res[0].comment);
+						$('#endorse_user #rating_id').val(res[0]._id);
 						$.each($('.stars li'), function(index, value) {
 							if (index === (res[0].rating)) {
 								return false;
@@ -97,14 +98,8 @@
 								$(this).addClass('marked');
 							}
 						});
-						$('#endorse_user .send_endorsement')
-							.removeClass('send_endorsement')
-							.addClass('update_endorsement')
-							.bind('click', function(e) {
-								e.preventDefault();
-								updateEndorsement();
-							});
-
+						$('#endorse_user .send_endorsement').hide();
+						$('#endorse_user .update_endorsement').show();
 						alreadyEndorsed = true;
 					}
 				},
@@ -359,12 +354,7 @@
 	};
 
 	function submitEndorsement() {
-		var rating = 0;
-		$.each($('.stars li'), function() {
-			if ($(this).hasClass('marked')) {
-				rating++;
-			}
-		});
+		var rating = getStarRating();
 
 		if (!alreadyEndorsed) {		// only submit if they haven't already rated member
 			bee.api.send(
@@ -377,7 +367,10 @@
 				},
 				function(res) {
 					bee.ui.notifications.notify('success', 'Endorsement submitted!');
+					$('#endorse_user .send_endorsement').hide();
+					$('#endorse_user .update_endorsement').show();
 					$('#endorse_compose').hide();
+					alreadyEndorsed = true;
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', err);
@@ -386,18 +379,14 @@
 		}
 	};
 
-	function updateEndorsement() {
-		var rating = 0;
-		$.each($('.stars li'), function() {
-			if ($(this).hasClass('marked')) {
-				rating++;
-			}
-		});
+	function updateEndorsement(id) {
+		var rating = getStarRating();
 
 		bee.api.send(
 			'PUT',
 			'/rating/update/' + viewProfile,
 			{
+				_id : id,
 				comment : $('#endorse_user #comment').val(),
 				rating : rating,
 				needsAction : true
@@ -410,6 +399,17 @@
 				bee.ui.notifications.notify('err', err);
 			}
 		);
+	};
+
+	function getStarRating() {
+		var rating = 0;
+		$.each($('.stars li'), function() {
+			if ($(this).hasClass('marked')) {
+				rating++;
+			}
+		});
+
+		return rating;
 	};
 	
 	////
@@ -431,13 +431,15 @@
 		//bee.ui.notifications.notify('err', 'Feature not yet available.');
 		$('#endorse_compose').show();
 
-		$('.stars li').bind('click', function() {
+		var stars = $('.stars li');
+
+		stars.bind('click', function() {
 			// mark all as empty
-			$.each($('.stars li'), function() {
+			$.each(stars, function() {
 				$(this).removeClass('marked');
 			});
 			$(this).addClass('marked');
-			$.each($('.stars li'), function() {
+			$.each(stars, function() {
 				if (!$(this).hasClass('marked')) {
 					$(this).addClass('marked');
 				} else {
@@ -446,11 +448,11 @@
 			});
 		})
 		.bind('mouseover', function() {
-			$.each($('.stars li'), function() {
+			$.each(stars, function() {
 				$(this).removeClass('hovered');
 			});
 			$(this).addClass('hovered');
-			$.each($('.stars li'), function() {
+			$.each(stars, function() {
 				if (!$(this).hasClass('hovered')) {
 					$(this).addClass('hovered');
 				} else {
@@ -459,14 +461,19 @@
 			});
 		})
 		.bind('mouseout', function(){
-			$.each($('.stars li'), function() {
+			$.each(stars, function() {
 				$(this).removeClass('hovered');
 			});
 		});
 
-		$('.send_endorsement').bind('click', function(e) {
+		$('#endorse_user .send_endorsement').unbind().bind('click', function(e) {
 			e.preventDefault();
 			submitEndorsement();
+		});
+
+		$('#endorse_user .update_endorsement').unbind().bind('click', function(e) {
+			e.preventDefault();
+			updateEndorsement($('#endorse_user #rating_id').val());
 		});
 	});
 })();

@@ -19,34 +19,50 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				var body = req.body;
-				
-				if (req.params.profileId && body.comment) {
-					var rating = new db.rating({
-						forUser : req.params.profileId,
-						fromUser : user.profile._id,
-						needsAction : body.needsAction,
-						isVisible : false,
-						rating : body.rating,
-						comment : body.comment
-					});
-					
-					rating.save(function(err) {
-						if (!err) {
-							res.write(JSON.stringify(rating));
-							res.end();
+
+				db.rating.find({ 
+					forUser : req.params.profileId,
+					fromUser : user.profile._id
+				}).exec(function(err, ratings) {
+					if (!err) {
+						if(ratings.length === 0) {	// if rating doesn't already exist
+							if (req.params.profileId && body.comment) {
+								var rating = new db.rating({
+									forUser : req.params.profileId,
+									fromUser : user.profile._id,
+									needsAction : true,
+									isVisible : false,
+									rating : body.rating,
+									comment : body.comment
+								});
+								
+								rating.save(function(err) {
+									if (!err) {
+										res.write(JSON.stringify(rating));
+										res.end();
+									} else {
+										res.writeHead(500);
+										res.write('Could not create rating.');
+										res.end();
+									}
+								});
+								
+							} else {
+								res.writeHead(400);
+								res.write('Missing required data.');
+								res.end();
+							}
 						} else {
-							res.writeHead(500);
-							res.write('Could not create rating.');
+							res.writeHead(400);
+							res.write('You have already created a rating for this user.');
 							res.end();
 						}
-					});
-					
-				} else {
-					res.writeHead(400);
-					res.write('Missing required data.');
-					res.end();
-				}
-				
+					} else {
+						res.writeHead(404);
+						res.write('Could not retrieve ratings.');
+						res.end();
+					}
+				});
 			} else {
 				res.writeHead(401);
 				res.write('You must be logged in to rate a user.');
@@ -151,8 +167,7 @@ module.exports = function(app, db) {
 			if (!err) {
 				var body = req.body;
 				db.rating.find({ 
-					forUser : req.params.profileId,
-					fromUser : (body.fromUser) ? body.fromUser : user.profile._id
+					_id : body._id
 				})
 				.exec(function(err, rating) {
 					if (err || !rating) {
@@ -164,20 +179,21 @@ module.exports = function(app, db) {
 
 						// this isn't converting to a boolean for some reason
 						if(body.needsAction && body.needsAction === 'false') {
-							rating.needsAction = false;
+							body.needsAction = false;
 						}
-						
-						rating.save(function(err) {
-							rating.update(body, function(err){
-								if (!err) {
-									res.write(JSON.stringify(rating));
-									res.end();
-								} else {
-									res.writeHead(500);
-									res.write('Could not update rating.');
-									res.end();
-								}
-							});
+
+						delete body._id;
+
+						db.rating.update(rating, {$set: body}, function(err){
+							if (!err) {
+								// do we even need to return anything here?
+								//res.write(JSON.stringify());
+								res.end();
+							} else {
+								res.writeHead(500);
+								res.write('Could not update rating.');
+								res.end();
+							}
 						});
 					}
 				});

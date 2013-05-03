@@ -166,7 +166,7 @@
 						var tmpl = Handlebars.compile($('#tmpl-accountEndorsement').html())(val);
 						$('#endorsement_list').append(tmpl);
 
-						$('#endorsement_list li').bind('click', function() {
+						$('#endorsement_list li[data-id="' + val._id + '"]').bind('click', function() {
 							// if needs action, set to false when user views endorsement
 							if(val.needsAction) {
 								setRatingAction(val);
@@ -190,6 +190,7 @@
 					},
 					function(res) {
 						// fire and forget
+						//console.log(res);
 					},
 					function(err) {
 						bee.ui.notifications.notify('err', err);

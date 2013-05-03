@@ -43,6 +43,10 @@
 	background: url('/assets/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat;
 }
 
+#team_profile #endorse_compose .update_endorsement {
+	display: none;
+}
+
 #team_profile .profile_avatar {
 	margin: 12px;
 	border: 12px solid white;
