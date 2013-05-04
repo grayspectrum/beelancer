@@ -7,12 +7,13 @@
 	
 	// determine context
 	var viewProfile = _.querystring.get('viewProfile')
+	  , endorseUser = _.querystring.get('endorseUser')
 	  , filterProject = _.querystring.get('projectId')
 	  , searchUsers = _.querystring.get('globalFind')
 	  , alreadyEndorsed = false;
 	  
 	if (viewProfile) {
-		loadProfile();
+		loadProfile(endorseUser);
 	} else if (searchUsers) {
 		loadSearch();
 	} else {
@@ -22,7 +23,7 @@
 	////
 	// Load Profile
 	////
-	function loadProfile() {
+	function loadProfile(endorse) {
 		// load profile
 		$('#team_nav .find_user, #team_list, #team_find, #which_team').remove();
 		bee.api.send(
@@ -51,6 +52,15 @@
 				
 				currentEndorsement();
 				loadEndorsements();
+				
+				// set the proper endorsement url
+				var endorseBtn = $('.rate_user')
+				  , url = location.href + '&endorseUser=true';
+				endorseBtn.attr('href', url);
+				if (endorse) {
+					showEndorsementForm();
+				}
+				
 				bee.ui.loader.hide();
 			},
 			function(err) {
@@ -412,23 +422,7 @@
 		return rating;
 	};
 	
-	////
-	// Event Bindings
-	////
-	$('#team_nav .invite_user').bind('click', function() {
-		bee.ui.confirm('Invite this user to join your team?', function() {
-			inviteToTeam(viewProfile);
-		});
-	});
-	
-	$('#team_nav .remove_user').bind('click', function() {
-		bee.ui.confirm('Remove this user from your team?', function() {
-			removeFromTeam(viewProfile);
-		});
-	});
-	
-	$('.rate_user').bind('click', function() {
-		//bee.ui.notifications.notify('err', 'Feature not yet available.');
+	function showEndorsementForm() {
 		$('#endorse_compose').show();
 
 		var stars = $('.stars li');
@@ -475,5 +469,21 @@
 			e.preventDefault();
 			updateEndorsement($('#endorse_user #rating_id').val());
 		});
+	};
+	
+	////
+	// Event Bindings
+	////
+	$('#team_nav .invite_user').bind('click', function() {
+		bee.ui.confirm('Invite this user to join your team?', function() {
+			inviteToTeam(viewProfile);
+		});
 	});
+	
+	$('#team_nav .remove_user').bind('click', function() {
+		bee.ui.confirm('Remove this user from your team?', function() {
+			removeFromTeam(viewProfile);
+		});
+	});
+	
 })();
