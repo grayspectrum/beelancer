@@ -180,7 +180,8 @@
 							if(val.needsAction) {
 								updateRating(val, false);
 							}
-							$(this).addClass('shown');
+							$(this).removeClass('needsAction').addClass('shown');
+							$('.view_endorse', this).hide();
 							$('.rating_content', this).show();
 						});
 

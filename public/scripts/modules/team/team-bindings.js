@@ -81,6 +81,19 @@
 
 
 					$('#team_profile .profile_ratings').html(ratings);
+
+					$.each($('.profile_ratings .rating'), function(){
+						var thisRating = Number($('input', this).val())
+						  , stars = $('.stars li', this);
+
+						$.each(stars, function(key, val){
+							if (key === thisRating) {
+								return false;
+							} else {
+								$(this).addClass('marked');
+							}
+						});
+					});
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', err);

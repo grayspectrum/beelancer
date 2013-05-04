@@ -258,7 +258,7 @@
 		<h4 class="gold-gradient">Endorse {{firstName}} {{lastName}}</h4>
 		<form id="endorse_user">
 			<label for="comment">
-				<textarea id="comment" name="comment" placeholder="Type your endorsement here..."></textarea>
+				<textarea id="comment" name="comment" placeholder="Type your endorsement here..." maxlength="250"></textarea>
 			</label>
 			<input type="hidden" id="rating_id" name="rating_id" />
 			<ul class="stars">
@@ -268,8 +268,10 @@
 				<li></li>
 				<li></li>
 			</ul>
-			<div class="new_message_submit_wrapper gold-gradient">
+			<div class="endorse_submit_wrapper gold-gradient">
 				<input type="submit" class="send_endorsement" value="Endorse!" />
+			</div>
+			<div class="update_submit_wrapper gold-gradient">
 				<input type="submit" class="update_endorsement" value="Update Endorsement" />
 			</div>
 		</form>
@@ -301,10 +303,21 @@
 			{{#each this}}
 				<li>
 					<div class="rating_from">
-						<img src="{{this.fromUser.avatarPath}}" width="32px" height="32px" />
-						<strong>{{this.fromUser.firstName}} {{this.fromUser.lastName}}</strong>
+						<div class="from_user">
+							<img src="{{this.fromUser.avatarPath}}" width="32px" height="32px" />
+							<span class="endorse_name">{{this.fromUser.firstName}} {{this.fromUser.lastName}}</span>
+							<div class="rating">
+								<ul class="stars">
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+								</ul>
+								<input type="hidden" name="star_rating" id="star_rating" value="{{this.rating}}" />
+							</div>
+						</div>
 						<p>{{this.comment}}</p>
-						<p>{{this.rating}}</p>
 					</div>
 				</li>
 			{{/each}}
@@ -473,18 +486,20 @@
 			</span>
 		</div>
 		<div class="rating_content">
-			<span class="left">
-				<p>{{this.comment}}</p>
-			</span>
-			<span class="right">
-				{{#if this.isVisible}}
-					<a href="#" class="showBtn hide">Show In Profile</a>
-					<a href="#" class="hideBtn show">Hide In Profile</a>
-				{{else}}
-					<a href="#" class="showBtn show">Show In Profile</a>
-					<a href="#" class="hideBtn hide">Hide In Profile</a>
-				{{/if}}
-			</span>
+			<div class="ratings">
+				<span class="left">
+					<p>{{this.comment}}</p>
+				</span>
+				<span class="right">
+					{{#if this.isVisible}}
+						<a href="#" class="showBtn hide">Show In Profile</a>
+						<a href="#" class="hideBtn show">Hide In Profile</a>
+					{{else}}
+						<a href="#" class="showBtn show">Show In Profile</a>
+						<a href="#" class="hideBtn hide">Hide In Profile</a>
+					{{/if}}
+				</span>
+			</div>
 			<ul class="stars">
 				<li></li>
 				<li></li>

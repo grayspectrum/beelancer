@@ -63,13 +63,36 @@
 	display : none;
 }
 
+#endorsement_section .endorsements {
+	border-color: #E2A809 !important;
+	box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+	background-color: #fff;
+	overflow: auto;
+	max-height: 300px;
+	margin: 12px 24px;
+	padding: 12px;
+	border: 1px solid #E2E2E2;
+	border-radius: 3px;
+}
+
+#endorsement_section .ratings {
+	clear: both;
+}
+
 #endorsement_section ul#endorsement_list {
 	overflow: auto;
 }
 
 #endorsement_section ul {
 	clear: both;
-	padding: 0 20px;
+	padding: 0 10px;
+}
+
+#endorsement_section ul.stars {
+	text-align: center;
+	clear: both;
+	margin: 10px 0 0;
+	padding-top: 10px;
 }
 
 #endorsement_section li.endorse {
@@ -78,8 +101,9 @@
 	margin: 3px 0;
 	border-radius: 6px;
     float: left;
-    width: 100%;
+    width: 96%;
     clear: both;
+    padding: 0px 10px;
 }
 
 #endorsement_section li.endorse.needsAction {
@@ -104,8 +128,7 @@
 #endorsement_section li.endorse p {
 	font-size: 14px;
 	margin: 0 12px 12px 12px;
-	height: 20px;
-	overflow: hidden;
+	height: 100%;
 }
 
 #endorsement_section li.endorse .view_endorse {
@@ -137,6 +160,7 @@
 	background: url('/assets/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat;
 	display: inline-block;
 	height: 24px;
+	padding: 10px;
 	width: 24px;
 }
 

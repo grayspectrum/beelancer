@@ -27,10 +27,27 @@
 	display: none;
 }
 
-#team_profile #endorse_compose li {
+#team_profile #endorse_compose #comment {
+	height: 144px;
+	width: 512px;
+	margin: 12px;
+	font-size: 14px;
+	padding: 6px 10px;
+	border: 1px solid #ABABAB;
+	border-radius: 2px;
+}
+
+#team_profile #endorse_compose .stars {
+	text-align: center;
+	margin: 10px 0px 20px;
+	padding: 0;
+}
+
+#team_profile #endorse_compose li, .profile_ratings .stars li {
 	background: url('/assets/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat;
 	display: inline-block;
 	height: 24px;
+	padding: 0px 10px;
 	width: 24px;
 }
 
@@ -39,8 +56,44 @@
 	cursor: pointer;
 }
 
-#team_profile #endorse_compose li.marked {
+#team_profile #endorse_compose li.marked, .profile_ratings .stars li.marked {
 	background: url('/assets/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat;
+}
+
+.profile_ratings .stars li {
+	border: none;
+	float: none;
+	padding: 0px;
+}
+
+#team_profile #endorse_compose .endorse_submit_wrapper, #team_profile #endorse_compose .update_submit_wrapper {
+	border-radius: 6px;
+	margin: 24px auto;
+	width: 200px;
+}
+
+#team_profile #endorse_compose .update_submit_wrapper {
+	width: 370px;
+}
+
+#team_profile #endorse_compose .send_endorsement, #team_profile #endorse_compose .update_endorsement {
+	background: url('/assets/images/mono/black/pencil_icon&32.png') 12px center no-repeat;
+	display: block;
+	width: 100%;
+	font-size: 28px;
+	font-family: Raleway;
+	font-weight: bold;
+	text-shadow: 0 1px 0 #FFC60B;
+	text-align: left;
+	text-indent: 48px;
+	padding: 12px;
+	border-radius: 6px;
+	border: 2px solid #FFC60B;
+}
+
+#team_profile #endorse_compose .send_endorsement:hover, #team_profile #endorse_compose .update_endorsement:hover {
+	background: url('/assets/images/mono/black/pencil_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
 }
 
 #team_profile #endorse_compose .update_endorsement {
@@ -93,6 +146,52 @@
 
 .profile_ratings {
 	margin: 0 12px 24px 12px;
+	overflow: hidden;
+}
+
+.profile_ratings ul {
+	margin: 0;
+	padding: 0;
+}
+
+.profile_ratings ul li {
+	border: 1px solid #e2e2e2;
+	background: #fff;
+	margin: 3px 0;
+	border-radius: 6px;
+	float: left;
+	width: 100%;
+	clear: both;
+	list-style: none;
+}
+
+.profile_ratings .rating_from {
+	padding: 10px;
+}
+
+.profile_ratings .rating_from .from_user {
+	float: left;
+	margin: 0 0 10px;
+	width: 100%;
+}
+
+.profile_ratings .rating_from .from_user img {
+	float: left;
+}
+
+.profile_ratings .rating_from .from_user .endorse_name {
+	float: left;
+	font-weight: bold;
+	margin: 6px;
+}
+
+.profile_ratings .rating_from .from_user .rating {
+	float: right;
+}
+
+.profile_ratings .rating_from p {
+	clear: both;
+	margin: 0 0 5px;
 }
 
 .profile_ratings .emptyList {
