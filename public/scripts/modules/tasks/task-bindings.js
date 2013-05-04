@@ -466,7 +466,7 @@
 				function(success) {
 					bee.ui.loader.hide();
 					bee.ui.notifications.notify('success', (isComplete) ? 'Task completed!' : 'Task reopened!');
-					$(window).trigger('hashchange');
+					bee.ui.refresh();
 				},
 				function(err) {
 					bee.ui.loader.hide();
@@ -501,7 +501,7 @@
 			logEntry = new bee.ui.WorkLogEditor(data);
 			logEntry.renderFor(taskId, function() {
 				logEntry.destroy();
-				$(window).trigger('hashchange');
+				bee.ui.refresh();
 			});
 			$('#wlog_startTime').val(new Date(start).toLocaleDateString() + ' ' + new Date(start).toLocaleTimeString());
 			$('#wlog_endTime').val(new Date(ended).toLocaleDateString() + ' ' + new Date(ended).toLocaleTimeString());
@@ -519,7 +519,7 @@
 					function(success) {
 						bee.ui.loader.hide();
 						bee.ui.notifications.notify('success','Log entry deleted!');
-						$(window).trigger('hashchange');
+						bee.ui.refresh();
 					},
 					function(err) {
 						bee.ui.loader.hide();

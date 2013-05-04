@@ -12,7 +12,7 @@
 		$('.welcome').remove();
 
 		if (!bee.get('profile')) {
-			$(window).trigger('hashchange');
+			bee.ui.refresh();
 		} else {
 			fillProfileFields();
 			getRatings();

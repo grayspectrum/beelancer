@@ -100,7 +100,7 @@ bee.ui = (function() {
 		
 		var Notification = function(type, message, mustDismiss, onDismiss) {
 			this.type = type;
-			this.message = message;
+			this.message = message.charAt(0).toUpperCase() + message.substr(1);
 			this.mustDismiss = mustDismiss;
 			this.ui = $(document.createElement('div'));
 			this.onDismiss = onDismiss || function() { };
@@ -367,7 +367,7 @@ bee.ui = (function() {
 							bee.ui.loader.hide();
 							bee.ui.notifications.notify('success', 'Entry Saved!');
 							log.destroy();
-							$(window).trigger('hashchange')
+							bee.ui.refresh();
 						}, function(err) {
 							log.destroy();
 							bee.ui.loader.hide();
