@@ -63,7 +63,12 @@
 	display : none;
 }
 
+#endorsement_section ul#endorsement_list {
+	overflow: auto;
+}
+
 #endorsement_section ul {
+	clear: both;
 	padding: 0 20px;
 }
 
@@ -72,6 +77,9 @@
 	background: #fff;
 	margin: 3px 0;
 	border-radius: 6px;
+    float: left;
+    width: 100%;
+    clear: both;
 }
 
 #endorsement_section li.endorse.needsAction {
@@ -82,6 +90,11 @@
 	cursor: pointer;
 	background: #e2e2e2;
 	border: 1px solid #d2d2d2;
+}
+
+#endorsement_section li.shown:hover {
+	cursor: default;
+	background: #fff;
 }
 
 #endorsement_section li.endorse.needsAction .msg_from {
@@ -104,6 +117,31 @@
 
 #endorsement_section li.endorse .rating_content {
 	display: none;
+	overflow: auto;
+}
+
+#endorsement_section li.endorse span.left {
+	float: left;
+}
+
+#endorsement_section li.endorse span.right {
+	float: right;
+	padding: 0 20px 0 0;
+}
+
+#endorsement_section li.endorse span.right .hide {
+	display: none;
+}
+
+#endorsement_section ul.stars li {
+	background: url('/assets/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat;
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+}
+
+#endorsement_section ul.stars li.marked {
+	background: url('/assets/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat;
 }
 
 #endorsement_section .msg_from {

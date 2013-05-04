@@ -296,14 +296,15 @@
 
 <!-- Ratings list -->
 <script id="tmpl-profile_ratings" type="text/x-handlebars-template">
-	{{#if user.ratings.length}}
+	{{#if this.length}}
 		<ul>
-			{{#each user.ratings}}
+			{{#each this}}
 				<li>
 					<div class="rating_from">
-						<img src="{{fromUser.avatarPath}}" width="32px" height="32px" />
-						<strong>{{fromUser.firstName}} {{fromUser.lastName}}</strong>
-						<p>{{comment}}</p>
+						<img src="{{this.fromUser.avatarPath}}" width="32px" height="32px" />
+						<strong>{{this.fromUser.firstName}} {{this.fromUser.lastName}}</strong>
+						<p>{{this.comment}}</p>
+						<p>{{this.rating}}</p>
 					</div>
 				</li>
 			{{/each}}
@@ -472,13 +473,25 @@
 			</span>
 		</div>
 		<div class="rating_content">
-			<div class="left">
+			<span class="left">
 				<p>{{this.comment}}</p>
-				<p>{{this.rating}}</p>
-			</div>
-			<div class="right">
-				<a href="#">Show In Profile</a>
-			</div>
+			</span>
+			<span class="right">
+				{{#if this.isVisible}}
+					<a href="#" class="showBtn hide">Show In Profile</a>
+					<a href="#" class="hideBtn show">Hide In Profile</a>
+				{{else}}
+					<a href="#" class="showBtn show">Show In Profile</a>
+					<a href="#" class="hideBtn hide">Hide In Profile</a>
+				{{/if}}
+			</span>
+			<ul class="stars">
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
 		</div>
 	</li>
 </script>

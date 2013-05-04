@@ -166,12 +166,38 @@
 						var tmpl = Handlebars.compile($('#tmpl-accountEndorsement').html())(val);
 						$('#endorsement_list').append(tmpl);
 
+						// set star rating
+						$.each($('#endorsement_list li[data-id="' + val._id + '"] .stars li'), function(index, value) {
+							if (index === (val.rating)) {
+								return false;
+							} else {
+								$(this).addClass('marked');
+							}
+						});
+
 						$('#endorsement_list li[data-id="' + val._id + '"]').bind('click', function() {
 							// if needs action, set to false when user views endorsement
 							if(val.needsAction) {
-								setRatingAction(val);
+								updateRating(val, false);
 							}
+							$(this).addClass('shown');
 							$('.rating_content', this).show();
+						});
+
+						$('#endorsement_list li[data-id="' + val._id + '"] a').bind('click', function(e) {
+							e.preventDefault();
+
+							// if needs action, set to false when user views endorsement
+							if(val.isVisible) {
+								val.isVisible = false;
+								$('#endorsement_list li[data-id="' + val._id + '"] .hideBtn').addClass('hide');
+								$('#endorsement_list li[data-id="' + val._id + '"] .showBtn').removeClass('hide');
+							} else {
+								val.isVisible = true;
+								$('#endorsement_list li[data-id="' + val._id + '"] .hideBtn').removeClass('hide');
+								$('#endorsement_list li[data-id="' + val._id + '"] .showBtn').addClass('hide');
+							}
+							updateRating(val, true);
 						});
 					},
 					function(error) {
@@ -180,14 +206,19 @@
 				);
 			});
 
-			function setRatingAction(endorse) {
+			function updateRating(endorse, isVisible) {
+				var updateObj = {
+					_id : endorse._id
+				};
+				if(isVisible) {
+					updateObj.isVisible = endorse.isVisible;
+				} else {
+					updateObj.needsAction = false;
+				}
 				bee.api.send(
 					'PUT',
 					'/rating/update/' + endorse.forUser,
-					{
-						fromUser : endorse.fromUser,
-						needsAction : false
-					},
+					updateObj,
 					function(res) {
 						// fire and forget
 						//console.log(res);

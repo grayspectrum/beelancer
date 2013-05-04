@@ -181,8 +181,11 @@ module.exports = function(app, db) {
 						if(body.needsAction && body.needsAction === 'false') {
 							body.needsAction = false;
 						}
+						if(body.isVisible && body.isVisible === 'false') {
+							body.isVisible = false;
+						}
 
-						delete body._id;
+						delete body._id;	// do this or it'll break things
 
 						db.rating.update(rating, {$set: body}, function(err){
 							if (!err) {
