@@ -1,0 +1,23 @@
+/*
+ * beelancer - 404.css
+ * Author: Gordon Hall
+ */
+
+#err-404 {
+	
+}
+
+#err-404 h2 {
+	text-align: center;
+	font-weight: normal;
+	background: url('/assets/images/mono/black/emotion_sad_icon&48.png') 50px 9px no-repeat;
+	width: 280px;
+	margin: 24px auto;
+}
+
+#err-404 h2 strong {
+	display: block;
+	font-size: 48px;
+	text-align: left;
+	margin-left: 108px;
+}
