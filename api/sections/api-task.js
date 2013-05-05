@@ -84,12 +84,12 @@ module.exports = function(app, db) {
 			if (!err) {
 				db.task
 					.findOne({ 
-						_id : req.params.taskId,
-						$or : [ 
-							{ owner : user._id }, 
-							{ assignee : user._id },
-							{ projectOwner : user._id }
-						]
+						_id : req.params.taskId
+						// $or : [ 
+						// 	{ owner : user._id }, 
+						// 	{ assignee : user._id },
+						// 	{ projectOwner : user._id }
+						// ]
 					})
 					.populate('owner', 'profile')
 					.populate('assignee', 'profile')
