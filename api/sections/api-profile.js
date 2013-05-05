@@ -21,7 +21,7 @@ module.exports = function(app, db) {
 		var id = req.params.profileId;
 		db.profile
 			.findOne({ _id : id })
-			.populate('ratings', null, { isVisible : true })
+			//.populate('ratings', null, { isVisible : true })
 			.populate('user', '_id')
 		.exec(function(err, profile) {
 			if (err || !profile) {

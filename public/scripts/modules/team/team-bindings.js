@@ -426,7 +426,7 @@
 
 	function getStarRating() {
 		var rating = 0;
-		$.each($('.stars li'), function() {
+		$.each($('#endorse_user .stars li'), function() {
 			if ($(this).hasClass('marked')) {
 				rating++;
 			}

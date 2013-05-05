@@ -162,7 +162,7 @@
 	{{#if this.length}}
 		<ul>
 			{{#each this}}
-				<li>
+				<li{{#if this.ratings.average}} title="Rating: {{this.ratings.average}}, # of Ratings: {{this.ratings.total}}"{{/if}}>
 					<a href="/#!/team?viewProfile={{_id}}">
 						<img src="{{avatarPath}}" width="32px" height="32px" />
 						<span class="member-name">{{firstName}} {{lastName}}</span>
@@ -287,6 +287,13 @@
 		{{#if about}}
 			<div class="profile_about">
 				<div class="bubble">{{about}}</div>
+			</div>
+		{{/if}}
+		{{#if ratings.average}}
+			<h4 class="gold-gradient">Rating</h4>
+			<div class="profile_average_rating">
+				<span class="number_ratings"># of Ratings:  <span>{{ratings.total}}</span></span>
+				<span class="rating">{{ratings.average}}</span>
 			</div>
 		{{/if}}
 		<h4 class="gold-gradient">Endorsements</h4>

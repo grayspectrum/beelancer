@@ -23,6 +23,33 @@
 	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
 }
 
+#team_profile .profile_average_rating {
+	border: 1px solid #e2e2e2;
+	background: #fff;
+	border-radius: 6px;
+	clear: both;
+	list-style: none;
+	overflow: auto;
+	margin: 0 10px;
+	padding: 10px;
+}
+
+#team_profile .profile_average_rating .number_ratings {
+	display: block;
+	float:left;
+}
+
+#team_profile .profile_average_rating .number_ratings span {
+	font-weight: bold;
+}
+
+#team_profile .profile_average_rating .rating {
+	display: block;
+	float: right;
+	background: url('/assets/images/mono/black/star_fav_icon&24.png') center right no-repeat;
+	padding-right: 34px;
+}
+
 #team_profile #endorse_compose {
 	display: none;
 }

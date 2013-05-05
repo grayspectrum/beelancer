@@ -38,15 +38,54 @@ module.exports = function(app, db) {
 								
 								rating.save(function(err) {
 									if (!err) {
-										res.write(JSON.stringify(rating));
-										res.end();
+
+										// update user average rating
+										db.rating
+											.find({ forUser : req.params.profileId })
+										.exec(function(err, allRatings) {
+											if (!err) {
+												var ratingTotal = 0
+												  , average = 0
+												  , updateProfile = {};
+
+												for (var i = 0; i < allRatings.length; i++) {
+													ratingTotal += Number(allRatings[i].rating);
+												}
+												average = ratingTotal / allRatings.length;
+												average = (Math.round(average * 2) / 2).toFixed(2);
+
+												updateProfile.ratings = {
+													average : average,
+													total : allRatings.length
+												}
+
+												db.profile.findOne({
+													_id : req.params.profileId
+												})
+												.exec(function(err, profile) {
+													db.profile.update(profile, {$set: updateProfile}, function(err){
+														if (!err) {
+															// do we even need to return anything here?
+															res.end();
+														} else {
+															res.writeHead(500);
+															res.write('Could not update rating.');
+															res.end();
+														}
+													});
+												});
+											} else {
+												res.writeHead(404);
+												res.write('Could not retrieve ratings.');
+												res.end();
+											}
+										});
 									} else {
 										res.writeHead(500);
 										res.write('Could not create rating.');
 										res.end();
 									}
 								});
-								
 							} else {
 								res.writeHead(400);
 								res.write('Missing required data.');
@@ -204,7 +243,10 @@ module.exports = function(app, db) {
 						// this isn't converting to a boolean for some reason
 						if(body.needsAction && body.needsAction === 'false') {
 							body.needsAction = false;
+						} else {
+							body.needsAction = true;
 						}
+
 						if(body.isVisible && body.isVisible === 'false') {
 							body.isVisible = false;
 						}
@@ -214,8 +256,47 @@ module.exports = function(app, db) {
 						db.rating.update(rating, {$set: body}, function(err){
 							if (!err) {
 								// do we even need to return anything here?
-								//res.write(JSON.stringify());
-								res.end();
+								// update user average rating
+								db.rating
+									.find({ forUser : req.params.profileId })
+								.exec(function(err, allRatings) {
+									if (!err) {
+										var ratingTotal = 0
+										  , average = 0
+										  , updateProfile = {};
+
+										for (var i = 0; i < allRatings.length; i++) {
+											ratingTotal += Number(allRatings[i].rating);
+										}
+										average = ratingTotal / allRatings.length;
+										average = (Math.round(average * 2) / 2).toFixed(2);
+
+										updateProfile.ratings = {
+											average : average,
+											total : allRatings.length
+										}
+
+										db.profile.findOne({
+											_id : req.params.profileId
+										})
+										.exec(function(err, profile) {
+											db.profile.update(profile, {$set: updateProfile}, function(err){
+												if (!err) {
+													// do we even need to return anything here?
+													res.end();
+												} else {
+													res.writeHead(500);
+													res.write('Could not update rating.');
+													res.end();
+												}
+											});
+										});
+									} else {
+										res.writeHead(404);
+										res.write('Could not retrieve ratings.');
+										res.end();
+									}
+								});
 							} else {
 								res.writeHead(500);
 								res.write('Could not update rating.');

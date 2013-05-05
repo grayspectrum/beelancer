@@ -25,10 +25,10 @@ module.exports = new Schema({
 	////
 	about : String,
 	avatarPath : String,
-	ratings : [{
-		type : ObjectId,
-		ref : 'rating'
-	}],
+	ratings : {
+		average : Number,
+		total : Number
+	},
 	address : {
 		line : String,
 		suite : String,
