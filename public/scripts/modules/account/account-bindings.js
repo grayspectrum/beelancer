@@ -7,6 +7,8 @@
 	
 	var newProfile = _.querystring.get('newProfile')
 	  , newEndorse = _.querystring.get('endorsements');
+
+	console.log('loaded twice?');
 	
 	if (!newProfile) {
 		// kill welcome stuff
@@ -139,6 +141,7 @@
 	};
 
 	function getRatings() {
+		console.log('in get ratings');
 		bee.api.send(
 			'GET',
 			'/ratings',

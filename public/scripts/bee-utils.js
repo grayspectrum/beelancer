@@ -54,12 +54,11 @@ bee.utils = (function() {
 				'/messages/pollUnread',
 				{},
 				function(data) {
-					console.log(data.unread + ' : ' + bee.get('unread'));
 					if (data.unread && data.unread > bee.get('unread')) {
 						$('#notifications .messages').remove();
 						bee.set('unread', data.unread);
 						bee.ui.notifications.notify('info messages', 'You have ' + data.unread + ' unread messages!', true, function() {
-							if (location.href = '#!/messages?show=inbox') {
+							if (location.href === '#!/messages?show=inbox') {
 								bee.ui.refresh();
 							}
 							location.href = '/#!/messages?show=inbox';
@@ -81,14 +80,14 @@ bee.utils = (function() {
 		if (_.cookies.get('apikey') && _.cookies.get('userid') && bee.get('profile')) {
 			bee.api.send(
 				'GET',
-				'/ratings/pollNew',
+				'/ratings/pollEndorse',
 				{},
 				function(res) {
 					if(res.newEndorses && res.newEndorses > bee.get('newEndorses')) {
 						bee.set('newEndorses', res.newEndorses);
 						$('#notifications .endorse').remove();
 						bee.ui.notifications.notify('info endorse', 'You have ' + res.newEndorses + ' new endorsements!', true, function() {
-							if (location.href = '#!/account?endorsements=true') {
+							if (location.href === '#!/account?endorsements=true') {
 								bee.ui.refresh();
 							}
 							location.href = '/#!/account?endorsements=true';

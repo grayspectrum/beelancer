@@ -99,10 +99,10 @@ module.exports = function(app, db) {
 	});
 
 	////
-	// GET - /api/ratings/
-	// Returns the callers ratings
+	// GET - /api/ratings/pollEndorse
+	// Returns if caller has any new endorsements
 	////
-	app.get('/api/ratings/pollNew', function(req, res) {
+	app.get('/api/ratings/pollEndorse', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
 				db.rating
