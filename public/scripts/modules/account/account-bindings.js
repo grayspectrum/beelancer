@@ -5,7 +5,8 @@
 
 (function() {
 	
-	var newProfile = _.querystring.get('newProfile');
+	var newProfile = _.querystring.get('newProfile')
+	  , newEndorse = _.querystring.get('endorsements');
 	
 	if (!newProfile) {
 		// kill welcome stuff
@@ -18,8 +19,6 @@
 			getRatings();
 			bee.ui.loader.hide();
 		}
-
-		
 		
 		// Bind Account Recovery
 		function recoverAccount() {
@@ -148,6 +147,11 @@
 				if(res.length > 0) {
 					getFromUserInfo(res);
 					$('#endorsement_section').show();
+
+					// if coming from new endorsement notification
+					if(newEndorse) {
+						$(window).scrollTop($('#endorsement_section').offset().top);
+					}
 				}
 			},
 			function(err) {

@@ -97,6 +97,30 @@ module.exports = function(app, db) {
 			}
 		});
 	});
+
+	////
+	// GET - /api/ratings/
+	// Returns the callers ratings
+	////
+	app.get('/api/ratings/pollNew', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.rating
+					.find({ 
+						forUser : user.profile._id,
+						needsAction : true
+					})
+				.exec(function(err, ratings) {
+					res.write(JSON.stringify({newEndorses : ratings.length}));
+					res.end();
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to view your ratings.');
+				res.end();
+			}
+		});
+	});
 	
 	////
 	// GET - /api/ratings/public/:profileId

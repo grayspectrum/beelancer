@@ -22,6 +22,10 @@ _.load([
 	setInterval(function() {
 		bee.utils.checkMessages();
 	}, 6000);
+	// begin endorsement poll
+	setInterval(function() {
+		bee.utils.checkEndorse();
+	}, 30000);
 });
 
 // Register Modules
