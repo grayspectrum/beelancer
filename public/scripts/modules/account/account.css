@@ -91,8 +91,12 @@
 #endorsement_section ul.stars {
 	text-align: center;
 	clear: both;
-	margin: 10px 0 0;
+	margin: 0;
 	padding-top: 10px;
+}
+
+#endorsement_section ul.stars.left {
+	float: left;
 }
 
 #endorsement_section li.endorse {
@@ -150,6 +154,7 @@
 #endorsement_section li.endorse span.right {
 	float: right;
 	padding: 0 20px 0 0;
+	margin-top: 8px;
 }
 
 #endorsement_section li.endorse span.right .hide {
@@ -183,4 +188,29 @@
 	margin-top: 12px;
 	display: block;
 	width: 80%;
+}
+
+.hideBtn,
+.showBtn {
+	background-color: #f1f1f1;
+	background-position: 6px center;
+	background-repeat: no-repeat;
+	padding: 4px 8px 4px 30px;
+	border: 1px solid #d2d2d2;
+	border-radius: 3px;
+	box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+.hideBtn {
+	background-image: url('/assets/images/mono/black/invisible_light_icon&16.png');
+}
+
+.showBtn {
+	background-image: url('/assets/images/mono/black/eye_icon&16.png');
+}
+
+.hideBtn:hover,
+.showBtn:hover {
+	background-color: #e2e2e2;
+	cursor: pointer;
 }

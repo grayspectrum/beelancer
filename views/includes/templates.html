@@ -487,26 +487,26 @@
 		</div>
 		<div class="rating_content">
 			<div class="ratings">
-				<span class="left">
-					<p>{{this.comment}}</p>
-				</span>
+				<p>{{this.comment}}</p>
+			</div>
+			<div>
+				<ul class="stars left">
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+				</ul>
 				<span class="right">
 					{{#if this.isVisible}}
-						<a href="#" class="showBtn hide">Show In Profile</a>
-						<a href="#" class="hideBtn show">Hide In Profile</a>
+						<button class="showBtn hide">Show On Profile</button>
+						<button class="hideBtn show">Hide From Profile</button>
 					{{else}}
-						<a href="#" class="showBtn show">Show In Profile</a>
-						<a href="#" class="hideBtn hide">Hide In Profile</a>
+						<button class="showBtn show">Show On Profile</button>
+						<button class="hideBtn hide">Hide From Profile</button>
 					{{/if}}
 				</span>
 			</div>
-			<ul class="stars">
-				<li></li>
-				<li></li>
-				<li></li>
-				<li></li>
-				<li></li>
-			</ul>
 		</div>
 	</li>
 </script>
