@@ -185,7 +185,7 @@
 							$('.rating_content', this).show();
 						});
 
-						$('#endorsement_list li[data-id="' + val._id + '"] a').bind('click', function(e) {
+						$('#endorsement_list li[data-id="' + val._id + '"] button').bind('click', function(e) {
 							e.preventDefault();
 
 							// if needs action, set to false when user views endorsement
