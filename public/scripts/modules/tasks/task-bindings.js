@@ -149,12 +149,13 @@
 				$('#tasks_nav .task_status').addClass(
 					(task.isComplete) ? 'reopen_task' : 'close_task'
 				).css({ display : 'block' }).html((task.isComplete) ? 'Reopen Task' : 'Complete Task');
-				bee.ui.loader.hide();
-				
+
 				// don't show edit option to non-owner
-				if (!(task.owner.profile === bee.get('profile')._id)) {
-					$('.edit_task, .delete_task').remove();
+				if (!(task.assignee.profile === bee.get('profile')._id)) {
+					$('#tasks_nav, #task_timer_controls .timer, .worklog .timer').remove();
 				}
+
+				bee.ui.loader.hide();
 				bindTaskWorkLogEditor();
 				bindTimerControls();
 				updateWorklogListView();
