@@ -73,7 +73,7 @@
 	function list_tasks() {
 		// kill irrelevant menus items
 		$('#tasks_nav li a').not('li .new_task').remove();
-		bee.ui.loader.show();
+		bee.ui.loader.hide();
 		// get tasks from api
 		bee.api.send(
 			'GET',
@@ -84,7 +84,7 @@
 				generateTaskList(parseTasks(tasks));
 			},
 			function(err) {
-				bee.ui.loader.hide();
+			//	bee.ui.loader.hide();
 				bee.ui.notifications.notify('err', err, true);
 			}
 		);
