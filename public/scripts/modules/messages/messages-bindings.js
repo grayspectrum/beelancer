@@ -261,7 +261,7 @@
 		} else {
 			bee.ui.loader.show();
 			var mesObj = {
-				to : $('#newmessage_to').val(),
+				to : $('#new_message input[name="to"]').val(),
 				body : $('#newmessage_body').val()
 			};
 			sendMessage(mesObj,
