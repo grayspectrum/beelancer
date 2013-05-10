@@ -15,4 +15,5 @@ module.exports = function(app, callback) {
 	require('./sections/api-task.js')(app, db); // task endpoints
 	require('./sections/api-rating.js')(app, db); // rating endpoints
 	require('./sections/api-message.js')(app, db); // message endpoints
+	require('./sections/api-jobs.js')(app, db); // jobs endpoints
 };
