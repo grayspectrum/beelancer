@@ -207,7 +207,7 @@
 	{{#if this.length}}
 		<ul>
 			{{#each this}}
-				<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this._id}}" data-from="{{this.from._id}}">
+				<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this._id}}" data-from="{{#if this.isCurrent}}{{this.to._id}}{{else}}{{this.from._id}}{{/if}}">
 					<div class="msg_from">
 						{{#if isCurrent}}
 							<img src="{{this.to.avatarPath}}" width="24px" height="24px" alt="{{this.to.avatarPath}}" />
@@ -237,7 +237,7 @@
 	<div class="light-gradient center-pane animated fadeInUp">
 		<div class="message_compose">
 			<input type="text" id="convo_compose" name="convo_compose" placeholder="Type your message here..." />
-			<button id="convo_submit" name="convo_submit" data-to="{{this.from._id}}">Send</button>
+			<button id="convo_submit" name="convo_submit">Send</button>
 		</div>
 		<div class="messageview_body">
 			<ul>
