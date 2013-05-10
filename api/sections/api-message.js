@@ -16,30 +16,21 @@ module.exports = function(app, db) {
 	// GET - /api/messages/:where/:type/:skip/:limit
 	// Returns the requested messages received
 	////
-	app.get('/api/messages/:where/:skip/:limit', function(req, res) {
+	app.get('/api/messages/:skip/:limit', function(req, res) {
 		var params = req.params;
 		if (params.skip && params.limit) {
 			utils.verifyUser(req, db, function(err, user) {
 				if (!err) {
-					var type = params.type
-					  , where = params.where
-					  , query;
-					  
-					if (where === 'inbox') {
-						query = {
-							to : user.profile._id,
-							belongsTo : user._id
-						};
-					} else if (where === 'sent') {
-						query = {
-							from : user.profile._id,
-							belongsTo : user._id
-						};
-					} else {
-						res.writeHead(400);
-						res.write('Invalid type parameter "' + where + '". Must be one of "sent" or "inbox".');
-						res.end();
-					}
+					var query = {
+						$or: [
+							{
+								from : user.profile._id
+							},
+							{
+								to : user.profile._id
+							}
+						]
+					};
 					
 					db.message
 						.find(query)
@@ -50,7 +41,42 @@ module.exports = function(app, db) {
 						.sort({ sentOn : -1 })
 					.exec(function(err, messages) {
 						if (!err) {
-							res.write(JSON.stringify(messages));
+							var latestUserMessage = [];
+							for (var m = 0; m < messages.length; m++) {
+								var messageFromId = messages[m].from.user
+								  , messageToId = messages[m].to.user
+								  , isInArray = false;
+
+								// if no messages in array, push the first one in
+								if (latestUserMessage.length === 0) {
+									latestUserMessage.push(messages[m]);
+								}
+
+								// make sure a thread from / for this user isn't already in our array
+								for (var latest = 0; latest < latestUserMessage.length; latest++) {
+									var latestFromId = latestUserMessage[latest].from.user
+									  , latestToId = latestUserMessage[latest].to.user;
+
+									if ((messageFromId.equals(latestFromId) && messageToId.equals(latestToId)) || (messageFromId.equals(latestToId) && messageToId.equals(latestFromId))) {
+										isInArray = true;
+										break;
+									}
+								}
+
+								if (!isInArray) {
+									latestUserMessage.push(messages[m]);
+								}
+							}
+
+							// if this user equals belongs to, set flag so front end
+							// knows how to separate messages
+							for (var i = 0; i < latestUserMessage.length; i++) {
+								if (latestUserMessage[i].from._id.equals(user.profile._id)) {
+									latestUserMessage[i].isCurrent = true;
+								}
+							}
+							
+							res.write(JSON.stringify(latestUserMessage));
 							res.end();
 						} else {
 							res.writeHead(500);
@@ -76,30 +102,59 @@ module.exports = function(app, db) {
 	// GET - /api/message/:id
 	// Retrieves a message by it's id
 	////
-	app.get('/api/message/:id', function(req, res) {
+	app.get('/api/conversation/:id', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
-				db.message
-					.findOne({
-						_id : req.params.id,
-						$or : [
-							{ from : user.profile._id },
-							{ to : user.profile._id }
-						],
-						belongsTo : user._id
-					})
-					.populate('from')
-					.populate('to')
-				.exec(function(err, message) {
-					if (err || !message) {
+				db.message.findOne({
+					_id : req.params.id
+				}).exec(function(er, mess) { 
+					if (er || !mess) {
 						res.writeHead(500);
 						res.write(err || 'Message not found.');
 						res.end();
 					} else {
-						message.isRead = true;
-						message.save();
-						res.write(JSON.stringify(message));
-						res.end();
+						db.message
+							.find({
+								$or: [
+									{
+										to : mess.to,
+										from : mess.from
+									},
+									{
+										from : mess.to,
+										to : mess.from
+									}
+								]
+							})
+							.populate('from')
+							.populate('to')
+							.sort({ sentOn: -1 })
+						.exec(function(err, message) {
+							if (err || !message) {
+								res.writeHead(500);
+								res.write(err || 'Message not found.');
+								res.end();
+							} else {
+								// only mark as read if it's the current user
+								if (mess.to.equals(user.profile._id) || mess.from.equals(user.profile._id)) {
+									if (!message[0].isRead) {
+										message[0].isRead = true;
+										message[0].save();
+									}
+
+									// if this user equals belongs to, set flag so front end
+									// knows how to separate messages
+									for (var i = 0; i < message.length; i++) {
+										if (message[i].from._id.equals(user.profile._id)) {
+											message[i].isCurrent = true;
+										}
+									}
+								}
+
+								res.write(JSON.stringify(message));
+								res.end();
+							}
+						});
 					}
 				});
 			} else {
@@ -279,22 +334,22 @@ module.exports = function(app, db) {
 				});
 				
 				// save a copy to sent
-				db.profile.findOne({
-					_id : body.to
-				}).exec(function(err, profile) {
-					if (!err && profile) {
-						var message2 = new db.message({
-							from : user.profile._id,
-							to : body.to,
-							body : body.body,
-							isRead : false,
-							type : 'message',
-							sentOn : new Date().toString(),
-							belongsTo : profile.user
-						});
-						message2.save();
-					}
-				});
+				// db.profile.findOne({
+				// 	_id : body.to
+				// }).exec(function(err, profile) {
+				// 	if (!err && profile) {
+				// 		var message2 = new db.message({
+				// 			from : user.profile._id,
+				// 			to : body.to,
+				// 			body : body.body,
+				// 			isRead : false,
+				// 			type : 'message',
+				// 			sentOn : new Date().toString(),
+				// 			belongsTo : profile.user
+				// 		});
+				// 		message2.save();
+				// 	}
+				// });
 				
 			} else {
 				res.writeHead(401);

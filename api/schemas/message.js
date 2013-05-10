@@ -24,6 +24,7 @@ module.exports = new Schema({
 	body : String,
 	isRead : Boolean,
 	isSent : Boolean,
+	isCurrent : Boolean,
 	type : String,
 	attachment : {
 		action : String,

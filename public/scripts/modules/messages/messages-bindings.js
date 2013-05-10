@@ -8,7 +8,8 @@
 	var newMessage = _.querystring.get('compose')
 	  , isReply = _.querystring.get('reply')
 	  , viewMessage = _.querystring.get('viewMessage')
-	  , showView = _.querystring.get('show');
+	  , showView = _.querystring.get('show')
+	  , fromUser = _.querystring.get('user');
 	
 	if (newMessage) {
 		showComposePanel(isReply);
@@ -32,7 +33,6 @@
 				function(res) {
 					$('#newmessage_to').attr('disabled', 'disabled').val(res.firstName + ' ' + res.lastName);
 					$('#newmessage_to').next('input[name="to"]').val(res._id);
-					showViewMessage();
 					bee.ui.loader.hide();
 				},
 				function(err) {
@@ -55,25 +55,18 @@
 	// View Message
 	////
 	function showViewMessage() {
-		$('#messages_nav .new_message, #filter_messages, #messages_inbox, #messages_sent').remove();
-		if (!isReply) {	// don't remove this if this is a reply
-			$('#message_compose').remove();
-		}
+		$('#messages_nav, #filter_messages, #messages_inbox, #messages_sent, #message_compose').remove();
 		
 		bee.api.send(
 			'GET',
-			'/message/' + viewMessage,
+			'/conversation/' + viewMessage,
 			{},
 			function(res) {
 				res.sentOn = new Date(res.sentOn).toDateString();
-				if (!isReply) {	// nav isn't displayed if this is a reply
-					$('#messages_nav .reply')[0].href += res.from._id + '&viewMessage=' + viewMessage;
-				}
+
 				var tmpl = Handlebars.compile($('#tmpl-message_view').html())(res);
 				$('#message_view').html(tmpl);
-				if (res.isSent) {
-					$('#messages_nav .reply, #messages_nav .mark_unread').remove();
-				}
+
 				bindMessageActions();
 				bee.ui.loader.hide();
 			},
@@ -92,7 +85,7 @@
 		
 		bee.api.send(
 			'GET',
-			'/messages/' + (showView || 'inbox') + '/0/100',
+			'/messages/0/100',
 			{},
 			function(res) {
 				$.each(res, function(key, val) {
@@ -130,7 +123,7 @@
 		
 		function bindMessages() {
 			$('li.message').bind('click', function() {
-				location.href = '/#!/messages?viewMessage=' + $(this).attr('data-id');
+				location.href = '/#!/messages?viewMessage=' + $(this).attr('data-id') + '&user=' + $(this).attr('data-from');
 			});
 		};
 	};
@@ -138,34 +131,22 @@
 	////
 	// Send New Message
 	////
-	function sendMessage() {
+	function sendMessage(obj, success, failure) {
 		bee.ui.notifications.dismiss();
-		var to = $('input[name="to"]').val()
-		  , body = $('#newmessage_body').val();
 		  
-		if (to && body) {
-			bee.ui.loader.show();
+		if (obj.to && obj.body) {
 			bee.api.send(
 				'POST',
 				'/message/send',
-				{
-					to :  to,
-					body : body
-				},
-				function(res) {
-					location.href = '/#!/messages';
-					bee.ui.notifications.notify('success', 'Message sent!');
-				},
-				function(err) {
-					bee.ui.notifications.notify('err', err);
-					bee.ui.loader.hide();
-				}
+				obj,
+				success,
+				failure
 			);
 		} else {
-			if (!to) {
+			if (!obj.to) {
 				bee.ui.notifications.notify('err', 'No recipient selected.', true);
 			}
-			if (!body) {
+			if (!obj.body) {
 				bee.ui.notifications.notify('err', 'Message cannot be empty.', true);
 			}
 		}
@@ -176,39 +157,41 @@
 	////
 	function bindMessageActions() {
 		// Mark Unread
-		$('#messages_nav .mark_unread').bind('click', function() {
-			bee.ui.loader.show();
-			bee.api.send(
-				'PUT',
-				'/message/update',
-				{
-					id : viewMessage
-				},
-				function(res) {
-					bee.ui.notifications.notify('success', 'Marked as unread!');
-					location.href = '/#!/messages?show=inbox';
-				},
-				function(err) {
-					bee.ui.loader.hide();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
-		});
+		// $('#messages_nav .mark_unread').bind('click', function() {
+		// 	bee.ui.loader.show();
+		// 	bee.api.send(
+		// 		'PUT',
+		// 		'/message/update',
+		// 		{
+		// 			id : viewMessage
+		// 		},
+		// 		function(res) {
+		// 			bee.ui.notifications.notify('success', 'Marked as unread!');
+		// 			location.href = '/#!/messages?show=inbox';
+		// 		},
+		// 		function(err) {
+		// 			bee.ui.loader.hide();
+		// 			bee.ui.notifications.notify('err', err);
+		// 		}
+		// 	);
+		// });
 		
 		// Accept Invite
 		$('#msg_action_accept').bind('click', function() {
+			var messageId = $(this).attr('data-id');
 			bee.ui.confirm('Are you sure you want to accept this invitaion?', function() {
 				bee.ui.loader.show();
 				bee.api.send(
 					'POST',
 					'/message/action',
 					{
-						messageId : viewMessage,
+						messageId : messageId,
 						accept : true
 					},
 					function(res) {
 						bee.ui.notifications.notify('success', 'Invitation accepted.');
-						location.href = '/#!/messages?show=inbox';
+						$(this).parent('.msg_attachment').remove();
+						bee.ui.loader.hide();
 					},
 					function(err) {
 						bee.ui.loader.hide();
@@ -220,18 +203,20 @@
 		
 		// Decline Invite
 		$('#msg_action_decline').bind('click', function() {
+			var messageId = $(this).attr('data-id');
 			bee.ui.confirm('Are you sure you want to decline this invitaion?', function() {
 				bee.ui.loader.show();
 				bee.api.send(
 					'POST',
 					'/message/action',
 					{
-						messageId : viewMessage,
+						messageId : messageId,
 						accept : false
 					},
 					function(res) {
 						bee.ui.notifications.notify('success', 'Invitation declined.');
-						location.href = '/#!/messages?show=inbox';
+						$(this).parent('.msg_attachment').remove();
+						bee.ui.loader.hide();
 					},
 					function(err) {
 						bee.ui.loader.hide();
@@ -239,6 +224,29 @@
 					}
 				);
 			});
+		});
+
+		// Submit new message inline
+		$('#convo_submit').bind('click', function(e) {
+			e.preventDefault();
+			if (!$('#convo_compose').val()) {
+				$('#convo_compose').focus();
+			} else {
+				var convoObj = {
+					to : fromUser,
+					body : $('#convo_compose').val()
+				};
+				sendMessage(convoObj,
+					function(res) {
+						bee.ui.notifications.notify('success', 'Message sent!');
+						showViewMessage();
+					},
+					function(err) {
+						bee.ui.notifications.notify('err', err);
+						bee.ui.loader.hide();
+					}
+				);
+			}
 		});
 	};
 	
@@ -251,7 +259,21 @@
 		if ($('#newmessage_to').is(':focus') && !$('#newmessage_body').val()) {
 			$('#newmessage_body').focus();
 		} else {
-			sendMessage();
+			bee.ui.loader.show();
+			var mesObj = {
+				to : $('#newmessage_to').val(),
+				body : $('#newmessage_body').val()
+			};
+			sendMessage(mesObj,
+				function(res) {
+					location.href = '/#!/messages';
+					bee.ui.notifications.notify('success', 'Message sent!');
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+					bee.ui.loader.hide();
+				}
+			);
 		}
 	});
 	

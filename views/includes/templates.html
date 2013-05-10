@@ -207,15 +207,15 @@
 	{{#if this.length}}
 		<ul>
 			{{#each this}}
-				<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this._id}}">
+				<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this._id}}" data-from="{{this.from._id}}">
 					<div class="msg_from">
-						{{#if isSent}}
+						{{#if isCurrent}}
 							<img src="{{this.to.avatarPath}}" width="24px" height="24px" alt="{{this.to.avatarPath}}" />
 						{{else}}
 							<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
 						{{/if}}
 						<span class="team_list_name">
-							{{#if isSent}}
+							{{#if isCurrent}}
 								{{this.to.firstName}} {{this.to.lastName}}
 							{{else}}
 								{{this.from.firstName}} {{this.from.lastName}}
@@ -235,20 +235,44 @@
 <!-- Message View -->
 <script id="tmpl-message_view" type="text/x-handlebars-template">
 	<div class="light-gradient center-pane animated fadeInUp">
-		<div class="messageview_from">
-			<a href="/#!/team?viewProfile={{from._id}}">
-				<img align="left" src="{{from.avatarPath}}" width="48px" height="48px" alt="{{avatarPath}}" />
-				<strong class="messageview_fromname">{{from.firstName}} {{from.lastName}}</strong>
-				<span class="messageview_sentOn">{{sentOn}}</span>
-			</a>
+		<div class="message_compose">
+			<input type="text" id="convo_compose" name="convo_compose" placeholder="Type your message here..." />
+			<button id="convo_submit" name="convo_submit" data-to="{{this.from._id}}">Send</button>
 		</div>
-		<div class="messageview_body">{{body}}</div>
-		{{#if attachment}}
-			<div class="msg_attachment">
-				<button class="light-gradient" id="msg_action_decline">Decline</button>
-				<button class="gold-gradient" id="msg_action_accept" data-action="{{attachment.action}}" data-data="{{attachment.data}}">Accept</button>
-			</div>
-		{{/if}}
+		<div class="messageview_body">
+			<ul>
+				{{#each this}}
+					<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this.from._id}}">
+						<div class="msg_from">
+							{{#if this.isCurrent}}
+								<div class="this_user">
+									<span class="msg_sentOn">{{this.sentOn}}</span>
+									<span class="team_list_name">
+										You
+										<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
+									</span>
+								</div>
+							{{else}}
+								<div class="user_message">
+									<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
+									<span class="team_list_name">
+										{{this.from.firstName}} {{this.from.lastName}}
+										<span class="msg_sentOn">{{this.sentOn}}</span>
+									</span>
+								</div>
+							{{/if}}
+						</div>
+						<p>{{this.body}}</p>
+						{{#if attachment}}
+							<div class="msg_attachment">
+								<button class="light-gradient" id="msg_action_decline" data-id="{{this._id}}">Decline</button>
+								<button class="gold-gradient" id="msg_action_accept" data-action="{{attachment.action}}" data-data="{{attachment.data}}" data-id="{{this._id}}">Accept</button>
+							</div>
+						{{/if}}
+					</li>
+				{{/each}}
+			</ul>
+		</div>
 	</div>
 </script>
 

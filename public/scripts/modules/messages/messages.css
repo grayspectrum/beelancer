@@ -90,6 +90,69 @@ li.message p {
 	margin: 4px 48px 0 0 !important;
 }
 
+.msg_from .this_user img {
+    float: right;
+    margin: 0 12px 0 0;
+}
+
+.this_user .team_list_name {
+	font-weight: bold;
+	margin-top: 12px;
+	display: block;
+    float: right;
+    width: 75px;
+}
+
+.this_user .msg_sentOn {
+	float: left;
+    margin: 12px 0 0 8px !important;
+}
+
+.messageview_body ul {
+	margin: 0;
+	padding: 0;
+}
+
+.messageview_body li.message {
+	border: 1px solid #e2e2e2;
+	background: #FFEFC6;
+	margin: 3px 0;
+	border-radius: 6px;
+}
+
+.messageview_body li.message.isRead {
+	background: #fff;
+}
+
+.messageview_body li.message:hover {
+	cursor: pointer;
+	background: #e2e2e2;
+	border: 1px solid #d2d2d2;
+}
+
+.messageview_body li.message.isRead .msg_from {
+	background: none;
+}
+
+.messageview_body li.message p {
+	font-size: 14px;
+	height: auto;
+	margin: 0 12px 12px 12px;
+	overflow: auto;
+}
+
+.message_compose {
+	margin: 10px 25px;
+}
+
+.message_compose input {
+	font-size: 14px;
+	padding: 6px 10px;
+	width: 400px;
+	border: 1px solid #ABABAB;
+	border-radius: 2px;
+}
+
 #newmessage_to, #newmessage_body {
 	display: block;
 	margin: 12px;
