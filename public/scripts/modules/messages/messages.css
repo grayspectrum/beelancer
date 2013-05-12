@@ -78,7 +78,7 @@ li.message p {
 }
 
 .messageview_body .msg_from img {
-	margin: 0px 12px;
+	margin: 0px 12px 12px 12px;
 	float: left;
 }
 
@@ -86,6 +86,13 @@ li.message p {
 	font-weight: bold;
 	margin-top: 12px;
 	display: block;
+}
+
+#messages_inbox_list .msg_sentOn {
+	color: #000;
+	font-size: 12px;
+	float: right;
+	margin: 4px 48px 0 0 !important;
 }
 
 .msg_sentOn {
@@ -98,6 +105,7 @@ li.message p {
 
 .current_body .msg_sentOn {
 	float: left;
+	font-weight: normal;
 	margin-top: 0px;
 }
 
@@ -108,7 +116,7 @@ li.message p {
 
 .this_user .team_list_name {
 	font-weight: bold;
-	margin-top: 12px;
+	margin: 12px 0px;
 	display: block;
     float: right;
     width: 75px;

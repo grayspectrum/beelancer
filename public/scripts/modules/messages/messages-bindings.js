@@ -255,6 +255,7 @@
 						bee.ui.notifications.notify('success', 'Message sent!');
 						$('#convo_compose').val('');
 						res.sentOn = new Date(res.sentOn).toLocaleString();
+						res.from = bee.get('profile');
 						var tmpl = Handlebars.compile($('#tmpl-ind_message').html())(res);
 						$('.messageview_body ul').prepend(tmpl);
 						checkPreviousMessage();

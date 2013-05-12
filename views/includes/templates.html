@@ -278,7 +278,7 @@
 
 <!-- Individual Message Template -->
 <script id="tmpl-ind_message" type="text/x-handlebars-template">
-	<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this.from}}">
+	<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this.from._id}}">
 		<div class="msg_from">
 			<div class="this_user">
 				<span class="team_list_name">
@@ -286,9 +286,9 @@
 					<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
 				</span>
 			</div>
-			<div class="msg_from_body">
-				<p class="current_body"><span class="msg_sentOn">{{this.sentOn}}</span>{{this.body}}</p>
-			</div>
+		</div>
+		<div class="msg_from_body">
+			<p class="current_body"><span class="msg_sentOn">{{this.sentOn}}</span>{{this.body}}</p>
 		</div>
 	</li>
 </script>
