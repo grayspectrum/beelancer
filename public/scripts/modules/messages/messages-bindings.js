@@ -67,6 +67,7 @@
 				var tmpl = Handlebars.compile($('#tmpl-message_view').html())(res);
 				$('#message_view').html(tmpl);
 
+				checkPreviousMessage();
 				bindMessageActions();
 				bee.ui.loader.hide();
 			},
@@ -150,6 +151,18 @@
 				bee.ui.notifications.notify('err', 'Message cannot be empty.', true);
 			}
 		}
+	};
+
+	////
+	// Check Previous Messages (combine if from same user)
+	////
+	function checkPreviousMessage() {
+		$.each($('.message'), function(key, val) {
+			if ($(this).attr('data-id') === $(this).next('li.message').attr('data-id')) {
+				$(this).next('li.message').children('.msg_body').prepend($('p', this));
+				$(this).remove();
+			}
+		});
 	};
 	
 	////
@@ -239,7 +252,9 @@
 				sendMessage(convoObj,
 					function(res) {
 						bee.ui.notifications.notify('success', 'Message sent!');
-						showViewMessage();
+						var tmpl = Handlebars.compile($('#tmpl-ind_message').html())(res);
+						$('.messageview_body ul').prepend(tmpl);
+						checkPreviousMessage();
 					},
 					function(err) {
 						bee.ui.notifications.notify('err', err);

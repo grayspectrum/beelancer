@@ -262,7 +262,9 @@
 								</div>
 							{{/if}}
 						</div>
-						<p>{{this.body}}</p>
+						<div class="msg_body">
+							<p{{#if this.isCurrent}} class="current_body"{{/if}}>{{this.body}}</p>
+						</div>
 						{{#if attachment}}
 							<div class="msg_attachment">
 								<button class="light-gradient" id="msg_action_decline" data-id="{{this._id}}">Decline</button>
@@ -274,6 +276,24 @@
 			</ul>
 		</div>
 	</div>
+</script>
+
+<!-- Individual Message Template -->
+<script id="tmpl-ind_message" type="text/x-handlebars-template">
+	<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this.from}}">
+		<div class="msg_from">
+			<div class="this_user">
+				<span class="msg_sentOn">{{this.sentOn}}</span>
+				<span class="team_list_name">
+					You
+					<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
+				</span>
+			</div>
+			<div class="msg_from_body">
+				<p class="current_body">{{this.body}}</p>
+			</div>
+		</div>
+	</li>
 </script>
 
 <!-- User Profile -->

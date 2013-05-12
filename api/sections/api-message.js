@@ -143,14 +143,13 @@ module.exports = function(app, db) {
 								res.write(err || 'Message not found.');
 								res.end();
 							} else {
-								
 								for (var i = 0; i < message.length; i++) {
 
 									// if this user equals belongs to, set flag so front end
 									// knows how to separate messages
 									if (message[i].from._id.equals(user.profile._id)) {
 										message[i].isCurrent = true;
-										
+
 										// mark as read but don't save
 										// so this doesn't get marked as read
 										// for the receiver of the message
@@ -336,11 +335,14 @@ module.exports = function(app, db) {
 					isSent : true,
 					type : 'message',
 					sentOn : new Date().toString(),
-					belongsTo : user._id
+					belongsTo : user._id,
+					isCurrent : false
 				});
 				
 				message.save(function(err) {
 					if (!err) {
+						message.isCurrent = true;
+						message.isRead = true;
 						res.write(JSON.stringify(message));
 						res.end();
 					} else {
