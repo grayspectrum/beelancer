@@ -233,10 +233,14 @@ module.exports = function(app, db) {
 				// calulate cost and return it
 				// also create an id in redis for cost
 				// caller must follow up with a second call
+				// to /api/job/publish/confirm while
 				// passing that id along with credit card
 				// information if it is a promoted job
+				// that endpoint will also attempt to process
+				// the payment via stripe api
+				
 				// if it is not a promoted job, then the user
-				// must pay upon hiring a bidder
+				// must pay upon hiring a bidder and the 
 			}
 			else {
 				res.writeHead(401);
@@ -245,6 +249,18 @@ module.exports = function(app, db) {
 				}));
 				res.end();
 			}
+		});
+	});
+	
+	////
+	// POST - /api/job/publish/confirm
+	// Confirms and pays for a published job
+	////
+	app.post('/api/job/publish/confirm', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			// find the passed id in redis
+			// process the passed payment information
+			// update the job as published
 		});
 	});
 	
