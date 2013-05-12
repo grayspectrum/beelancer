@@ -77,6 +77,11 @@ li.message p {
 	float: left;
 }
 
+.messageview_body .msg_from img {
+	margin: 0px 12px;
+	float: left;
+}
+
 .msg_from span {
 	font-weight: bold;
 	margin-top: 12px;
@@ -84,10 +89,16 @@ li.message p {
 }
 
 .msg_sentOn {
-	font-size: 12px;
+	color: #CCC;
+	font-size: 11px;
 	font-weight: normal;
 	float: right;
-	margin: 4px 48px 0 0 !important;
+	margin: 0 0 0 0 !important;
+}
+
+.current_body .msg_sentOn {
+	float: left;
+	margin-top: 0px;
 }
 
 .msg_from .this_user img {
@@ -101,11 +112,6 @@ li.message p {
 	display: block;
     float: right;
     width: 75px;
-}
-
-.this_user .msg_sentOn {
-	float: left;
-    margin: 12px 0 0 8px !important;
 }
 
 .messageview_body ul {
@@ -125,8 +131,6 @@ li.message p {
 }
 
 .messageview_body li.message:hover {
-	cursor: pointer;
-	background: #e2e2e2;
 	border: 1px solid #d2d2d2;
 }
 
@@ -139,6 +143,10 @@ li.message p {
 	height: auto;
 	margin: 0 12px 12px 12px;
 	overflow: auto;
+}
+
+.messageview_body li.message p.current_body {
+	text-align: right;
 }
 
 .message_compose {
@@ -234,10 +242,8 @@ li.message p {
 
 .messageview_body {
 	margin: 0 24px 24px 24px;
-	padding: 12px;
 	font-size: 14px;
 	line-height: 23px;
-	background: #E2E2E2;
 	border-radius: 6px;
 	text-shadow: 0 1px 0 white;
 }

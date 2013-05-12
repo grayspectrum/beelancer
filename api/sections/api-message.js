@@ -41,6 +41,8 @@ module.exports = function(app, db) {
 						.sort({ sentOn : -1 })
 					.exec(function(err, messages) {
 						if (!err) {
+
+							// find the latest message in the thread between users
 							var latestUserMessage = [];
 							for (var m = 0; m < messages.length; m++) {
 								var messageFromId = messages[m].from.user
@@ -68,11 +70,17 @@ module.exports = function(app, db) {
 								}
 							}
 
-							// if this user equals belongs to, set flag so front end
+							// if this user equals is the from user, set flag so front end
 							// knows how to separate messages
 							for (var i = 0; i < latestUserMessage.length; i++) {
 								if (latestUserMessage[i].from._id.equals(user.profile._id)) {
+									// mark as read but don't save
+									// so this doesn't get marked as read
+									// for the receiver of the message
+									latestUserMessage[i].isRead = true;
 									latestUserMessage[i].isCurrent = true;
+								} else {
+									latestUserMessage[i].isCurrent = false;
 								}
 							}
 							
@@ -135,22 +143,30 @@ module.exports = function(app, db) {
 								res.write(err || 'Message not found.');
 								res.end();
 							} else {
-								// only mark as read if it's the current user
-								if (mess.to.equals(user.profile._id) || mess.from.equals(user.profile._id)) {
-									if (!message[0].isRead) {
-										message[0].isRead = true;
-										message[0].save();
-									}
+								for (var i = 0; i < message.length; i++) {
 
 									// if this user equals belongs to, set flag so front end
 									// knows how to separate messages
-									for (var i = 0; i < message.length; i++) {
-										if (message[i].from._id.equals(user.profile._id)) {
-											message[i].isCurrent = true;
+									if (message[i].from._id.equals(user.profile._id)) {
+										message[i].isCurrent = true;
+
+										// mark as read but don't save
+										// so this doesn't get marked as read
+										// for the receiver of the message
+										message[i].isRead = true;
+									} else {
+										message[i].isCurrent = false;
+									}
+
+									// mark as read if it's the to use reading the message
+									if (message[i].to._id.equals(user.profile._id)) {
+										if (!message[i].isRead) {
+											message[i].isRead = true;
+											message[i].save();
 										}
 									}
 								}
-
+								
 								res.write(JSON.stringify(message));
 								res.end();
 							}
@@ -315,15 +331,18 @@ module.exports = function(app, db) {
 					from : user.profile._id,
 					to : body.to,
 					body : body.body,
-					isRead : true,
+					isRead : false,
 					isSent : true,
 					type : 'message',
 					sentOn : new Date().toString(),
-					belongsTo : user._id
+					belongsTo : user._id,
+					isCurrent : false
 				});
 				
 				message.save(function(err) {
 					if (!err) {
+						message.isCurrent = true;
+						message.isRead = true;
 						res.write(JSON.stringify(message));
 						res.end();
 					} else {
@@ -332,25 +351,6 @@ module.exports = function(app, db) {
 						res.end();
 					}
 				});
-				
-				// save a copy to sent
-				// db.profile.findOne({
-				// 	_id : body.to
-				// }).exec(function(err, profile) {
-				// 	if (!err && profile) {
-				// 		var message2 = new db.message({
-				// 			from : user.profile._id,
-				// 			to : body.to,
-				// 			body : body.body,
-				// 			isRead : false,
-				// 			type : 'message',
-				// 			sentOn : new Date().toString(),
-				// 			belongsTo : profile.user
-				// 		});
-				// 		message2.save();
-				// 	}
-				// });
-				
 			} else {
 				res.writeHead(401);
 				res.write('You must be logged in to send messages.');
@@ -391,7 +391,6 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user.profile) {
 				db.message.find({
-					belongsTo : user._id,
 					isRead : false,
 					to : user.profile._id
 				}).exec(function(err, messages) {
