@@ -89,10 +89,16 @@ li.message p {
 }
 
 .msg_sentOn {
-	font-size: 12px;
+	color: #CCC;
+	font-size: 11px;
 	font-weight: normal;
 	float: right;
-	margin: 4px 48px 0 0 !important;
+	margin: 0 0 0 0 !important;
+}
+
+.current_body .msg_sentOn {
+	float: left;
+	margin-top: 0px;
 }
 
 .msg_from .this_user img {
@@ -106,11 +112,6 @@ li.message p {
 	display: block;
     float: right;
     width: 75px;
-}
-
-.this_user .msg_sentOn {
-	float: left;
-    margin: 12px 0 0 8px !important;
 }
 
 .messageview_body ul {

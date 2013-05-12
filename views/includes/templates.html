@@ -246,7 +246,6 @@
 						<div class="msg_from">
 							{{#if this.isCurrent}}
 								<div class="this_user">
-									<span class="msg_sentOn">{{this.sentOn}}</span>
 									<span class="team_list_name">
 										You
 										<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
@@ -257,13 +256,12 @@
 									<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
 									<span class="team_list_name">
 										{{this.from.firstName}} {{this.from.lastName}}
-										<span class="msg_sentOn">{{this.sentOn}}</span>
 									</span>
 								</div>
 							{{/if}}
 						</div>
 						<div class="msg_body">
-							<p{{#if this.isCurrent}} class="current_body"{{/if}}>{{this.body}}</p>
+							<p{{#if this.isCurrent}} class="current_body"{{/if}}><span class="msg_sentOn">{{this.sentOn}}</span>{{this.body}}</p>
 						</div>
 						{{#if attachment}}
 							<div class="msg_attachment">
@@ -283,14 +281,13 @@
 	<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this.from}}">
 		<div class="msg_from">
 			<div class="this_user">
-				<span class="msg_sentOn">{{this.sentOn}}</span>
 				<span class="team_list_name">
 					You
 					<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
 				</span>
 			</div>
 			<div class="msg_from_body">
-				<p class="current_body">{{this.body}}</p>
+				<p class="current_body"><span class="msg_sentOn">{{this.sentOn}}</span>{{this.body}}</p>
 			</div>
 		</div>
 	</li>

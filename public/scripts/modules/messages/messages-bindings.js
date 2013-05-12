@@ -62,7 +62,9 @@
 			'/conversation/' + viewMessage,
 			{},
 			function(res) {
-				res.sentOn = new Date(res.sentOn).toDateString();
+				$.each(res, function(key, val) {
+					val.sentOn = new Date(val.sentOn).toLocaleString();
+				});
 
 				var tmpl = Handlebars.compile($('#tmpl-message_view').html())(res);
 				$('#message_view').html(tmpl);
@@ -252,6 +254,8 @@
 				sendMessage(convoObj,
 					function(res) {
 						bee.ui.notifications.notify('success', 'Message sent!');
+						$('#convo_compose').val('');
+						res.sentOn = new Date(res.sentOn).toLocaleString();
 						var tmpl = Handlebars.compile($('#tmpl-ind_message').html())(res);
 						$('.messageview_body ul').prepend(tmpl);
 						checkPreviousMessage();
