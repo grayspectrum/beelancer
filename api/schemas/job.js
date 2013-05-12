@@ -19,7 +19,9 @@ module.exports = new Schema({
 	listing : {
 		start : Date,
 		end : Date,
-		isPriority : Boolean
+		isPromoted : Boolean,
+		cost : Number,
+		acceptId : String
 	},
 	requirements : [String],
 	assignee : {
@@ -31,18 +33,23 @@ module.exports = new Schema({
 		owner : Boolean,
 		assignee : Boolean
 	},
-	category : String,
+	isPublished : Boolean,
+	title : String,
+	description : String,
+	category : Schema.Types.Mixed,
 	tags : [String],
 	////
 	// Options for Job.status:
 	// ----------------------
-	// "PENDING_HIRE" (user posts job and has not selected a bidder)
-	// "IN_PROGRESS" (user and assignee have both accepted requirements)
-	// "PENDING_PAYMENT" (assignee has marked the job as complete)
-	// "PAYMENT_PROCESSING" (owner has paid beelancer in full)
-	// "PAYMENT_DECLINED" (payment has failed and the payer notified)
-	// "PENDING_PAYOUT" (funds have cleared and are queued for payout to assignee)
-	// "COMPLETED" (profit)
+	// "UNPUBLISHED" (user creates job but has not pulished it)
+	// "PUBLISHED" (user publishes job to job board)
+	// "PENDING_HIRE" (user posts job and has not selected a bidder) [Jobs API]
+	// "IN_PROGRESS" (user and assignee have both accepted requirements) [Jobs API]
+	// "PENDING_PAYMENT" (assignee has marked the job as complete) [Invoice API]
+	// "PAYMENT_PROCESSING" (owner has paid beelancer in full) [Invoice API]
+	// "PAYMENT_DECLINED" (payment has failed and the payer notified) [Invoice API]
+	// "PENDING_PAYOUT" (funds have cleared and are queued for payout to assignee) [Invoice API]
+	// "COMPLETED" (profit) [Invoice API]
 	////
 	status : String,
 	bids : [{

@@ -82,7 +82,8 @@
 	////
 	function showMessageList(showView) {
 		$('#messages_nav .reply, #messages_nav .mark_unread, #messages_nav .delete_message, #message_view, #message_compose').remove();
-		
+		displayList();
+		bee.ui.loader.hide();
 		bee.api.send(
 			'GET',
 			'/messages/0/100',
@@ -96,7 +97,6 @@
 				});
 				var tmpl = Handlebars.compile($('#tmpl-message_list').html())(res);
 				$('#messages_' + (showView || 'inbox') + '_list').html(tmpl);
-				displayList();
 				bindMessages();
 				var messagesPager = new bee.ui.Paginator(
 					$('#messages_' + (showView || 'inbox') + ' .pagination'),
@@ -104,7 +104,6 @@
 					10
 				);
 				messagesPager.init();
-				bee.ui.loader.hide();
 			},
 			function(err) {
 				bee.ui.loader.hide();

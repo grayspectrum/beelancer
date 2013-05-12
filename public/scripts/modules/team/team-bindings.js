@@ -187,7 +187,7 @@
 	function loadTeam() {
 		// load list
 		$('#team_nav .remove_user, #team_nav .send_message, #team_nav .invite_user, #team_nav .rate_user, #team_find, #team_profile').remove();
-		
+		bee.ui.loader.hide();
 		var teamList = new bee.ui.TeamList(showProfile);
 	
 		function showProfile(profile) {
@@ -199,7 +199,6 @@
 			'/projects',
 			{},
 			function(res) {
-				bee.ui.loader.hide();
 				$.each(res, function(key, val) {
 					if (val.isActive) {
 						var option = $('<option></option>');
@@ -215,11 +214,13 @@
 						//	bee.ui.notifications.notify('err', err);
 							location.href = '/#!/team';
 						} else {
+							$('#list_team').empty();
 							teamList.populate(projectTeam).attach('#list_team').show();
 							bindMemberOptions('#list_team');
 						}
 					});
 				} else {
+					$('#list_team').empty();
 					teamList.populate().attach('#list_team').show();
 				}
 			},

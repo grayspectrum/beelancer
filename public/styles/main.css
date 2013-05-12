@@ -45,6 +45,14 @@ html, body {
 	height: 100%;
 }
 
+.loader {
+	width: 48px;
+	height: 48px;
+	margin: 12px auto;
+	background: url('/assets/images/loader2.gif') center center no-repeat;
+	background-size: 48px;
+}
+
 h1.logo {
 	background: url('/assets/images/logo.png') center center no-repeat;
 	height: 62px;

@@ -128,6 +128,22 @@ _.load([
 		}
 	});
 	
+	var jobs = new bee.Module(app, {
+		name : 'jobs',
+		container : 'main',
+		load : {
+			always : [
+				'/scripts/modules/jobs/jobs-bindings.js'
+			],
+			before : [
+			
+			],
+			once : [
+				'/scripts/modules/jobs/jobs.css'
+			]
+		}
+	});
+	
 	var not_found = new bee.Module(app, {
 		name : '404',
 		container : 'main',
