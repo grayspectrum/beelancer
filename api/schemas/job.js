@@ -19,7 +19,9 @@ module.exports = new Schema({
 	listing : {
 		start : Date,
 		end : Date,
-		isPromoted : Boolean
+		isPromoted : Boolean,
+		cost : Number,
+		acceptId : String
 	},
 	requirements : [String],
 	assignee : {

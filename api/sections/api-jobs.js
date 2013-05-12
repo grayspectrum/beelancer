@@ -10,7 +10,7 @@ var crypto = require('crypto')
   , utils = require('../utils.js')
   , actions = require('../actions.js')
   , jobCategories = require('../jobs/job-categories.js')
-  , jobUtils = require('../jobs/job-utils.js');
+  , calculateJobPostingCost = require('../jobs/job-postingcost.js');
   
 module.exports = function(app, db) {
 	
@@ -229,18 +229,67 @@ module.exports = function(app, db) {
 	app.post('/api/job/publish', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
-				var isValid = true;
-				// calulate cost and return it
-				// also create an id in redis for cost
-				// caller must follow up with a second call
-				// to /api/job/publish/confirm while
-				// passing that id along with credit card
-				// information if it is a promoted job
-				// that endpoint will also attempt to process
-				// the payment via stripe api
-				
-				// if it is not a promoted job, then the user
-				// must pay upon hiring a bidder and the 
+				var jobId = req.body.jobId;
+				db.job.findOne({
+					_id : jobId,
+					owner : user._id
+				})
+				.populate('tasks')
+				.exec(function(err, job) {
+					if (!err && job) {
+						// make sure there are tasks
+						if (job.tasks && job.tasks.length) {
+							calculateJobPostingCost(job, function(err, calc) {
+								if (!err) {
+									job.listing.cost = calc.cost;
+									job.listing.acceptId = calc.acceptId;
+									// caller must follow up with a second call
+									// to /api/job/publish/confirm while
+									// passing that id along with credit card
+									// information if it is a promoted job
+									// that endpoint will also attempt to process
+									// the payment via stripe api
+									// if it is not a promoted job, then the user
+									// must pay upon hiring a bidder and the 
+									job.save(function(err) {
+										if (!err) {
+											res.write(JSON.stringify(job));
+											res.end();
+										}
+										else {
+											res.writeHead(500);
+											res.write(JSON.stringify({
+												error : err
+											}));
+											res.end();
+										}
+									});
+								}
+								else {
+									res.writeHead(400);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'Job must have tasks attached to it before posting.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead((err) ? 500 : 400);
+						res.write(JSON.stringify({
+							error : (err) ? err : 'Could not publish job.'
+						}));
+						res.end();
+					}
+				});
 			}
 			else {
 				res.writeHead(401);
