@@ -269,7 +269,11 @@ module.exports = function(app, db) {
 	// Publishes an existing job
 	////
 	app.post('/api/job/unpublish', function(req, res) {
-		
+		// unpublishes job from job board
+		// caller must own job
+		// promoted jobs which have been prepaid cannot 
+		// be refunded in full, but prorated by remaining 
+		// time left in original post time
 	});
 	
 	////
@@ -277,7 +281,8 @@ module.exports = function(app, db) {
 	// Updates an existing job - adds tasks, etc
 	////
 	app.put('/api/job', function(req, res) {
-		
+		// cannot updated jobs which are already published
+		// must first unpublish job before making updates
 	});
 	
 	////
@@ -285,7 +290,10 @@ module.exports = function(app, db) {
 	// Deletes an existing job
 	////
 	app.del('/api/job', function(req, res) {
-		
+		// deletes a job
+		// job must not be published to delete
+		// can be unpublished before deleting
+		// and is bound by unpublishing rules
 	});
 	
 	////
@@ -293,7 +301,10 @@ module.exports = function(app, db) {
 	// Sends an offer request to the specified bidder for the passed job
 	////
 	app.post('/api/job/hire', function(req, res) {
-		
+		// requires caller to be owner of job
+		// and must pass the defined requiredments
+		// with the request to confirm they accept the requirements
+		// then sends an offer message to the recipient
 	});
 	
 	////
@@ -302,7 +313,15 @@ module.exports = function(app, db) {
 	// addressed to the caller
 	////
 	app.post('/api/job/accept', function(req, res) {
-		
+		// accepts a hire offer
+		// caller must be a recipient of hire offer
+		// must pass requirements list to accept
+		// this unpublishes the job and assigns the caller to
+		// the job
+		// if the job is not promoted, the job owner must pay
+		// the posting fee
+		// this also adds the owner and assignee to each others
+		// respective teams
 	});
 	
 	////
@@ -310,7 +329,8 @@ module.exports = function(app, db) {
 	// Adds caller to watchers
 	////
 	app.post('/api/job/watch', function(req, res) {
-		
+		// "favorites" a job listing so it shows up
+		// in the callers watch list
 	});
 	
 	////
@@ -318,7 +338,7 @@ module.exports = function(app, db) {
 	// Removes caller from watchers
 	////
 	app.post('/api/job/unwatch', function(req, res) {
-		
+		// removes the job from the callers watch list
 	});
 	
 	////
@@ -327,6 +347,7 @@ module.exports = function(app, db) {
 	// on the specified job
 	////
 	app.post('/api/job/bid', function(req, res) {
-		
+		// creates a bid which is a message that expresses interest
+		// in a posted job and allows the job owner to send a hire request
 	});
 };
