@@ -240,6 +240,13 @@
 			});
 		});
 
+		$('#convo_compose').bind('keyup', function() {
+			tappa.on('enter', function(key, val) {
+				$('#convo_submit').click();
+				tappa.clear('enter');
+			});
+		});
+
 		// Submit new message inline
 		$('#convo_submit').bind('click', function(e) {
 			e.preventDefault();

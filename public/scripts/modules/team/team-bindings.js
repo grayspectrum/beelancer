@@ -142,7 +142,7 @@
 		
 		function doSearch(event) {
 			var text = $(this).val()
-			  , key = event.which;
+			  , key = tappa.map('enter');
 
 			if (text && ((text.length % 3 === 0) || key === 13)) {	// run this on every fourth key stroke
 				if (_.validate.email(text)) {

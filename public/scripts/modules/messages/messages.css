@@ -159,14 +159,25 @@ li.message p {
 
 .message_compose {
 	margin: 10px 25px;
+	overflow: auto;
 }
 
 .message_compose input {
+	float: left;
 	font-size: 14px;
 	padding: 6px 10px;
-	width: 400px;
+	width: 425px;
 	border: 1px solid #ABABAB;
 	border-radius: 2px;
+}
+
+.message_compose #convo_submit {
+	background: url('/assets/images/mono/black/spechbubble_icon&32.png') 0 0 no-repeat;
+	cursor: pointer;
+	display: inline-block;
+	float: right;
+	height: 32px;
+	width: 32px;
 }
 
 #newmessage_to, #newmessage_body {
