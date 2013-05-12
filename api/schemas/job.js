@@ -31,11 +31,16 @@ module.exports = new Schema({
 		owner : Boolean,
 		assignee : Boolean
 	},
-	category : String,
+	isPublished : Boolean,
+	title : String,
+	description : String,
+	category : Schema.Types.Mixed,
 	tags : [String],
 	////
 	// Options for Job.status:
 	// ----------------------
+	// "UNPUBLISHED" (user creates job but has not pulished it)
+	// "PUBLISHED" (user publishes job to job board)
 	// "PENDING_HIRE" (user posts job and has not selected a bidder) [Jobs API]
 	// "IN_PROGRESS" (user and assignee have both accepted requirements) [Jobs API]
 	// "PENDING_PAYMENT" (assignee has marked the job as complete) [Invoice API]
