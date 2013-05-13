@@ -154,6 +154,12 @@ module.exports = function(app, db) {
 										// so this doesn't get marked as read
 										// for the receiver of the message
 										message[i].isRead = true;
+
+										// don't show attachment if the current user sent it
+										if (message[i].attachment && message[i].attachment.data) {
+											message[i].attachment = null;
+											message[i].body = 'You have invited ' + message[i].to.firstName + ' ' + message[i].to.lastName + ' to a project.';
+										}
 									} else {
 										message[i].isCurrent = false;
 									}

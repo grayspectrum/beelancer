@@ -160,7 +160,7 @@
 	function checkPreviousMessage() {
 		$.each($('.message'), function(key, val) {
 			if ($(this).attr('data-id') === $(this).next('li.message').attr('data-id')) {
-				$(this).next('li.message').children('.msg_body').prepend($('p', this));
+				$(this).next('li.message').children('.msg_body').prepend($('p, div.msg_attachment', this));
 				$(this).remove();
 			}
 		});

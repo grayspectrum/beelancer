@@ -272,8 +272,9 @@ li.message p {
  */
 .msg_attachment {
 	text-align: right;
-	padding: 12px 24px;
-	border-top: 1px solid #e2e2e2;
+	padding: 0px 24px 12px;
+	border-bottom: 1px solid #e2e2e2;
+	margin-bottom: 5px;
 }
 
 .msg_attachment button {

@@ -262,13 +262,13 @@
 						</div>
 						<div class="msg_body">
 							<p{{#if this.isCurrent}} class="current_body"{{/if}}><span class="msg_sentOn">{{this.sentOn}}</span>{{this.body}}</p>
+							{{#if this.attachment}}
+								<div class="msg_attachment">
+									<button class="light-gradient" id="msg_action_decline" data-id="{{this._id}}">Decline</button>
+									<button class="gold-gradient" id="msg_action_accept" data-action="{{this.attachment.action}}" data-data="{{this.attachment.data}}" data-id="{{this._id}}">Accept</button>
+								</div>
+							{{/if}}
 						</div>
-						{{#if attachment}}
-							<div class="msg_attachment">
-								<button class="light-gradient" id="msg_action_decline" data-id="{{this._id}}">Decline</button>
-								<button class="gold-gradient" id="msg_action_accept" data-action="{{attachment.action}}" data-data="{{attachment.data}}" data-id="{{this._id}}">Accept</button>
-							</div>
-						{{/if}}
 					</li>
 				{{/each}}
 			</ul>
