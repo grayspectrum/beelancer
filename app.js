@@ -11,6 +11,7 @@ module.exports = (function() {
 	  , express = require('express')
 	  , routes = require('./routes.js')
 	  , spi = require('spijs')
+	  , sockets = require('./sockets.js')
 	  , app;
 	
 	console.log(fs.readFileSync(__dirname + '/logo.txt').toString());
@@ -89,9 +90,12 @@ module.exports = (function() {
 		spi.config({
 			viewDir : __dirname + '/views/panels'
 		}).init(app);
-		// start server
-		app.listen(config.app_port, function() {
-			console.log('Beelancer listening on port ' + config.app_port + '.\n');
+		// bind sockets
+		sockets.bind(app, function(server) {
+			// start server
+			server.listen(config.app_port, function() {
+				console.log('Beelancer listening on port ' + config.app_port + '.\n');
+			});
 		});
 	});
 	
