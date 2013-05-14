@@ -1,4 +1,7 @@
-
+/*
+ * beelancer - sockets.js
+ * Author: Gordon Hall
+ */
 
 var socket_io = require('socket.io')
   , conf = require('./config.js');
@@ -16,7 +19,7 @@ module.exports.clients.online = function(id, returnClient) {
 	// clients aray
 	var clients = module.exports.clients;
 	for (var i = 0; i < clients.length; i++) {
-		if (clients[i].userId === id) {
+		if (clients[i].userId.toString() === id.toString()) {
 			return (returnClient) ? clients[i] : true;
 		}
 	}
@@ -49,39 +52,40 @@ module.exports.bind = function(app, onComplete) {
 		});
 		
 		// client disconnects
-		socket.on('disconnect', function(data) {
-			registerUserAsOnline(client.id);
+		client.on('disconnect', function(data) {
+			registerUserAsOffline(client.id);
 		});
 	});
 	
 	onComplete(server);
-};
-
-// add a user online
-function registerUserAsOnline(userId, clientId) {
-	var clients = module.exports.clients;
-	// make sure they aren't already online
-	if (!clients.online(userId)) {
-		clients.push({
-			userId : userId,
-			clientId : clientId,
-			socket : io.sockets.socket(clientId)
-		});
-		console.log('User connected:', userId);
-	}
-};
-
-// remove a user from online
-function registerUserAsOffline(userOrClientId) {
-	// find the user registered in clients
-	// and remove them
-	var clients = module.exports.clients;
-	for (var i = 0; i < clients.length; i++) {
-		if (clients[i].userId === userOrClientId || clients[i].clientId === userOrClientId) {
-			clients.splice(i, 1);
-			console.log('User disconnected:', clients[i].userId);
-			return true;
+	
+	// add a user online
+	function registerUserAsOnline(userId, clientId) {
+		var clients = module.exports.clients;
+		// make sure they aren't already online
+		if (!clients.online(userId)) {
+			clients.push({
+				userId : userId,
+				clientId : clientId,
+				socket : io.sockets.socket(clientId)
+			});
+			console.log('User connected:', userId);
+			console.log('Total connected:', clients.length);
 		}
-	}
-	return false;
+	};
+	
+	// remove a user from online
+	function registerUserAsOffline(userOrClientId) {
+		// find the user registered in clients
+		// and remove them
+		var clients = module.exports.clients;
+		for (var i = 0; i < clients.length; i++) {
+			if (clients[i].userId === userOrClientId || clients[i].clientId === userOrClientId) {
+				console.log('User disconnected:', clients[i].userId);
+				clients.splice(i, 1);
+				return true;
+			}
+		}
+		return false;
+	};
 };

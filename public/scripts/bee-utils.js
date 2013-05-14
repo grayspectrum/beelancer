@@ -35,6 +35,11 @@ bee.utils = (function() {
 					if (firstTime) {
 						bee.ui.notifications.notify('info', 'Welcome back, ' + res.firstName + '!');
 					}
+					// notify the sytem we are logged in
+					bee.socket.emit('online', {
+						userId : bee.get('profile').user
+					});
+					bee.socket.bindListeners(bee.socket);
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', 'Failed to identify you.');

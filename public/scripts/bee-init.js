@@ -14,6 +14,7 @@ var bee = new spi.App({
 // Load API Library
 _.load([
 	'/scripts/bee-api.js',
+	'/scripts/bee-socket.js',
 	'/scripts/bee-ui.js',
 	'/scripts/bee-utils.js'
 ], function() {

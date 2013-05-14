@@ -8,7 +8,8 @@
 var crypto = require('crypto')
   , mailer = require('../email/mailer.js')
   , utils = require('../utils.js')
-  , actions = require('../actions.js');
+  , actions = require('../actions.js')
+  , clients = require('../../sockets.js').clients;
 
 module.exports = function(app, db) {
 	
@@ -351,6 +352,20 @@ module.exports = function(app, db) {
 						message.isRead = true;
 						res.write(JSON.stringify(message));
 						res.end();
+						// notify recipient
+						// but we need their user id not their profile id
+						// so we need to look them up first
+						// probably need to change this to be more efficient
+						// but mongodb lookup by id is efficient so we 
+						// can see how it goes...
+						db.profile.findOne(body.to).exec(function(err, profile) {
+							if (!err) {
+								var recip = clients.get(profile.user);
+								if (recip) {
+									recip.socket.emit('message', message);
+								}
+							}
+						});
 					} else {
 						res.writeHead(500);
 						res.write('Could not send message.');
