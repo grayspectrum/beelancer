@@ -44,8 +44,8 @@ module.exports = function(app, db) {
 	});
 	
 	////
-	// GET - /api/jobs/promoted
-	// Returns the current promoted jobs
+	// GET - /api/jobs/categories
+	// Returns the job categories
 	////
 	app.get('/api/jobs/categories', function(req, res) {
 		res.write(JSON.stringify(
@@ -69,6 +69,28 @@ module.exports = function(app, db) {
 				'listing.end' : today
 			},
 			'listing.isPromoted' : false
+		}).exec(function(err, jobs) {
+			if (!err && jobs) {
+				res.write(JSON.stringify(jobs));
+				res.end();
+			}
+			else {
+				res.writeHead(500);
+				res.write(JSON.stringify({
+					error : err || 'Could not get jobs.'
+				}));
+				res.end();
+			}
+		});
+	});
+
+	////
+	// GET - /api/jobs/search
+	// Returns all jobs matching search criteria
+	////
+	app.get('/api/jobs/search/:search', function(req, res) {
+		db.job.find({
+			title : req.params.search
 		}).exec(function(err, jobs) {
 			if (!err && jobs) {
 				res.write(JSON.stringify(jobs));
