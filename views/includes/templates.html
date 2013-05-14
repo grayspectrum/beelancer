@@ -561,5 +561,9 @@
 
 <!-- Job List Template -->
 <script id="tmpl-joblist" type="text/x-handlebars-template">
-	
+	{{#if this.length}}
+
+	{{else}}
+		<p>No jobs found.</p>
+	{{/if}}
 </script>
