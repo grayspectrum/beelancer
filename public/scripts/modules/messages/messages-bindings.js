@@ -62,6 +62,9 @@
 			'/conversation/' + viewMessage,
 			{},
 			function(res) {
+				// reverse order for chat window
+				res = res.reverse();
+				
 				$.each(res, function(key, val) {
 					val.sentOn = new Date(val.sentOn).toLocaleString();
 				});
@@ -72,6 +75,10 @@
 				checkPreviousMessage();
 				bindMessageActions();
 				bee.ui.loader.hide();
+				
+				$(window).trigger('resize');
+				$('.messageview_body').animate({ scrollTop: $('.messageview_body')[0].scrollHeight }, 800);
+				$('#convo_compose').focus();
 			},
 			function(err) {
 			//	history.back();
@@ -159,8 +166,8 @@
 	////
 	function checkPreviousMessage() {
 		$.each($('.message'), function(key, val) {
-			if ($(this).attr('data-id') === $(this).next('li.message').attr('data-id')) {
-				$(this).next('li.message').children('.msg_body').prepend($('p, div.msg_attachment', this));
+			if ($(this).attr('data-id') === $(this).prev('li.message').attr('data-id')) {
+				$(this).prev('li.message').children('.msg_body').append($('p, div.msg_attachment', this));
 				$(this).remove();
 			}
 		});
@@ -171,24 +178,26 @@
 	////
 	function bindMessageActions() {
 		// Mark Unread
-		// $('#messages_nav .mark_unread').bind('click', function() {
-		// 	bee.ui.loader.show();
-		// 	bee.api.send(
-		// 		'PUT',
-		// 		'/message/update',
-		// 		{
-		// 			id : viewMessage
-		// 		},
-		// 		function(res) {
-		// 			bee.ui.notifications.notify('success', 'Marked as unread!');
-		// 			location.href = '/#!/messages?show=inbox';
-		// 		},
-		// 		function(err) {
-		// 			bee.ui.loader.hide();
-		// 			bee.ui.notifications.notify('err', err);
-		// 		}
-		// 	);
-		// });
+		/*
+		$('#messages_nav .mark_unread').bind('click', function() {
+			bee.ui.loader.show();
+			bee.api.send(
+				'PUT',
+				'/message/update',
+				{
+					id : viewMessage
+				},
+				function(res) {
+					bee.ui.notifications.notify('success', 'Marked as unread!');
+					location.href = '/#!/messages?show=inbox';
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
+		*/
 		
 		// Accept Invite
 		$('#msg_action_accept').bind('click', function() {
@@ -264,8 +273,9 @@
 						res.sentOn = new Date(res.sentOn).toLocaleString();
 						res.from = bee.get('profile');
 						var tmpl = Handlebars.compile($('#tmpl-ind_message').html())(res);
-						$('.messageview_body ul').prepend(tmpl);
+						$('.messageview_body ul').append(tmpl);
 						checkPreviousMessage();
+						$('.messageview_body').animate({ scrollTop: $('.messageview_body')[0].scrollHeight }, 800);
 					},
 					function(err) {
 						bee.ui.notifications.notify('err', err);
@@ -320,6 +330,17 @@
 				}
 			);
 		});
+	});
+	
+	// handle reactive ui
+	$(window).bind('resize', function() {
+		var wHeight = $(window).height()
+		  , bMargin = 84
+		  , ctrHeight = wHeight - bMargin
+		  , composeH = $('.message_compose').height() + 24;
+		
+		$('#message_view .messageview_body').height(ctrHeight - composeH);
+		$('#message_view > div').height(ctrHeight);
 	});
 	
 })();

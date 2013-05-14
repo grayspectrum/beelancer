@@ -158,7 +158,7 @@ li.message p {
 }
 
 .message_compose {
-	margin: 10px 25px;
+	margin: 6px 24px;
 	overflow: auto;
 }
 
@@ -260,11 +260,12 @@ li.message p {
 }
 
 .messageview_body {
-	margin: 0 24px 24px 24px;
+	margin: 12px 24px 6px 24px;
 	font-size: 14px;
 	line-height: 23px;
 	border-radius: 6px;
 	text-shadow: 0 1px 0 white;
+	overflow: auto;
 }
 
 /*
