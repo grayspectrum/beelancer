@@ -3,13 +3,13 @@
  * Author: Gordon Hall
  */
 
-#jobs_nav .new_job {
-	background: url('/assets/images/mono/black/push_pin_icon&24.png') 12px center no-repeat;
+#jobs_nav .search_job_btn {
+	background: url('/assets/images/mono/black/zoom_icon&24.png') 12px center no-repeat;
 }
 
 #search_jobs {
 	float: left;
-	width: 432px;
+	width: 400px;
 }
 
 #job_search {
@@ -18,5 +18,5 @@
 	border-radius: 4px;
 	font-size: 14px;
 	margin: 10px;
-	width: 384px;
+	width: 364px;
 }
