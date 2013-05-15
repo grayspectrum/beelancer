@@ -280,15 +280,32 @@
 <script id="tmpl-ind_message" type="text/x-handlebars-template">
 	<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this.from._id}}">
 		<div class="msg_from">
-			<div class="this_user">
-				<span class="team_list_name">
-					You
-					<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
-				</span>
+			<div class="msg_from">
+				{{#if this.isCurrent}}
+					<div class="this_user">
+						<span class="team_list_name">
+							You
+							<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
+						</span>
+					</div>
+				{{else}}
+					<div class="user_message">
+						<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
+						<span class="team_list_name">
+							{{this.from.firstName}} {{this.from.lastName}}
+						</span>
+					</div>
+				{{/if}}
 			</div>
-		</div>
-		<div class="msg_from_body">
-			<p class="current_body"><span class="msg_sentOn">{{this.sentOn}}</span>{{this.body}}</p>
+			<div class="msg_body">
+				<p{{#if this.isCurrent}} class="current_body"{{/if}}><span class="msg_sentOn">{{this.sentOn}}</span>{{this.body}}</p>
+				{{#if this.attachment}}
+					<div class="msg_attachment">
+						<button class="light-gradient" id="msg_action_decline" data-id="{{this._id}}">Decline</button>
+						<button class="gold-gradient" id="msg_action_accept" data-action="{{this.attachment.action}}" data-data="{{this.attachment.data}}" data-id="{{this._id}}">Accept</button>
+					</div>
+				{{/if}}
+			</div>
 		</div>
 	</li>
 </script>

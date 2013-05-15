@@ -348,23 +348,30 @@ module.exports = function(app, db) {
 				
 				message.save(function(err) {
 					if (!err) {
-						message.isCurrent = true;
-						message.isRead = true;
-						res.write(JSON.stringify(message));
-						res.end();
-						// notify recipient
-						// but we need their user id not their profile id
-						// so we need to look them up first
-						// probably need to change this to be more efficient
-						// but mongodb lookup by id is efficient so we 
-						// can see how it goes...
-						db.profile.findOne(body.to).exec(function(err, profile) {
-							if (!err) {
-								var recip = clients.get(profile.user);
-								if (recip) {
-									recip.socket.emit('message', message);
+						db.message
+							.findOne({ _id : message._id})
+							.populate('to')
+							.populate('from')
+						.exec(function(err, mess) {
+							mess.isCurrent = true;
+							mess.isRead = true;
+							res.write(JSON.stringify(mess));
+							res.end();
+							// notify recipient
+							// but we need their user id not their profile id
+							// so we need to look them up first
+							// probably need to change this to be more efficient
+							// but mongodb lookup by id is efficient so we 
+							// can see how it goes...
+							db.profile.findOne({ _id : body.to}).exec(function(err, profile) {
+								if (!err) {
+									var recip = clients.get(profile.user);
+									if (recip) {
+										mess.isCurrent = false;
+										recip.socket.emit('message', mess);
+									}
 								}
-							}
+							});
 						});
 					} else {
 						res.writeHead(500);
