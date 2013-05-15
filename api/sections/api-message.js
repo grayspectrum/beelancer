@@ -368,6 +368,7 @@ module.exports = function(app, db) {
 									var recip = clients.get(profile.user);
 									if (recip) {
 										mess.isCurrent = false;
+										mess.isRead = false;
 										recip.socket.emit('message', mess);
 									}
 								}

@@ -19,10 +19,10 @@ _.load([
 	'/scripts/bee-utils.js'
 ], function() {
 	bee.utils.updateContextAndRenderView(true);
-	// begin message poll
-	setInterval(function() {
-		bee.utils.checkMessages();
-	}, 6000);
+	// // begin message poll
+	// setInterval(function() {
+	bee.utils.checkMessages();
+	// }, 6000);
 	// begin endorsement poll
 	setInterval(function() {
 		bee.utils.checkEndorse();
