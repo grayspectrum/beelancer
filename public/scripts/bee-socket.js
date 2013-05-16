@@ -10,10 +10,13 @@ bee.socket = io.connect(location.protocol + '//' + location.host);
 // Bind Events
 bee.socket.bindListeners = function(socket) {
 
+	var viewMessage = _.querystring.get('viewMessage')
+	  , user = _.querystring.get('user');
+
 	socket.on('message', function(data) {
 		// do message stuff
 		// data should be a message object
-		if (_.querystring.get('viewMessage') && (data.from._id === _.querystring.get('user'))) {
+		if (viewMessage && (data.from._id === user)) {
 
 			data.sentOn = new Date(data.sentOn).toLocaleString();
 			data.isRead = true;		// set is read to true, as you are in the conversation view
@@ -31,6 +34,21 @@ bee.socket.bindListeners = function(socket) {
 			}
 
 			$('.messageview_body').animate({ scrollTop: $('.messageview_body')[0].scrollHeight }, 800);
+
+			// mark message as read
+			bee.api.send(
+				'PUT',
+				'/message/update',
+				{
+					id : data._id
+				},
+				function(res) {
+					// silent success
+				},
+				function(err) {
+					// silent fail
+				}
+			);
 		} else if (!location.search && $('#menu .messages').hasClass('active')) {
 			// if on messages panel, refresh panel
 			location.href = '/#!/messages';
@@ -41,5 +59,16 @@ bee.socket.bindListeners = function(socket) {
 		}
 		
 	});
+
+	// socket.on('online', function(data) {
+	// 	$.each(data, function(key, val) {
+	// 		if (viewMessage && (val === user)) {
+	// 			$('#online_user').html('User is online.');
+	// 			return false;
+	// 		} else if (!location.search && $('#menu .messages').hasClass('active')) {
+
+	// 		}
+	// 	});
+	// });
 
 };

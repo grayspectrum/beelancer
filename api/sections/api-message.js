@@ -250,7 +250,6 @@ module.exports = function(app, db) {
 				
 				db.message.findOne({
 					 _id : id, 
-					belongsTo : user._id
 				}).exec(function(err, message) {
 					if (!err) {
 						message.isRead = false;

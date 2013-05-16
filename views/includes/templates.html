@@ -248,7 +248,7 @@
 									</span>
 								</div>
 							{{else}}
-								<div class="user_message">
+								<div class="user_message" data-user="{{this.from.user}}">
 									<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
 									<span class="team_list_name">
 										{{this.from.firstName}} {{this.from.lastName}}
@@ -289,7 +289,7 @@
 						</span>
 					</div>
 				{{else}}
-					<div class="user_message">
+					<div class="user_message" data-user="{{this.from.user}}">
 						<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
 						<span class="team_list_name">
 							{{this.from.firstName}} {{this.from.lastName}}
