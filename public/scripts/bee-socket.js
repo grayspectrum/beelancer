@@ -62,4 +62,11 @@ bee.socket.bindListeners = function(socket) {
 	//  	bee.utils.onlineList = data;
 	// });
 
+	socket.on('endorse', function(data) {
+		console.log(data);
+		if (data.endorse) {
+			bee.utils.checkEndorse();
+		}
+	});
+
 };

@@ -7,7 +7,8 @@
 
 var crypto = require('crypto')
   , mailer = require('../email/mailer.js')
-  , utils = require('../utils.js');
+  , utils = require('../utils.js')
+  , clients = require('../../sockets.js').clients;
 
 module.exports = function(app, db) {
 	
@@ -66,6 +67,11 @@ module.exports = function(app, db) {
 													db.profile.update(profile, {$set: updateProfile}, function(err){
 														if (!err) {
 															// do we even need to return anything here?
+
+															var recip = clients.get(req.params.profileId);
+															if (recip) {
+																recip.socket.emit('endorse', { endorse: true});
+															}
 															res.end();
 														} else {
 															res.writeHead(500);
@@ -241,11 +247,8 @@ module.exports = function(app, db) {
 						rating = rating[0];
 
 						// this isn't converting to a boolean for some reason
-						if(body.needsAction && body.needsAction === 'false') {
-							body.needsAction = false;
-						} else {
-							body.needsAction = true;
-						}
+						
+						body.needsAction = true;
 
 						if(body.isVisible && body.isVisible === 'false') {
 							body.isVisible = false;
@@ -283,6 +286,11 @@ module.exports = function(app, db) {
 											db.profile.update(profile, {$set: updateProfile}, function(err){
 												if (!err) {
 													// do we even need to return anything here?
+
+													var recip = clients.get(req.params.profileId);
+													if (recip) {
+														recip.socket.emit('endorse', { endorse: true});
+													}
 													res.end();
 												} else {
 													res.writeHead(500);
