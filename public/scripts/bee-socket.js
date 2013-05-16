@@ -10,12 +10,10 @@ bee.socket = io.connect(location.protocol + '//' + location.host);
 // Bind Events
 bee.socket.bindListeners = function(socket) {
 
-	var viewMessage = _.querystring.get('viewMessage')
-	  , user = _.querystring.get('user');
-
 	socket.on('message', function(data) {
-		// do message stuff
-		// data should be a message object
+		var viewMessage = _.querystring.get('viewMessage')
+	  	  , user = _.querystring.get('user');
+
 		if (viewMessage && (data.from._id === user)) {
 
 			data.sentOn = new Date(data.sentOn).toLocaleString();
@@ -61,14 +59,7 @@ bee.socket.bindListeners = function(socket) {
 	});
 
 	// socket.on('online', function(data) {
-	// 	$.each(data, function(key, val) {
-	// 		if (viewMessage && (val === user)) {
-	// 			$('#online_user').html('User is online.');
-	// 			return false;
-	// 		} else if (!location.search && $('#menu .messages').hasClass('active')) {
-
-	// 		}
-	// 	});
+	//  	bee.utils.onlineList = data;
 	// });
 
 };

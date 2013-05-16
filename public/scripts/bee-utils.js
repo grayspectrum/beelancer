@@ -37,7 +37,7 @@ bee.utils = (function() {
 					}
 					// notify the sytem we are logged in
 					bee.socket.emit('online', {
-						userId : bee.get('profile').user
+						userId : bee.get('profile')._id
 					});
 					bee.socket.bindListeners(bee.socket);
 				},

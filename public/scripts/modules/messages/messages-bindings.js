@@ -62,6 +62,8 @@
 			'/conversation/' + viewMessage,
 			{},
 			function(res) {
+				var isOnline = false;
+
 				// reverse order for chat window
 				res = res.reverse();
 				
@@ -71,6 +73,18 @@
 
 				var tmpl = Handlebars.compile($('#tmpl-message_view').html())(res);
 				$('#message_view').html(tmpl);
+
+				// $.each(bee.utils.onlineList, function(key, val) {
+				// 	if (val === fromUser) {
+				// 		bee.ui.notifications.notify('success', 'User is online.');
+				// 		isOnline = true;
+				// 		return false;
+				// 	}
+				// });
+
+				// if (!isOnline) {
+				// 	// mark as offline
+				// }
 
 				checkPreviousMessage();
 				bindMessageActions();

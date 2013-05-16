@@ -362,16 +362,16 @@ module.exports = function(app, db) {
 							// probably need to change this to be more efficient
 							// but mongodb lookup by id is efficient so we 
 							// can see how it goes...
-							db.profile.findOne({ _id : body.to}).exec(function(err, profile) {
+							//db.profile.findOne({ _id : body.to}).exec(function(err, profile) {
 								if (!err) {
-									var recip = clients.get(profile.user);
+									var recip = clients.get(body.to);
 									if (recip) {
 										mess.isCurrent = false;
 										mess.isRead = false;
 										recip.socket.emit('message', mess);
 									}
 								}
-							});
+							//});
 						});
 					} else {
 						res.writeHead(500);

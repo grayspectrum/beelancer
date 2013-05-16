@@ -59,6 +59,11 @@ module.exports.bind = function(app, onComplete) {
 		// client disconnects
 		client.on('disconnect', function(data) {
 			registerUserAsOffline(client.id);
+			// var onlineUsers = [];
+			// for (var i = 0; i < module.exports.clients.length; i++) {
+			// 	onlineUsers.push(module.exports.clients[i].userId);
+			// }
+			// client.emit('online', onlineUsers);
 		});
 	});
 	
