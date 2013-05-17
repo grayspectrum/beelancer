@@ -261,7 +261,7 @@ module.exports = function(app, db) {
 					if (!err && job) {
 						// make sure there are tasks
 						if (job.tasks && job.tasks.length) {
-							calculateJobPostingCost(job, function(err, calc) {
+							calculateJobPostingCost(db, job, function(err, calc) {
 								if (!err) {
 									job.listing.cost = calc.cost;
 									job.listing.acceptId = calc.acceptId;
@@ -332,6 +332,62 @@ module.exports = function(app, db) {
 			// find the passed id in redis
 			// process the passed payment information
 			// update the job as published
+			var jobId = req.body.jobId
+			  , acceptId = req.body.acceptId;
+			  
+			db.job.findOne({
+				'_id' : jobId,
+				'listing.acceptId' : acceptId
+			}).exec(function(err, job) {
+				if (!err && job) {
+					if (job.listing.isPromoted) {
+						// require credit car info
+						var card = req.body.payment;
+						if (!payment) {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'Payment information is required for promoted posts.'
+							}));
+							res.end();
+						}
+						else {
+							// process payment
+							// but err for now...
+							res.writeHead(500);
+							res.write(JSON.stringify({
+								error : 'Promoted jobs not yet supported.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						// do it
+						job.isPublished = true;
+						job.listing.acceptId = null;
+						// save job
+						job.save(function(err) {
+							if (!err) {
+								res.write(JSON.stringify(job));
+								res.end();
+							}
+							else {
+								res.writeHead(500);
+								res.write(JSON.stringify({
+									error : err
+								}));
+								res.end();
+							}
+						});
+					}
+				}
+				else {
+					res.writeHead(400);
+					res.write(JSON.stringify({
+						error : err || 'Could not confirm job posting.'
+					}));
+					res.end();
+				}
+			});
 		});
 	});
 	
