@@ -247,10 +247,13 @@ module.exports = function(app, db) {
 						rating = rating[0];
 
 						// this isn't converting to a boolean for some reason
-						
-						body.needsAction = true;
+						if(body.needsAction && body.needsAction === 'false') {
+							body.needsAction = false;
+						}
 
-						if(body.isVisible && body.isVisible === 'false') {
+						if(body.isVisible && body.isVisible === 'true') {
+							body.isVisible = true;
+						} else {
 							body.isVisible = false;
 						}
 
@@ -258,7 +261,6 @@ module.exports = function(app, db) {
 
 						db.rating.update(rating, {$set: body}, function(err){
 							if (!err) {
-								// do we even need to return anything here?
 								// update user average rating
 								db.rating
 									.find({ forUser : req.params.profileId })
@@ -285,11 +287,13 @@ module.exports = function(app, db) {
 										.exec(function(err, profile) {
 											db.profile.update(profile, {$set: updateProfile}, function(err){
 												if (!err) {
-													// do we even need to return anything here?
 
-													var recip = clients.get(req.params.profileId);
-													if (recip) {
-														recip.socket.emit('endorse', { endorse: true});
+													// only send the socket if it's not the current user
+													if (!profile._id.equals(user.profile._id)) {
+														var recip = clients.get(req.params.profileId);
+														if (recip) {
+															recip.socket.emit('endorse', { endorse: true});
+														}
 													}
 													res.end();
 												} else {
