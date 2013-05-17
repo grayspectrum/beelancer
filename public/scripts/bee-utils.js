@@ -85,7 +85,7 @@ bee.utils = (function() {
 		if (_.cookies.get('apikey') && _.cookies.get('userid') && bee.get('profile')) {
 			bee.api.send(
 				'GET',
-				'/ratings/pollEndorse',
+				'/ratings/getEndorsements',
 				{},
 				function(res) {
 					if(res.newEndorses && res.newEndorses > bee.get('newEndorses')) {
