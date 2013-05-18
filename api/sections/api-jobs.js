@@ -370,22 +370,7 @@ module.exports = function(app, db) {
 								res.end();
 							}
 							else {
-								var requiredPmtProps = [
-									'name',
-									'number',
-									'exp_month',
-									'exp_year',
-									'cvc'
-								]
-								  , isValid = true
-								  , missingProps = [];
-								// validate required props
-								requiredPmtProps.forEach(function(val) {
-									if (!req.body.payment[val]) {
-										isValid = false;
-										missingProps.push(val);
-									}
-								});
+								var pmtData = utils.hasValidPaymentData(card);
 								// process payment
 								if (isValid) {
 									var body = req.body;
@@ -404,6 +389,9 @@ module.exports = function(app, db) {
 											};
 											res.write(JSON.stringify(resp));
 											res.end();
+											// save the charge id for reference
+											job.listing.chargeId = data.id;
+											job.save();
 										}
 										else {
 											res.writeHead(500);
@@ -416,7 +404,7 @@ module.exports = function(app, db) {
 									res.writeHead(400);
 									res.write(JSON.stringify({
 										error : 'Missing required properties.',
-										data : missingProps
+										data : pmtData.missing
 									}));
 									res.end();	
 								}
@@ -733,27 +721,174 @@ module.exports = function(app, db) {
 	// Sends an offer request to the specified bidder for the passed job
 	////
 	app.post('/api/job/hire', function(req, res) {
-		// requires caller to be owner of job
-		// and must pass the defined requiredments
-		// with the request to confirm they accept the requirements
-		// then sends an offer message to the recipient
-	});
-	
-	////
-	// POST - /api/job/accept
-	// Completes the hiring process assuming the given job id has a pending hire
-	// addressed to the caller
-	////
-	app.post('/api/job/accept', function(req, res) {
-		// accepts a hire offer
-		// caller must be a recipient of hire offer
-		// must pass requirements list to accept
-		// this unpublishes the job and assigns the caller to
-		// the job
-		// if the job is not promoted, the job owner must pay
-		// the posting fee
-		// this also adds the owner and assignee to each others
-		// respective teams
+		utils.verifyUser(req, db, function(err, user) {
+			// requires caller to be owner of job
+			// and must pass the defined requiredments
+			// with the request to confirm they accept the requirements
+			// then sends an offer message to the recipient
+			if (!err && user) {
+				db.job.findOne({
+					_id : req.body.jobId,
+					owner : user._id
+				}).exec(function(err, job) {
+					if (!err && job) {
+						// check that requirements were passed and all match up
+						var requirementsMatch = (req.body.requirments) ? (req.body.requirments.length === job.requirements.length) : false;
+						
+						if (requirementsMatch) {
+							req.body.requirements.forEach(function(val) {
+								if (job.requirements.indexOf(val) === -1) {
+									requirementsMatch = false;
+								}
+							});
+						}
+						
+						if (requirementsMatch) {
+							var bidId = req.body.bidId
+							  , bidIndex = job.bids.indexOf(bidId);
+							if (bidIndex !== -1) {
+								// find the bid
+								db.bid.findOne({ _id : bidId })
+									.populate('user')
+								.exec(function(err, bid) {
+									if (!err && bid) {
+										// does the owner need to pay now?
+										if (job.isPromoted) {
+											// make sure they have paid
+											// but chances are they already have
+										}
+										else {
+											// yes, this job is a standard post
+											// and the user now needs to pay
+											var pmtData = utils.hasValidPaymentData(req.body.payment);
+											if (pmtData.valid) {
+												stripe.charge.create({
+													card : req.body.payment,
+													currency : 'usd',
+													amount : job.listing.cost,
+													capture : false, // don't capture until job is accepted
+													description : 'Job ID: ' + job._id + ', User: ' + user.email
+												}, function(err, data) {
+													if (!err) {
+														// lets store the charge id, so we can charge it later when the assignee
+														// accepts the job
+														job.listing.chargeId = data.id;
+														job.save(function(err) {
+															if (!err) {
+																// mark bid as accepted
+																bid.isAccepted = true;
+																bid.save(function(err) {
+																	if (!err) {
+																		// send hire request to assignee
+																		var jobOffer = new db.message({
+																			from : user.profile._id,
+																			to : bid.user.profile,
+																			body : 'I would like to hire you for the job "' + job.title + '"',
+																			type : 'invitation',
+																			attachment : {
+																				action : 'job_invite',
+																				data : bid._id
+																			},
+																			sentOn : new Date().toString(),
+																			isRead : false,
+																			belongsTo : user._id
+																		});
+																		
+																		jobOffer.save(function(err) {
+																			if (!err) {
+																				res.write(JSON.stringify(jobOffer));
+																				res.end();
+																				// emit notification
+																				var recip = clients.get(jobOffer.to);
+																				if (recip) {
+																					jobOffer.isCurrent = false;
+																					jobOffer.isRead = false;
+																					recip.socket.emit('message', jobOffer);
+																				}
+																			} else {
+																				res.writeHead(500);
+																				res.write('Could not send invitation.');
+																				res.end();
+																			}
+																		});
+																	}
+																	else {
+																		res.writeHead(500);
+																		res.write(JSON.stringify({
+																			error : err
+																		}));
+																		res.end();	
+																	}
+																});
+															}
+															else {
+																res.writeHead(500);
+																res.write(JSON.stringify({
+																	error : 'Failed to save charge ID.'
+																}));
+																res.end();
+															}
+														});
+													}
+													else {
+														res.writeHead(500);
+														res.write(JSON.stringify(err));
+														res.end();
+													}
+												});
+											}
+											else {
+												res.writeHead(400);
+												res.write(JSON.stringify({
+													error : 'Missing required properties.',
+													data : pmtData.missing
+												}));
+												res.end();
+											}
+										}
+									}
+									else {
+										res.writeHead(404);
+										res.write(JSON.stringify({
+											error : 'Could not find bid.'
+										}));
+										res.end();
+									}
+								});
+							}
+							else {
+								res.writeHead(400);
+								res.write(JSON.stringify({
+									error : 'Bid was not found for this job.'
+								}));
+								res.end();
+							}
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'You must indicate you accept your own requirements.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Could not find job or you are not the owner.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to hire someone.'
+				}));
+				res.end();
+			}
+		});
 	});
 	
 	////
@@ -892,47 +1027,73 @@ module.exports = function(app, db) {
 						// see if the user has an existing bid
 						// for this job and if so, update it
 						// otherwise lets create a new one
-						db.bid.findOne({
-							user : user._id,
-							job : job._id
-						}).exec(function(err, bid) {
-							if (!err) {
-								if (bid) {
-									bid.message = body.message;
-									bid.placedOn = new Date();
-									bid.isAccepted = false;
+						// but first they need to accept the requirements
+						// check that requirements were passed and all match up
+						var requirementsMatch = (req.body.requirments) ? (req.body.requirments.length === job.requirements.length) : false;
+						
+						if (requirementsMatch) {
+							req.body.requirements.forEach(function(val) {
+								if (job.requirements.indexOf(val) === -1) {
+									requirementsMatch = false;
 								}
-								else {
-									bid = new db.bid({
-										user : user._id,
-										job : job._id,
-										isAccepted : false,
-										placedOn : new Date(),
-										message : body.message
-									});
-								}
-								bid.save(function(err) {
-									if (!err) {
-										res.write(JSON.stringify(bid));
-										res.end();
+							});
+						}
+						
+						if (requirementsMatch) {
+							db.bid.findOne({
+								user : user._id,
+								job : job._id
+							}).exec(function(err, bid) {
+								if (!err) {
+									if (bid) {
+										bid.message = body.message;
+										bid.placedOn = new Date();
+										bid.isAccepted = false;
 									}
 									else {
-										res.writeHead(500);
-										res.write(JSON.stringify({
-											error : err
-										}));
-										res.end();
+										bid = new db.bid({
+											user : user._id,
+											job : job._id,
+											isAccepted : false,
+											placedOn : new Date(),
+											message : body.message
+										});
 									}
-								});
-							}
-							else {
-								res.writeHead(500);
-								res.write(JSON.stringify({
-									error : err
-								}));
-								res.end();
-							}
-						});
+									bid.save(function(err) {
+										if (!err) {
+											res.write(JSON.stringify(bid));
+											res.end();
+											// add to callers watch list
+											if (user.jobs.watched.indexOf(job._id) === -1) {
+												user.jobs.watched.push(bid._id);
+												user.save();
+											}
+										}
+										else {
+											res.writeHead(500);
+											res.write(JSON.stringify({
+												error : err
+											}));
+											res.end();
+										}
+									});
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'You must indicate you accept the job requirements.'
+							}));
+							res.end();
+						}
 					}
 					else {
 						res.writeHead(400);
