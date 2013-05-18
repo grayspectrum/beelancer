@@ -21,7 +21,8 @@ module.exports = new Schema({
 		end : Date,
 		isPromoted : Boolean,
 		cost : Number,
-		acceptId : String
+		publishId : String,
+		unpublishId : String
 	},
 	requirements : [String],
 	assignee : {

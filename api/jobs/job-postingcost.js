@@ -10,7 +10,7 @@ module.exports = function(db, job, callback) {
 	calculate(job, function(cost) {
 		// calculate stuff
 		calc.cost = cost;
-		calc.acceptId = generateId(calc.cost);
+		calc.publishId = require('../utils.js').generateKey();
 		
 		if (calc.cost) {
 			callback.call(this, null, calc);
@@ -66,11 +66,4 @@ module.exports = function(db, job, callback) {
 		return est_daily_hours * days_until_deadline;
 	};
 	
-	function generateId(cost) {
-		// id is merely a hash of the current time
-		// number of tasks and the total cost
-		var tasks = job.tasks, time = new Date().getTime()
-		  , id = require('crypto').createHash('md5').update(tasks.length + cost + time).digest('hex');
-		return id;
-	};
 };
