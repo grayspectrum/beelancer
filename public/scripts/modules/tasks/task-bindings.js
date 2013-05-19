@@ -60,6 +60,19 @@
 				// prefill fields
 				$('#newtask_title').val(task.title);
 				$('#newtask_rate').val(task.rate);
+
+				// if not the assignee or owner, remove save button (api should handle this, but just in case)
+				if (task.assignee.profile !== bee.get('profile')._id && task.owner.profile !== bee.get('profile')._id) {
+					$('#save_task').remove();
+				}
+
+				// if assignee or the job is published
+				if (task.assignee.profile === bee.get('profile')._id || (task.job && task.job.isPublished)) {
+					$('#create_task input').attr('disabled', 'disabled');
+					// $('#create_task label').unbind(); can't find this binding, where is it?
+					$('#save_task').remove();
+				}
+
 				bee.ui.loader.hide();
 			},
 			function(err) {
@@ -151,8 +164,18 @@
 				).css({ display : 'block' }).html((task.isComplete) ? 'Reopen Task' : 'Complete Task');
 
 				// don't show edit option to non-owner
-				if (!(task.assignee.profile === bee.get('profile')._id)) {
+				if (task.assignee.profile !== bee.get('profile')._id && task.owner.profile !== bee.get('profile')._id) {
 					$('#tasks_nav, #task_timer_controls .timer, .worklog .timer').remove();
+				}
+
+				// if assignee of task
+				if (task.assignee.profile === bee.get('profile')._id) {
+					$('#tasks_nav .edit_task').remove();
+				}
+
+				// if owner of task
+				if (task.owner.profile === bee.get('profile')._id) {
+					$('#task_timer_controls .timer, .worklog .timer, #tasks_nav .close_task').remove();
 				}
 
 				bee.ui.loader.hide();
