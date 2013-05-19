@@ -94,6 +94,7 @@ module.exports = function(app, db) {
 					.populate('owner', 'profile')
 					.populate('assignee', 'profile')
 					.populate('worklog', 'started ended message')
+					.populate('job')
 				.exec(function(err, task) {
 					if (err || !task) {
 						res.writeHead(500);
@@ -163,7 +164,9 @@ module.exports = function(app, db) {
 						{ owner : user._id }, 
 						{ assignee : user._id }
 					]
-				}).exec(function(err, task) {
+				})
+				.populate('job')
+				.exec(function(err, task) {
 					if (err || !task) {
 						res.writeHead(404);
 						res.write('Could not find task to update.');
@@ -201,6 +204,14 @@ module.exports = function(app, db) {
 								'isComplete'
 							];
 							updateAllowed(task, allowed);
+						}
+
+						if (task.job.isPublished) {
+							var allowed = [
+								'hoursWorked',
+								'isComplete'
+							];
+							updateAllowed(task,allowed);
 						}
 						
 						task.isComplete = (req.body.isComplete) ? true : false;
