@@ -383,19 +383,35 @@ module.exports = function(app, db) {
 									}, function(err, data) {
 										// if all is good, post it
 										if (!err) {
-											var resp = {
-												job : job,
-												confirmation : data
-											};
-											res.write(JSON.stringify(resp));
-											res.end();
+											job.status = 'PUBLISHED';
+											job.isPublished = true;
+											job.listing.publishId = null;
+											job.save(function(err) {
+												if (!err) {
+													var resp = {
+														job : job,
+														confirmation : data
+													};
+													res.write(JSON.stringify(resp));
+													res.end();
+												}
+												else {
+													res.writeHead(500);
+													res.write(JSON.stringify({
+														error : err
+													}));
+													res.end();
+												}
+											});
 											// save the charge id for reference
 											job.listing.chargeId = data.id;
 											job.save();
 										}
 										else {
 											res.writeHead(500);
-											res.write(JSON.stringify(err));
+											res.write(JSON.stringify({
+												error : err
+											}));
 											res.end();
 										}
 									});
@@ -412,6 +428,7 @@ module.exports = function(app, db) {
 						}
 						else {
 							// do it
+							job.status = 'PUBLISHED';
 							job.isPublished = true;
 							job.listing.publishId = null;
 							// save job
@@ -476,7 +493,7 @@ module.exports = function(app, db) {
 									if (!err) {
 										res.write(JSON.stringify({
 											job : job,
-											message : 'Please confirm you wish to unpublish this promoted job.'	
+											message : 'Please confirm you wish to unpublish this promoted job.'
 										}));
 										res.end();
 									}
@@ -493,6 +510,7 @@ module.exports = function(app, db) {
 								// all good, so go ahead and do it
 								job.isPublished = false;
 								job.listing.cost = null;
+								job.status = 'UNPUBLISHED';
 								job.listing.publishId = null;
 								job.save(function(err) {
 									if (!err) {
@@ -539,7 +557,7 @@ module.exports = function(app, db) {
 	
 	////
 	// POST - /api/job/unpublish/confirm
-	// Confirms unpublishes an existing promoted job
+	// Confirms unpublishing an existing promoted job
 	////
 	app.post('/api/job/unpublish/confirm', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
@@ -552,6 +570,7 @@ module.exports = function(app, db) {
 					if (!err && job) {
 						job.isPublished = false;
 						job.listing.unpublishId = null;
+						job.status = 'UNPUBLISHED';
 						job.listing.cost = null;
 						job.listing.publishId = null;
 						job.save(function(err) {
@@ -591,13 +610,13 @@ module.exports = function(app, db) {
 	// PUT - /api/job
 	// Updates an existing job - adds tasks, etc
 	////
-	app.put('/api/job', function(req, res) {
+	app.put('/api/job/update/:jobId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			// cannot updated jobs which are already published
 			// must first unpublish job before making updates
 			if (!err && user) {
 				db.job.findOne({
-					_id : req.body.jobId,
+					_id : req.params.jobId,
 					owner : user._id
 				}).exec(function(err, job) {
 					if (!err && job) {
@@ -648,7 +667,7 @@ module.exports = function(app, db) {
 	// DELETE - /api/job
 	// Deletes an existing job
 	////
-	app.del('/api/job', function(req, res) {
+	app.del('/api/job/:jobId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			// deletes a job
 			// job must not be published to delete
@@ -656,7 +675,7 @@ module.exports = function(app, db) {
 			// and is bound by unpublishing rules
 			if (!err && user) {
 				db.job.findOne({
-					_id : req.body.jobId,
+					_id : req.params.jobId,
 					owner : user._id
 				}).exec(function(err, job) {
 					if (!err && job) {

@@ -205,8 +205,9 @@ module.exports = function(app, db) {
 							];
 							updateAllowed(task, allowed);
 						}
-
-						if (task.job.isPublished) {
+						
+						// if the task is published or it is active...
+						if (task.job.isPublished || (job.status === 'IN_PROGRESS' && job.assignee)) {
 							var allowed = [
 								'hoursWorked',
 								'isComplete'

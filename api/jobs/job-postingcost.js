@@ -51,8 +51,8 @@ module.exports = function(db, job, callback) {
 		var daily_cost = null;
 		db.project.findOne({ _id : task.project }).exec(function(projectErr, project) {
 			if (!projectErr && project) {
-				var promoted_rate = 0.0035
-				  , standard_rate = 0.0025
+				var promoted_rate = 0.35 // returned amount is in cents
+				  , standard_rate = 0.25 // returned amount is in cents
 				  , multiplier = (task.isFixed) ? parseInt(task.rate) : estimatedRate(task, project);
 				daily_cost = (((job.listing.isPromoted) ? promoted_rate : standard_rate) * multiplier);
 			}
