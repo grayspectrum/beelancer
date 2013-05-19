@@ -69,3 +69,25 @@ module.exports.gravatar = function(email) {
 	var url = 'https://gravatar.com/avatar/';
 	return url + crypto.createHash('md5').update(email).digest('hex').toString();
 };
+
+module.exports.hasValidPaymentData = function(payment) {
+	var requiredPmtProps = [
+		'name',
+		'number',
+		'exp_month',
+		'exp_year',
+		'cvc'
+	]
+	  , result = {
+	  		valid : true,
+	  		missing : []
+	  };
+	// validate required props
+	requiredPmtProps.forEach(function(val) {
+		if (!payment[val]) {
+			result.valid = false;
+			result.missing.push(val);
+		}
+	});
+	return result;
+};

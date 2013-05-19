@@ -10,7 +10,9 @@ var crypto = require('crypto')
   , utils = require('../utils.js')
   , actions = require('../actions.js')
   , jobCategories = require('../jobs/job-categories.js')
-  , calculateJobPostingCost = require('../jobs/job-postingcost.js');
+  , calculateJobPostingCost = require('../jobs/job-postingcost.js')
+  , config = require('../../config.js')
+  , stripe = require('stripe')(config.stripe.privateKey);
   
 module.exports = function(app, db) {
 	
@@ -214,8 +216,21 @@ module.exports = function(app, db) {
 					job.category = jobCategories.contains(body.category);
 					job.save(function(err) {
 						if (!err) {
-							res.write(JSON.stringify(job));
-							res.end();
+							// add job to user list
+							user.jobs.owned.push(job._id);
+							user.save(function(err) {
+								if (!err) {
+									res.write(JSON.stringify(job));
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
 						}
 						else {
 							res.writeHead(500);
@@ -264,7 +279,7 @@ module.exports = function(app, db) {
 							calculateJobPostingCost(db, job, function(err, calc) {
 								if (!err) {
 									job.listing.cost = calc.cost;
-									job.listing.acceptId = calc.acceptId;
+									job.listing.publishId = calc.publishId;
 									// caller must follow up with a second call
 									// to /api/job/publish/confirm while
 									// passing that id along with credit card
@@ -275,7 +290,10 @@ module.exports = function(app, db) {
 									// must pay upon hiring a bidder and the 
 									job.save(function(err) {
 										if (!err) {
-											res.write(JSON.stringify(job));
+											res.write(JSON.stringify({
+												job : job,
+												message : 'Please confirm you wish to publish this job.'	
+											}));
 											res.end();
 										}
 										else {
@@ -329,42 +347,213 @@ module.exports = function(app, db) {
 	////
 	app.post('/api/job/publish/confirm', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
-			// find the passed id in redis
-			// process the passed payment information
-			// update the job as published
-			var jobId = req.body.jobId
-			  , acceptId = req.body.acceptId;
-			  
-			db.job.findOne({
-				'_id' : jobId,
-				'listing.acceptId' : acceptId
-			}).exec(function(err, job) {
-				if (!err && job) {
-					if (job.listing.isPromoted) {
-						// require credit car info
-						var card = req.body.payment;
-						if (!payment) {
-							res.writeHead(400);
-							res.write(JSON.stringify({
-								error : 'Payment information is required for promoted posts.'
-							}));
-							res.end();
+			if (!err && user) {
+				// find the passed id in redis
+				// process the passed payment information
+				// update the job as published
+				var jobId = req.body.jobId
+				  , publishId = req.body.publishId;
+				  
+				db.job.findOne({
+					'_id' : jobId,
+					'listing.publishId' : publishId
+				}).exec(function(err, job) {
+					if (!err && job) {
+						if (job.listing.isPromoted) {
+							// require credit car info
+							var card = req.body.payment;
+							if (!payment) {
+								res.writeHead(400);
+								res.write(JSON.stringify({
+									error : 'Payment information is required for promoted posts.'
+								}));
+								res.end();
+							}
+							else {
+								var pmtData = utils.hasValidPaymentData(card);
+								// process payment
+								if (isValid) {
+									var body = req.body;
+									stripe.charge.create({
+										card : body.payment,
+										currency : 'usd',
+										amount : job.listing.cost,
+										capture : true,
+										description : 'Job ID: ' + job._id + ', User: ' + user.email
+									}, function(err, data) {
+										// if all is good, post it
+										if (!err) {
+											var resp = {
+												job : job,
+												confirmation : data
+											};
+											res.write(JSON.stringify(resp));
+											res.end();
+											// save the charge id for reference
+											job.listing.chargeId = data.id;
+											job.save();
+										}
+										else {
+											res.writeHead(500);
+											res.write(JSON.stringify(err));
+											res.end();
+										}
+									});
+								}
+								else {
+									res.writeHead(400);
+									res.write(JSON.stringify({
+										error : 'Missing required properties.',
+										data : pmtData.missing
+									}));
+									res.end();	
+								}
+							}
 						}
 						else {
-							// process payment
-							// but err for now...
-							res.writeHead(500);
+							// do it
+							job.isPublished = true;
+							job.listing.publishId = null;
+							// save job
+							job.save(function(err) {
+								if (!err) {
+									res.write(JSON.stringify(job));
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : err || 'Could not confirm job posting.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to confirm a job publishing.'
+				}));
+				res.end();
+			}
+		});
+	});
+	
+	////
+	// POST - /api/job/unpublish
+	// Unpublishes an existing job
+	////
+	app.post('/api/job/unpublish', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			// unpublishes job from job board
+			// caller must own job
+			// promoted jobs which have been prepaid cannot 
+			// be refunded
+			if (!err && user) {
+				var body = req.body;
+				db.job.findOne({
+					_id : body.jobId,
+					owner : user._id
+				}).exec(function(err, job) {
+					if (!err && job) {
+						if (job.isPublished) {
+							if (job.listing.isPromoted) {
+								// if the job is promoted then we need to tell the user
+								// that they won't be refunded and have them accept via
+								// a seperate api call
+								job.listing.unpublishId = utils.generateKey();
+								job.save(function(err) {
+									if (!err) {
+										res.write(JSON.stringify({
+											job : job,
+											message : 'Please confirm you wish to unpublish this promoted job.'	
+										}));
+										res.end();
+									}
+									else {
+										res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+									}
+								});
+							}
+							else {
+								// all good, so go ahead and do it
+								job.isPublished = false;
+								job.listing.cost = null;
+								job.listing.publishId = null;
+								job.save(function(err) {
+									if (!err) {
+										res.write(JSON.stringify(job));
+										res.end();
+									}
+									else {
+										res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+									}
+								});
+							}
+						}
+						else {
+							// job is not published so fail
+							res.writeHead(400);
 							res.write(JSON.stringify({
-								error : 'Promoted jobs not yet supported.'
+								error : 'Cannot unpublish a job that is not published.'
 							}));
 							res.end();
 						}
 					}
 					else {
-						// do it
-						job.isPublished = true;
-						job.listing.acceptId = null;
-						// save job
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Could not find job or it does not belong to you.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to unpublish a job.'
+				}));
+				res.end();
+			}
+		});
+	});
+	
+	////
+	// POST - /api/job/unpublish/confirm
+	// Confirms unpublishes an existing promoted job
+	////
+	app.post('/api/job/unpublish/confirm', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				var body = req.body;
+				db.job.findOne({
+					_id : body.jobId,
+					'listing.unpublishId' : body.unpublishId
+				}).exec(function(err, job) {
+					if (!err && job) {
+						job.isPublished = false;
+						job.listing.unpublishId = null;
+						job.listing.cost = null;
+						job.listing.publishId = null;
 						job.save(function(err) {
 							if (!err) {
 								res.write(JSON.stringify(job));
@@ -379,28 +568,23 @@ module.exports = function(app, db) {
 							}
 						});
 					}
-				}
-				else {
-					res.writeHead(400);
-					res.write(JSON.stringify({
-						error : err || 'Could not confirm job posting.'
-					}));
-					res.end();
-				}
-			});
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Could not find job or it does not belong to you.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to unpublish a job.'
+				}));
+				res.end();
+			}
 		});
-	});
-	
-	////
-	// POST - /api/job/unpublish
-	// Publishes an existing job
-	////
-	app.post('/api/job/unpublish', function(req, res) {
-		// unpublishes job from job board
-		// caller must own job
-		// promoted jobs which have been prepaid cannot 
-		// be refunded in full, but prorated by remaining 
-		// time left in original post time
 	});
 	
 	////
@@ -408,8 +592,56 @@ module.exports = function(app, db) {
 	// Updates an existing job - adds tasks, etc
 	////
 	app.put('/api/job', function(req, res) {
-		// cannot updated jobs which are already published
-		// must first unpublish job before making updates
+		utils.verifyUser(req, db, function(err, user) {
+			// cannot updated jobs which are already published
+			// must first unpublish job before making updates
+			if (!err && user) {
+				db.job.findOne({
+					_id : req.body.jobId,
+					owner : user._id
+				}).exec(function(err, job) {
+					if (!err && job) {
+						if (!job.isPublished) {
+							// go ahead and update
+							job.update(req.body, function(err) {
+								if (!err) {
+									res.write(JSON.stringify(job));
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'Cannot update a published job. Unpublish the job first if you wish to update it.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Could not find job or it does not belong to you.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to update a job.'
+				}));
+				res.end();
+			}
+		});
 	});
 	
 	////
@@ -417,10 +649,71 @@ module.exports = function(app, db) {
 	// Deletes an existing job
 	////
 	app.del('/api/job', function(req, res) {
-		// deletes a job
-		// job must not be published to delete
-		// can be unpublished before deleting
-		// and is bound by unpublishing rules
+		utils.verifyUser(req, db, function(err, user) {
+			// deletes a job
+			// job must not be published to delete
+			// must be unpublished before deleting
+			// and is bound by unpublishing rules
+			if (!err && user) {
+				db.job.findOne({
+					_id : req.body.jobId,
+					owner : user._id
+				}).exec(function(err, job) {
+					if (!err && job) {
+						if (!job.isPublished) {
+							// go ahead and remove
+							// also remove from user refs
+							var index = user.jobs.owned.indexOf(job._id);
+							user.jobs.owned.splice(index, 1);
+							user.save(function(err) {
+								if (!err) {
+									job.remove(req.body, function(err) {
+										if (!err) {
+											res.end();
+										}
+										else {
+											res.writeHead(500);
+											res.write(JSON.stringify({
+												error : err
+											}));
+											res.end();
+										}
+									});
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'Cannot delete a published job. Unpublish the job first if you wish to delete it.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Could not find job or it does not belong to you.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to delete a job.'
+				}));
+				res.end();
+			}
+		});
 	});
 	
 	////
@@ -428,27 +721,174 @@ module.exports = function(app, db) {
 	// Sends an offer request to the specified bidder for the passed job
 	////
 	app.post('/api/job/hire', function(req, res) {
-		// requires caller to be owner of job
-		// and must pass the defined requiredments
-		// with the request to confirm they accept the requirements
-		// then sends an offer message to the recipient
-	});
-	
-	////
-	// POST - /api/job/accept
-	// Completes the hiring process assuming the given job id has a pending hire
-	// addressed to the caller
-	////
-	app.post('/api/job/accept', function(req, res) {
-		// accepts a hire offer
-		// caller must be a recipient of hire offer
-		// must pass requirements list to accept
-		// this unpublishes the job and assigns the caller to
-		// the job
-		// if the job is not promoted, the job owner must pay
-		// the posting fee
-		// this also adds the owner and assignee to each others
-		// respective teams
+		utils.verifyUser(req, db, function(err, user) {
+			// requires caller to be owner of job
+			// and must pass the defined requiredments
+			// with the request to confirm they accept the requirements
+			// then sends an offer message to the recipient
+			if (!err && user) {
+				db.job.findOne({
+					_id : req.body.jobId,
+					owner : user._id
+				}).exec(function(err, job) {
+					if (!err && job) {
+						// check that requirements were passed and all match up
+						var requirementsMatch = (req.body.requirments) ? (req.body.requirments.length === job.requirements.length) : false;
+						
+						if (requirementsMatch) {
+							req.body.requirements.forEach(function(val) {
+								if (job.requirements.indexOf(val) === -1) {
+									requirementsMatch = false;
+								}
+							});
+						}
+						
+						if (requirementsMatch) {
+							var bidId = req.body.bidId
+							  , bidIndex = job.bids.indexOf(bidId);
+							if (bidIndex !== -1) {
+								// find the bid
+								db.bid.findOne({ _id : bidId })
+									.populate('user')
+								.exec(function(err, bid) {
+									if (!err && bid) {
+										// does the owner need to pay now?
+										if (job.isPromoted) {
+											// make sure they have paid
+											// but chances are they already have
+										}
+										else {
+											// yes, this job is a standard post
+											// and the user now needs to pay
+											var pmtData = utils.hasValidPaymentData(req.body.payment);
+											if (pmtData.valid) {
+												stripe.charge.create({
+													card : req.body.payment,
+													currency : 'usd',
+													amount : job.listing.cost,
+													capture : false, // don't capture until job is accepted
+													description : 'Job ID: ' + job._id + ', User: ' + user.email
+												}, function(err, data) {
+													if (!err) {
+														// lets store the charge id, so we can charge it later when the assignee
+														// accepts the job
+														job.listing.chargeId = data.id;
+														job.save(function(err) {
+															if (!err) {
+																// mark bid as accepted
+																bid.isAccepted = true;
+																bid.save(function(err) {
+																	if (!err) {
+																		// send hire request to assignee
+																		var jobOffer = new db.message({
+																			from : user.profile._id,
+																			to : bid.user.profile,
+																			body : 'I would like to hire you for the job "' + job.title + '"',
+																			type : 'invitation',
+																			attachment : {
+																				action : 'job_invite',
+																				data : bid._id
+																			},
+																			sentOn : new Date().toString(),
+																			isRead : false,
+																			belongsTo : user._id
+																		});
+																		
+																		jobOffer.save(function(err) {
+																			if (!err) {
+																				res.write(JSON.stringify(jobOffer));
+																				res.end();
+																				// emit notification
+																				var recip = clients.get(jobOffer.to);
+																				if (recip) {
+																					jobOffer.isCurrent = false;
+																					jobOffer.isRead = false;
+																					recip.socket.emit('message', jobOffer);
+																				}
+																			} else {
+																				res.writeHead(500);
+																				res.write('Could not send invitation.');
+																				res.end();
+																			}
+																		});
+																	}
+																	else {
+																		res.writeHead(500);
+																		res.write(JSON.stringify({
+																			error : err
+																		}));
+																		res.end();	
+																	}
+																});
+															}
+															else {
+																res.writeHead(500);
+																res.write(JSON.stringify({
+																	error : 'Failed to save charge ID.'
+																}));
+																res.end();
+															}
+														});
+													}
+													else {
+														res.writeHead(500);
+														res.write(JSON.stringify(err));
+														res.end();
+													}
+												});
+											}
+											else {
+												res.writeHead(400);
+												res.write(JSON.stringify({
+													error : 'Missing required properties.',
+													data : pmtData.missing
+												}));
+												res.end();
+											}
+										}
+									}
+									else {
+										res.writeHead(404);
+										res.write(JSON.stringify({
+											error : 'Could not find bid.'
+										}));
+										res.end();
+									}
+								});
+							}
+							else {
+								res.writeHead(400);
+								res.write(JSON.stringify({
+									error : 'Bid was not found for this job.'
+								}));
+								res.end();
+							}
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'You must indicate you accept your own requirements.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Could not find job or you are not the owner.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to hire someone.'
+				}));
+				res.end();
+			}
+		});
 	});
 	
 	////
@@ -456,8 +896,58 @@ module.exports = function(app, db) {
 	// Adds caller to watchers
 	////
 	app.post('/api/job/watch', function(req, res) {
-		// "favorites" a job listing so it shows up
-		// in the callers watch list
+		utils.verifyUser(req, db, function(err, user) {
+			// "favorites" a job listing so it shows up
+			// in the callers watch list
+			if (!err && user) {
+				db.job.findOne({
+					_id : jobId,
+					isPublished : true
+				}).exec(function(err, job) {
+					if (!err && job) {
+						// make sure we aren't already watching
+						if (user.jobs.watched.indexOf(job._id) === -1) {
+							// watch it
+							user.jobs.watched.push(job._id);
+							user.save(function(err) {
+								if (!err) {
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							})
+						}
+						else {
+							// already watching
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'You are already watching this job.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Could not find job.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to watch a job.'
+				}));
+				res.end();
+			}
+		});
 	});
 	
 	////
@@ -466,6 +956,56 @@ module.exports = function(app, db) {
 	////
 	app.post('/api/job/unwatch', function(req, res) {
 		// removes the job from the callers watch list
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.job.findOne({
+					_id : jobId
+				}).exec(function(err, job) {
+					if (!err && job) {
+						// make sure we are already watching
+						var index = user.jobs.watched.indexOf(job._id);
+						if (index !== -1) {
+							// unwatch it
+							user.jobs.watched.splice(index, 1);
+							user.save(function(err) {
+								if (!err) {
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							})
+						}
+						else {
+							// already watching
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'You are not watching this job.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Could not find job.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to unwatch a job.'
+				}));
+				res.end();
+			}
+		});
 	});
 	
 	////
@@ -474,7 +1014,103 @@ module.exports = function(app, db) {
 	// on the specified job
 	////
 	app.post('/api/job/bid', function(req, res) {
-		// creates a bid which is a message that expresses interest
-		// in a posted job and allows the job owner to send a hire request
+		utils.verifyUser(req, db, function(err, user) {
+			// creates a bid which is a message that expresses interest
+			// in a posted job and allows the job owner to send a hire request
+			if (!err && user) {
+				var body = req.body;
+				db.job.findOne({
+					_id : body.jobId,
+					isPublished : true
+				}).exec(function(err, job) {
+					if (!err && job) {
+						// see if the user has an existing bid
+						// for this job and if so, update it
+						// otherwise lets create a new one
+						// but first they need to accept the requirements
+						// check that requirements were passed and all match up
+						var requirementsMatch = (req.body.requirments) ? (req.body.requirments.length === job.requirements.length) : false;
+						
+						if (requirementsMatch) {
+							req.body.requirements.forEach(function(val) {
+								if (job.requirements.indexOf(val) === -1) {
+									requirementsMatch = false;
+								}
+							});
+						}
+						
+						if (requirementsMatch) {
+							db.bid.findOne({
+								user : user._id,
+								job : job._id
+							}).exec(function(err, bid) {
+								if (!err) {
+									if (bid) {
+										bid.message = body.message;
+										bid.placedOn = new Date();
+										bid.isAccepted = false;
+									}
+									else {
+										bid = new db.bid({
+											user : user._id,
+											job : job._id,
+											isAccepted : false,
+											placedOn : new Date(),
+											message : body.message
+										});
+									}
+									bid.save(function(err) {
+										if (!err) {
+											res.write(JSON.stringify(bid));
+											res.end();
+											// add to callers watch list
+											if (user.jobs.watched.indexOf(job._id) === -1) {
+												user.jobs.watched.push(bid._id);
+												user.save();
+											}
+										}
+										else {
+											res.writeHead(500);
+											res.write(JSON.stringify({
+												error : err
+											}));
+											res.end();
+										}
+									});
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'You must indicate you accept the job requirements.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'The job no longer exists or is no longer published.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to bid on a job.'
+				}));
+				res.end();
+			}
+		});
 	});
 };

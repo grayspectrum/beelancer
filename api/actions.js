@@ -10,7 +10,8 @@ var utils = require('./utils.js');
 module.exports = (function() {
 	// Actions
 	var team_invite
-	  , project_invite;
+	  , project_invite
+	  , job_invite;
 	  
 	team_invite = function(db, message, accept, callback) {
 		var from = message.from
@@ -77,6 +78,22 @@ module.exports = (function() {
 				}
 			});
 		};
+	};
+	
+	job_invite = function(db, message, accept, callback) {
+		var bidId = message.attachment.data
+		  , to = message.to
+		  , from = message.from;
+		  
+		// accepts a hire offer
+		// caller must be a recipient of hire offer
+		// must pass requirements list to accept
+		// this unpublishes the job and assigns the caller to
+		// the job
+		// if the job is not promoted, the job owner must pay
+		// the posting fee
+		// this also adds the owner and assignee to each others
+		// respective teams
 	};
 	
 	function getUser(db, id, callback) {

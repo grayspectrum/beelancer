@@ -27,6 +27,20 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'message'
 	}],
+	jobs : {
+		owned : [{
+			type : ObjectId,
+			ref : 'job'
+		}],
+		watched : [{
+			type : ObjectId,
+			ref : 'job'
+		}],
+		assigned : [{
+			type : ObjectId,
+			ref : 'job'
+		}]
+	},
 	isPro : Boolean,
 	memberSince : Date,
 	proSince : Date,
