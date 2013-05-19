@@ -169,7 +169,7 @@
 				}
 
 				// if assignee of task
-				if (task.assignee.profile !== bee.get('profile')._id) {
+				if (task.assignee.profile === bee.get('profile')._id) {
 					$('#tasks_nav .edit_task').remove();
 				}
 
