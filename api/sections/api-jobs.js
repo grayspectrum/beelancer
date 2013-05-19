@@ -601,7 +601,7 @@ module.exports = function(app, db) {
 					owner : user._id
 				}).exec(function(err, job) {
 					if (!err && job) {
-						if (!job.isPublished) {
+						if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
 							// go ahead and update
 							job.update(req.body, function(err) {
 								if (!err) {
@@ -620,7 +620,7 @@ module.exports = function(app, db) {
 						else {
 							res.writeHead(400);
 							res.write(JSON.stringify({
-								error : 'Cannot update a published job. Unpublish the job first if you wish to update it.'
+								error : 'Cannot update a published or active job.'
 							}));
 							res.end();
 						}
@@ -660,7 +660,7 @@ module.exports = function(app, db) {
 					owner : user._id
 				}).exec(function(err, job) {
 					if (!err && job) {
-						if (!job.isPublished) {
+						if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
 							// go ahead and remove
 							// also remove from user refs
 							var index = user.jobs.owned.indexOf(job._id);
@@ -692,7 +692,7 @@ module.exports = function(app, db) {
 						else {
 							res.writeHead(400);
 							res.write(JSON.stringify({
-								error : 'Cannot delete a published job. Unpublish the job first if you wish to delete it.'
+								error : 'Cannot delete a published job or active job.'
 							}));
 							res.end();
 						}

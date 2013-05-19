@@ -5,7 +5,9 @@
  * Message actions 
  */
 
-var utils = require('./utils.js');
+var utils = require('./utils.js')
+  , config = require('../config.js')
+  , stripe = require('stripe')(config.stripe.privateKey);
 
 module.exports = (function() {
 	// Actions
@@ -20,13 +22,15 @@ module.exports = (function() {
 		getUser(db, from, function(err, fromUser) {
 			if (err) {
 				callback.call(this, 'Could not get "from" user.', null);
-			} else {
+			} 
+			else {
 				if (accept == 'true') {
 					fromUser.team.push(to);
 					getUser(db, to, function(err, toUser) {
 						if (err) {
 							callback.call(this, 'Could not get "to" user.', null);
-						} else {
+						} 
+						else {
 							toUser.team.push(from);
 							fromUser.save(function(err) {
 								toUser.save(function(err) {
@@ -36,7 +40,8 @@ module.exports = (function() {
 							});
 						}
 					});
-				} else {
+				} 
+				else {
 					message.remove(function(err) {
 						callback.call(this, err, message);
 					});
@@ -54,7 +59,8 @@ module.exports = (function() {
 		getUser(db, to, function(err, invitee) {
 			if (!err) {
 				dispatchInvite(invitee._id, callback);
-			} else {
+			} 
+			else {
 				callback.call(this, err);
 			}
 		});
@@ -63,14 +69,16 @@ module.exports = (function() {
 			getProject(db, id, function(err, project) {
 				if (err) {
 					callback.call(this, 'Could not get project.', null);
-				} else {
+				} 
+				else {
 					if (accept == 'true') {
 						project.members.push(inviteeId);
 						project.save(function(err) {
 							callback.call(this, err, message);
 							message.remove();
 						});
-					} else {
+					} 
+					else {
 						message.remove(function(err) {
 							callback.call(this, err);
 						});
@@ -84,16 +92,129 @@ module.exports = (function() {
 		var bidId = message.attachment.data
 		  , to = message.to
 		  , from = message.from;
-		  
-		// accepts a hire offer
-		// caller must be a recipient of hire offer
-		// must pass requirements list to accept
-		// this unpublishes the job and assigns the caller to
-		// the job
-		// if the job is not promoted, the job owner must pay
-		// the posting fee
+		
+		getUser(db, to, function(err, invitee) {
+			if (!err && accept == 'true') {
+				acceptJob(invitee, bidId, callback);
+			} 
+			else {
+				if (err) {
+					callback.call(this, err);
+				}
+				else {
+					message.remove(function(err) {
+						callback.call(this, err);
+					});
+				}
+			}
+		}); 
+		
+		function acceptJob(to, bidId, callback) {
+			// accepts a hire offer
+			// caller must be a recipient of hire offer
+			db.bid.findOne({ _id : bidId })
+				.populate('job')
+				.populate('user')
+			.exec(function(err, bid) {
+				if (!err && bid) {
+					// this unpublishes the job and assigns the caller to
+					// the job
+					if (bid.user.profile === to.profile) {					
+						// if the job is not promoted, the job owner must pay
+						// the posting fee - we already have the charge, so let's
+						// make some money...
+						if (!bid.job.isPromoted) {
+							stripe.charges.capture(bid.job.listing.chargeId, function(err, data) {
+								if (!err) {
+									finalizeHire(to, bid.job.owner, bid, callback);
+								}
+								else {
+									callback.call(this, err);
+								}
+							});
+						}
+						else {
+							finalizeHire(to, bid.job.owner, bid, callback);
+						}
+					}
+					else {
+						// bid accepter is not the recipient
+						callback.call(this, 'Cannot accept an offer on someone else\'s behalf.');
+					}
+				}
+				else {
+					callback.call(this, err);
+				}
+			});
+		};
+	};
+	
+	function finalizeHire(toUser, fromId, populatedBid, callback) {
+		var bid = populatedBid;
 		// this also adds the owner and assignee to each others
 		// respective teams
+		bid.isAccepted = true;
+		// update the job data
+		bid.job.acceptedBy.owner = true;
+		bid.job.acceptedBy.assignee = true;
+		bid.job.assignee = bid.user
+		bid.job.status = 'IN_PROGRESS';
+		bid.job.isPublished = false;
+		
+		// update the assignee's data
+		var jobIndex = toUser.jobs.watched.indexOf(bid.job._id)
+		  , teamIndex = toUser.team.indexOf(fromId);
+		toUser.jobs.assigned.push(bid.job._id);
+		if (index !== -1) {
+			toUser.jobs.watched.splice(jobIndex, 1);
+		}
+		
+		// update each other's teams
+		// and save everything else
+		if (teamIndex === -1) {
+			toUser.team.push(fromId);
+		}
+		db.user.findOne({ 
+			_id : fromId 
+		}).exec(function(err, fromUser) {
+			if (!err && fromUser) {
+				if (fromUser.team.indexOf(toUser) === -1) {
+					fromUser.team.push(toUser);
+				}
+				// save owner
+				fromUser.save(function(err) {
+					if (!err) {
+						// save assignee
+						toUser.save(function(err) {
+							if (!err) {
+								// save job
+								bid.job.save(function(err) {
+									if (!err) {
+										// save bid
+										bid.save(function(err) {
+											// all done!
+											callback.call(this, null, bid.job);
+										});
+									}
+									else {
+										callback.call(this, err);
+									}
+								});
+							}
+							else {
+								callback.call(this, err);
+							}
+						});
+					}
+					else {
+						callback.call(this, err);
+					}
+				});
+			}
+			else {
+				callback.call(this, err);
+			}
+		});
 	};
 	
 	function getUser(db, id, callback) {
@@ -122,6 +243,7 @@ module.exports = (function() {
 	
 	return {
 		project_invite : project_invite,
-		team_invite : team_invite
+		team_invite : team_invite,
+		job_invite : job_invite
 	};
 })();
