@@ -239,7 +239,8 @@
 	function divideTasksByAssignee(tasks) {
 		var divided = {
 			assignedToMe : [],
-			assignedToOthers : []
+			assignedToOthers : [],
+			unassigned : []
 		};
 		// match them up
 		var userid = _.cookies.get('userid');
@@ -248,7 +249,11 @@
 				divided.assignedToMe.push(val);
 			}
 			else {
-				divided.assignedToOthers.push(val);
+				if (val.assignee) {
+					divided.assignedToOthers.push(val);	
+				} else {
+					divided.unassigned.push(val);
+				}
 			}
 		});
 		return divided;
@@ -294,6 +299,13 @@
 			5
 		);
 		others.init();
+
+		var unassigned = new bee.ui.Paginator(
+			$('.pagination.pag-task-unassigned'),
+			$('ul.task-unassigned li'),
+			5
+		);
+		unassigned.init();
 		
 		// get owner/assignee profiles
 		var tasks = $('.task-mine li a, .task-others li a');
