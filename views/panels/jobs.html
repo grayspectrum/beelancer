@@ -50,15 +50,35 @@
 </div>
 <div id="jobs_mine" class="light-gradient center-pane animated fadeInUp">
 	<h4 class="gold-gradient">My Jobs</h4>
-	<div id="my_jobs_list">
-		<div class="loader"></div>
+	<div id="jobs_i_own">
+		<h3 class="light-gradient">
+			<span class="user">Jobs I Own</span>
+		</h3>
+		<div id="own_jobs_list">
+			<div class="loader"></div>
+		</div>
+		<div class="pagination">
+			<button class="pageLeft">&laquo;</button>
+			<span class="pageLocation">
+				Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+			</span>
+			<button class="pageRight">&raquo;</button>
+		</div>
 	</div>
-	<div class="pagination">
-		<button class="pageLeft">&laquo;</button>
-		<span class="pageLocation">
-			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-		</span>
-		<button class="pageRight">&raquo;</button>
+	<div id="jobs_assigned">
+		<h3 class="light-gradient">
+			<span class="user">Jobs Assigned to Me</span>
+		</h3>
+		<div id="assigned_jobs_list">
+			<div class="loader"></div>
+		</div>
+		<div class="pagination">
+			<button class="pageLeft">&laquo;</button>
+			<span class="pageLocation">
+				Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+			</span>
+			<button class="pageRight">&raquo;</button>
+		</div>
 	</div>
 </div>
 <div id="jobs_create" class="light-gradient center-pane animated fadeInUp">
@@ -82,6 +102,21 @@
 				<label for="newjob_desc">
 					<span>Description: </span>
 					<textarea class="required" id="description" name="description"></textarea>
+				</label>
+			</div>
+			<div class="group">
+				<label for="newjob_reqs" class="req_label">
+					<span>Requirements: </span>
+					<div class="job_req_list">
+						<ul>
+							<li class="req">
+								<input type="text" name="requirements" class="required" />
+							</li>
+						</ul>
+					</div>
+					<div class="add_req">
+						<a href="#" id="job_add_req">Add</a>
+					</div>
 				</label>
 			</div>
 			<div class="group">

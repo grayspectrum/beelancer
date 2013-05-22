@@ -128,8 +128,8 @@ module.exports = function(app, db) {
 							assigned : []
 						};
 						jobs.forEach(function(val, key) {
-							if (val.owner === user._id) response.owned.push(val);
-							if (val.assignee === user._id) response.assigned.push(val);
+							if (user._id.equals(val.owner)) response.owned.push(val);
+							if (val.assignee && user._id.equals(val.assignee)) response.assigned.push(val);
 						});
 						res.write(JSON.stringify(response));
 						res.end();

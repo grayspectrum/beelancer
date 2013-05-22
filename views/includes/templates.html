@@ -545,7 +545,7 @@
 			<div class="job_task_option">
 				<span class="job_project_title">Project: {{this.project.title}}</span>
 				<span class="job_task_title">Task: {{this.title}}</span>
-				<input type="checkbox" id="{{this._id}}" name="requirements" value="{{this._id}}" />
+				<input type="checkbox" id="{{this._id}}" name="tasks" value="{{this._id}}" />
 			</div>
 		{{/each}}
 	{{/if}}
@@ -602,8 +602,25 @@
 <!-- Job List Template -->
 <script id="tmpl-joblist" type="text/x-handlebars-template">
 	{{#if this.length}}
-
+		<ul>
+			{{#each this}}
+				<li class="job">
+					<a href="/#!/jobs/viewJob={{this._id}}">
+						<span class="job_title">{{this.title}}</span>
+						<span class="view_job">View Job</span>
+					</a>
+				</li>
+			{{/each}}
+		</ul>
 	{{else}}
 		<p>No jobs found.</p>
 	{{/if}}
+</script>
+
+<!-- Job Requirement List Template -->
+<script id="tmpl-jobreqlist" type="text/x-handlebars-template">
+	<li class="req">
+		<input type="text" name="requirements" class="required" />
+		<a href="#" class="job_req_rem"></a>
+	</li>
 </script>

@@ -40,7 +40,7 @@
 						var pro_tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
 						$('#promoted_jobs_list').html(pro_tmpl);
 					} else {
-						$('#promoted_jobs_list').html('There are no current jobs to view.');
+						$('#promoted_jobs_list').html('There are no promoted jobs to view.');
 					}
 					
 				},
@@ -133,11 +133,18 @@
 			'/jobs/mine',
 			{},
 			function(res) {
-				if (res.length) {
-					var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
-					$('#my_jobs_list').html(tmpl);
+				if (res.owned.length) {
+					var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res.owned);
+					$('#own_jobs_list').html(tmpl);
 				} else {
-					$('#my_jobs_list').html('You have no current jobs.');
+					$('#own_jobs_list').html('You do not own any jobs.');
+				}
+
+				if (res.assigned.length) {
+					var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res.assigned);
+					$('#assigned_jobs_list').html(tmpl);
+				} else {
+					$('#assigned_jobs_list').html('You do not have any jobs assigned to you.');
 				}
 			},
 			function(err) {
@@ -221,13 +228,13 @@
 		});
 
 		// make sure at least one task was assigned
-		if ($('#jobs_create .job_task_option input:checked').length === 0) {
-			isValid = false;
-			$('#jobs_create .job_task_option').addClass('hasError');
-			bee.ui.notifications.notify('err', 'Please select at least one task.', true, function() {
-				$(window).scrollTop($('#jobs_create .job_task_option').position().top);
-			});
-		}
+		// if ($('#jobs_create .job_task_option input:checked').length === 0) {
+		// 	isValid = false;
+		// 	$('#jobs_create .job_task_option').addClass('hasError');
+		// 	bee.ui.notifications.notify('err', 'Please select at least one task.', true, function() {
+		// 		$(window).scrollTop($('#jobs_create .job_task_option').position().top);
+		// 	});
+		// }
 
 		return isValid;
 	};
@@ -260,6 +267,19 @@
 		e.preventDefault();
 		var updateJob = _.querystring.get('jobId');
 		saveJob(updateJob || null);
+	});
+
+	$('#jobs_create #job_add_req').click(function(e) {
+		e.preventDefault();
+
+		var tmpl = Handlebars.compile($('#tmpl-jobreqlist').html());
+		$('.job_req_list ul').append(tmpl);
+
+		$('.job_req_rem', tmpl).click(function(e) {
+			e.preventDefault();
+
+			$(this).parent().remove();
+		});
 	});
 
 })();
