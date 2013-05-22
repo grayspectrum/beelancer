@@ -244,7 +244,7 @@
 		// match them up
 		var userid = _.cookies.get('userid');
 		$.each(tasks, function(key, val) {
-			if (val.assignee._id === userid) {
+			if (val.assignee && (val.assignee._id === userid)) {
 				divided.assignedToMe.push(val);
 			}
 			else {

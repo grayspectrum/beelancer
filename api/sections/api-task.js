@@ -29,42 +29,36 @@ module.exports = function(app, db) {
 						res.write('Could not find project.');
 						res.end();
 					} else {
+						if (body.assignee === '') {
+							body.assignee = null;
+						}
 						var task = new db.task(body);
 						task.isBilled = false;
 						task.owner = user._id;
 						task.isPaid = false;
 						task.isComplete = false;
 						task.project = projectId;
-						task.projectOwner = project.owner
-						// make sure that there is an assignee
-						// they must be either a member of the project
-						// or the owner of the project
-						if (task.assignee && 
-						(project.members.indexOf(task.assignee) === -1) && (project.owner.toString() !== task.assignee.toString())) {
-							res.writeHead(400);
-							res.write('Assignee is not a member of this project.');
-							res.end();
-						} else {
-							task.save(function(err) {
-								if (err) {
-									res.writeHead(500);
-									res.write('Could not create task.');
-									res.end();
-								} else {
-									project.tasks.push(task._id);
-									project.save(function(err) {
-										if (err) {
-											res.writeHead(500);
-											res.write('Unable to add task to project.');
-											res.end();
-										} else {
-											res.write(JSON.stringify(task));
-											res.end();
-										}
-									});
-								}
-							});
-						}
+						task.projectOwner = project.owner;
+						
+						task.save(function(err) {
+							if (err) {
+								res.writeHead(500);
+								res.write('Could not create task.');
+								res.end();
+							} else {
+								project.tasks.push(task._id);
+								project.save(function(err) {
+									if (err) {
+										res.writeHead(500);
+										res.write('Unable to add task to project.');
+										res.end();
+									} else {
+										res.write(JSON.stringify(task));
+										res.end();
+									}
+								});
+							}
+						});
 					}
 				});
 			} else {
@@ -133,6 +127,38 @@ module.exports = function(app, db) {
 					})
 					.populate('owner', 'profile')
 					.populate('assignee', 'profile')
+				.exec(function(err, tasks) {
+					if (err | !tasks) {
+						res.writeHead(404);
+						res.write('Could not get tasks.');
+						res.end();
+					} else {
+						res.write(JSON.stringify(tasks));
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to view your tasks.');
+				res.end();
+			}
+		});
+	});
+
+	////
+	// GET - /api/tasks/unassigned
+	// Gets all tasks for the owner that are unassigned
+	////
+	app.get('/api/tasks/unassigned', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.task
+					.find({
+						owner : user._id, 
+						assignee : null
+					})
+					.populate('owner', 'profile')
+					.populate('project','title')
 				.exec(function(err, tasks) {
 					if (err | !tasks) {
 						res.writeHead(404);

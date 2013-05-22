@@ -529,14 +529,37 @@
 	{{/if}}
 </script>
 
+<!-- Job Category List -->
+<script id="tmpl-catsForJob" type="text/x-handlebars-template">
+	{{#if this.length}}
+		{{#each this}}
+			<option value="{{this.id}}">{{this.title}}</option>
+		{{/each}}
+	{{/if}}
+</script>
+
+<!-- Job Task List -->
+<script id="tmpl-taskForJobs" type="text/x-handlebars-template">
+	{{#if this.length}}
+		{{#each this}}
+			<div class="job_task_option">
+				<span class="job_project_title">Project: {{this.project.title}}</span>
+				<span class="job_task_title">Task: {{this.title}}</span>
+				<input type="checkbox" id="{{this._id}}" name="requirements" value="{{this._id}}" />
+			</div>
+		{{/each}}
+	{{/if}}
+</script>
+
 <!-- Assignee For Task -->
 <script id="tmpl-assigneeForTask" type="text/x-handlebars-template">
 	{{#if this.length}}
+		<option value="">Unassigned</option>
 		{{#each this}}
 			<option value="{{this.user}}">{{this.firstName}} {{this.lastName}}</option>
 		{{/each}}
 	{{else}}
-		<option>No Team Members</option>
+		<option>Unassigned</option>
 	{{/if}}
 </script>
 

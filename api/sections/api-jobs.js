@@ -195,11 +195,13 @@ module.exports = function(app, db) {
 					'requirements'
 				];
 				required.forEach(function(val, key) {
-					if (!body[val]) isValid = false;
-					errors.push('"' + val + '" is a required field.');	
+					if (!body[val]) {
+						isValid = false;
+						errors.push('"' + val + '" is a required field.');
+					}
 				});
 				// make sure it's a valid category
-				if (jobCategories.contains(body.category)) {
+				if (!jobCategories.contains(body.category)) {
 					isValid = false;
 					errors.push('Category is not valid.');
 				}

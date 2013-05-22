@@ -48,8 +48,76 @@
 		<button class="pageRight">&raquo;</button>
 	</div>
 </div>
+<div id="jobs_mine" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">My Jobs</h4>
+	<div id="my_jobs_list">
+		<div class="loader"></div>
+	</div>
+	<div class="pagination">
+		<button class="pageLeft">&laquo;</button>
+		<span class="pageLocation">
+			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+		</span>
+		<button class="pageRight">&raquo;</button>
+	</div>
+</div>
 <div id="jobs_create" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">New Job</h4>
-	<form id="create_job"></form>
+	<h4 class="gold-gradient" id="create_job_heading">New Job</h4>
+	<h4 class="gold-gradient" id="edit_job_heading">Edit Job</h4>
+	<div class="create_job_container">
+		<form id="create_job">
+			<div class="group">
+				<label for="newjob_title">
+					<span>Title: </span>
+					<input class="required" type="text" id="title" placeholder="" name="title" />
+				</label>
+				<label for="newjob_cat">
+					<span>Category: </span>
+					<select class="required" id="category" name="category">
+						<option value="null">Loading categories...</option>
+					</select>
+				</label>
+			</div>
+			<div class="group">
+				<label for="newjob_desc">
+					<span>Description: </span>
+					<textarea class="required" id="description" name="description"></textarea>
+				</label>
+			</div>
+			<div class="group">
+				<label for="newjob_task">
+					<span>Task(s): </span>
+					<div id="newjob_task_list">Loading task(s)...</div>
+				</label>
+			</div>
+			<!-- only show in edit view -->
+			<div class="edit_job">
+				<div class="group">
+					<label for="newtask_assignee">
+						<span>Assignee: </span>
+						<select id="newjob_assignee" name="assigneeId">
+							<option value="null">Loading assignees...</option>
+						</select>
+					</label>
+				</div>
+				<label class="big_radio" for="newjob_isPublished">
+					<input id="newjob_isPublished" type="checkbox" name="isPublished" value="true" /> Publish this job
+					<p>
+						Note:  Once this job is published, it cannot be edited.
+					</p>
+				</label>
+			</div>
+			<!-- end edit view -->
+			<label class="big_radio" for="newjob_isPromoted">
+				<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true" /> Promote this job
+				<p>
+					By promoting this job, it will show up before other unpromoted jobs on the jobs board.
+				</p>
+			</label>
+			<div class="new_task_submit_wrapper gold-gradient">
+				<input type="submit" id="create_new_job" value="Create Job" />
+			</div>
+		</form>
+	</div>
 </div>
 <div id="job_view" class="animated fadeInUp"></div>
