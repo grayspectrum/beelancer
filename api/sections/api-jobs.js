@@ -224,6 +224,10 @@ module.exports = function(app, db) {
 								if (!err) {
 									res.write(JSON.stringify(job));
 									res.end();
+									// add the refs to the added tasks if there are any
+									if (job.tasks && job.tasks.length) {
+										utils.tasks.updateReferencedJobs(db, job.tasks, [], job._id);
+									}
 								}
 								else {
 									res.writeHead(500);
@@ -616,6 +620,9 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			// cannot updated jobs which are already published
 			// must first unpublish job before making updates
+			
+			// we need to keep track of the tasks that are assigned
+			// in and out of the job documents
 			if (!err && user) {
 				db.job.findOne({
 					_id : req.params.jobId,
@@ -623,6 +630,9 @@ module.exports = function(app, db) {
 				}).exec(function(err, job) {
 					if (!err && job) {
 						if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
+							
+							utils.tasks.updateReferencedJobs(db, job.tasks, req.body.tasks);
+
 							// go ahead and update
 							job.update(req.body, function(err) {
 								if (!err) {
@@ -684,6 +694,8 @@ module.exports = function(app, db) {
 						if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
 							// go ahead and remove
 							// also remove from user refs
+							utils.tasks.updateReferencedJobs(db, job.tasks, []);
+							
 							var index = user.jobs.owned.indexOf(job._id);
 							user.jobs.owned.splice(index, 1);
 							user.save(function(err) {
