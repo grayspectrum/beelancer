@@ -62,12 +62,14 @@
 				$('#newtask_rate').val(task.rate);
 
 				// if not the assignee or owner, remove save button (api should handle this, but just in case)
-				if (task.assignee.profile !== bee.get('profile')._id && task.owner.profile !== bee.get('profile')._id) {
-					$('#save_task').remove();
+				if (task.assignee 
+					&& (task.assignee.profile !== bee.get('profile')._id) 
+					&& (task.owner.profile !== bee.get('profile')._id)) {
+						$('#save_task').remove();
 				}
 
 				// if assignee or the job is published
-				if (task.assignee.profile === bee.get('profile')._id || (task.job && task.job.isPublished)) {
+				if (task.assignee && task.assignee.profile === bee.get('profile')._id || (task.job && task.job.isPublished)) {
 					$('#create_task input').attr('disabled', 'disabled');
 					// $('#create_task label').unbind(); can't find this binding, where is it?
 					$('#save_task').remove();
