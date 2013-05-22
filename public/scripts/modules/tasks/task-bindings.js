@@ -164,12 +164,12 @@
 				).css({ display : 'block' }).html((task.isComplete) ? 'Reopen Task' : 'Complete Task');
 
 				// don't show edit option to non-owner
-				if (task.assignee.profile !== bee.get('profile')._id && task.owner.profile !== bee.get('profile')._id) {
+				if (task.assignee && (task.assignee.profile !== bee.get('profile')._id) && (task.owner.profile !== bee.get('profile')._id)) {
 					$('#tasks_nav, #task_timer_controls .timer, .worklog .timer').remove();
 				}
 
 				// if assignee of task
-				if (task.assignee.profile === bee.get('profile')._id) {
+				if (task.assignee && (task.assignee.profile === bee.get('profile')._id)) {
 					$('#tasks_nav .edit_task').remove();
 				}
 
