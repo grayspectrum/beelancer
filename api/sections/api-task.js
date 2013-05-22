@@ -215,9 +215,11 @@ module.exports = function(app, db) {
 								'isFixed',
 								'rate',
 								'title',
-								'assignee',
 								'isComplete'
 							];
+							// only allow the assignee to be updated if
+							// there is not a job tied to it
+							if (!task.job) allowed.push('assignee');
 							updateAllowed(task, allowed);
 						}
 						

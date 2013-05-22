@@ -30,6 +30,10 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'user'
 	},
+	job : {
+		type : ObjectId,
+		ref : 'job'
+	},
 	isComplete : Boolean,
 	acceptedBy : {
 		owner : Boolean,

@@ -91,3 +91,24 @@ module.exports.hasValidPaymentData = function(payment) {
 	});
 	return result;
 };
+
+module.exports.tasks = {
+	// de-references jobs during a task update
+	// see usage in /api/job/update and post /api/job
+	updateReferencedJobs : function(db, old_tasks, new_tasks, refThisJob) {
+		// are we changing the tasks?
+		if (old_tasks && old_tasks !== new_tasks) {	
+			old_tasks.filter(function(task) {
+				return new_tasks.indexOf(task) === -1;
+			}).forEach(function(task_id) {
+				if (refThisJob) {
+					db.task.findOne({ _id : task_id }).exec(function(err, task) {
+						if (!err && task) {
+							task.update({ job : refThisJob || null });
+						}
+					});
+				}
+			});
+		}
+	}
+};
