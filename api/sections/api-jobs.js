@@ -700,7 +700,7 @@ module.exports = function(app, db) {
 							user.jobs.owned.splice(index, 1);
 							user.save(function(err) {
 								if (!err) {
-									job.remove(req.body, function(err) {
+									job.remove(function(err) {
 										if (!err) {
 											res.end();
 										}

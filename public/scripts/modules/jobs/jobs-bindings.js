@@ -24,7 +24,7 @@
 	}
 
 	function generateJobHomePage() {
-		$('#job_search_result, #jobs_search, #jobs_create, #jobs_mine').remove();
+		$('#job_search_result, #jobs_search, #jobs_create, #jobs_mine, .job_edit_nav, .job_del_nav').remove();
 
 		getPromotedJobs();
 		getLatestJobs();
@@ -71,7 +71,8 @@
 	};
 
 	function showNewJobPanel() {
-		$('#jobs_promoted, #jobs_new, #jobs_view, #job_search_result, #jobs_search, #jobs_nav .job_new_nav, #jobs_create .edit_job, #jobs_create #edit_job_heading, #jobs_mine').remove();
+		$('#jobs_promoted, #jobs_new, #jobs_view, #job_search_result, #jobs_search, #jobs_create .edit_job, #jobs_create #edit_job_heading, #jobs_mine').remove();
+		$('.job_new_nav, .job_edit_nav, .job_del_nav').remove();
 
 		getTasks();
 		getCategories();
@@ -125,8 +126,35 @@
 		);
 	};
 
+	function showJobView() {
+		$('#jobs_promoted, #jobs_new, #jobs_create, #job_search_result, #jobs_search, #jobs_mine').remove();
+		$('.job_search_nav, .job_myjobs_nav, .job_new_nav').remove();
+
+		bee.api.send(
+			'GET',
+			'/job/' + viewJob,
+			{},
+			function(res) {
+
+				// if not the owner, remove nav edit / del options
+				if (res.owner !== bee.get('profile').user) {
+					$('#jobs_nav').remove();
+				}
+
+				// do stuff
+
+				bindJobNav(viewJob);
+				bee.ui.loader.hide();
+			},
+			function(err) {
+				bee.ui.loader.hide();
+				bee.ui.notifications.notify('err', err, true);
+			}
+		);
+	};
+
 	function showMyJobsPanel() {
-		$('#jobs_promoted, #jobs_new, #jobs_create, #jobs_view, #job_search_result, #jobs_search, #jobs_nav .job_myjobs_nav').remove();
+		$('#jobs_promoted, #jobs_new, #jobs_create, #jobs_view, #job_search_result, #jobs_search, .job_myjobs_nav, .job_edit_nav, .job_del_nav').remove();
 
 		bee.api.send(
 			'GET',
@@ -157,7 +185,7 @@
 	};
 
 	function showJobSearchPanel() {
-		$('#jobs_promoted, #jobs_new, #jobs_create, #jobs_view, #jobs_nav .job_search_nav, #jobs_mine').remove();
+		$('#jobs_promoted, #jobs_new, #jobs_create, #jobs_view, .job_search_nav, #jobs_mine, .job_edit_nav, .job_del_nav').remove();
 
 		var search_input = $('#job_search');
 		
@@ -261,6 +289,30 @@
 				}
 			);
 		}
+	};
+
+	function bindJobNav(id) {
+		$('.job_edit_nav').click(function(e) {
+			e.preventDefault();
+			location.href = '/#!/jobs?editJob=' + id;
+		});
+
+		$('.job_del_nav').click(function(e) {
+			e.preventDefault();
+
+			bee.api.send(
+				'DELETE',
+				'/job/' + id,
+				{},
+				function(res) {
+					location.href = '/#!/jobs';
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+					bee.ui.loader.hide();
+				}
+			);
+		});
 	};
 
 	$('#create_new_job').click(function(e) {
