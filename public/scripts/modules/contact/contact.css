@@ -1,0 +1,78 @@
+#contact_us, .about, #contact_success {
+	margin: 12px;
+}
+
+#contact_success {
+	display: none;
+}
+
+#con_us {
+	display: block;
+	margin: 12px 0;
+	font-size: 14px;
+	padding: 6px 10px;
+	height: 144px;
+	width: 512px;
+	border: 1px solid #ABABAB;
+	border-radius: 2px;
+}
+
+.contact_submit_wrapper {
+	border-radius: 6px;
+	margin: 24px auto;
+	width: 242px;
+}
+
+#send_contact {
+	background: url('/assets/images/mono/black/doc_edit_icon&32.png') 12px center no-repeat;
+	display: block;
+	width: 100%;
+	font-size: 28px;
+	font-family: Raleway;
+	font-weight: bold;
+	text-shadow: 0 1px 0 #FFC60B;
+	text-align: left;
+	text-indent: 48px;
+	padding: 12px;
+	border-radius: 6px;
+	border: 2px solid #FFC60B;
+}
+
+#send_contact:hover {
+	background: url('/assets/images/mono/black/doc_edit_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+.share {
+	text-align: center;
+}
+
+.share ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.share ul li {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+}
+
+.share a {
+	display: block;
+}
+
+.share a.facebook {
+	background: url('/assets/images/mono/black/facebook_icon&24.png') 0 0 no-repeat;
+	height: 24px;
+	margin: 10px;
+	width: 24px;
+}
+
+.share a.twitter {
+	background: url('/assets/images/mono/black/twitter_icon&24.png') 0 0 no-repeat;
+	height: 24px;
+	margin: 10px;
+	width: 24px;
+}

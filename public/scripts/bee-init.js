@@ -141,6 +141,22 @@ _.load([
 			]
 		}
 	});
+
+	var contact = new bee.Module(app, {
+		name : 'contact',
+		container : 'main',
+		load : {
+			always : [
+				'/scripts/modules/contact/contact-bindings.js'
+			],
+			before : [
+			
+			],
+			once : [
+				'/scripts/modules/contact/contact.css'
+			]
+		}
+	});
 	
 	var not_found = new bee.Module(app, {
 		name : '404',

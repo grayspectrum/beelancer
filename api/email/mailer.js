@@ -20,19 +20,35 @@ module.exports.send = function(tmpl, tmpl_data) {
 		if (err) {
 			console.log(err);
 		} else {
-			var body = handlebars.compile(data.toString())(tmpl_data);
-			mlserver.send({
-				text : 'Your confirmation number is ' + tmpl_data.confirmCode, 
-				from : 'Beelancer <noreply@beelancer.com>', 
-				to : '<' + tmpl_data.email + '>',
-				subject : 'Confirm Your Beelancer Account',
-				attachment : [
-					{
-						data : body,
-						alternative : true
-					}
-				]
-			}, function(err, message) { 
+			var body = handlebars.compile(data.toString())(tmpl_data)
+			  , emailMsgConfig = {
+				'confirm' : {
+					text : 'Your confirmation number is ' + tmpl_data.confirmCode, 
+					from : 'Beelancer <noreply@beelancer.com>', 
+					to : '<' + tmpl_data.email + '>',
+					subject : 'Confirm Your Beelancer Account',
+					attachment : [
+						{
+							data : body,
+							alternative : true
+						}
+					]
+				},
+				'contact' : {
+					text : 'Contact from: ' + tmpl_data.user, 
+					from : 'Beelancer <noreply@beelancer.com>', 
+					to : '<datzun@gmail.com>, <sporkmydork@gmail.com>',
+					subject : 'Contact Form Submission',
+					attachment : [
+						{
+							data : body,
+							alternative : true
+						}
+					]
+				}
+			};
+
+			mlserver.send(emailMsgConfig[tmpl], function(err, message) { 
 				console.log(err || 'Email to ' + tmpl + ' sent to "' + tmpl_data.email + '".'); 
 			});
 		}

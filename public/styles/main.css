@@ -259,6 +259,10 @@ label.hasError input {
 	background: url('/assets/images/mono/white/cog_icon&24.png') left center no-repeat;
 }
 
+#menu .contact {
+	background: url('/assets/images/mono/white/doc_edit_icon&24.png') left center no-repeat;
+}
+
 .action {
 	color: #002734;
 	text-decoration: underline;
