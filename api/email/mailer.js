@@ -21,12 +21,24 @@ module.exports.send = function(tmpl, tmpl_data) {
 			console.log(err);
 		} else {
 			var body = handlebars.compile(data.toString())(tmpl_data)
-			  , emailMsgConfig = {
+			  , emailMsgConfig = {					// better way to do this?  store this elsewhere?
 				'confirm' : {
 					text : 'Your confirmation number is ' + tmpl_data.confirmCode, 
 					from : 'Beelancer <noreply@beelancer.com>', 
 					to : '<' + tmpl_data.email + '>',
 					subject : 'Confirm Your Beelancer Account',
+					attachment : [
+						{
+							data : body,
+							alternative : true
+						}
+					]
+				},
+				'recover' : {
+					text : 'Recover Your Beelancer Account Password', 
+					from : 'Beelancer <noreply@beelancer.com>', 
+					to : '<' + tmpl_data.email + '>',
+					subject : 'Recover Your Beelancer Account Password',
 					attachment : [
 						{
 							data : body,
