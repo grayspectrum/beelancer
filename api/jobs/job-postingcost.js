@@ -10,7 +10,7 @@ module.exports = function(db, job, callback) {
 	calculate(job, function(cost) {
 		// calculate stuff
 		calc.cost = cost;
-		calc.publishId = require('../utils.js').generateKey();
+		calc.publishId = require('../utils.js').generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 });
 		
 		if (calc.cost) {
 			callback.call(this, null, calc);
@@ -30,7 +30,6 @@ module.exports = function(db, job, callback) {
 				dailyTaskCost(tasks[i], function(costErr, dailyCost) {
 					if (!costErr && dailyCost) {
 						totalCost = totalCost + dailyCost;
-						currentTask++;
 						numCalculated++;
 						if (numCalculated === tasks.length) {
 							onComplete(totalCost);

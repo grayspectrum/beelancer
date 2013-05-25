@@ -164,8 +164,14 @@ module.exports = function(app, db) {
 		.populate('tasks')
 		.exec(function(err, job) {
 			if (!err && job) {
-				res.write(JSON.stringify(job));
-				res.end();
+				// i wish this would work, but it's not
+				// db.profile
+				// 	.findOne({ user : job.owner})
+				// .exec(function(errPro, profile){
+				// 	job.owner = profile;
+					res.write(JSON.stringify(job));
+					res.end();
+				//});
 			}
 			else {
 				res.writeHead((err) ? 500 : 404);

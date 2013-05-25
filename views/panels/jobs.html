@@ -15,6 +15,9 @@
 		<li>
 			<a href="#" class="job_edit_nav">Edit Job</a>
 		</li>
+		<li>
+			<a href="#" class="job_bid_nav">Bid on Job</a>
+		</li>
 	</ul>
 </div>
 <div id="jobs_search" class="navigation light-gradient center-pane animated fadeInUp">
@@ -155,12 +158,15 @@
 					By promoting this job, it will show up before other unpromoted jobs on the jobs board.
 				</p>
 			</label>
-			<div class="new_task_submit_wrapper gold-gradient">
-				<input type="submit" id="create_new_job" value="Create Job" />
+			<div class="job_buttons">
+				<div class="save_job_submit_wrapper light-gradient">
+					<input type="submit" id="save_job" value="Save Job" />
+				</div>
+				<div class="publish_job_submit_wrapper gold-gradient">
+					<input type="submit" id="publish_job" value="Publish Job" />
+				</div>
 			</div>
 		</form>
 	</div>
 </div>
-<div id="job_view" class="animated fadeInUp">
-
-</div>
+<div id="job_view" class="animated fadeInUp"></div>

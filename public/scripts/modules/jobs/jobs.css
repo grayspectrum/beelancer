@@ -107,3 +107,53 @@ li.req a {
 	border: 1px solid #ABABAB;
 	border-radius: 2px;
 }
+
+.job_buttons {
+	margin: 10px 30px;
+	overflow: auto;
+}
+
+.save_job_submit_wrapper, .publish_job_submit_wrapper {
+	border-radius: 6px;
+	margin: 24px auto;
+	width: 242px;
+}
+
+.save_job_submit_wrapper {
+	float: left;
+	width: 202px;
+}
+
+.publish_job_submit_wrapper {
+	float: right;
+}
+
+#save_job, #publish_job {
+	background: url('/assets/images/mono/black/doc_edit_icon&32.png') 12px center no-repeat;
+	display: block;
+	width: 100%;
+	font-size: 28px;
+	font-family: Raleway;
+	font-weight: bold;
+	text-shadow: 0 1px 0 #FFC60B;
+	text-align: left;
+	text-indent: 48px;
+	padding: 12px;
+	border-radius: 6px;
+	border: 2px solid #FFC60B;
+}
+
+#save_job {
+	border: 2px solid #BBB;
+	text-shadow: 0 1px 0 #CCC;
+}
+
+#publish_job:hover {
+	background: url('/assets/images/mono/black/doc_edit_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+#save_job:hover {
+	background: url('/assets/images/mono/black/doc_edit_icon&32.png') 12px center no-repeat #DDD;
+	cursor: pointer;
+}

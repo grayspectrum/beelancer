@@ -650,3 +650,66 @@
 		<a href="#" class="job_req_rem"></a>
 	</li>
 </script>
+
+<!-- Job View Template -->
+<script id="tmpl-jobview" type="text/x-handlebars-template">
+	<div class="light-gradient center-pane animated fadeInUp">
+		<div id="job_details" data-id="{{_id}}">
+			<h4 class="gold-gradient">{{title}}</h4>
+			<div class="job-published">Published</div>
+			<div>
+				<div class="job-owner">
+					<strong>Job Owner:</strong>
+					<div>
+						<div class="job-owner-showcase">
+							<img>
+							<strong>{{owner}}</strong>
+						</div>
+					</div>
+				</div>
+				<div class="job-cat">
+					<strong>Category:</strong>
+					<span>{{category.title}}
+				</div>
+			</div>
+			<div class="job-desc">
+				<strong>Description:</strong>
+				<p>{{description}}</p>
+			</div>
+			<div class="job-reqs">
+				<strong>Requirements:</strong>
+				<ul>
+					{{#each requirements}}
+						<li>{{this}}</li>
+					{{/each}}
+				</ul>
+			</div>
+			<div class="job-tasks"></div>
+			<div class="job-bids"></div>
+		</div>
+	</div>
+</script>
+
+<!-- Job Task List Template -->
+<script id="tmpl-jobtasklist" type="text/x-handlebars-template">
+	<strong>Tasks:</strong>
+	<ul>
+		{{#each this}}
+			<li>{{title}}</li>
+		{{/each}}
+	</ul>
+</script>
+
+<!-- Job Bid List Template -->
+<script id="tmpl-jobbidlist" type="text/x-handlebars-template">
+	<strong>Bids:</strong>
+	<ul>
+		{{#each this}}
+			<li>
+				<span>{{this.user}}</span>
+				<p>{{this.message}}</p>
+				<a href="#" data-id="{{this._id}}">Accept Bid</a>
+			</li>
+		{{/each}}
+	</ul>
+</script>
