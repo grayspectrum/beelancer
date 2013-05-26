@@ -23,14 +23,17 @@ module.exports = function(app, db) {
 	app.get('/api/jobs/promoted', function(req, res) {
 		var today = new Date();
 		db.job.find({
-			$gte : {
-				'listing.start' : today
-			},
-			$lte : {
-				'listing.end' : today
-			},
+			// $gte : {
+			// 	'listing.start' : today
+			// },
+			// $lte : {
+			// 	'listing.end' : today
+			// },
+			isPublished : true,
 			'listing.isPromoted' : true
-		}).exec(function(err, promotedJobs) {
+		})
+		.sort({ 'listing.start' : -1 })
+		.exec(function(err, promotedJobs) {
 			if (!err && promotedJobs) {
 				res.write(JSON.stringify(promotedJobs));
 				res.end();
@@ -64,14 +67,17 @@ module.exports = function(app, db) {
 	app.get('/api/jobs', function(req, res) {
 		var today = new Date();
 		db.job.find({
-			$gte : {
-				'listing.start' : today
-			},
-			$lte : {
-				'listing.end' : today
-			},
+			// $gte : {
+			// 	'listing.start' : today
+			// },
+			// $lte : {
+			// 	'listing.end' : today
+			// },
+			isPublished : true,
 			'listing.isPromoted' : false
-		}).exec(function(err, jobs) {
+		})
+		.sort({ 'listing.start' : -1 })
+		.exec(function(err, jobs) {
 			if (!err && jobs) {
 				res.write(JSON.stringify(jobs));
 				res.end();
@@ -88,11 +94,12 @@ module.exports = function(app, db) {
 
 	////
 	// GET - /api/jobs/search
-	// Returns all jobs matching search criteria
+	// Returns all published jobs matching search criteria
 	////
 	app.get('/api/jobs/search/:search', function(req, res) {
 		db.job.find({
-			title : req.params.search
+			title : new RegExp(req.params.search, 'i'),
+			isPublished : true
 		}).exec(function(err, jobs) {
 			if (!err && jobs) {
 				res.write(JSON.stringify(jobs));
@@ -222,6 +229,7 @@ module.exports = function(app, db) {
 					job.owner = user._id;
 					job.status = 'UNPUBLISHED';
 					job.category = jobCategories.contains(body.category);
+					job.listing.isPromoted = (body.isPromoted) ? body.isPromoted : false;
 					job.save(function(err) {
 						if (!err) {
 							// add job to user list
@@ -416,6 +424,7 @@ module.exports = function(app, db) {
 												}
 											});
 											// save the charge id for reference
+											job.listing.start = new Date();
 											job.listing.chargeId = data.id;
 											job.save();
 										}
@@ -443,6 +452,7 @@ module.exports = function(app, db) {
 							job.status = 'PUBLISHED';
 							job.isPublished = true;
 							job.listing.publishId = null;
+							job.listing.start = new Date();
 							// save job
 							job.save(function(err) {
 								if (!err) {
@@ -585,6 +595,7 @@ module.exports = function(app, db) {
 						job.status = 'UNPUBLISHED';
 						job.listing.cost = null;
 						job.listing.publishId = null;
+						job.listing.end = new Date();
 						job.save(function(err) {
 							if (!err) {
 								res.write(JSON.stringify(job));
@@ -931,16 +942,16 @@ module.exports = function(app, db) {
 	});
 	
 	////
-	// POST - /api/job/watch
+	// GET - /api/job/watch
 	// Adds caller to watchers
 	////
-	app.post('/api/job/watch', function(req, res) {
+	app.get('/api/job/watch/:jobId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			// "favorites" a job listing so it shows up
 			// in the callers watch list
 			if (!err && user) {
 				db.job.findOne({
-					_id : jobId,
+					_id : req.params.jobId,
 					isPublished : true
 				}).exec(function(err, job) {
 					if (!err && job) {
@@ -990,15 +1001,15 @@ module.exports = function(app, db) {
 	});
 	
 	////
-	// POST - /api/job/unwatch
+	// GET - /api/job/unwatch
 	// Removes caller from watchers
 	////
-	app.post('/api/job/unwatch', function(req, res) {
+	app.get('/api/job/unwatch/:jobId', function(req, res) {
 		// removes the job from the callers watch list
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
 				db.job.findOne({
-					_id : jobId
+					_id : req.params.jobId
 				}).exec(function(err, job) {
 					if (!err && job) {
 						// make sure we are already watching

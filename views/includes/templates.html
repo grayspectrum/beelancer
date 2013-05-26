@@ -656,7 +656,11 @@
 	<div class="light-gradient center-pane animated fadeInUp">
 		<div id="job_details" data-id="{{_id}}">
 			<h4 class="gold-gradient">{{title}}</h4>
-			<div class="job-published">Published</div>
+			<div class="job-published">{{status}}</div>
+			<div class="job-watch">
+				<button class="job-watch-btn">Watch Job</button>
+				<button class="job-unwatch-btn">Unwatch Job</button>
+			</div>
 			<div>
 				<div class="job-owner">
 					<strong>Job Owner:</strong>

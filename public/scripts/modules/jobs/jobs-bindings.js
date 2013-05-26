@@ -9,7 +9,8 @@
 	  , newJob = _.querystring.get('newJob')
 	  , myJobs = _.querystring.get('myJobs')
 	  , viewJob = _.querystring.get('viewJob')
-	  , editJob = _.querystring.get('editJob');
+	  , editJob = _.querystring.get('editJob')
+	  , bidJob = _.querystring.get('bidJob');
 
 	if (jobSearch) {
 		showJobSearchPanel();
@@ -19,6 +20,8 @@
 		showMyJobsPanel();
 	} else if(viewJob) {
 		showJobView();
+	} else if(bidJob) {
+		showBidView();
 	} else {
 		generateJobHomePage();
 	}
@@ -28,6 +31,7 @@
 
 		getPromotedJobs();
 		getLatestJobs();
+		getWatchedJobs();
 		bee.ui.loader.hide();
 
 		function getPromotedJobs() {
@@ -68,10 +72,20 @@
 				}
 			);
 		}
+
+		function getWatchedJobs() {
+			var watched = bee.get('profile').jobs.watched;
+			if (watched.length > 0) {
+				var wat_tmpl = Handlebars.compile($('#tmpl-joblist').html())(watched);
+				$('#watched_jobs_list').html(wat_tmpl);
+			} else {
+				$('#watched_jobs_list').html('There are no current jobs to view.');
+			}
+		};
 	};
 
 	function showNewJobPanel() {
-		$('#jobs_promoted, #jobs_new, #jobs_view, #job_search_result, #jobs_search, #jobs_create .edit_job, #jobs_create #edit_job_heading, #jobs_mine').remove();
+		$('#jobs_list, #jobs_view, #job_search_result, #jobs_search, #jobs_create .edit_job, #jobs_create #edit_job_heading, #jobs_mine').remove();
 		$('.job_new_nav, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
 
 		getTasks();
@@ -127,7 +141,7 @@
 	};
 
 	function showJobView() {
-		$('#jobs_promoted, #jobs_new, #jobs_create, #job_search_result, #jobs_search, #jobs_mine').remove();
+		$('#jobs_list, #jobs_create, #job_search_result, #jobs_search, #jobs_mine').remove();
 		$('.job_search_nav, .job_myjobs_nav, .job_new_nav').remove();
 
 		bee.api.send(
@@ -141,12 +155,27 @@
 
 				// if not the owner, remove nav edit / del options
 				if (res.owner !== bee.get('profile').user) {
-					$('#jobs_nav li, .job-published').not('.job_bid_nav').remove();
-				} else {
-					$('.job_bid_nav').remove();
+					$('.job_del_nav, .job_edit_nav, .job-published').remove();
 
-					var taskTmpl = Handlebars.compile($('#tmpl-jobtasklist').html())(res.tasks);
-					$('.job-tasks').html(taskTmpl);
+					// check if item is being watch
+					if (bee.get('profile').jobs.watched.length === 0) {
+						$('.job-watch-btn').show();
+					} else {
+						$.each(bee.get('profile').jobs.watched, function(key, val) {
+							if (val._id === viewJob) {
+								$('.job-unwatch-btn').show();
+							} else {
+								$('.job-watch.btn').show();
+							}
+						});
+					}
+				} else {
+					$('.job_bid_nav, .job-watch').remove();
+
+					if (res.tasks.length > 0) {
+						var taskTmpl = Handlebars.compile($('#tmpl-jobtasklist').html())(res.tasks);
+						$('.job-tasks').html(taskTmpl);
+					}
 
 					if (res.bids.length > 0){
 						var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(res.bids);
@@ -170,8 +199,15 @@
 		);
 	};
 
+	function showBidView() {
+		$('#jobs_list, #jobs_create, #job_search_result, #jobs_search, #jobs_mine, #jobs_nav').remove();
+
+		//do stuff
+		bee.ui.loader.hide();
+	};
+
 	function showMyJobsPanel() {
-		$('#jobs_promoted, #jobs_new, #jobs_create, #jobs_view, #job_search_result, #jobs_search, .job_myjobs_nav, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
+		$('#jobs_list, #jobs_create, #jobs_view, #job_search_result, #jobs_search, .job_myjobs_nav, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
 
 		bee.api.send(
 			'GET',
@@ -202,7 +238,7 @@
 	};
 
 	function showJobSearchPanel() {
-		$('#jobs_promoted, #jobs_new, #jobs_create, #jobs_view, .job_search_nav, #jobs_mine, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
+		$('#jobs_list, #jobs_create, #jobs_view, .job_search_nav, #jobs_mine, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
 
 		var search_input = $('#job_search');
 		
@@ -367,6 +403,46 @@
 		$('.job_bid_nav').click(function(e) {
 			e.preventDefault();
 			location.href = '/#!/jobs/bidJob=' + id;
+		});
+
+		$('.job-watch-btn').click(function(e) {
+			e.preventDefault();
+			bee.ui.loader.show();
+
+			bee.api.send(
+				'GET',
+				'/job/watch/' + id,
+				{},
+				function(res) {
+					$('.job-watch-btn').hide();
+					$('.job-unwatch-btn').show();
+					bee.ui.loader.hide();
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+					bee.ui.loader.hide();
+				}
+			);
+		});
+
+		$('.job-unwatch-btn').click(function(e) {
+			e.preventDefault();
+			bee.ui.loader.show();
+
+			bee.api.send(
+				'GET',
+				'/job/unwatch/' + id,
+				{},
+				function(res) {
+					$('.job-watch-btn').show();
+					$('.job-unwatch-btn').hide();
+					bee.ui.loader.hide();
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+					bee.ui.loader.hide();
+				}
+			);
 		});
 	};
 

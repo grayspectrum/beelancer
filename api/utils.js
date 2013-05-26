@@ -43,6 +43,7 @@ module.exports.verifyUser = function(req, db, callback) {
 		db.user
 			.findOne({ _id : creds.userId })
 			.populate('profile')
+			.populate('jobs.watched', 'title')
 		.exec(function(err, user) {
 			if (err || !user) {
 				callback.call(this, {
