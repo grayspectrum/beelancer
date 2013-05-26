@@ -94,6 +94,7 @@ module.exports = function(app, db) {
 			if (!err) {
 				var me = user.toObject().profile || {};
 				me.team = user.team;
+				me.jobs = user.jobs;
 				res.write(JSON.stringify(me));
 				res.end();
 			} else {

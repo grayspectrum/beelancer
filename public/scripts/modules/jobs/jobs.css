@@ -23,6 +23,10 @@
 	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
 }
 
+#jobs_nav .job_bid_nav {
+	background: url('/assets/images/mono/black/target_icon&32.png') 12px center no-repeat;
+}
+
 #search_jobs {
 	float: left;
 	width: 400px;
@@ -41,7 +45,7 @@
 	display: none;
 }
 
-#jobs_promoted ul, #jobs_new ul, #jobs_mine ul, #jobs_create ul {
+#jobs_promoted ul, #jobs_new ul, #jobs_mine ul, #jobs_create ul, #jobs_watched ul {
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -129,7 +133,7 @@ li.req a {
 }
 
 #save_job, #publish_job {
-	background: url('/assets/images/mono/black/doc_edit_icon&32.png') 12px center no-repeat;
+	background: url('/assets/images/mono/black/save_icon&32.png') 12px center no-repeat;
 	display: block;
 	width: 100%;
 	font-size: 28px;
@@ -143,17 +147,51 @@ li.req a {
 	border: 2px solid #FFC60B;
 }
 
+#publish_job {
+	background: url('/assets/images/mono/black/notepad_icon&32.png') 12px center no-repeat;
+}
+
 #save_job {
 	border: 2px solid #BBB;
 	text-shadow: 0 1px 0 #CCC;
 }
 
 #publish_job:hover {
-	background: url('/assets/images/mono/black/doc_edit_icon&32.png') 12px center no-repeat #FFC60B;
+	background: url('/assets/images/mono/black/notepad_icon&32.png') 12px center no-repeat #FFC60B;
 	cursor: pointer;
 }
 
 #save_job:hover {
-	background: url('/assets/images/mono/black/doc_edit_icon&32.png') 12px center no-repeat #DDD;
+	background: url('/assets/images/mono/black/save_icon&32.png') 12px center no-repeat #DDD;
 	cursor: pointer;
+}
+
+.job-published, .job-watch {
+	float: right;
+	margin: -50px 24px 0 0;
+}
+
+.job-watch-btn, .job-unwatch-btn {
+	background-color: #f1f1f1;
+	background-position: 6px center;
+	background-repeat: no-repeat;
+	padding: 4px 8px 4px 30px;
+	border: 1px solid #d2d2d2;
+	border-radius: 3px;
+	box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+.job-watch-btn:hover, .job-unwatch-btn:hover {
+	background-color: #e2e2e2;
+	cursor: pointer;
+}
+
+.job-unwatch-btn {
+	background-image: url('/assets/images/mono/black/invisible_light_icon&16.png');
+	display: none;
+}
+
+.job-watch-btn {
+	background-image: url('/assets/images/mono/black/eye_icon&16.png');
+	display: none;
 }
