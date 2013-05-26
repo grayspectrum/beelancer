@@ -25,6 +25,12 @@ module.exports = (function(env) {
 				port: '',
 				client_id: 'ARolkxBU-NKgUtVvctvWz0IrWXpRLx8yFi2Buk8nuvvf6luhFdiWjwtj2VEt',
 				client_secret: 'EJUA_RA-ohVASPs8hhy7LNvIY2S-jU0WbxChkyxt89s4DocrHL3u4rAWZFOs'
+			},
+			aws : {
+				fpsAPI : 'https://fps.sandbox.amazonaws.com/',
+				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
+				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
+				accessKeySecret : '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'
 			}
 		},
 		
@@ -45,6 +51,12 @@ module.exports = (function(env) {
 				port: '',
 				client_id: 'ARolkxBU-NKgUtVvctvWz0IrWXpRLx8yFi2Buk8nuvvf6luhFdiWjwtj2VEt',
 				client_secret: 'EJUA_RA-ohVASPs8hhy7LNvIY2S-jU0WbxChkyxt89s4DocrHL3u4rAWZFOs'
+			},
+			aws : {
+				fpsAPI : 'https://fps.sandbox.amazonaws.com/',
+				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
+				accessKeyId : '',
+				accessKeySecret : ''
 			}
 		},
 		
@@ -65,6 +77,12 @@ module.exports = (function(env) {
 				port: '',
 				client_id: '',
 				client_secret: ''
+			},
+			aws : {
+				fpsAPI : '',
+				coBrandedUI : '',
+				accessKeyId : '',
+				accessKeySecret : ''
 			}
 		}
 	};
