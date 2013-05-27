@@ -46,5 +46,8 @@ module.exports = new Schema({
 	proSince : Date,
 	isConfirmed : Boolean,
 	confirmCode : String,
-	recoveryKey : String
+	recoveryKey : String,
+	aws : {
+		recipientId : String
+	}
 });
