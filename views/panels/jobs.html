@@ -110,69 +110,6 @@
 	<h4 class="gold-gradient" id="edit_job_heading">Edit Job</h4>
 	<div class="create_job_container">
 		<form id="create_job">
-			<div class="group">
-				<label for="newjob_title">
-					<span>Title: </span>
-					<input class="required" type="text" id="title" placeholder="" name="title" />
-				</label>
-				<label for="newjob_cat">
-					<span>Category: </span>
-					<select class="required" id="category" name="category">
-						<option value="null">Loading categories...</option>
-					</select>
-				</label>
-			</div>
-			<div class="group">
-				<label for="newjob_desc">
-					<span>Description: </span>
-					<textarea class="required" id="description" name="description"></textarea>
-				</label>
-			</div>
-			<div class="group">
-				<label for="newjob_reqs" class="req_label">
-					<span>Requirements: </span>
-					<div class="job_req_list">
-						<ul>
-							<li class="req">
-								<input type="text" name="requirements" class="required" />
-							</li>
-						</ul>
-					</div>
-					<div class="add_req">
-						<a href="#" id="job_add_req">Add</a>
-					</div>
-				</label>
-			</div>
-			<div class="group">
-				<label for="newjob_task">
-					<span>Task(s): </span>
-					<div id="newjob_task_list">Loading task(s)...</div>
-				</label>
-			</div>
-			<!-- only show in edit view -->
-			<div class="edit_job">
-				<div class="group">
-					<label for="newtask_assignee">
-						<span>Assignee: </span>
-						<select id="newjob_assignee" name="assigneeId">
-							<option value="null">Loading assignees...</option>
-						</select>
-					</label>
-				</div>
-				<label class="big_radio" for="newjob_isPublished">
-					<input id="newjob_isPublished" type="checkbox" name="isPublished" value="true" /> Publish this job
-					<p>
-						Note:  Once this job is published, it cannot be edited.
-					</p>
-				</label>
-			</div>
-			<!-- end edit view -->
-			<label class="big_radio" for="newjob_isPromoted">
-				<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true" /> Promote this job
-				<p>
-					By promoting this job, it will show up before other unpromoted jobs on the jobs board.
-				</p>
-			</label>
 			<div class="job_buttons">
 				<div class="save_job_submit_wrapper light-gradient">
 					<input type="submit" id="save_job" value="Save Job" />

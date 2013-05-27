@@ -18,7 +18,7 @@
 		showNewJobPanel();
 	} else if(myJobs) {
 		showMyJobsPanel();
-	} else if(viewJob) {
+	} else if(viewJob || bidJob) {
 		showJobView();
 	} else if(bidJob) {
 		showBidView();
@@ -85,29 +85,74 @@
 	};
 
 	function showNewJobPanel() {
-		$('#jobs_list, #jobs_view, #job_search_result, #jobs_search, #jobs_create .edit_job, #jobs_create #edit_job_heading, #jobs_mine').remove();
-		$('.job_new_nav, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
+		$('#jobs_list, #jobs_view, #job_search_result, #jobs_search, #jobs_mine').remove();
+		$('.job_new_nav, .job_edit_nav, .job_bid_nav').remove();
 
-		getTasks();
-		getCategories();
+		if (newJob) {
+			$('#jobs_create .edit_job, #jobs_create #edit_job_heading, .job_del_nav').remove();
+			var tmpl = Handlebars.compile($('#tmpl-jobnew').html())({});
+			$('#create_job').prepend(tmpl);
+
+			$('#job_task_list').parent().remove();
+
+			getTasks(false);
+			getCategories(null);
+			bindNewJobPanel();
+		} else {
+			getJob(editJob,
+				function(res) {
+					$('.job_myjobs_nav, .job_search_nav, #create_job_heading').remove();
+					var tmpl = Handlebars.compile($('#tmpl-jobnew').html())(res);
+					$('#create_job').prepend(tmpl);
+
+					var req_tmpl = Handlebars.compile($('#tmpl-jobeditreqlist').html())(res.requirements);
+					$('.job_req_list ul').html(req_tmpl);
+
+					$('.job_req_rem:first').remove();
+					$('.job_req_rem').click(function(e) {
+						e.preventDefault();
+
+						$(this).parent().remove();
+					});
+
+					var taskList = $('#job_task_list')
+					  , tmpl = $('#tmpl-taskForJobs').html()
+		  			  , source = Handlebars.compile(tmpl);
+
+		  			taskList.html(source(res.tasks));
+		  			$('input', taskList).attr('checked', 'checked');
+
+					getTasks(true);
+					getCategories(res.category.id);
+					bindNewJobPanel();
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		}
 		
 		bee.ui.loader.hide();
 	};
 
-	function getTasks() {
+	function getTasks(isEdit) {
 		bee.api.send(
 			'GET',
 			'/tasks/unassigned',
 			{},
 			function(res) {
 				if (res.length > 0) {
-					var taskList = $('#newjob_task_list')
+					var taskList = $('#job_unassigned_task_list')
 					  , tmpl = $('#tmpl-taskForJobs').html()
 		  			  , source = Handlebars.compile(tmpl);
 
 		  			taskList.html(source(res));
 		  		} else {
-		  			$('.create_job_container').html('You must create a task in order to create a job for it.');
+		  			if (!isEdit) {
+		  				$('.create_job_container').html('You must create a task in order to create a job for it.');
+		  			} else {
+		  				$('#job_unassigned_task_list').parent().remove();
+		  			}
 		  		}
 			},
 			function(err) {
@@ -117,7 +162,7 @@
 		);
 	};
 
-	function getCategories() {
+	function getCategories(cat) {
 		bee.api.send(
 			'GET',
 			'/jobs/categories',
@@ -129,6 +174,11 @@
 					  , catSource = Handlebars.compile(catTmpl);
 
 					catList.html(catSource(res));
+
+					// if edit default
+					if (cat) {
+						catList.val(cat);
+					}
 				} else {
 					// oops?
 				}
@@ -144,17 +194,20 @@
 		$('#jobs_list, #jobs_create, #job_search_result, #jobs_search, #jobs_mine').remove();
 		$('.job_search_nav, .job_myjobs_nav, .job_new_nav').remove();
 
-		bee.api.send(
-			'GET',
-			'/job/' + viewJob,
-			{},
+		getJob(viewJob || bidJob, 
 			function(res) {
 
 				var tmpl = Handlebars.compile($('#tmpl-jobview').html())(res);
 				$('#job_view').html(tmpl);
 
+				if (viewJob) {
+					$('.req-bid-accept, .job-bid-view').remove();
+				} else {
+					$('#jobs_nav, .job-watch').remove();
+				}
+
 				// if not the owner, remove nav edit / del options
-				if (res.owner !== bee.get('profile').user) {
+				if (res.owner.profile.user !== bee.get('profile').user) {
 					$('.job_del_nav, .job_edit_nav, .job-published').remove();
 
 					// check if item is being watch
@@ -178,18 +231,28 @@
 					}
 
 					if (res.bids.length > 0){
-						var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(res.bids);
-						$('.job-bids').html(bidTmpl);
+						bee.api.send(
+							'GET',
+							'/job/bids/' + viewJob,
+							{},
+							function(bids) {
+								var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(bids);
+								$('.job-bids').html(bidTmpl);
+							},
+							function(err) {
+								bee.ui.notifications.notify('err', err);
+							}
+						);
 
-						$(this).click(function(e) {
-							e.preventDefault();
+						// $(this).click(function(e) {
+						// 	e.preventDefault();
 
-							// send requirements over in hire api call here
-						});
+						// 	// send requirements over in hire api call here
+						// });
 					}
 				}
 
-				bindJobNav(viewJob, res.isPublished);
+				bindJobNav(res);
 				bee.ui.loader.hide();
 			},
 			function(err) {
@@ -291,7 +354,7 @@
 	};
 
 	function jobDataIsValid() {
-		var required = $('#jobs_create .required')
+		var required = $('.required')
 		  , isValid = true;
 		
 		bee.ui.notifications.dismiss();
@@ -307,15 +370,6 @@
 				});
 			}
 		});
-
-		// make sure at least one task was assigned
-		// if ($('#jobs_create .job_task_option input:checked').length === 0) {
-		// 	isValid = false;
-		// 	$('#jobs_create .job_task_option').addClass('hasError');
-		// 	bee.ui.notifications.notify('err', 'Please select at least one task.', true, function() {
-		// 		$(window).scrollTop($('#jobs_create .job_task_option').position().top);
-		// 	});
-		// }
 
 		return isValid;
 	};
@@ -334,6 +388,16 @@
 		}
 	};
 
+	function getJob(id, success, failure) {
+		bee.api.send(
+			'GET',
+			'/job/' + id,
+			{},
+			success,
+			failure
+		);
+	};
+
 	function deleteJob(id) {
 		bee.api.send(
 			'DELETE',
@@ -349,23 +413,29 @@
 		);
 	};
 
-	function bindJobNav(id, published) {
+	function bindJobNav(job) {
 		$('.job_edit_nav').click(function(e) {
 			e.preventDefault();
-			location.href = '/#!/jobs?editJob=' + id;
+
+			if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
+				location.href = '/#!/jobs?editJob=' + job._id;
+			} else {
+				bee.ui.notifications.notify('err', 'You cannot edit a job that been published or active.');
+				bee.ui.loader.hide();
+			}
 		});
 
 		$('.job_del_nav').click(function(e) {
 			e.preventDefault();
 
-			if (!published) {
-				deleteJob(id);
+			if (!job.isPublished) {
+				deleteJob(job._id);
 			} else {
 				bee.api.send(
 					'POST',
 					'/job/unpublish',
 					{
-						jobId : id
+						jobId : job._id
 					},
 					function(res) {
 						if (res.message) {
@@ -402,7 +472,7 @@
 
 		$('.job_bid_nav').click(function(e) {
 			e.preventDefault();
-			location.href = '/#!/jobs/bidJob=' + id;
+			location.href = '/#!/jobs/bidJob=' + job._id;
 		});
 
 		$('.job-watch-btn').click(function(e) {
@@ -411,7 +481,7 @@
 
 			bee.api.send(
 				'GET',
-				'/job/watch/' + id,
+				'/job/watch/' + job._id,
 				{},
 				function(res) {
 					$('.job-watch-btn').hide();
@@ -431,7 +501,7 @@
 
 			bee.api.send(
 				'GET',
-				'/job/unwatch/' + id,
+				'/job/unwatch/' + job._id,
 				{},
 				function(res) {
 					$('.job-watch-btn').show();
@@ -444,11 +514,56 @@
 				}
 			);
 		});
+
+		$('.req-bid-accept').click(function(e) {
+			e.preventDefault();
+			$(this).addClass('accepted').unbind();
+		});
+
+		$('#bid_job').click(function(e) {
+			e.preventDefault();
+
+			var reqAccepted = true
+			  , reqs = [];
+			$.each($('.req-bid-accept'), function() {
+				if (!$(this).hasClass('accepted')) {
+					reqAccepted = false;
+					return false;
+				} else {
+					reqs.push($(this).attr('data-req'));
+				}
+			});
+
+			if (!reqAccepted) {
+				bee.ui.notifications.notify('err', 'You must agree to all requirements!');
+			} else {
+				if (jobDataIsValid()) {
+					bee.ui.loader.show();
+					bee.api.send(
+						'POST',
+						'/job/bid',
+						{
+							jobId : job._id,
+							requirements : reqs,
+							message : $('#job_view #message').val()
+						},
+						function(res) {
+							bee.ui.notifications.notify('success', 'Job bid submitted!');
+							location.href = '/#!/jobs';
+						},
+						function(err) {
+							bee.ui.notifications.notify('err', err);
+							bee.ui.loader.hide();
+						}
+					);
+				}
+			}
+		});
 	};
 
 	$('#save_job').click(function(e) {
 		e.preventDefault();
-		var updateJob = _.querystring.get('jobId');
+		var updateJob = _.querystring.get('editJob');
 		saveJob(updateJob || null,
 			function(res) {
 				bee.ui.notifications.notify(
@@ -516,17 +631,19 @@
 		}
 	});
 
-	$('#jobs_create #job_add_req').click(function(e) {
-		e.preventDefault();
-
-		var tmpl = Handlebars.compile($('#tmpl-jobreqlist').html());
-		$('.job_req_list ul').append(tmpl);
-
-		$('.job_req_rem', tmpl).click(function(e) {
+	function bindNewJobPanel() {
+		$('#jobs_create #job_add_req').click(function(e) {
 			e.preventDefault();
 
-			$(this).parent().remove();
+			var tmpl = Handlebars.compile($('#tmpl-jobreqlist').html());
+			$('.job_req_list ul').append(tmpl);
+
+			$('.job_req_rem', tmpl).click(function(e) {
+				e.preventDefault();
+
+				$(this).parent().remove();
+			});
 		});
-	});
+	};
 
 })();

@@ -101,7 +101,7 @@ li.req a {
 	width: 100% !important;
 }
 
-#jobs_create #description {
+#jobs_create #description, #job_view #message {
 	display: block;
 	margin: 12px;
 	font-size: 14px;
@@ -117,7 +117,7 @@ li.req a {
 	overflow: auto;
 }
 
-.save_job_submit_wrapper, .publish_job_submit_wrapper {
+.save_job_submit_wrapper, .publish_job_submit_wrapper, .bid_job_submit_wrapper {
 	border-radius: 6px;
 	margin: 24px auto;
 	width: 242px;
@@ -132,7 +132,7 @@ li.req a {
 	float: right;
 }
 
-#save_job, #publish_job {
+#save_job, #publish_job, #bid_job {
 	background: url('/assets/images/mono/black/save_icon&32.png') 12px center no-repeat;
 	display: block;
 	width: 100%;
@@ -149,6 +149,15 @@ li.req a {
 
 #publish_job {
 	background: url('/assets/images/mono/black/notepad_icon&32.png') 12px center no-repeat;
+}
+
+#bid_job {
+	background: url('/assets/images/mono/black/target_icon&32.png') 12px center no-repeat;
+}
+
+#bid_job:hover {
+	background: url('/assets/images/mono/black/target_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
 }
 
 #save_job {
@@ -171,7 +180,7 @@ li.req a {
 	margin: -50px 24px 0 0;
 }
 
-.job-watch-btn, .job-unwatch-btn {
+.job-watch-btn, .job-unwatch-btn, .req-bid-accept {
 	background-color: #f1f1f1;
 	background-position: 6px center;
 	background-repeat: no-repeat;
@@ -181,7 +190,20 @@ li.req a {
 	box-shadow: 0 3px 5px rgba(0,0,0,0.1);
 }
 
-.job-watch-btn:hover, .job-unwatch-btn:hover {
+.req-bid-accept {
+	color: #333;
+	float: right;
+	font-size: 12px;
+	padding: 4px 8px;
+	text-decoration: none;
+}
+
+.req-bid-accept.accepted {
+	background-image: url('/assets/images/mono/black/checkmark_icon&16.png');
+	padding: 4px 8px 4px 30px;
+}
+
+.job-watch-btn:hover, .job-unwatch-btn:hover, .req-bid-accept:hover {
 	background-color: #e2e2e2;
 	cursor: pointer;
 }
@@ -194,4 +216,68 @@ li.req a {
 .job-watch-btn {
 	background-image: url('/assets/images/mono/black/eye_icon&16.png');
 	display: none;
+}
+
+.job-own-contain, .job-desc, .job-reqs, .job-tasks, .job-bids, .job-bid-view strong {
+	margin: 10px 20px;
+}
+
+.job-owner {
+	float: left;
+	margin-bottom: 20px;
+}
+
+.job-owner-showcase {
+	margin-top: 10px;
+}
+
+.job-owner-showcase a {
+	display: block;
+	overflow: hidden;
+	text-decoration: none;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+}
+
+.job-owner-showcase img {
+	margin-right: 10px;
+}
+
+.job-owner img {
+	float: left;
+}
+
+.job-cat {
+	float: right;
+}
+
+.job-cat span {
+	display: block;
+}
+
+.job-desc {
+	clear: both;
+}
+
+.job-desc p {
+	margin: 0px 0px 20px;
+}
+
+.job-reqs span.req-desc {
+	display: block;
+	font-size: 12px;
+	font-style: italic;
+}
+
+.job-tasks ul, .job-bids ul {
+	margin: 5px 0px 20px;
+}
+
+.job-reqs ul {
+	margin: 5px 0px;
+}
+
+.job-reqs ul li {
+	display: block;
+	height: 32px;
 }

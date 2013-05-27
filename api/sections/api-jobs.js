@@ -169,16 +169,45 @@ module.exports = function(app, db) {
 			_id : jobId
 		})
 		.populate('tasks')
+		.populate('owner', 'profile')
 		.exec(function(err, job) {
 			if (!err && job) {
-				// i wish this would work, but it's not
-				// db.profile
-				// 	.findOne({ user : job.owner})
-				// .exec(function(errPro, profile){
-				// 	job.owner = profile;
+				db.user.findOne({
+					_id : job.owner._id
+				})
+				.populate('profile')
+				.exec(function(err, doc) {
+					job = job.toObject();
+					job.owner.profile = doc.profile;
+
+					// only show assignee to the owner of the project
+					utils.verifyUser(req, db, function(err, user) {
+						if (!err && user) {
+							if (job.assignee) {
+								db.user.findOne({
+									_id : job.assignee
+								})
+								.populate('profile')
+								.exec(function(err, ass) {
+									job.assignee = ass;
+								});
+							}
+
+							// db.bid.find({
+							// 	job : jobId
+							// })
+							// .exec(function(err, bid) {
+							// 	console.log(bid);
+							// 	if (bid.length) {
+							// 		job.bids = bid;
+							// 	}
+							// });
+						}
+					});
+
 					res.write(JSON.stringify(job));
 					res.end();
-				//});
+				});
 			}
 			else {
 				res.writeHead((err) ? 500 : 404);
@@ -648,7 +677,8 @@ module.exports = function(app, db) {
 					if (!err && job) {
 						if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
 							
-							utils.tasks.updateReferencedJobs(db, job.tasks, req.body.tasks);
+							job.category = jobCategories.contains(job.category);
+							utils.tasks.updateReferencedJobs(db, job.tasks, req.body.tasks, job._id);
 
 							// go ahead and update
 							job.update(req.body, function(err) {
@@ -1079,7 +1109,7 @@ module.exports = function(app, db) {
 						// otherwise lets create a new one
 						// but first they need to accept the requirements
 						// check that requirements were passed and all match up
-						var requirementsMatch = (req.body.requirments) ? (req.body.requirments.length === job.requirements.length) : false;
+						var requirementsMatch = (req.body.requirements) ? (req.body.requirements.length === job.requirements.length) : false;
 						
 						if (requirementsMatch) {
 							req.body.requirements.forEach(function(val) {
@@ -1109,15 +1139,20 @@ module.exports = function(app, db) {
 											message : body.message
 										});
 									}
+
 									bid.save(function(err) {
 										if (!err) {
-											res.write(JSON.stringify(bid));
-											res.end();
+											job.bids.push(bid._id);
+											job.save();
+
 											// add to callers watch list
 											if (user.jobs.watched.indexOf(job._id) === -1) {
 												user.jobs.watched.push(bid._id);
 												user.save();
 											}
+
+											res.write(JSON.stringify(bid));
+											res.end();
 										}
 										else {
 											res.writeHead(500);
@@ -1158,6 +1193,31 @@ module.exports = function(app, db) {
 				res.writeHead(401);
 				res.write(JSON.stringify({
 					error : 'You must be logged in to bid on a job.'
+				}));
+				res.end();
+			}
+		});
+	});
+
+	////
+	// GET - /api/job/bid
+	// Returns all bids for the specified job
+	////
+	app.get('/api/job/bids/:jobId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.job.findOne({
+					_id : req.params.jobId
+				})
+				.populate('bids')
+				.exec(function(err, job) {
+					res.write(JSON.stringify(job.bids));
+					res.end();
+				});
+			} else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be the owner of this job to see the current bids.'
 				}));
 				res.end();
 			}
