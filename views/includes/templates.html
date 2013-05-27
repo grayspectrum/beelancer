@@ -651,6 +651,71 @@
 	</li>
 </script>
 
+<!-- Job Edit Requirement List Template -->
+<script id="tmpl-jobeditreqlist" type="text/x-handlebars-template">
+	{{#each this}}
+		<li class="req">
+			<input type="text" name="requirements" class="required" value="{{this}}" />
+			<a href="#" class="job_req_rem"></a>
+		</li>
+	{{/each}}	
+</script>
+
+<!-- Job New/Edit Template -->
+<script id="tmpl-jobnew" type="text/x-handlebars-template">
+	<div class="group">
+		<label for="newjob_title">
+			<span>Title: </span>
+			<input class="required" type="text" id="title" placeholder="" name="title"{{#if title}}value="{{title}}"{{/if}} />
+		</label>
+		<label for="newjob_cat">
+			<span>Category: </span>
+			<select class="required" id="category" name="category">
+				<option value="null">Loading categories...</option>
+			</select>
+		</label>
+	</div>
+	<div class="group">
+		<label for="newjob_desc">
+			<span>Description: </span>
+			<textarea class="required" id="description" name="description">{{#if description}}{{description}}{{/if}}</textarea>
+		</label>
+	</div>
+	<div class="group">
+		<label for="newjob_reqs" class="req_label">
+			<span>Requirements: </span>
+			<div class="job_req_list">
+				<ul>
+					<li class="req">
+						<input type="text" name="requirements" class="required" />
+					</li>
+				</ul>
+			</div>
+			<div class="add_req">
+				<a href="#" id="job_add_req">Add</a>
+			</div>
+		</label>
+	</div>
+	<div class="group">
+		<label for="job_tasks">
+			<span>Job Task(s): </span>
+			<div id="job_task_list">Loading task(s)...</div>
+		</label>
+	</div>
+	<div class="group">
+		<label for="job_unassigned_tasks">
+			<span>Unassigned Task(s): </span>
+			<div id="job_unassigned_task_list">Loading task(s)...</div>
+		</label>
+	</div>
+	<label class="big_radio" for="newjob_isPromoted">
+		<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true" /> Promote this job
+		<p>
+			By promoting this job, it will show up before other unpromoted jobs on the jobs board.
+		</p>
+	</label>
+</script>
+
 <!-- Job View Template -->
 <script id="tmpl-jobview" type="text/x-handlebars-template">
 	<div class="light-gradient center-pane animated fadeInUp">
@@ -661,13 +726,15 @@
 				<button class="job-watch-btn">Watch Job</button>
 				<button class="job-unwatch-btn">Unwatch Job</button>
 			</div>
-			<div>
+			<div class="job-own-contain">
 				<div class="job-owner">
 					<strong>Job Owner:</strong>
 					<div>
 						<div class="job-owner-showcase">
-							<img>
-							<strong>{{owner}}</strong>
+							<a href="/#!/team?viewProfile={{owner.profile._id}}">
+								<img src="{{owner.profile.avatarPath}}" height="24px" width="24px" />
+								<strong>{{owner.profile.firstName}} {{owner.profile.lastName}}</strong>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -682,14 +749,23 @@
 			</div>
 			<div class="job-reqs">
 				<strong>Requirements:</strong>
+				<span class="req-desc">A list of requirements for this job.  Each requirement has to be agreed upon by both the owner and bidder of this job.</span>
 				<ul>
 					{{#each requirements}}
-						<li>{{this}}</li>
+						<li>
+							<span>{{this}}</span>
+							<a href="#" data-req="{{this}}" class="req-bid-accept">Accept</a>
+						</li>
 					{{/each}}
 				</ul>
 			</div>
 			<div class="job-tasks"></div>
 			<div class="job-bids"></div>
+			{{#if job.assignee}}
+				<div class="job-assignee">
+
+				</div>
+			{{/if}}
 		</div>
 	</div>
 </script>

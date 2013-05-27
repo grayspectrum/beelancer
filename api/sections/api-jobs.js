@@ -164,21 +164,42 @@ module.exports = function(app, db) {
 	// Returns a specified job
 	////
 	app.get('/api/job/:jobId', function(req, res) {
+		console.log(req.params.jobId);
 		var jobId = req.params.jobId;
 		db.job.findOne({
 			_id : jobId
 		})
 		.populate('tasks')
+		.populate('owner', 'profile')
 		.exec(function(err, job) {
 			if (!err && job) {
-				// i wish this would work, but it's not
-				// db.profile
-				// 	.findOne({ user : job.owner})
-				// .exec(function(errPro, profile){
-				// 	job.owner = profile;
+				console.log(job);
+				db.user.findOne({
+					_id : job.owner._id
+				})
+				.populate('profile')
+				.exec(function(err, doc) {
+					job = job.toObject();
+					job.owner.profile = doc.profile;
+
+					// only show assignee to the owner of the project
+					// utils.verifyUser(req, db, function(err, user) {
+					// 	if (!err && user) {
+					// 		if (job.assignee) {
+					// 			db.user.findOne({
+					// 				_id : job.assignee
+					// 			})
+					// 			.populate('profile')
+					// 			.exec(function(err, ass) {
+					// 				job.assignee = ass;
+					// 			});
+					// 		}
+					// 	}
+					// });
+
 					res.write(JSON.stringify(job));
 					res.end();
-				//});
+				});
 			}
 			else {
 				res.writeHead((err) ? 500 : 404);
@@ -649,6 +670,8 @@ module.exports = function(app, db) {
 						if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
 							
 							utils.tasks.updateReferencedJobs(db, job.tasks, req.body.tasks);
+
+							delete req.body._id;
 
 							// go ahead and update
 							job.update(req.body, function(err) {
@@ -1158,6 +1181,50 @@ module.exports = function(app, db) {
 				res.writeHead(401);
 				res.write(JSON.stringify({
 					error : 'You must be logged in to bid on a job.'
+				}));
+				res.end();
+			}
+		});
+	});
+
+	////
+	// GET - /api/job/bid
+	// Returns all bids for the specified job
+	////
+	app.get('/api/job/bids/:jobId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.job.findOne({
+					_id : req.params.jobId
+				})
+				.populate('bids')
+				.exec(function(err, job) {
+					var job = job.toObject();
+
+					// better way of doing this? this isn't going to work
+					for (var i = 0; i < job.bids.length; i++) {
+						db.user.findOne({
+							_id : job.bids[i].user
+						})
+						.populate('profile')
+						.exec(function(err, profile) {
+							// db.profile.findOne({
+							// 	_id : user._id
+							// })
+							// .exec(function(err, profile) {
+
+							// });
+							job.bids[i].user = profile;
+						});
+					}
+
+					res.write(JSON.stringify(job.bids));
+					res.end();
+				});
+			} else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be the owner of this job to see the current bids.'
 				}));
 				res.end();
 			}

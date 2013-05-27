@@ -195,3 +195,58 @@ li.req a {
 	background-image: url('/assets/images/mono/black/eye_icon&16.png');
 	display: none;
 }
+
+.job-own-contain, .job-desc, .job-reqs, .job-tasks, .job-bids {
+	margin: 10px 20px;
+}
+
+.job-owner {
+	float: left;
+	margin-bottom: 20px;
+}
+
+.job-owner-showcase {
+	margin-top: 10px;
+}
+
+.job-owner-showcase a {
+	display: block;
+	overflow: hidden;
+	text-decoration: none;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+}
+
+.job-owner-showcase img {
+	margin-right: 10px;
+}
+
+.job-owner img {
+	float: left;
+}
+
+.job-cat {
+	float: right;
+}
+
+.job-cat span {
+	display: block;
+}
+
+.job-desc {
+	clear: both;
+}
+
+.job-desc p {
+	margin: 0px 0px 20px;
+}
+
+.job-reqs span.req-desc {
+	display: block;
+	font-size: 12px;
+	font-style: italic;
+}
+
+.job-reqs ul, .job-tasks ul, .job-bids ul {
+	margin: 5px 0px 20px;
+}
