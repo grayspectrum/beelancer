@@ -18,7 +18,7 @@
 		showNewJobPanel();
 	} else if(myJobs) {
 		showMyJobsPanel();
-	} else if(viewJob) {
+	} else if(viewJob || bidJob) {
 		showJobView();
 	} else if(bidJob) {
 		showBidView();
@@ -194,13 +194,17 @@
 		$('#jobs_list, #jobs_create, #job_search_result, #jobs_search, #jobs_mine').remove();
 		$('.job_search_nav, .job_myjobs_nav, .job_new_nav').remove();
 
-		getJob(viewJob, 
+		getJob(viewJob || bidJob, 
 			function(res) {
 
 				var tmpl = Handlebars.compile($('#tmpl-jobview').html())(res);
 				$('#job_view').html(tmpl);
 
-				$('.req-bid-accept').remove();
+				if (viewJob) {
+					$('.req-bid-accept, .job-bid-view').remove();
+				} else {
+					$('#jobs_nav, .job-watch').remove();
+				}
 
 				// if not the owner, remove nav edit / del options
 				if (res.owner.profile.user !== bee.get('profile').user) {
@@ -350,7 +354,7 @@
 	};
 
 	function jobDataIsValid() {
-		var required = $('#jobs_create .required')
+		var required = $('.required')
 		  , isValid = true;
 		
 		bee.ui.notifications.dismiss();
@@ -512,7 +516,48 @@
 		});
 
 		$('.req-bid-accept').click(function(e) {
+			e.preventDefault();
+			$(this).addClass('accepted').unbind();
+		});
 
+		$('#bid_job').click(function(e) {
+			e.preventDefault();
+
+			var reqAccepted = true
+			  , reqs = [];
+			$.each($('.req-bid-accept'), function() {
+				if (!$(this).hasClass('accepted')) {
+					reqAccepted = false;
+					return false;
+				} else {
+					reqs.push($(this).attr('data-req'));
+				}
+			});
+
+			if (!reqAccepted) {
+				bee.ui.notifications.notify('err', 'You must agree to all requirements!');
+			} else {
+				if (jobDataIsValid()) {
+					bee.ui.loader.show();
+					bee.api.send(
+						'POST',
+						'/job/bid',
+						{
+							jobId : job._id,
+							requirements : reqs,
+							message : $('#job_view #message').val()
+						},
+						function(res) {
+							bee.ui.notifications.notify('success', 'Job bid submitted!');
+							location.href = '/#!/jobs';
+						},
+						function(err) {
+							bee.ui.notifications.notify('err', err);
+							bee.ui.loader.hide();
+						}
+					);
+				}
+			}
 		});
 	};
 

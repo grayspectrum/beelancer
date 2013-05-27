@@ -192,6 +192,16 @@ module.exports = function(app, db) {
 									job.assignee = ass;
 								});
 							}
+
+							// db.bid.find({
+							// 	job : jobId
+							// })
+							// .exec(function(err, bid) {
+							// 	console.log(bid);
+							// 	if (bid.length) {
+							// 		job.bids = bid;
+							// 	}
+							// });
 						}
 					});
 
@@ -670,8 +680,6 @@ module.exports = function(app, db) {
 							job.category = jobCategories.contains(job.category);
 							utils.tasks.updateReferencedJobs(db, job.tasks, req.body.tasks, job._id);
 
-							delete req.body._id;
-
 							// go ahead and update
 							job.update(req.body, function(err) {
 								if (!err) {
@@ -1101,7 +1109,7 @@ module.exports = function(app, db) {
 						// otherwise lets create a new one
 						// but first they need to accept the requirements
 						// check that requirements were passed and all match up
-						var requirementsMatch = (req.body.requirments) ? (req.body.requirments.length === job.requirements.length) : false;
+						var requirementsMatch = (req.body.requirements) ? (req.body.requirements.length === job.requirements.length) : false;
 						
 						if (requirementsMatch) {
 							req.body.requirements.forEach(function(val) {
@@ -1131,15 +1139,20 @@ module.exports = function(app, db) {
 											message : body.message
 										});
 									}
+
 									bid.save(function(err) {
 										if (!err) {
-											res.write(JSON.stringify(bid));
-											res.end();
+											job.bids.push(bid._id);
+											job.save();
+
 											// add to callers watch list
 											if (user.jobs.watched.indexOf(job._id) === -1) {
 												user.jobs.watched.push(bid._id);
 												user.save();
 											}
+
+											res.write(JSON.stringify(bid));
+											res.end();
 										}
 										else {
 											res.writeHead(500);
@@ -1198,25 +1211,6 @@ module.exports = function(app, db) {
 				})
 				.populate('bids')
 				.exec(function(err, job) {
-					var job = job.toObject();
-
-					// better way of doing this? this isn't going to work
-					for (var i = 0; i < job.bids.length; i++) {
-						db.user.findOne({
-							_id : job.bids[i].user
-						})
-						.populate('profile')
-						.exec(function(err, profile) {
-							// db.profile.findOne({
-							// 	_id : user._id
-							// })
-							// .exec(function(err, profile) {
-
-							// });
-							job.bids[i].user = profile;
-						});
-					}
-
 					res.write(JSON.stringify(job.bids));
 					res.end();
 				});
