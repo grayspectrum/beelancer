@@ -45,42 +45,28 @@ module.exports = function(db) {
 	// users need to have a recipient token to
 	// accept payments
 	function getRecipientToken(user, callback) {
-		if (user.aws && user.aws.recipientId) {
-			callback.call(this, null, user.aws.recipientId);
-		}
-		else {
-			// user has no token so we need to generate one
-			createCallerReference(function(err, ref) {
-				if (!err && ref) {
-					// got reference, so create a token for user
-					send('Recipient', {
-						callerReference : ref._id.toString(),
-						paymentMethod : 'CC',
-						recipientPaysFee : 'True',
-						returnURL : 'http://beelancer.com'
-					}, function(err, data) {
-						if (!err && data.status === 'SR') {
-							user.aws.recipientId = data.tokenId;
-							console.log(data)
-							user.save(function(err) {
-								if (!err) {
-									callback.call(this, null, user);
-								}
-								else {
-									callback.call(this, err, null);
-								}
-							});
-						}
-						else {
-							callback.call(this, err || data.errorMessage, data);
-						}
-					}, true);
-				}
-				else {
-					callback.call(this, err, ref);
-				}
-			});
-		}
+		// user has no token so we need to generate one
+		createCallerReference(function(err, ref) {
+			if (!err && ref) {
+				// got reference, so create a token for user
+				send('Recipient', {
+					callerReference : ref._id.toString(),
+					paymentMethod : 'CC',
+					recipientPaysFee : 'True',
+					returnURL : config.domain + 'api/payments/token/confirm' // where to redirect confirm
+				}, function(err, data) {
+					if (!err && data.status === 'SR') {
+						callback.call(this, null, user);
+					}
+					else {
+						callback.call(this, err || data.errorMessage, data);
+					}
+				}, true);
+			}
+			else {
+				callback.call(this, err, ref);
+			}
+		});
 	};
 	
 	function buildSignableQuery(body) {

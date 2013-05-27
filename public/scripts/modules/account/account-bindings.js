@@ -17,6 +17,7 @@
 		} else {
 			fillProfileFields();
 			getRatings();
+			checkAWSAccountStatus();
 			bee.ui.loader.hide();
 		}
 		
@@ -45,7 +46,7 @@
 		$('#recover_account').bind('click', recoverAccount);
 		
 	} else {
-		$('#security, #view_my_profile').remove();
+		$('#security, #view_my_profile, #my_endorsements, #aws_account_setup').remove();
 		bee.ui.loader.hide();
 	}
 	
@@ -55,6 +56,35 @@
 		e.preventDefault();
 		saveProfile();
 	});
+	
+	// check AWS account status
+	function checkAWSAccountStatus() {
+		bee.api.send(
+			'GET',
+			'/payments/accountStatus',
+			{},
+			function(data) {
+				console.log(data);
+				$('.aws_account_status').addClass(
+					(data.isAuthorized) ? 'authorized' : 'not_authorized'
+				);
+				$('.aws_account_status em').html(
+					(data.isAuthorized) ? 'You are setup to recieve payments!' : 'You are not setup to recieve payments.'
+				);
+				if (!data.isAuthorized) {
+					$('#authorize_aws').show();
+				}
+				else {
+					$('#authorize_aws').hide();
+				}
+			},
+			function(err) {
+				$('.aws_account_status').addClass('not_authorized');
+				$('.aws_account_status em').html('Failed to verify status. Please try again.');
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	};
 	
 	function saveProfile() {
 		if (validate()) {
@@ -235,5 +265,24 @@
 			};
 		};
 	};
+	
+	$('#authorize_aws').bind('click', function(e) {
+		bee.ui.confirm('You will be briefly redirected to Amazon Payments. Click confirm to continue.', function() {
+			bee.ui.loader.show();
+			bee.api.send(
+				'GET',
+				'/payments/token',
+				{},
+				function(data) {
+					console.log(data);
+					location.href = data.redirectTo;
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
+	});
 	
 })();

@@ -48,6 +48,7 @@ module.exports = new Schema({
 	confirmCode : String,
 	recoveryKey : String,
 	aws : {
-		recipientId : String
+		recipientId : String,
+		refundId : String
 	}
 });

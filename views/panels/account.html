@@ -42,15 +42,6 @@
 			<span>About Me: <small>(optional)</small></span>
 			<textarea id="np_about" name="about" maxlength="500"></textarea>
 		</label>
-		<div id="endorsement_section">
-			<h4 class="gold-gradient">Endorsements</h4>
-			<p class="hint">This is a list of endorsements you've received.  Decide which ones you'd like to display on your profile.</p>
-			<div class="endorsements">
-				<ul id="endorsement_list">
-
-				</ul>
-			</div>
-		</div>
 		<h4 class="gold-gradient">Privacy</h4>
 		<label class="big_radio" for="np_privacy0">
 			<input id="np_privacy0" type="radio" name="privacy" value="0" /> Publicly Viewable
@@ -86,6 +77,32 @@
 			<input type="submit" id="np_submit" value="Update Profile" />
 		</div>
 	</form>
+</div>
+<div id="my_endorsements" class="light-gradient center-pane animated fadeInUp">
+	<div id="endorsement_section">
+		<h4 class="gold-gradient">Endorsements</h4>
+		<p class="hint">This is a list of endorsements you've received.  Decide which ones you'd like to display on your profile.</p>
+		<div class="endorsements">
+			<ul id="endorsement_list">
+
+			</ul>
+		</div>
+	</div>
+</div>
+<div id="aws_account_setup" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">Payments &amp; Billing</h4>
+	<p class="hint">
+		In order to send and recieve payments, you will need to setup an <strong>Amazon Payments</strong> 
+		account and authorize <strong>Beelancer</strong> to make payments to and from you account on your
+		behalf. For details regarding how we handle your information, see our <a href="/#!/privacy">Privacy
+		Policy</a>.
+	</p>
+	<div class="aws_account_status">
+		<strong>Status:</strong> <em>Checking...</em>
+	</div>
+	<div class="np_submit_wrapper gold-gradient">
+		<input type="button" id="authorize_aws" value="Setup Payments" />
+	</div>
 </div>
 <div id="security" class="light-gradient center-pane animated fadeInUp">
 	<h4 class="gold-gradient">Password &amp; Security</h4>
