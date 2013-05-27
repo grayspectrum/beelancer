@@ -164,7 +164,6 @@ module.exports = function(app, db) {
 	// Returns a specified job
 	////
 	app.get('/api/job/:jobId', function(req, res) {
-		console.log(req.params.jobId);
 		var jobId = req.params.jobId;
 		db.job.findOne({
 			_id : jobId
@@ -173,7 +172,6 @@ module.exports = function(app, db) {
 		.populate('owner', 'profile')
 		.exec(function(err, job) {
 			if (!err && job) {
-				console.log(job);
 				db.user.findOne({
 					_id : job.owner._id
 				})
@@ -183,19 +181,19 @@ module.exports = function(app, db) {
 					job.owner.profile = doc.profile;
 
 					// only show assignee to the owner of the project
-					// utils.verifyUser(req, db, function(err, user) {
-					// 	if (!err && user) {
-					// 		if (job.assignee) {
-					// 			db.user.findOne({
-					// 				_id : job.assignee
-					// 			})
-					// 			.populate('profile')
-					// 			.exec(function(err, ass) {
-					// 				job.assignee = ass;
-					// 			});
-					// 		}
-					// 	}
-					// });
+					utils.verifyUser(req, db, function(err, user) {
+						if (!err && user) {
+							if (job.assignee) {
+								db.user.findOne({
+									_id : job.assignee
+								})
+								.populate('profile')
+								.exec(function(err, ass) {
+									job.assignee = ass;
+								});
+							}
+						}
+					});
 
 					res.write(JSON.stringify(job));
 					res.end();
@@ -669,7 +667,8 @@ module.exports = function(app, db) {
 					if (!err && job) {
 						if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
 							
-							utils.tasks.updateReferencedJobs(db, job.tasks, req.body.tasks);
+							job.category = jobCategories.contains(job.category);
+							utils.tasks.updateReferencedJobs(db, job.tasks, req.body.tasks, job._id);
 
 							delete req.body._id;
 
