@@ -9,22 +9,42 @@ var mongoose = require('mongoose')
 
 module.exports = new Schema({
 	amount : Number,
+	type: String, // JOB / PROJECT
+	// only one of job or project references
+	// this is for historical purposes and no
+	// logic should relay on this
+	job : {
+		type : ObjectId,
+		ref : 'job'
+	},
 	project : {
 		type : ObjectId,
 		ref : 'project'
 	},
+	// these are the "line items"
+	// the amount is calculated by their
+	// total cost
 	tasks : [{
 		type : ObjectId,
 		ref : 'task'
 	}],
 	isPaid : Boolean,
-	forUser : {
+	isSent : Boolean,
+	externalRecipient : String, // email address
+	recipient : {
 		type : ObjectId,
-		ref : 'profile'
+		ref : 'user'
 	},
-	fromUser : {
+	sender : {
 		type : ObjectId,
-		ref : 'profile'
+		ref : 'user'
 	},
-	dueDate : Date
+	dueDate : Date,
+	aws : {
+		senderTokenId : String,
+		recipientTokenId : String,
+		refundTokenId : String,
+		transactionId : String,
+		transactionStatus : String
+	}
 });
