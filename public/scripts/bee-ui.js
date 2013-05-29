@@ -39,19 +39,24 @@ bee.ui = (function() {
 		
 		if (!view && isLoggedIn) {
 			location.href = ' /#!/projects';
-		} else if ((view !== 'login') && !isLoggedIn) {
+		} 
+		else if ((view !== 'login') && !isLoggedIn) {
 			location.href = ' /#!/login';
 			bee.ui.menu.hide();
-		} else if ((view == 'login' && isLoggedIn)) {
+		} 
+		else if ((view == 'login' && isLoggedIn)) {
 			location.href = '/#!/projects';
-		} else if ((view == 'login') && !isLoggedIn) {
+		} 
+		else if ((view == 'login') && !isLoggedIn) {
 			bee.ui.menu.hide();
 			bee.modules[view].render();
-		} else {
+		} 
+		else {
 			if (bee.modules[view]) {
 				bee.ui.menu.show();
 				bee.modules[view].render();
-			} else {
+			} 
+			else {
 				bee.modules['404'].render();
 			}
 		}

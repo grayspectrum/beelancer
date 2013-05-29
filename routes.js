@@ -9,7 +9,15 @@ module.exports = function(app, callback) {
 	
 	// render app
 	app.get('/', function(req, res) {
-		res.render('index', {});
+		res.render('app', { layout: 'app_layout' });
+	});
+	
+	// render invoice mini-app
+	app.get('/invoice/:invoiceId', function(req, res) {
+		res.render('invoice', { 
+			layout: 'invoice_layout',
+			invoiceId : req.params.invoiceId
+		});
 	});
 	
 	// Initialize API

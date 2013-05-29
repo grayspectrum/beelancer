@@ -9,7 +9,7 @@ var mongoose = require('mongoose')
 
 module.exports = new Schema({
 	amount : Number,
-	type: String, // JOB / PROJECT
+	type: String, // job / project
 	// only one of job or project references
 	// this is for historical purposes and no
 	// logic should relay on this
@@ -21,6 +21,7 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'project'
 	},
+	description : String,
 	// these are the "line items"
 	// the amount is calculated by their
 	// total cost
@@ -35,7 +36,7 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'user'
 	},
-	sender : {
+	owner : {
 		type : ObjectId,
 		ref : 'user'
 	},
@@ -45,6 +46,7 @@ module.exports = new Schema({
 		recipientTokenId : String,
 		refundTokenId : String,
 		transactionId : String,
-		transactionStatus : String
+		transactionStatus : String,
+		paymentUrl : String
 	}
 });

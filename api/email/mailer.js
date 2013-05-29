@@ -21,7 +21,8 @@ module.exports.send = function(tmpl, tmpl_data) {
 			console.log(err);
 		} else {
 			var body = handlebars.compile(data.toString())(tmpl_data)
-			  , emailMsgConfig = {					// better way to do this?  store this elsewhere?
+			  , emailMsgConfig = {					
+			  	// better way to do this?  store this elsewhere?
 				'confirm' : {
 					text : 'Your confirmation number is ' + tmpl_data.confirmCode, 
 					from : 'Beelancer <noreply@beelancer.com>', 
@@ -51,6 +52,18 @@ module.exports.send = function(tmpl, tmpl_data) {
 					from : 'Beelancer <noreply@beelancer.com>', 
 					to : '<datzun@gmail.com>, <sporkmydork@gmail.com>',
 					subject : 'Contact Form Submission',
+					attachment : [
+						{
+							data : body,
+							alternative : true
+						}
+					]
+				},
+				'invoice' : {
+					text : 'Invoice recieved from: ' + tmpl_data.owner.profile.firstName + ' ' + tmpl_data.owner.profile.lastName, 
+					from : 'Beelancer <noreply@beelancer.com>', 
+					to : '<' + tmpl_data.externalRecipient + '>',
+					subject : 'Invoice Recieved',
 					attachment : [
 						{
 							data : body,
