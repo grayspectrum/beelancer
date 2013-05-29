@@ -29,8 +29,8 @@ module.exports = function(db) {
 	
 	// we need to store all aws api calls
 	// so we can fix problems if they arise
-	function createCallerReference(callback) {
-		var ref = new db.awsreq();
+	function createCallerReference(data, callback) {
+		var ref = new db.awsreq(data);
 		// save it
 		ref.save(function(err) {
 			if (!err) {
@@ -46,7 +46,11 @@ module.exports = function(db) {
 	// accept payments
 	function getRecipientToken(user, callback) {
 		// user has no token so we need to generate one
-		createCallerReference(function(err, ref) {
+		createCallerReference({
+			ref : 'user',
+			data : user._id,
+			description : 'GenerateRecipientToken'
+		}, function(err, ref) {
 			if (!err && ref) {
 				// got reference, so create a token for user
 				send('Recipient', {

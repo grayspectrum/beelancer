@@ -9,6 +9,9 @@ var mongoose = require('mongoose')
 
 module.exports = new Schema({
 	transactionId : String,
-	requestId : String
+	requestId : String,
+	ref : String, // collection name
+	data : String, // _id associated with the transaction
+	description : String
 	// mongodb assigned id is the value of caller reference
 });
