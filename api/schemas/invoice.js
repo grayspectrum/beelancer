@@ -19,7 +19,7 @@ module.exports = new Schema({
 	},
 	project : {
 		type : ObjectId,
-		ref : 'job'
+		ref : 'project'
 	},
 	// these are the "line items"
 	// the amount is calculated by their
