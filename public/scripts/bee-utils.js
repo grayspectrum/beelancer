@@ -125,7 +125,7 @@ bee.utils = (function() {
 		updateContextAndRenderView : updateContextAndRenderView,
 		checkMessages : checkMessages,
 		checkEndorse : checkEndorse,
-		stdTime : stdTime
+		stdTime : stdTime,
 	};
 
 })();

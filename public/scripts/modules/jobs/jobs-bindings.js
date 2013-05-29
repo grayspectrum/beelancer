@@ -236,6 +236,11 @@
 							'/job/bids/' + viewJob,
 							{},
 							function(bids) {
+								$.each(bids, function(key, val) {
+									bee.api.send(
+
+									);
+								});
 								var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(bids);
 								$('.job-bids').html(bidTmpl);
 							},
@@ -243,12 +248,6 @@
 								bee.ui.notifications.notify('err', err);
 							}
 						);
-
-						// $(this).click(function(e) {
-						// 	e.preventDefault();
-
-						// 	// send requirements over in hire api call here
-						// });
 					}
 				}
 
@@ -377,7 +376,7 @@
 	function saveJob(update, success, failure) {
 		if (jobDataIsValid()) {
 			bee.ui.loader.show();
-			var jobData = $('#create_job').serialize();
+			var jobData = $('#create_job input, #create_job select, #create_job textarea').serializeArray();
 			bee.api.send(
 				(update) ? 'PUT' : 'POST',
 				(update) ? '/job/update/' + update : '/job',
@@ -564,6 +563,10 @@
 	$('#save_job').click(function(e) {
 		e.preventDefault();
 		var updateJob = _.querystring.get('editJob');
+
+		$('#listingDateStart').removeClass('required');
+		$('#listingDateEnd').removeClass('required');
+
 		saveJob(updateJob || null,
 			function(res) {
 				bee.ui.notifications.notify(
@@ -582,6 +585,9 @@
 
 	$('#publish_job').click(function(e) {
 		e.preventDefault();
+
+		$('#listingDateStart').addClass('required');
+		$('#listingDateEnd').addClass('required');
 
 		if ($('input[name="tasks"]:checked').length > 0) {
 			saveJob(null,
@@ -644,6 +650,9 @@
 				$(this).parent().remove();
 			});
 		});
+
+		$('#listingDateStart').datepicker({minDate : new Date()});
+		$('#listingDateEnd').datepicker({minDate : new Date()});
 	};
 
 })();

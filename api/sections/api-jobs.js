@@ -259,6 +259,8 @@ module.exports = function(app, db) {
 					job.status = 'UNPUBLISHED';
 					job.category = jobCategories.contains(body.category);
 					job.listing.isPromoted = (body.isPromoted) ? body.isPromoted : false;
+					job.listing.start = (body.listingDateStart) ? body.listingDateStart : null;
+					job.listing.end = (body.listingDateEnd) ? body.listingDateEnd : null;
 					job.save(function(err) {
 						if (!err) {
 							// add job to user list
@@ -327,8 +329,10 @@ module.exports = function(app, db) {
 						if (job.tasks && job.tasks.length) {
 							calculateJobPostingCost(db, job, function(err, calc) {
 								if (!err) {
+									var listingDays = (new Date(job.listing.end) - new Date(job.listing.start)) / (1000*60*60*24);
 									job.listing.cost = calc.cost;
 									job.listing.publishId = calc.publishId;
+									job.listing.cost = parseFloat(listingDays * calc.cost).toFixed(2);
 									// caller must follow up with a second call
 									// to /api/job/publish/confirm while
 									// passing that id along with credit card
@@ -481,7 +485,6 @@ module.exports = function(app, db) {
 							job.status = 'PUBLISHED';
 							job.isPublished = true;
 							job.listing.publishId = null;
-							job.listing.start = new Date();
 							// save job
 							job.save(function(err) {
 								if (!err) {

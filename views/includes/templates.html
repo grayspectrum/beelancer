@@ -708,6 +708,17 @@
 			<div id="job_unassigned_task_list">Loading task(s)...</div>
 		</label>
 	</div>
+	<div class="group">
+		<span class="listing-date-desc">Some description about listing dates / costs</span>
+		<label for="listingDateStart">
+			<span>Listing Start Date: </span>
+			<input type="text" id="listingDateStart" placeholder="" name="listingDateStart"{{#if listing.start}}value="{{listing.start}}"{{/if}} />
+		</label>
+		<label for="listingDateEnd">
+			<span>Listing End Date: </span>
+			<input type="text" id="listingDateEnd" placeholder="" name="listingDateEnd"{{#if listing.end}}value="{{listing.end}}"{{/if}} />
+		</label>
+	</div>
 	<label class="big_radio" for="newjob_isPromoted">
 		<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true" /> Promote this job
 		<p>
