@@ -88,6 +88,8 @@
 		$('#jobs_list, #jobs_view, #job_search_result, #jobs_search, #jobs_mine').remove();
 		$('.job_new_nav, .job_edit_nav, .job_bid_nav').remove();
 
+		bee.ui.loader.show();
+
 		if (newJob) {
 			$('#jobs_create .edit_job, #jobs_create #edit_job_heading, .job_del_nav').remove();
 			var tmpl = Handlebars.compile($('#tmpl-jobnew').html())({});
@@ -98,6 +100,7 @@
 			getTasks(false);
 			getCategories(null);
 			bindNewJobPanel();
+			bee.ui.loader.hide();
 		} else {
 			getJob(editJob,
 				function(res) {
@@ -112,7 +115,7 @@
 					}
 					$('.job_myjobs_nav, .job_search_nav, #create_job_heading').remove();
 					var tmpl = Handlebars.compile($('#tmpl-jobnew').html())(res);
-					$('#create_job').prepend(tmpl);
+					$('#create_job').html(tmpl);
 
 					var req_tmpl = Handlebars.compile($('#tmpl-jobeditreqlist').html())(res.requirements);
 					$('.job_req_list ul').html(req_tmpl);
@@ -131,9 +134,18 @@
 		  			taskList.html(source(res.tasks));
 		  			$('input', taskList).attr('checked', 'checked');
 
-					getTasks(true);
+					// if published, in progress, or has an assignee, must be unpublished to edit
+					if (res.isPublished || (res.status === 'IN_PROGRESS') || res.assignee) {
+						// disable inputs
+						$('input, select, textarea').not('#unpublish_job').prop('disabled', true);
+						$('.add_req, #job_unass_group').remove();
+					} else {
+						getTasks(true);
+					}
+
 					getCategories(res.category.id);
 					bindNewJobPanel();
+					bee.ui.loader.hide();
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', err);
@@ -436,13 +448,7 @@
 	function bindJobNav(job) {
 		$('.job_edit_nav').click(function(e) {
 			e.preventDefault();
-
-			if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
-				location.href = '/#!/jobs?editJob=' + job._id;
-			} else {
-				bee.ui.notifications.notify('err', 'You cannot edit a job that been published or active.');
-				bee.ui.loader.hide();
-			}
+			location.href = '/#!/jobs?editJob=' + job._id;
 		});
 
 		$('.job_del_nav').click(function(e) {
@@ -581,106 +587,6 @@
 		});
 	};
 
-	$('#save_job').click(function(e) {
-		e.preventDefault();
-		var updateJob = _.querystring.get('editJob');
-
-		$('#listingDateStart').removeClass('required');
-		$('#listingDateEnd').removeClass('required');
-
-		saveJob(updateJob || null,
-			function(res) {
-				bee.ui.notifications.notify(
-					'success',
-					(updateJob) ? 'Job Updated!' : 'Job Created!'
-				);
-				location.href = '/#!/jobs?myJobs=true';
-				bee.ui.loader.hide();
-			},
-			function(err) {
-				bee.ui.notifications.notify('err', err);
-				bee.ui.loader.hide();
-			}
-		);
-	});
-
-	$('#publish_job').click(function(e) {
-		e.preventDefault();
-		var updateJob = _.querystring.get('editJob');
-
-		$('#listingDateStart').addClass('required');
-		$('#listingDateEnd').addClass('required');
-
-		if ($('input[name="tasks"]:checked').length > 0) {
-			saveJob(updateJob || null,
-				function(res) {
-					bee.api.send(
-						'POST',
-						'/job/publish',
-						{
-							jobId : res._id
-						},
-						function(pub) {
-							bee.ui.loader.hide();
-							var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(pub.job);
-							$('body').append(tmpl);
-
-							$('#credit-popup #bee-ui_confirm_ok').click(function(e) {
-								e.preventDefault();
-
-								if (jobDataIsValid(false)) {
-									bee.ui.loader.show();
-									bee.api.send(
-										'POST',
-										'/job/publish/confirm',
-										{
-											jobId : pub.job._id,
-											publishId : pub.job.listing.publishId,
-											payment : {
-												name : $('#name').val(),
-												number : $('#number').val(),
-												cvc : $('#cvc').val(),
-												exp_month : Number($('#exp_month').val()),
-												exp_year : Number($('#exp_year').val())
-											}
-										},
-										function(job) {
-											$('#credit-popup').remove();
-											bee.ui.loader.hide();
-											bee.ui.notifications.notify('success', 'Job published!');
-											location.href = '/#!/jobs?myJobs=true';
-										},
-										function(jobErr) {
-											bee.ui.loader.hide();
-											bee.ui.notifications.notify('err', jobErr);
-										}
-									);
-								}
-							});
-							
-							$('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
-								e.preventDefault();
-
-								$('#credit-popup').remove();
-								location.href = '/#!/jobs?viewJob=' + pub.job._id;
-							});
-						},
-						function(noPub) {
-							bee.ui.notifications.notify('err', noPub);
-							bee.ui.loader.hide();
-						}
-					);
-				},
-				function(err) {
-					bee.ui.notifications.notify('err', err);
-					bee.ui.loader.hide();
-				}
-			);
-		} else {
-			bee.ui.notifications.notify('err', 'At least one task must be selected in order to publish a job.');
-		}
-	});
-
 	function bindNewJobPanel() {
 		$('#jobs_create #job_add_req').click(function(e) {
 			e.preventDefault();
@@ -693,6 +599,152 @@
 
 				$(this).parent().remove();
 			});
+		});
+
+		$('#save_job').click(function(e) {
+			e.preventDefault();
+			var updateJob = _.querystring.get('editJob');
+
+			$('#listingDateStart').removeClass('required');
+			$('#listingDateEnd').removeClass('required');
+
+			saveJob(updateJob || null,
+				function(res) {
+					bee.ui.notifications.notify(
+						'success',
+						(updateJob) ? 'Job Updated!' : 'Job Created!'
+					);
+					location.href = '/#!/jobs?myJobs=true';
+					bee.ui.loader.hide();
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+					bee.ui.loader.hide();
+				}
+			);
+		});
+
+		$('#publish_job').click(function(e) {
+			e.preventDefault();
+			var updateJob = _.querystring.get('editJob');
+
+			$('#listingDateStart').addClass('required');
+			$('#listingDateEnd').addClass('required');
+
+			if ($('input[name="tasks"]:checked').length > 0) {
+				saveJob(updateJob || null,
+					function(res) {
+						bee.api.send(
+							'POST',
+							'/job/publish',
+							{
+								jobId : res._id
+							},
+							function(pub) {
+								bee.ui.loader.hide();
+								var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(pub.job);
+								$('body').append(tmpl);
+
+								$('#credit-popup #bee-ui_confirm_ok').click(function(e) {
+									e.preventDefault();
+
+									if (jobDataIsValid(false)) {
+										bee.ui.loader.show();
+										bee.api.send(
+											'POST',
+											'/job/publish/confirm',
+											{
+												jobId : pub.job._id,
+												publishId : pub.job.listing.publishId,
+												payment : {
+													name : $('#name').val(),
+													number : $('#number').val(),
+													cvc : $('#cvc').val(),
+													exp_month : Number($('#exp_month').val()),
+													exp_year : Number($('#exp_year').val())
+												}
+											},
+											function(job) {
+												$('#credit-popup').remove();
+												bee.ui.loader.hide();
+												bee.ui.notifications.notify('success', 'Job published!');
+												location.href = '/#!/jobs?myJobs=true';
+											},
+											function(jobErr) {
+												bee.ui.loader.hide();
+												bee.ui.notifications.notify('err', jobErr);
+											}
+										);
+									}
+								});
+								
+								$('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
+									e.preventDefault();
+
+									$('#credit-popup').remove();
+									location.href = '/#!/jobs?viewJob=' + pub.job._id;
+								});
+							},
+							function(noPub) {
+								bee.ui.notifications.notify('err', noPub);
+								bee.ui.loader.hide();
+							}
+						);
+					},
+					function(err) {
+						bee.ui.notifications.notify('err', err);
+						bee.ui.loader.hide();
+					}
+				);
+			} else {
+				bee.ui.notifications.notify('err', 'At least one task must be selected in order to publish a job.');
+			}
+		});
+
+		$('#unpublish_job').click(function(e) {
+			e.preventDefault();
+
+			var jobId = _.querystring.get('editJob');
+
+			bee.api.send(
+				'POST',
+				'/job/unpublish',
+				{
+					jobId : jobId
+				},
+				function(res) {
+					if (res.message) {
+						bee.ui.loader.hide();
+						bee.ui.confirm(res.message, function() {
+							bee.ui.loader.show();
+							console.log(res);
+							bee.api.send(
+								'POST',
+								'/job/unpublish/confirm',
+								{
+									jobId : res.job._id,
+									unpublishId : res.job.listing.unpublishId
+								},
+								function(job) {
+									bee.ui.notifications.notify('success', 'Job has been unpublished.');
+									location = '/#!/jobs?viewJob=' + res.job._id;
+								},
+								function(jobErr) {
+									bee.ui.loader.hide();
+									bee.ui.notifications.notify('err', jobErr);
+								}
+							);				
+						});
+					} else {
+						bee.ui.notifications.notify('success', 'Job has been unpublished.');
+						location = '/#!/jobs?viewJob=' + res.job._id;
+					}
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
+					bee.ui.loader.hide();
+				}
+			);
 		});
 
 		$('#listingDateStart').datepicker({minDate : new Date()});

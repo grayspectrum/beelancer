@@ -541,7 +541,7 @@ module.exports = function(app, db) {
 								// if the job is promoted then we need to tell the user
 								// that they won't be refunded and have them accept via
 								// a seperate api call
-								job.listing.unpublishId = utils.generateKey();
+								job.listing.unpublishId = utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 });
 								job.save(function(err) {
 									if (!err) {
 										res.write(JSON.stringify({

@@ -117,7 +117,7 @@ li.req a {
 	overflow: auto;
 }
 
-.save_job_submit_wrapper, .publish_job_submit_wrapper, .bid_job_submit_wrapper {
+.save_job_submit_wrapper, .publish_job_submit_wrapper, .bid_job_submit_wrapper, .unpublish_job_submit_wrapper {
 	border-radius: 6px;
 	margin: 24px auto;
 	width: 242px;
@@ -132,7 +132,11 @@ li.req a {
 	float: right;
 }
 
-#save_job, #publish_job, #bid_job {
+.unpublish_job_submit_wrapper {
+	width: 290px;
+}
+
+#save_job, #publish_job, #bid_job, #unpublish_job {
 	background: url('/assets/images/mono/black/save_icon&32.png') 12px center no-repeat;
 	display: block;
 	width: 100%;
@@ -167,6 +171,15 @@ li.req a {
 
 #publish_job:hover {
 	background: url('/assets/images/mono/black/notepad_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+#unpublish_job {
+	background: url('/assets/images/mono/black/undo_icon&32.png') 12px center no-repeat;
+}
+
+#unpublish_job:hover {
+	background: url('/assets/images/mono/black/undo_icon&32.png') 12px center no-repeat #FFC60B;
 	cursor: pointer;
 }
 

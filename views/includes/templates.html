@@ -702,7 +702,7 @@
 			<div id="job_task_list">Loading task(s)...</div>
 		</label>
 	</div>
-	<div class="group">
+	<div class="group" id="job_unass_group">
 		<label for="job_unassigned_tasks">
 			<span>Unassigned Task(s): </span>
 			<div id="job_unassigned_task_list">Loading task(s)...</div>
@@ -720,11 +720,25 @@
 		</label>
 	</div>
 	<label class="big_radio" for="newjob_isPromoted">
-		<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true" /> Promote this job
+		<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true"{{#if listing.isPromoted}}checked{{/if}} /> Promote this job
 		<p>
 			By promoting this job, it will show up before other unpromoted jobs on the jobs board.
 		</p>
 	</label>
+	<div class="job_buttons">
+		{{#if isPublished}}
+			<div class="unpublish_job_submit_wrapper gold-gradient" id="unpublish_btn">
+				<input type="submit" id="unpublish_job" value="Unpublish Job" />
+			</div>
+		{{else}}
+			<div class="save_job_submit_wrapper light-gradient">
+				<input type="submit" id="save_job" value="Save Job" />
+			</div>
+			<div class="publish_job_submit_wrapper gold-gradient">
+				<input type="submit" id="publish_job" value="Publish Job" />
+			</div>
+		{{/if}}
+	</div>
 </script>
 
 <!-- Job View Template -->
