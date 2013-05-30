@@ -94,7 +94,7 @@ module.exports = (function() {
 		  , from = message.from;
 		
 		getUser(db, to, function(err, invitee) {
-			if (!err && accept == 'true') {
+			if (!err && accept === 'true') {
 				acceptJob(invitee, bidId, callback);
 			} 
 			else {

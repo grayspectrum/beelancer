@@ -445,6 +445,24 @@
 		);
 	};
 
+	function publishConfirm(pub, payment, success, failure) {
+		var pubObj = {
+			jobId : pub.job._id,
+			publishId : pub.job.listing.publishId
+		};
+
+		if (payment) {
+			pubObj.payment = payment;
+		}
+		bee.api.send(
+			'POST',
+			'/job/publish/confirm',
+			pubObj,
+			success,
+			failure
+		);
+	};
+
 	function bindJobNav(job) {
 		$('.job_edit_nav').click(function(e) {
 			e.preventDefault();
@@ -642,48 +660,62 @@
 							},
 							function(pub) {
 								bee.ui.loader.hide();
-								var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(pub.job);
-								$('body').append(tmpl);
 
-								$('#credit-popup #bee-ui_confirm_ok').click(function(e) {
-									e.preventDefault();
-
-									if (jobDataIsValid(false)) {
+								// unpromoted job, don't collect payment
+								if (!res.listing.isPromoted) {
+									bee.ui.confirm(pub.message, function() {
 										bee.ui.loader.show();
-										bee.api.send(
-											'POST',
-											'/job/publish/confirm',
-											{
-												jobId : pub.job._id,
-												publishId : pub.job.listing.publishId,
-												payment : {
-													name : $('#name').val(),
-													number : $('#number').val(),
-													cvc : $('#cvc').val(),
-													exp_month : Number($('#exp_month').val()),
-													exp_year : Number($('#exp_year').val())
-												}
-											},
+										publishConfirm(pub, null,
 											function(job) {
-												$('#credit-popup').remove();
 												bee.ui.loader.hide();
 												bee.ui.notifications.notify('success', 'Job published!');
-												location.href = '/#!/jobs?myJobs=true';
+												location.href = '/#!/jobs';
 											},
 											function(jobErr) {
 												bee.ui.loader.hide();
 												bee.ui.notifications.notify('err', jobErr);
 											}
 										);
-									}
-								});
-								
-								$('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
-									e.preventDefault();
+									});
+								// promoted job, collect payment
+								} else {
+									var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(pub.job);
+									$('body').append(tmpl);
 
-									$('#credit-popup').remove();
-									location.href = '/#!/jobs?viewJob=' + pub.job._id;
-								});
+									$('#credit-popup #bee-ui_confirm_ok').click(function(e) {
+										e.preventDefault();
+
+										if (jobDataIsValid(false)) {
+											bee.ui.loader.show();
+											var payment = {
+												name : $('#name').val(),
+												number : $('#number').val(),
+												cvc : $('#cvc').val(),
+												exp_month : Number($('#exp_month').val()),
+												exp_year : Number($('#exp_year').val())
+											};
+											publishConfirm(pub, payment,
+												function(job) {
+													$('#credit-popup').remove();
+													bee.ui.loader.hide();
+													bee.ui.notifications.notify('success', 'Job published!');
+													location.href = '/#!/jobs?myJobs=true';
+												},
+												function(jobErr) {
+													bee.ui.loader.hide();
+													bee.ui.notifications.notify('err', jobErr);
+												}
+											);
+										}
+									});
+									
+									$('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
+										e.preventDefault();
+
+										$('#credit-popup').remove();
+										location.href = '/#!/jobs?viewJob=' + pub.job._id;
+									});
+								}
 							},
 							function(noPub) {
 								bee.ui.notifications.notify('err', noPub);
@@ -717,7 +749,6 @@
 						bee.ui.loader.hide();
 						bee.ui.confirm(res.message, function() {
 							bee.ui.loader.show();
-							console.log(res);
 							bee.api.send(
 								'POST',
 								'/job/unpublish/confirm',

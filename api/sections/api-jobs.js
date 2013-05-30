@@ -345,7 +345,7 @@ module.exports = function(app, db) {
 										if (!err) {
 											res.write(JSON.stringify({
 												job : job,
-												message : 'Please confirm you wish to publish this job.'	
+												message : 'It will cost $' + job.listing.cost + ' to publish this job (payment will be collected upon hiring).  Please confirm that you wish to publish this job.'	
 											}));
 											res.end();
 										}
@@ -546,7 +546,7 @@ module.exports = function(app, db) {
 									if (!err) {
 										res.write(JSON.stringify({
 											job : job,
-											message : 'Please confirm you wish to unpublish this promoted job.'
+											message : 'You have already paid to publish this promoted job.  Are you sure you wish to unpublish it?'
 										}));
 										res.end();
 									}
@@ -1055,7 +1055,14 @@ module.exports = function(app, db) {
 				}).exec(function(err, job) {
 					if (!err && job) {
 						// make sure we are already watching
-						var index = user.jobs.watched.indexOf(job._id);
+						var index = -1;
+						for (var i = 0; i < user.jobs.watched.length; i++) {
+							if (user.jobs.watched[i]._id.equals(job._id)) {
+								index = i;
+								console.log(index);
+								break;
+							}
+						}
 						if (index !== -1) {
 							// unwatch it
 							user.jobs.watched.splice(index, 1);
