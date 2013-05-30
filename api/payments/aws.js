@@ -73,6 +73,38 @@ module.exports = function(db) {
 		});
 	};
 	
+	// create a single use payment token
+	// to pay for an invoice
+	function getSingleUseToken(invoice, callback) {
+		createCallerReference({
+			ref : 'invoice',
+			data : invoice._id,
+			description : 'GenerateSingleUseToken'
+		}, function(err, ref) {
+			if (!err && ref) {				
+				send('SingleUse', {
+					callerReference : ref._id.toString(),
+					itemTotal : invoice.amount,
+					paymentMethod : 'CC',
+					paymentReason : invoice.description,
+					recipientToken : invoice.aws.recipientTokenId,
+					transactionAmount : invoice.amount,
+					returnURL : config.domain + 'api/invoice/pay/' + invoice._id // where to redirect confirm
+				}, function(err, data) {
+					if (!err && data.status === 'SC') { // success for credit card
+						callback.call(this, null, invoice);
+					}
+					else {
+						callback.call(this, err || data.errorMessage, data);
+					}
+				}, true);
+			}
+			else {
+				callback.call(this, err, ref);
+			}
+		});
+	};
+	
 	function buildSignableQuery(body) {
 		var data = {}
 		// get the keys in order
@@ -139,6 +171,7 @@ module.exports = function(db) {
 	return {
 		requestSignature : requestSignature,
 		createCallerReference : createCallerReference,
-		getRecipientToken : getRecipientToken
+		getRecipientToken : getRecipientToken,
+		getSingleUseToken : getSingleUseToken
 	};
 };
