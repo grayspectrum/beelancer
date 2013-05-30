@@ -7,7 +7,7 @@ module.exports = function(db, job, callback) {
 	var calc = {}
 	  , err;
 	
-	calculate(job, function(cost) {
+	calculate(job, function(err, cost) {
 		// calculate stuff
 		calc.cost = cost;
 		calc.publishId = require('../utils.js').generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 });
@@ -32,11 +32,12 @@ module.exports = function(db, job, callback) {
 						totalCost = parseFloat(totalCost) + parseFloat(dailyCost);
 						numCalculated++;
 						if (numCalculated === tasks.length) {
-							onComplete(totalCost);
+							onComplete(null, totalCost);
 						}
 					}
 					else {
 						err = costErr;
+						onComplete(err, null);
 					}
 				});
 			}
@@ -50,7 +51,7 @@ module.exports = function(db, job, callback) {
 		var daily_cost = null;
 		db.project.findOne({ _id : task.project }).exec(function(projectErr, project) {
 			if (!projectErr && project) {
-				if (new Date(project.deadline) > new Date()) {
+				if (project.deadline.getTime() > new Date().getTime()) {
 					var promoted_rate = 0.35 // returned amount is in cents
 					  , standard_rate = 0.25 // returned amount is in cents
 					  , multiplier = (task.isFixed) ? parseInt(task.rate) : estimatedRate(task, project);

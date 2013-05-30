@@ -360,9 +360,7 @@ module.exports = function(app, db) {
 								}
 								else {
 									res.writeHead(400);
-									res.write(JSON.stringify({
-										error : err
-									}));
+									res.write(err);
 									res.end();
 								}
 							});
@@ -415,7 +413,7 @@ module.exports = function(app, db) {
 						if (job.listing.isPromoted) {
 							// require credit car info
 							var card = req.body.payment;
-							if (!payment) {
+							if (!card) {
 								res.writeHead(400);
 								res.write(JSON.stringify({
 									error : 'Payment information is required for promoted posts.'
@@ -425,12 +423,13 @@ module.exports = function(app, db) {
 							else {
 								var pmtData = utils.hasValidPaymentData(card);
 								// process payment
-								if (isValid) {
+								if (pmtData.valid) {
 									var body = req.body;
-									stripe.charge.create({
+
+									stripe.charges.create({
 										card : body.payment,
 										currency : 'usd',
-										amount : job.listing.cost,
+										amount : (job.listing.cost * 100),
 										capture : true,
 										description : 'Job ID: ' + job._id + ', User: ' + user.email
 									}, function(err, data) {
@@ -667,6 +666,7 @@ module.exports = function(app, db) {
 	////
 	app.put('/api/job/update/:jobId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
+			var body = req.body;
 			// cannot updated jobs which are already published
 			// must first unpublish job before making updates
 			
@@ -679,12 +679,21 @@ module.exports = function(app, db) {
 				}).exec(function(err, job) {
 					if (!err && job) {
 						if (!job.isPublished && !(job.status === 'IN_PROGRESS') && !job.assignee) {
+							body.listing = {};
+							body.category = jobCategories.contains(body.category);
+							body.listing.isPromoted = (body.isPromoted) ? body.isPromoted : false;
+							body.listing.start = (body.listingDateStart) ? body.listingDateStart : null;
+							body.listing.end = (body.listingDateEnd) ? body.listingDateEnd : null;
+							if (body.tasks instanceof Array) {
+								// already an array, no need to do anything
+							} else {
+								body.tasks = [body.tasks];
+							}
 							
-							job.category = jobCategories.contains(job.category);
-							utils.tasks.updateReferencedJobs(db, job.tasks, req.body.tasks, job._id);
+							utils.tasks.updateReferencedJobs(db, job.tasks, body.tasks, job._id);
 
 							// go ahead and update
-							job.update(req.body, function(err) {
+							job.update({$set: body}, function(err) {
 								if (!err) {
 									res.write(JSON.stringify(job));
 									res.end();
@@ -845,10 +854,10 @@ module.exports = function(app, db) {
 											// and the user now needs to pay
 											var pmtData = utils.hasValidPaymentData(req.body.payment);
 											if (pmtData.valid) {
-												stripe.charge.create({
+												stripe.charges.create({
 													card : req.body.payment,
 													currency : 'usd',
-													amount : job.listing.cost,
+													amount : (job.listing.cost * 100),
 													capture : false, // don't capture until job is accepted
 													description : 'Job ID: ' + job._id + ', User: ' + user.email
 												}, function(err, data) {
