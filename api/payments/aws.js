@@ -105,6 +105,65 @@ module.exports = function(db) {
 		});
 	};
 	
+	// processes a payment using the data received from 
+	// a single use token
+	function capturePayment(invoice, callback) {
+		createCallerReference({
+			ref : 'invoice',
+			data : invoice._id,
+			description : 'CapturePayment'
+		}, function(err, ref) {
+			if (!err && ref) {				
+				send('Pay', {
+					CallerReference : ref._id.toString(),
+					ChargeFeeTo : 'Recipient',
+					OverrideIPNURL : config.domain + 'api/payments/ipn/pay',
+					RecipientTokenId : invoice.aws.recipientTokenId,
+					SenderTokenId : invoice.aws.senderTokenId,
+					TransactionAmount : invoice.amount
+				}, function(err, data) {
+					if (!err) { 
+						callback.call(this, null, data);
+					}
+					else {
+						callback.call(this, err || data.errorMessage, data);
+					}
+				}, false);
+			}
+			else {
+				callback.call(this, err, ref);
+			}
+		});
+	};
+	
+	// processes a payment using the data received from 
+	// a single use token
+	function captureRefund(invoice, callback) {
+		createCallerReference({
+			ref : 'invoice',
+			data : invoice._id,
+			description : 'CaptureRefund'
+		}, function(err, ref) {
+			if (!err && ref) {				
+				send('Refund', {
+					CallerReference : ref._id.toString(),
+					OverrideIPNURL : config.domain + 'api/payments/ipn/refund',
+					TransactionId : invoice.aws.transactionId
+				}, function(err, data) {
+					if (!err) { 
+						callback.call(this, null, data);
+					}
+					else {
+						callback.call(this, err || data.errorMessage, data);
+					}
+				}, false);
+			}
+			else {
+				callback.call(this, err, ref);
+			}
+		});
+	};
+	
 	function buildSignableQuery(body) {
 		var data = {}
 		// get the keys in order
@@ -124,7 +183,16 @@ module.exports = function(db) {
 	};
 	
 	function send(pipeline, data, callback, useCoBrandedUI) {
-		var body = {
+		var body = (!useCoBrandedUI) ? {
+			// REST API common params
+			Action : pipeline,
+			AWSAccessKeyId : config.aws.accessKeyId,
+			SignatureVersion : '2',
+			SignatureMethod : 'HmacSHA256',
+			Timestamp : new Date().toJSON(),
+			Version : '2009-01-09'
+		} : {
+			// CBUI common params
 			callerKey : config.aws.accessKeyId,
 			cobrandingStyle : 'logo',
 			pipelineName : pipeline,
@@ -144,7 +212,7 @@ module.exports = function(db) {
 			path : parsedUrl.pathname,
 			query : buildSignableQuery(body)
 		};
-		body.signature = requestSignature(requestData);
+		body[(useCoBrandedUI) ? 'signature' : 'Signature'] = requestSignature(requestData);
 		// send the request
 		if (!useCoBrandedUI) {
 			request.get(config.aws.fpsAPI, { 
@@ -172,6 +240,8 @@ module.exports = function(db) {
 		requestSignature : requestSignature,
 		createCallerReference : createCallerReference,
 		getRecipientToken : getRecipientToken,
-		getSingleUseToken : getSingleUseToken
+		getSingleUseToken : getSingleUseToken,
+		capturePayment : capturePayment,
+		captureRefund : captureRefund
 	};
 };

@@ -51,11 +51,11 @@ module.exports = new Schema({
 	// "PUBLISHED" (user publishes job to job board)
 	// "PENDING_HIRE" (user posts job and has not selected a bidder) [Jobs API]
 	// "IN_PROGRESS" (user and assignee have both accepted requirements) [Jobs API]
-	// "PENDING_PAYMENT" (assignee has marked the job as complete) [Invoice API]
-	// "PAYMENT_PROCESSING" (owner has paid beelancer in full) [Invoice API]
-	// "PAYMENT_DECLINED" (payment has failed and the payer notified) [Invoice API]
-	// "PENDING_PAYOUT" (funds have cleared and are queued for payout to assignee) [Invoice API]
-	// "COMPLETED" (profit) [Invoice API]
+	// !! - extraneous? - !! "PENDING_PAYMENT" (assignee has marked the job as complete) [Invoice API]
+	// !! - extraneous? - !! "PAYMENT_PROCESSING" (owner has paid beelancer in full) [Invoice API]
+	// !! - extraneous? - !! "PAYMENT_DECLINED" (payment has failed and the payer notified) [Invoice API]
+	// !! - extraneous? - !! "PENDING_PAYOUT" (funds have cleared and are queued for payout to assignee) [Invoice API]
+	// !! - extraneous? - !! "COMPLETED" (profit) [Invoice API]
 	////
 	status : String,
 	bids : [{

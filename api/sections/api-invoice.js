@@ -99,7 +99,13 @@ module.exports = function(app, db) {
 		});
 	});
 	
+	// retrieve a single invoice by it's id
 	app.get('/api/invoice/:invoiceId', function(req, res) {
+		
+	});
+	
+	// get a list of the users invoices
+	app.get('/api/invoices', function(req, res) {
 		
 	});
 	
@@ -182,6 +188,7 @@ module.exports = function(app, db) {
 									if (!err) {
 										res.write(JSON.stringify(invoice));
 										res.end();
+										
 										// attach populated user to invoice
 										var mail_data = invoice.toObject();
 										mail_data.owner = user;
@@ -235,12 +242,147 @@ module.exports = function(app, db) {
 	// pays an invoice - redirect here after successful single
 	// token generation for invoice payment
 	app.get('/api/invoice/pay/:invoiceId', function(req, res) {
-		
+		if (req.query.errorMessage) {
+			res.writeHead(400);
+			res.redirect('/invoice/' + req.params.invoiceId + '?error=' + req.query.errorMessage);
+		}
+		else {
+			// we use the recipientTokenId and the senderTokenId from
+			// Single Use Token request (CBUI) to complete the transaction
+			// we update the invoice if necessary and then redirect back to 
+			// the beelancer UI
+			db.invoice.findOne({
+				_id : req.params.invoiceId
+			}).exec(function(err, invoice) {
+				if (!err && invoice) {
+					// get the senderTokenId
+					invoice.aws.senderTokenId = req.query.tokenID
+					// capture that shit
+					AWS.capturePayment(invoice, function(err, data) {
+						if (!err) {
+							/*
+							 * DO WE NEED TO SET paymentPending HERE?
+							 */
+							invoice.aws.transactionId = data.TransactionId;
+							invoice.aws.transactionStatus = data.TransactionStatus;
+							// got what we need, let's finish up
+							invoice.save(function(err) {
+								if (!err) {
+									res.redirect('/invoice/' + req.params.invoiceId);
+								}
+								else {
+									res.writeHead(500);
+									res.redirect('/invoice/' + req.params.invoiceId + '?error=' + err);
+								}
+							});
+						}
+						else {
+							res.writeHead(500);
+							res.redirect('/invoice/' + req.params.invoiceId + '?error=' + err);
+							res.end();
+						}
+					});
+				}
+				else {
+					res.writeHead((err) ? 500 : 400);
+					res.write('/invoice/' + req.params.invoiceId + '?error=' + (err || 'Could not find invoice.'));
+					res.end();
+				}
+			});
+		}
 	});
 	
 	// refunds an invoice
 	app.get('/api/invoice/refund/:invoiceId', function(req, res) {
-		
+		// using the stored transactionId for the invoice
+		// make a Refund API request
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				// find the invoice
+				db.invoice.findOne({
+					_id : req.params.id,
+					owner : user._id
+				}).exec(function(err, invoice) {
+					if (!err && invoice) {
+						// make sure the invoice can be refunded
+						if (invoice.isPaid && !invoice.isRefunded) {
+							AWS.captureRefund(invoice, function(err, data) {
+								if (!err) {
+									/*
+									 * DO WE NEED TO SET refundPending HERE?
+									 */									
+									invoice.aws.transactionStatus = data.TransactionStatus;
+									invoice.save();
+									res.write(JSON.stringify({
+										refundStatus : data.TransactionStatus
+									}));
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'Cannot refund this invoice.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead((err) ? 500 : 400);
+						res.write(JSON.stringify({
+							error : err || 'Invoice not found or you are not the owner.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : err || 'You must be logged in to refund an invoice.'
+				}));
+				res.end();
+			}
+		});
+	});
+	
+	// recieves IPN and updates invoice
+	app.get('/api/payments/ipn/:operation', function(req, res) {
+		var data = req.query;
+		// get the transactionId and find the invoice
+		db.invoice.findOne({
+			'aws.transactionId' : data.transactionId
+		}).exec(function(err, invoice) {
+			if (!err && invoice) {
+				invoice.aws.ipn = {
+					operation : data.operation,
+					date : data.transactionDate,
+					result : data.status
+				};
+				if (data.transactionStatus === 'SUCCESS') {
+					switch(req.params.operation) {
+						case 'pay':
+							invoice.isPaid = true;
+							invoice.paymentPending = false;
+							break;
+						case 'refund':
+							invoice.isRefunded = true;
+							invoice.refundPending = false;
+							break;
+						default:
+					}
+				}
+				invoice.save();
+			}
+		});
 	});
 	
 };
