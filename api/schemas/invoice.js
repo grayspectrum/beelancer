@@ -30,6 +30,9 @@ module.exports = new Schema({
 		ref : 'task'
 	}],
 	isPaid : Boolean,
+	isRefunded : Boolean,
+	paymentPending : Boolean,
+	refundPending : Boolean,
 	isSent : Boolean,
 	externalRecipient : String, // email address
 	recipient : {
@@ -47,6 +50,11 @@ module.exports = new Schema({
 		refundTokenId : String,
 		transactionId : String,
 		transactionStatus : String,
-		paymentUrl : String
+		paymentUrl : String,
+		ipn : {
+			date : Date,
+			result : String,
+			operation : String
+		}
 	}
 });
