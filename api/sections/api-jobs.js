@@ -825,7 +825,7 @@ module.exports = function(app, db) {
 				}).exec(function(err, job) {
 					if (!err && job) {
 						// check that requirements were passed and all match up
-						var requirementsMatch = (req.body.requirments) ? (req.body.requirments.length === job.requirements.length) : false;
+						var requirementsMatch = (req.body.requirements) ? (req.body.requirements.length === job.requirements.length) : false;
 						
 						if (requirementsMatch) {
 							req.body.requirements.forEach(function(val) {

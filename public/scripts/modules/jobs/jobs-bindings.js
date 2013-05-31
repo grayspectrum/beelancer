@@ -269,11 +269,26 @@
 							function(bids) {
 								$.each(bids, function(key, val) {
 									bee.api.send(
+										'GET',
+										'/user/' + val.user,
+										{},
+										function(user) {
+											val.profile = user;
+											var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(val);
+											$('.job-bids ul').append(bidTmpl);
 
+											// dunno how else to bind this right now
+											$('a[data-id="' + val._id + '"]').click(function(e) {
+												e.preventDefault();
+												hireBid(val, res);
+											});
+										},
+										function(jobErr) {
+											// ??
+										}
 									);
 								});
-								var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(bids);
-								$('.job-bids').html(bidTmpl);
+								
 							},
 							function(err) {
 								bee.ui.notifications.notify('err', err);
@@ -290,6 +305,50 @@
 				bee.ui.notifications.notify('err', err, true);
 			}
 		);
+
+		function hireBid(bid, job) {
+			var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(job);
+			$('body').append(tmpl);
+
+			$('#credit-popup #bee-ui_confirm_ok').click(function(e) {
+				e.preventDefault();
+
+				if (jobDataIsValid(false)) {
+					bee.ui.loader.show();
+					var payment = {
+						name : $('#name').val(),
+						number : $('#number').val(),
+						cvc : $('#cvc').val(),
+						exp_month : Number($('#exp_month').val()),
+						exp_year : Number($('#exp_year').val())
+					};
+					bee.api.send(
+						'POST',
+						'/job/hire',
+						{
+							id : bid._id,
+							jobId : job._id,
+							requirements : job.requirements,
+							payment : payment
+						},
+						function(hire) {
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('success', 'Hire request sent!');
+							location.href = '/#!/jobs?myJobs=true';
+						},
+						function(err) {
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('err', err);
+						}
+					);
+				}
+			});
+			
+			$('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
+				e.preventDefault();
+				$('#credit-popup').remove();
+			});
+		};
 	};
 
 	function showBidView() {

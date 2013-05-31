@@ -292,4 +292,28 @@ module.exports = function(app, db) {
 		});
 	});
 	
+	////
+	// GET - /api/user/:userId
+	// Returns the user information
+	////
+	app.get('/api/user/:userId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				db.user.findOne({ _id : req.params.userId }).populate('profile').exec(function(err, user) {
+					if (!err) {
+						res.write(JSON.stringify(user.profile));
+						res.end();
+					} else {
+						res.writeHead(500);
+						res.write('Could not get user.');
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to view your team.');
+				res.end();
+			}
+		});
+	});
 };

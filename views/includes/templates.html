@@ -799,7 +799,10 @@
 					</div>
 				{{/if}}
 			</div>
-			<div class="job-bids group"></div>
+			<div class="job-bids group">
+				<strong>Bids:</strong>
+				<ul></ul>
+			</div>
 			{{#if job.assignee}}
 				<div class="job-assignee">
 
@@ -828,16 +831,16 @@
 
 <!-- Job Bid List Template -->
 <script id="tmpl-jobbidlist" type="text/x-handlebars-template">
-	<strong>Bids:</strong>
-	<ul>
-		{{#each this}}
-			<li>
-				<span>{{this.user}}</span>
+	<li class="bid">
+		<a href="#" data-id="{{this._id}}">
+			<div class="profile">
+				<img src="{{profile.avatarPath}}" width="32px" height="32px" />
+				<span class="member-name">{{profile.firstName}} {{profile.lastName}}</span>
 				<p>{{this.message}}</p>
-				<a href="#" data-id="{{this._id}}">Accept Bid</a>
-			</li>
-		{{/each}}
-	</ul>
+			</div>
+			<span class="accept">Accept Bid</span>
+		</a>
+	</li>
 </script>
 
 <!-- Job Credit Card Popup Template -->
