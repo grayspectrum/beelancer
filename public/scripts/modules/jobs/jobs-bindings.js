@@ -241,17 +241,22 @@
 				if (res.owner.profile.user !== bee.get('profile').user) {
 					$('.job_del_nav, .job_edit_nav, .job-published, .job-bids').remove();
 
-					// check if item is being watch
-					if (bee.get('profile').jobs.watched.length === 0) {
-						$('.job-watch-btn').show();
+					// if theres an assignee, remove bid and watch options
+					if (res.assignee) {
+						$('#jobs_nav, .job-watch').remove();
 					} else {
-						$.each(bee.get('profile').jobs.watched, function(key, val) {
-							if (val._id === viewJob) {
-								$('.job-unwatch-btn').show();
-							} else {
-								$('.job-watch.btn').show();
-							}
-						});
+						// check if item is being watch
+						if (bee.get('profile').jobs.watched.length === 0) {
+							$('.job-watch-btn').show();
+						} else {
+							$.each(bee.get('profile').jobs.watched, function(key, val) {
+								if (val._id === viewJob) {
+									$('.job-unwatch-btn').show();
+								} else {
+									$('.job-watch.btn').show();
+								}
+							});
+						}
 					}
 				} else {
 					$('.job_bid_nav, .job-watch').remove();
@@ -261,41 +266,47 @@
 						$('.job-tasks').html(taskTmpl);
 					}
 
-					if (res.bids.length > 0){
-						bee.api.send(
-							'GET',
-							'/job/bids/' + viewJob,
-							{},
-							function(bids) {
-								$.each(bids, function(key, val) {
-									bee.api.send(
-										'GET',
-										'/user/' + val.user,
-										{},
-										function(user) {
-											val.profile = user;
-											var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(val);
-											$('.job-bids ul').append(bidTmpl);
+					// if no assignee, display bids if there are any
+					if (!res.assignee) {
+						if (res.bids.length > 0){
+							bee.api.send(
+								'GET',
+								'/job/bids/' + viewJob,
+								{},
+								function(bids) {
+									$.each(bids, function(key, val) {
+										bee.api.send(
+											'GET',
+											'/user/' + val.user,
+											{},
+											function(user) {
+												val.profile = user;
+												var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(val);
+												$('.job-bids ul').append(bidTmpl);
 
-											// dunno how else to bind this right now
-											$('a[data-id="' + val._id + '"]').click(function(e) {
-												e.preventDefault();
-												if (!val.isAccepted) {
-													hireBid(val, res);
-												}
-											});
-										},
-										function(jobErr) {
-											// ??
-										}
-									);
-								});
-								
-							},
-							function(err) {
-								bee.ui.notifications.notify('err', err);
-							}
-						);
+												// dunno how else to bind this right now
+												$('a[data-id="' + val._id + '"]').click(function(e) {
+													e.preventDefault();
+													if (!val.isAccepted) {
+														hireBid(val, res);
+													}
+												});
+											},
+											function(jobErr) {
+												// ??
+											}
+										);
+									});
+									
+								},
+								function(err) {
+									bee.ui.notifications.notify('err', err);
+								}
+							);
+						} else {
+							// delete edit and delete nav options?
+							$('.job-bids').remove();
+						}
 					}
 				}
 

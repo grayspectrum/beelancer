@@ -181,33 +181,25 @@ module.exports = function(app, db) {
 					job = job.toObject();
 					job.owner.profile = doc.profile;
 
-					// only show assignee to the owner of the project
-					utils.verifyUser(req, db, function(err, user) {
-						if (!err && user) {
-							if (job.assignee) {
+					if (job.assignee) {
+						// only show assignee to the owner of the project
+						utils.verifyUser(req, db, function(err, user) {
+							if (!err && user) {
 								db.user.findOne({
 									_id : job.assignee
 								})
 								.populate('profile')
 								.exec(function(err, ass) {
-									job.assignee = ass;
+									job.assignee = ass.profile;
+									res.write(JSON.stringify(job));
+									res.end();
 								});
 							}
-
-							// db.bid.find({
-							// 	job : jobId
-							// })
-							// .exec(function(err, bid) {
-							// 	console.log(bid);
-							// 	if (bid.length) {
-							// 		job.bids = bid;
-							// 	}
-							// });
-						}
-					});
-
-					res.write(JSON.stringify(job));
-					res.end();
+						});
+					} else {
+						res.write(JSON.stringify(job));
+						res.end();
+					}	
 				});
 			}
 			else {

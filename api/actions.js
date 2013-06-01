@@ -164,7 +164,6 @@ module.exports = (function() {
 		db.user.findOne({
 			_id : toUser
 		}).populate('jobs', '_id').exec(function(err, to) {
-			console.log(to);
 			// update the assignee's data
 			var jobIndex = to.jobs.watched.indexOf(bid.job._id)
 			  , teamIndex = to.team.indexOf(fromId);

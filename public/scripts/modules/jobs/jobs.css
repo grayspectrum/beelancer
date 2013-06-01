@@ -337,13 +337,18 @@ li.req a {
 	z-index: 997;
 }
 
+#credit-popup strong.heading {
+	display: block;
+	margin: 10px 10px 0px;
+}
+
 #credit-popup .popup {
 	width: 500px;
 	min-height: 200px;
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	margin: -81px 0 0 -202px;
+	margin: -141px 0 0 -202px;
 	border: 2px solid white;
 	border-radius: 6px;
 	box-shadow: 0 0 24px black;
@@ -351,8 +356,34 @@ li.req a {
 
 #credit-popup label {
 	display: inline-block;
+	float: none;
+	width: auto;
+}
+
+#credit-popup label.left {
+	clear: both;
+	float: left;
+}
+
+#credit-popup input.small {
+	width: 75px;
+}
+
+#credit-popup .left input.small {
+	display: inline-block;
 }
 
 #credit-popup label span {
 	display: block;
+}
+
+#credit-popup .cc-group {
+	clear: both;
+}
+
+#credit-popup .cc-buttons {
+	margin-top: 90px;
+}
+#credit-popup .popup-options {
+	clear: both;
 }

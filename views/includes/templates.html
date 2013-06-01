@@ -803,9 +803,15 @@
 				<strong>Bids:</strong>
 				<ul></ul>
 			</div>
-			{{#if job.assignee}}
-				<div class="job-assignee">
-
+			{{#if assignee}}
+				<div class="job-assignee group">
+					<strong>Assigned To:</strong>
+					<div class="job-owner-showcase">
+						<a href="/#!/team?viewProfile={{assignee._id}}">
+							<img src="{{assignee.avatarPath}}" height="24px" width="24px" />
+							<strong>{{assignee.firstName}} {{assignee.lastName}}</strong>
+						</a>
+					</div>
 				</div>
 			{{/if}}
 			<div class="job-bid-view">
@@ -852,11 +858,11 @@
 	<div id="credit-popup">
 		<div class="light-gradient popup animated flipInY">
 			{{#if hireCall}}
-				<strong>Reminder - Your card will be charged the posting cost of this job (if the user accepts): {{this.listing.cost}}</strong>
+				<strong class="heading">Reminder - Your card will be charged the posting cost of this job (if the user accepts): {{this.listing.cost}}</strong>
 			{{else}}
-				<strong>Cost to Post this Job: {{this.listing.cost}}</strong>
+				<strong class="heading">Cost to Post this Job: {{this.listing.cost}}</strong>
 			{{/if}}
-			<div class="credit-card-info">
+			<div class="credit-card-info group">
 				<form id="credit-card">
 					<div class="cc-group">
 						<label for="name">
@@ -865,32 +871,34 @@
 						</label>
 					</div>
 					<div class="cc-group">
-						<label for="number">
+						<label class="left" for="number">
 							<span>Credit Card Number:</span>
 							<input type="textbox" id="number" name="number" class="required" />
 						</label>
 						<label for="cvc">
 							<span>CCV:</span>
-							<input type="textbox" id="cvc" name="cvc" class="required" />
+							<input type="textbox" id="cvc" name="cvc" class="required small" />
 						</label>
 					</div>
 					<div class="cc-group">
-						<span>Expiration Date:</span>
-						<label for="exp_month">
-							<input type="textbox" id="exp_month" name="exp_month" placeholder="MM" class="required" />
+						<label class="left heading">
+							<span>Expiration Date:</span>
 						</label>
-						<label for="exp_year">
-							<input type="textbox" id="exp_year" name="exp_month" placeholder="YYYY" class="required" />
+						<label class="left" for="expiration">
+							<input type="textbox" id="exp_month" name="exp_month" placeholder="MM" class="required small" />
+							<input type="textbox" id="exp_year" name="exp_month" placeholder="YYYY" class="required small" />
 						</label>
 					</div>
-					<ul class="popup-options">
-						<li>
-							<button id="bee-ui_confirm_cancel" class="light-gradient">Cancel</button>
-						</li>
-						<li>
-							<button id="bee-ui_confirm_ok" class="gold-gradient">Confirm</button>
-						</li>
-					</ul>
+					<div class="cc-buttons">
+						<ul class="popup-options">
+							<li>
+								<button id="bee-ui_confirm_cancel" class="light-gradient">Cancel</button>
+							</li>
+							<li>
+								<button id="bee-ui_confirm_ok" class="gold-gradient">Confirm</button>
+							</li>
+						</ul>
+					</div>
 				</form>
 			</div>
 		</div>

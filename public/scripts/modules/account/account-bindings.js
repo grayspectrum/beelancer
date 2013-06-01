@@ -64,7 +64,6 @@
 			'/payments/accountStatus',
 			{},
 			function(data) {
-				console.log(data);
 				$('.aws_account_status').addClass(
 					(data.isAuthorized) ? 'authorized' : 'not_authorized'
 				);
