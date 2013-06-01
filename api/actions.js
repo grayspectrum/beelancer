@@ -119,14 +119,14 @@ module.exports = (function() {
 				if (!err && bid) {
 					// this unpublishes the job and assigns the caller to
 					// the job
-					if (bid.user.profile === to.profile) {					
+					if (bid.user._id.equals(to._id)) {					
 						// if the job is not promoted, the job owner must pay
 						// the posting fee - we already have the charge, so let's
 						// make some money...
 						if (!bid.job.isPromoted) {
 							stripe.charges.capture(bid.job.listing.chargeId, function(err, data) {
 								if (!err) {
-									finalizeHire(to, bid.job.owner, bid, callback);
+									finalizeHire(db, to._id, bid.job.owner, bid, callback);
 								}
 								else {
 									callback.call(this, err);
@@ -134,7 +134,7 @@ module.exports = (function() {
 							});
 						}
 						else {
-							finalizeHire(to, bid.job.owner, bid, callback);
+							finalizeHire(db, to, bid.job.owner, bid, callback);
 						}
 					}
 					else {
@@ -149,7 +149,7 @@ module.exports = (function() {
 		};
 	};
 	
-	function finalizeHire(toUser, fromId, populatedBid, callback) {
+	function finalizeHire(db, toUser, fromId, populatedBid, callback) {
 		var bid = populatedBid;
 		// this also adds the owner and assignee to each others
 		// respective teams
@@ -161,59 +161,65 @@ module.exports = (function() {
 		bid.job.status = 'IN_PROGRESS';
 		bid.job.isPublished = false;
 		
-		// update the assignee's data
-		var jobIndex = toUser.jobs.watched.indexOf(bid.job._id)
-		  , teamIndex = toUser.team.indexOf(fromId);
-		toUser.jobs.assigned.push(bid.job._id);
-		if (index !== -1) {
-			toUser.jobs.watched.splice(jobIndex, 1);
-		}
-		
-		// update each other's teams
-		// and save everything else
-		if (teamIndex === -1) {
-			toUser.team.push(fromId);
-		}
-		db.user.findOne({ 
-			_id : fromId 
-		}).exec(function(err, fromUser) {
-			if (!err && fromUser) {
-				if (fromUser.team.indexOf(toUser) === -1) {
-					fromUser.team.push(toUser);
+		db.user.findOne({
+			_id : toUser
+		}).populate('jobs', '_id').exec(function(err, to) {
+			console.log(to);
+			// update the assignee's data
+			var jobIndex = to.jobs.watched.indexOf(bid.job._id)
+			  , teamIndex = to.team.indexOf(fromId);
+			to.jobs.assigned.push(bid.job._id);
+			if (jobIndex !== -1) {
+				to.jobs.watched.splice(jobIndex, 1);
+			}
+			
+			// update each other's teams
+			// and save everything else
+			if (teamIndex === -1) {
+				to.team.push(fromId);
+			}
+
+			db.user.findOne({ 
+				_id : fromId 
+			}).populate('jobs').exec(function(err, fromUser) {
+				if (!err && fromUser) {
+					if (fromUser.team.indexOf(toUser) === -1) {
+						fromUser.team.push(toUser);
+					}
+					// save owner
+					fromUser.save(function(err) {
+						if (!err) {
+							// save assignee
+							to.save(function(err) {
+								if (!err) {
+									// save job
+									bid.job.save(function(err) {
+										if (!err) {
+											// save bid
+											bid.save(function(err) {
+												// all done!
+												callback.call(this, null, bid.job);
+											});
+										}
+										else {
+											callback.call(this, err);
+										}
+									});
+								}
+								else {
+									callback.call(this, err);
+								}
+							});
+						}
+						else {
+							callback.call(this, err);
+						}
+					});
 				}
-				// save owner
-				fromUser.save(function(err) {
-					if (!err) {
-						// save assignee
-						toUser.save(function(err) {
-							if (!err) {
-								// save job
-								bid.job.save(function(err) {
-									if (!err) {
-										// save bid
-										bid.save(function(err) {
-											// all done!
-											callback.call(this, null, bid.job);
-										});
-									}
-									else {
-										callback.call(this, err);
-									}
-								});
-							}
-							else {
-								callback.call(this, err);
-							}
-						});
-					}
-					else {
-						callback.call(this, err);
-					}
-				});
-			}
-			else {
-				callback.call(this, err);
-			}
+				else {
+					callback.call(this, err);
+				}
+			});
 		});
 	};
 	

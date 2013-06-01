@@ -9,6 +9,7 @@ var crypto = require('crypto')
   , mailer = require('../email/mailer.js')
   , utils = require('../utils.js')
   , actions = require('../actions.js')
+  , clients = require('../../sockets.js').clients
   , jobCategories = require('../jobs/job-categories.js')
   , calculateJobPostingCost = require('../jobs/job-postingcost.js')
   , config = require('../../config.js')
@@ -837,7 +838,13 @@ module.exports = function(app, db) {
 						
 						if (requirementsMatch) {
 							var bidId = req.body.bidId
-							  , bidIndex = job.bids.indexOf(bidId);
+							  , bidIndex = -1;
+							for (var i = 0; i < job.bids.length; i++) {
+								if (job.bids[i].equals(bidId)) {
+									bidIndex = i;
+									break;
+								}
+							}
 							if (bidIndex !== -1) {
 								// find the bid
 								db.bid.findOne({ _id : bidId })
@@ -1059,7 +1066,6 @@ module.exports = function(app, db) {
 						for (var i = 0; i < user.jobs.watched.length; i++) {
 							if (user.jobs.watched[i]._id.equals(job._id)) {
 								index = i;
-								console.log(index);
 								break;
 							}
 						}

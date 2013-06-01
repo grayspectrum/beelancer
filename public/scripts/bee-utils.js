@@ -40,6 +40,9 @@ bee.utils = (function() {
 						userId : bee.get('profile')._id
 					});
 					bee.socket.bindListeners(bee.socket);
+
+					bee.utils.checkMessages();
+					bee.utils.checkEndorse();
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', 'Failed to identify you.');
@@ -54,6 +57,7 @@ bee.utils = (function() {
 	
 	function checkMessages() {
 		if (_.cookies.get('apikey') && _.cookies.get('userid') && bee.get('profile')) {
+			//console.log('in check message');
 			bee.api.send(
 				'GET',
 				'/messages/pollUnread',

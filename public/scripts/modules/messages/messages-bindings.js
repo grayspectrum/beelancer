@@ -214,7 +214,8 @@
 		*/
 		
 		// Accept Invite
-		$('#msg_action_accept').bind('click', function() {
+		$('.msg_action_accept').bind('click', function() {
+			console.log('in click');
 			var messageId = $(this).attr('data-id');
 			bee.ui.confirm('Are you sure you want to accept this invitaion?', function() {
 				bee.ui.loader.show();
@@ -239,7 +240,7 @@
 		});
 		
 		// Decline Invite
-		$('#msg_action_decline').bind('click', function() {
+		$('.msg_action_decline').bind('click', function() {
 			var messageId = $(this).attr('data-id');
 			bee.ui.confirm('Are you sure you want to decline this invitaion?', function() {
 				bee.ui.loader.show();

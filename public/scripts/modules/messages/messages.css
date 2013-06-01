@@ -285,22 +285,22 @@ li.message p {
 	border-radius: 3px;
 }
 
-#msg_action_accept {
+.msg_action_accept {
 	border: 1px solid #FFC60B;
 	text-shadow: 0 1px 0 #FFC60B;
 }
 
-#msg_action_accept:hover {
+.msg_action_accept:hover {
 	background: #FFC60B;
 	cursor: pointer;
 }
 
-#msg_action_decline {
+.msg_action_decline {
 	border: 1px solid #fff;
 	text-shadow: 0 1px 0 #fff;
 }
 
-#msg_action_decline:hover {
+.msg_action_decline:hover {
 	background: #fff;
 	cursor: pointer;
 }

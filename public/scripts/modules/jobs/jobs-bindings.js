@@ -239,7 +239,7 @@
 
 				// if not the owner, remove nav edit / del options
 				if (res.owner.profile.user !== bee.get('profile').user) {
-					$('.job_del_nav, .job_edit_nav, .job-published').remove();
+					$('.job_del_nav, .job_edit_nav, .job-published, .job-bids').remove();
 
 					// check if item is being watch
 					if (bee.get('profile').jobs.watched.length === 0) {
@@ -280,7 +280,9 @@
 											// dunno how else to bind this right now
 											$('a[data-id="' + val._id + '"]').click(function(e) {
 												e.preventDefault();
-												hireBid(val, res);
+												if (!val.isAccepted) {
+													hireBid(val, res);
+												}
 											});
 										},
 										function(jobErr) {
@@ -307,6 +309,7 @@
 		);
 
 		function hireBid(bid, job) {
+			job.hireCall = true;
 			var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(job);
 			$('body').append(tmpl);
 
@@ -326,12 +329,13 @@
 						'POST',
 						'/job/hire',
 						{
-							id : bid._id,
+							bidId : bid._id,
 							jobId : job._id,
 							requirements : job.requirements,
 							payment : payment
 						},
 						function(hire) {
+							$('#credit-popup').remove();
 							bee.ui.loader.hide();
 							bee.ui.notifications.notify('success', 'Hire request sent!');
 							location.href = '/#!/jobs?myJobs=true';

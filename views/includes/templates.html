@@ -260,8 +260,8 @@
 							<p{{#if this.isCurrent}} class="current_body"{{/if}}><span class="msg_sentOn">{{this.sentOn}}</span>{{this.body}}</p>
 							{{#if this.attachment}}
 								<div class="msg_attachment">
-									<button class="light-gradient" id="msg_action_decline" data-id="{{this._id}}">Decline</button>
-									<button class="gold-gradient" id="msg_action_accept" data-action="{{this.attachment.action}}" data-data="{{this.attachment.data}}" data-id="{{this._id}}">Accept</button>
+									<button class="light-gradient msg_action_decline" data-id="{{this._id}}">Decline</button>
+									<button class="gold-gradient msg_action_accept" data-action="{{this.attachment.action}}" data-data="{{this.attachment.data}}" data-id="{{this._id}}">Accept</button>
 								</div>
 							{{/if}}
 						</div>
@@ -838,7 +838,11 @@
 				<span class="member-name">{{profile.firstName}} {{profile.lastName}}</span>
 				<p>{{this.message}}</p>
 			</div>
-			<span class="accept">Accept Bid</span>
+			{{#if isAccepted}}
+
+			{{else}}
+				<span class="accept">Accept Bid</span>
+			{{/if}}
 		</a>
 	</li>
 </script>
@@ -847,7 +851,11 @@
 <script id="tmpl-creditcard" type="text/x-handlebars-template">
 	<div id="credit-popup">
 		<div class="light-gradient popup animated flipInY">
-			<strong>Cost to Post this Job: {{this.listing.cost}}</strong>
+			{{#if hireCall}}
+				<strong>Reminder - Your card will be charged the posting cost of this job (if the user accepts): {{this.listing.cost}}</strong>
+			{{else}}
+				<strong>Cost to Post this Job: {{this.listing.cost}}</strong>
+			{{/if}}
 			<div class="credit-card-info">
 				<form id="credit-card">
 					<div class="cc-group">
