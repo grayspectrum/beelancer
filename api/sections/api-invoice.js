@@ -101,12 +101,116 @@ module.exports = function(app, db) {
 	
 	// retrieve a single invoice by it's id
 	app.get('/api/invoice/:invoiceId', function(req, res) {
-		
+		var body = req.body;
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.invoice.findOne({
+					_id : req.params.invoiceId,
+					$or : [
+						{ owner : user._id },
+						{ recipient : user._id }
+					]
+				})
+				.populate('job')
+				.populate('project')
+				.populate('tasks')
+				.populate('user', 'profile')
+				.exec(function(err, invoice) {
+					if (!err && invoice) {
+						res.write(JSON.stringify(invoice));
+						res.end();
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : err || 'You cannot view this invoice.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				if (body.publicViewKey) {
+					db.invoice.findOne({
+						_id : req.params.invoiceId,
+						publicViewKey : body.publicViewKey
+					})
+					.populate('job')
+					.populate('project')
+					.populate('tasks')
+					.populate('user', 'profile')
+					.exec(function(err, invoice) {
+						if (!err && invoice) {
+							res.write(JSON.stringify(invoice));
+							res.end();
+						}
+						else {
+							res.writeHead((err) ? 500 : 401);
+							res.write(JSON.stringify({
+								error : err || 'You cannot view this invoice.'
+							}));
+							res.end();
+						}
+					});
+				}
+				else {
+					res.writeHead(401);
+					res.write(JSON.stringify({
+						error : err || 'You cannot view this invoice.'
+					}));
+					res.end();
+				}
+			}
+		});
 	});
 	
 	// get a list of the users invoices
 	app.get('/api/invoices', function(req, res) {
-		
+		var body = req.body;
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.invoice.find({
+					_id : req.params.invoiceId,
+					$or : [
+						{ owner : user._id },
+						{ recipient : user._id }
+					]
+				}).exec(function(err, invoices) {
+					if (!err && invoices) {
+						var response = {
+							sent : [],
+							recieved : []
+						};
+						// organize the invoices
+						invoices.forEach(function(val) {
+							if (val.owner.toString() === user._id.toString()) {
+								response.sent.push(val);	
+							}
+							else {
+								response.received.push(val);
+							}
+						});
+						// send em back
+						res.write(JSON.stringify(response));
+						res.end();
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : err || 'You cannot view this invoice.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : err || 'You must be logged in to view your invoices.'
+				}));
+				res.end();
+			}
+		});
 	});
 	
 	// creates an invoice
@@ -145,7 +249,8 @@ module.exports = function(app, db) {
 						aws : {
 							recipientTokenId : user.aws.recipientId,
 							refundTokenId : user.aws.refundId
-						}
+						},
+						publicViewId : utils.generateKey()
 					});
 					// add reference
 					invoice[invoice.type] = body[body.type];
@@ -154,7 +259,7 @@ module.exports = function(app, db) {
 					// then we need to get the reference owner (job or project)
 					if (body.externalRecipient) {
 						invoice.externalRecipient = body.externalRecipient;
-						finalize(invoice);
+						validateTasks(invoice, finalize);
 					}
 					else {
 						db[invoice.type].findOne({
@@ -165,7 +270,7 @@ module.exports = function(app, db) {
 							if (!err && jobOrProject) {
 								invoice.recipient = jobOrProject.owner._id;
 								invoice.externalRecipient = jobOrProject.owner.email;
-								finalize(invoice);
+								validateTasks(invoice, finalize);
 							}
 							else {
 								res.writeHead((err) ? 500 : 404);
@@ -177,49 +282,96 @@ module.exports = function(app, db) {
 						});
 					}
 					
-					function finalize(invoice) {
-						// generate payment URL
-						AWS.getSingleUseToken(invoice, function(err, data) {
-							if (!err && data) {
-								invoice.aws.paymentUrl = data.redirectTo;
-								// save the invoice
-								// if all goes well send out the payment link
-								invoice.save(function(err) {
-									if (!err) {
-										res.write(JSON.stringify(invoice));
-										res.end();
-										
-										// attach populated user to invoice
-										var mail_data = invoice.toObject();
-										mail_data.owner = user;
-										mail_data.paymentUrl = conf.domain + 'invoice/' + invoice._id;
-										// fire off email notification to externalRecipient
-										mailer.send('invoice', mail_data);
+					function validateTasks(invoice, callback) {
+						// query all tasks in invoice
+						// make sure they exist and are completed
+						var tasks = invoice.tasks
+						  , current = 0;
+						
+						function checkTask(task) {
+							db.task.findOne({
+								_id : task,
+								isComplete : true,
+								isPaid : false
+							}).exec(function(err, task) {
+								if (!err && task) {
+									current++;
+									if (current >= tasks.length) {
+										// all done and good
+										callback(null, invoice);
 									}
 									else {
-										res.writeHead(500);
-										res.write(JSON.stringify({
-											error : err
-										}));
-										res.end();
+										// all good, move on to next task
+										checkTask(tasks[current]);
 									}
-								});
-							}
-							else {
-								res.writeHead(500);
-								res.write(JSON.stringify({
-									error : err || 'Could not create payment token.'
-								}));
-								res.end();
-							}
-						});
+								}
+								else {
+									// break and respond with error
+									callback(err, null);
+								}
+							});
+						};
+						// start recursive check
+						checkTask(tasks[current]);
 					};
 					
-					aws = {
-						senderTokenId : String,
-						transactionId : String,
-						transactionStatus : String,
-					}
+					function finalize(err, invoice) {
+						if (!err && invoice) {	
+							// generate payment URL
+							AWS.getSingleUseToken(invoice, function(err, data) {
+								if (!err && data) {
+									invoice.aws.paymentUrl = data.redirectTo;
+									// save the invoice
+									// if all goes well send out the payment link
+									invoice.save(function(err) {
+										if (!err) {
+											// respond back
+											res.write(JSON.stringify(invoice));
+											res.end();
+											
+											// attach populated user to invoice
+											var mail_data = invoice.toObject();
+											mail_data.owner = user;
+											mail_data.paymentUrl = conf.domain + 'invoice/' + invoice._id + '?publicViewKey=' + invoice.publicViewKey;
+											// fire off email notification to externalRecipient
+											mailer.send('invoice', mail_data);
+											
+											// mark the tasks as billed
+											invoice.tasks.forEach(function(val) {
+												db.task.findOne({ _id : val }).exec(function(err, task) {
+													if (!err && task) {
+														task.isBilled = true;
+														task.save();
+													}
+												});
+											});
+										}
+										else {
+											res.writeHead(500);
+											res.write(JSON.stringify({
+												error : err
+											}));
+											res.end();
+										}
+									});
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err || 'Could not create payment token.'
+									}));
+									res.end();
+								}
+							});
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : err || 'Failed to create invoice.'
+							}));
+							res.end();
+						}
+					};
 				}
 				else {
 					res.writeHead(400);
@@ -372,6 +524,15 @@ module.exports = function(app, db) {
 						case 'pay':
 							invoice.isPaid = true;
 							invoice.paymentPending = false;
+							// mark tasks as paid
+							invoice.tasks.forEach(function(val) {
+								db.task.findOne({ _id : val }).exec(function(err, task) {
+									if (!err && task) {
+										task.isPaid = true;
+										task.save();
+									}
+								});
+							});
 							break;
 						case 'refund':
 							invoice.isRefunded = true;

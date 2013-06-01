@@ -56,5 +56,6 @@ module.exports = new Schema({
 			result : String,
 			operation : String
 		}
-	}
+	},
+	publicViewId : String
 });
