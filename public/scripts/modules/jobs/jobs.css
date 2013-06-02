@@ -45,7 +45,7 @@
 	display: none;
 }
 
-#jobs_promoted ul, #jobs_new ul, #jobs_mine ul, #jobs_create ul, #jobs_watched ul {
+#jobs_promoted ul, #jobs_new ul, #jobs_mine ul, #jobs_create ul, #jobs_watched ul, #job_search_result ul {
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -129,8 +129,14 @@ li.req a {
 	padding-right: 12px;
 }
 
-.req_label {
+.req_label, .task_label {
+	margin-bottom: 12px;
 	width: 100% !important;
+}
+
+#jobs_create .listing {
+	width: 100% !important;
+	margin-left: 24px;
 }
 
 #jobs_create #description, #job_view #message {
@@ -142,6 +148,10 @@ li.req a {
 	width: 512px;
 	border: 1px solid #ABABAB;
 	border-radius: 2px;
+}
+
+#jobs_create .hint {
+	margin: 6px 24px;
 }
 
 .job_buttons {
@@ -318,6 +328,10 @@ li.req a {
 	margin: 5px 0px 20px;
 }
 
+#job_task_list ul, #job_unassigned_task_list ul {
+	margin: 5px 20px;
+}
+
 .job-reqs ul {
 	margin: 5px 0px;
 }
@@ -386,4 +400,43 @@ li.req a {
 }
 #credit-popup .popup-options {
 	clear: both;
+}
+
+.no-job {
+	display: block;
+	text-align: center;
+}
+
+li.job_task_option {
+	padding: 6px 18px;
+	margin: 3px 0;
+	display: block;
+	text-decoration: none;
+	border-radius: 6px;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+	font-size: 14px;
+	border: 1px solid transparent;
+	overflow: hidden;
+}
+
+li.job_task_option:hover {
+	background-color: #e2e2e2;
+	border: 1px solid #d2d2d2;
+	border-color: #d2d2d2;
+}
+
+li.job_task_option span {
+	float: left;
+	margin: 0;
+}
+
+li.job_task_option span a {
+	color: #333;
+	text-decoration: none;
+}
+
+li.job_task_option input {
+	float: right;
+	width: auto;
 }

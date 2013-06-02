@@ -43,8 +43,16 @@
 					if (res.length) {
 						var pro_tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
 						$('#promoted_jobs_list').html(pro_tmpl);
+
+						var proPager = new bee.ui.Paginator(
+							$('#jobs_promoted .pagination'),
+							$('#jobs_promoted li.job'),
+							10
+						);
+						proPager.init();
 					} else {
-						$('#promoted_jobs_list').html('There are no promoted jobs to view.');
+						var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'There are no promoted jobs to view.' })
+						$('#promoted_jobs_list').html(no_tmpl);
 					}
 					
 				},
@@ -63,8 +71,16 @@
 					if (res.length) {
 						var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
 						$('#latest_jobs_list').html(tmpl);
+
+						var newPager = new bee.ui.Paginator(
+							$('#jobs_new .pagination'),
+							$('#jobs_new li.job'),
+							10
+						);
+						newPager.init();
 					} else {
-						$('#latest_jobs_list').html('There are no current jobs to view.');
+						var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'There are no current jobs to view.' })
+						$('#latest_jobs_list').html(no_tmpl);
 					}
 				},
 				function(err) {
@@ -78,8 +94,16 @@
 			if (watched.length > 0) {
 				var wat_tmpl = Handlebars.compile($('#tmpl-joblist').html())(watched);
 				$('#watched_jobs_list').html(wat_tmpl);
+
+				var watchPager = new bee.ui.Paginator(
+					$('#jobs_watched .pagination'),
+					$('#jobs_watched li.job'),
+					10
+				);
+				watchPager.init();
 			} else {
-				$('#watched_jobs_list').html('There are no current jobs to view.');
+				var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'There are no current jobs to view.' })
+				$('#watched_jobs_list').html(no_tmpl);
 			}
 		};
 	};
@@ -307,6 +331,10 @@
 							// delete edit and delete nav options?
 							$('.job-bids').remove();
 						}
+					} else {
+						// there's an assignee, so this job has already been accepted
+						// so the job can no longer be edited or deleted by the owner
+						$('#jobs_nav, .job-bids').remove();
 					}
 				}
 
@@ -384,15 +412,31 @@
 				if (res.owned.length) {
 					var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res.owned);
 					$('#own_jobs_list').html(tmpl);
+
+					var ownPager = new bee.ui.Paginator(
+						$('#jobs_i_own .pagination'),
+						$('#jobs_i_own li.job'),
+						10
+					);
+					ownPager.init();
 				} else {
-					$('#own_jobs_list').html('You do not own any jobs.');
+					var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'You do not own any jobs.' });
+					$('#own_jobs_list').html(no_tmpl);
 				}
 
 				if (res.assigned.length) {
 					var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res.assigned);
 					$('#assigned_jobs_list').html(tmpl);
+
+					var assPager = new bee.ui.Paginator(
+						$('#jobs_assigned .pagination'),
+						$('#jobs_assigned li.job'),
+						10
+					);
+					assPager.init();
 				} else {
-					$('#assigned_jobs_list').html('You do not have any jobs assigned to you.');
+					var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'You do not have any jobs assigned to you.' });
+					$('#assigned_jobs_list').html(no_tmpl);
 				}
 			},
 			function(err) {
