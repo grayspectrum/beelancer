@@ -95,7 +95,7 @@ module.exports = (function() {
 		
 		getUser(db, to, function(err, invitee) {
 			if (!err && accept === 'true') {
-				acceptJob(invitee, bidId, callback);
+				acceptJob(invitee, bidId, message, callback);
 			} 
 			else {
 				if (err) {
@@ -109,7 +109,7 @@ module.exports = (function() {
 			}
 		}); 
 		
-		function acceptJob(to, bidId, callback) {
+		function acceptJob(to, bidId, message, callback) {
 			// accepts a hire offer
 			// caller must be a recipient of hire offer
 			db.bid.findOne({ _id : bidId })
@@ -127,7 +127,7 @@ module.exports = (function() {
 							stripe.charges.capture(bid.job.listing.chargeId, function(err, data) {
 								if (!err) {
 									assignTasks(db, to._id, bid.job.tasks, callback);
-									finalizeHire(db, to._id, bid.job.owner, bid, callback);
+									finalizeHire(db, to._id, bid.job.owner, bid, message, callback);
 								}
 								else {
 									callback.call(this, err);
@@ -136,7 +136,7 @@ module.exports = (function() {
 						}
 						else {
 							assignTasks(db, to._id, bid.job.tasks, callback);
-							finalizeHire(db, to._id, bid.job.owner, bid, callback);
+							finalizeHire(db, to._id, bid.job.owner, bid, message, callback);
 						}
 					}
 					else {
@@ -165,7 +165,7 @@ module.exports = (function() {
 		});
 	};
 	
-	function finalizeHire(db, toUser, fromId, populatedBid, callback) {
+	function finalizeHire(db, toUser, fromId, populatedBid, message, callback) {
 		var bid = populatedBid;
 		// this also adds the owner and assignee to each others
 		// respective teams
@@ -213,6 +213,7 @@ module.exports = (function() {
 											// save bid
 											bid.save(function(err) {
 												// all done!
+												message.remove();
 												callback.call(this, null, bid.job);
 											});
 										}
