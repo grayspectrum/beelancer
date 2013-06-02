@@ -126,6 +126,7 @@ module.exports = (function() {
 						if (!bid.job.isPromoted) {
 							stripe.charges.capture(bid.job.listing.chargeId, function(err, data) {
 								if (!err) {
+									assignTasks(db, to._id, bid.job.tasks, callback);
 									finalizeHire(db, to._id, bid.job.owner, bid, callback);
 								}
 								else {
@@ -134,7 +135,8 @@ module.exports = (function() {
 							});
 						}
 						else {
-							finalizeHire(db, to, bid.job.owner, bid, callback);
+							assignTasks(db, to._id, bid.job.tasks, callback);
+							finalizeHire(db, to._id, bid.job.owner, bid, callback);
 						}
 					}
 					else {
@@ -147,6 +149,20 @@ module.exports = (function() {
 				}
 			});
 		};
+	};
+
+	function assignTasks(db, to, tasks, callback) {
+		tasks.forEach(function(val, key) {
+			db.task.findOne({ _id : val })
+			.exec(function(err, task) {
+				if (!err && task) {
+					task.assignee = to;
+					task.save();
+				} else {
+					callback.call(this, err);
+				}
+			});
+		});
 	};
 	
 	function finalizeHire(db, toUser, fromId, populatedBid, callback) {

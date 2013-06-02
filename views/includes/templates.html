@@ -567,13 +567,16 @@
 <!-- Job Task List -->
 <script id="tmpl-taskForJobs" type="text/x-handlebars-template">
 	{{#if this.length}}
-		{{#each this}}
-			<div class="job_task_option">
-				<span class="job_project_title">Project: {{this.project.title}}</span>
-				<span class="job_task_title">Task: {{this.title}}</span>
-				<input type="checkbox" id="{{this._id}}" name="tasks" value="{{this._id}}" />
-			</div>
-		{{/each}}
+		<ul>
+			{{#each this}}
+				<li class="job_task_option">
+					<span class="job_task_title">
+						<a href="/#!/tasks?viewTask={{this._id}}">{{this.title}}</a>
+					</span>
+					<input type="checkbox" id="{{this._id}}" name="tasks" value="{{this._id}}" />
+				</li>
+			{{/each}}
+		</ul>
 	{{/if}}
 </script>
 
@@ -630,7 +633,7 @@
 	{{#if this.length}}
 		<ul>
 			{{#each this}}
-				<li class="job">
+				<li class="job" title="{{this.description}}">
 					<a href="/#!/jobs?viewJob={{this._id}}">
 						<span class="job_title">{{this.title}}</span>
 						<span class="view_job">View Job</span>
@@ -659,6 +662,11 @@
 			<a href="#" class="job_req_rem"></a>
 		</li>
 	{{/each}}	
+</script>
+
+<!-- Job No Job Span Template -->
+<script id="tmpl-nojobspan" type="text/x-handlebars-template">
+	<span class="no-job">{{message}}</span>
 </script>
 
 <!-- Job New/Edit Template -->
@@ -697,25 +705,26 @@
 		</label>
 	</div>
 	<div class="group">
-		<label for="job_tasks">
+		<label for="job_tasks" class="task_label">
 			<span>Job Task(s): </span>
 			<div id="job_task_list">Loading task(s)...</div>
 		</label>
 	</div>
 	<div class="group" id="job_unass_group">
-		<label for="job_unassigned_tasks">
+		<label for="job_unassigned_tasks" class="task_label">
 			<span>Unassigned Task(s): </span>
 			<div id="job_unassigned_task_list">Loading task(s)...</div>
 		</label>
 	</div>
 	<div class="group">
-		<span class="listing-date-desc">Some description about listing dates / costs</span>
+		<label class="listing">Listing Date:</label>
+		<p class="hint listing-date-desc">Some description about listing dates / costs</p>
 		<label for="listingDateStart">
-			<span>Listing Start Date: </span>
+			<span>Start: </span>
 			<input type="text" id="listingDateStart" placeholder="" name="listingDateStart"{{#if listing.start}}value="{{listing.start}}"{{/if}} />
 		</label>
 		<label for="listingDateEnd">
-			<span>Listing End Date: </span>
+			<span>End: </span>
 			<input type="text" id="listingDateEnd" placeholder="" name="listingDateEnd"{{#if listing.end}}value="{{listing.end}}"{{/if}} />
 		</label>
 	</div>
