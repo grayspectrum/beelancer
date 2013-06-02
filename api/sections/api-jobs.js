@@ -1160,16 +1160,30 @@ module.exports = function(app, db) {
 									bid.save(function(err) {
 										if (!err) {
 											job.bids.push(bid._id);
-											job.save();
+											job.save(function(err) {
+												// add to callers watch list
+												if (user.jobs.watched.indexOf(job._id) === -1) {
+													user.jobs.watched.push(bid._id);
+													user.save();
+												}
 
-											// add to callers watch list
-											if (user.jobs.watched.indexOf(job._id) === -1) {
-												user.jobs.watched.push(bid._id);
-												user.save();
-											}
+												// send an email to the owner to alert
+												// them that they've received a bid
+												db.user.findOne({ _id : job.owner })
+												.exec(function(err, owner) {
+													db.user.findOne({ _id : bid.user })
+													.populate('profile').exec(function(err, user) {
+														job = job.toObject();
+														job.owner = owner;
+														job.bid = user;
 
-											res.write(JSON.stringify(bid));
-											res.end();
+														mailer.send('bid', job);
+													});
+												});
+
+												res.write(JSON.stringify(bid));
+												res.end();
+											});
 										}
 										else {
 											res.writeHead(500);

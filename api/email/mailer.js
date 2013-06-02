@@ -70,6 +70,18 @@ module.exports.send = function(tmpl, tmpl_data) {
 							alternative : true
 						}
 					]
+				},
+				'bid' : {
+					text : 'Bid recieved from: ' + tmpl_data.bid.profile.firstName + ' ' + tmpl_data.bid.profile.lastName, 
+					from : 'Beelancer <noreply@beelancer.com>', 
+					to : '<' + tmpl_data.owner.email + '>',
+					subject : 'Bid Recieved',
+					attachment : [
+						{
+							data : body,
+							alternative : true
+						}
+					]
 				}
 			};
 
