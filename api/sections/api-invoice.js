@@ -473,21 +473,18 @@ module.exports = function(app, db) {
 									res.redirect('/invoice/' + req.params.invoiceId);
 								}
 								else {
-									res.writeHead(500);
 									res.redirect('/invoice/' + req.params.invoiceId + '?error=' + err);
 								}
 							});
 						}
 						else {
-							res.writeHead(500);
 							res.redirect('/invoice/' + req.params.invoiceId + '?error=' + err);
 							res.end();
 						}
 					});
 				}
 				else {
-					res.writeHead((err) ? 500 : 400);
-					res.write('/invoice/' + req.params.invoiceId + '?error=' + (err || 'Could not find invoice.'));
+					res.redirect('/invoice/' + req.params.invoiceId + '?error=' + (err || 'Could not find invoice.'));
 					res.end();
 				}
 			});
