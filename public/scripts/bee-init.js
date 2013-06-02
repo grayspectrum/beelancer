@@ -136,6 +136,22 @@ _.load([
 			]
 		}
 	});
+	
+	var invoices = new bee.Module(app, {
+		name : 'invoices',
+		container : 'main',
+		load : {
+			always : [
+				'/scripts/modules/invoices/invoices-bindings.js'
+			],
+			before : [
+			
+			],
+			once : [
+				'/scripts/modules/invoices/invoices.css'
+			]
+		}
+	});
 
 	var contact = new bee.Module(app, {
 		name : 'contact',

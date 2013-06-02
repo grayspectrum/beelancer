@@ -15,7 +15,7 @@ var conf = require('./email-config.js')
 
 module.exports.send = function(tmpl, tmpl_data) {
 	tmpl_data.domain = appConf.domain;
-	
+
 	fs.readFile(tmpl_path + tmpl + '.html', function(err, data) {
 		if (err) {
 			console.log(err);

@@ -46,23 +46,17 @@ module.exports.verifyUser = function(req, db, callback) {
 			.populate('jobs.watched', 'title')
 		.exec(function(err, user) {
 			if (err || !user) {
-				callback.call(this, {
-					text : 'The user account could not be found.'
-				}, null);
+				callback.call(this, 'The user account could not be found.', null);
 			} else {
 				if (user.apiKey === creds.apiKey) {
 					callback.call(this, null, user);
 				} else {
-					callback.call(this, {
-						text : 'The supplied UserId and API key are invalid'
-					}, null);
+					callback.call(this, 'The supplied UserId and API key are invalid', null);
 				}
 			}
 		});
 	} else {
-		callback.call(this, {
-			text : 'Permission Denied'
-		}, null);
+		callback.call(this, 'Permission Denied', null);
 	}
 };
 
@@ -111,5 +105,42 @@ module.exports.tasks = {
 				}
 			});
 		}
+	},
+	getTotalWorklogMinutes : function(wlog) {
+		var time = 0;
+		wlog.forEach(function(val) {
+			var diff = val.ended - val.started;
+			time = time + diff;
+		});
+		return Math.round(((time % 86400000) % 3600000) / 60000);
+	},
+	calculateTotal : function(tasks, db, callback) {
+		// build query
+		var task_query = [];
+		tasks.forEach(function(val) {
+			task_query.push({ _id : val });
+		});
+		// get the tasks
+		db.task.find({
+			$or : task_query
+		})
+		.populate('worklog')
+		.exec(function(err, tasks) {
+			if (!err && tasks && tasks.length === task_query.length) {
+				var total = 0;
+				tasks.forEach(function(val) {
+					if (val.isFixed) {
+						total = total + val.rate;
+					}
+					else {
+						total = total + ((module.exports.tasks.getTotalWorklogMinutes(val.worklog) / 60) * val.rate);
+					}
+				});
+				callback(null, total.toFixed(2));
+			}
+			else {
+				callback(err || 'Task(s) are invalid or no longer exist.', null);
+			}
+		});
 	}
 };

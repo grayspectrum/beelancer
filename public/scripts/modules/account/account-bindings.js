@@ -72,15 +72,19 @@
 				);
 				if (!data.isAuthorized) {
 					$('#authorize_aws').show();
+					$('#unauthorize_aws').hide();
 				}
 				else {
 					$('#authorize_aws').hide();
+					$('#unauthorize_aws').show();
 				}
+				bee.ui.loader.hide();
 			},
 			function(err) {
 				$('.aws_account_status').addClass('not_authorized');
 				$('.aws_account_status em').html('Failed to verify status. Please try again.');
 				bee.ui.notifications.notify('err', err);
+				bee.ui.loader.hide();
 			}
 		);
 	};
@@ -273,8 +277,25 @@
 				'/payments/token',
 				{},
 				function(data) {
-					console.log(data);
 					location.href = data.redirectTo;
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
+	});
+	
+	$('#unauthorize_aws').bind('click', function(e) {
+		bee.ui.confirm('Are you sure you wish to reset your payments account?', function() {
+			bee.ui.loader.show();
+			bee.api.send(
+				'POST',
+				'/payments/unauthorize',
+				{},
+				function(data) {
+					checkAWSAccountStatus();
 				},
 				function(err) {
 					bee.ui.loader.hide();

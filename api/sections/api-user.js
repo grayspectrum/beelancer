@@ -175,7 +175,9 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (err) {
 				res.writeHead(401);
-				res.write(err.text);
+				res.write(JSON.stringify({
+					error : err
+				}));
 				res.end();
 			} else {
 				user.apiKey = null;

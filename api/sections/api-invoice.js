@@ -9,7 +9,8 @@ module.exports = function(app, db) {
 
 	var AWS = require('../payments/aws.js')(db)
 	  , mailer = require('../email/mailer.js')
-	  , utils = require('../utils.js');
+	  , utils = require('../utils.js')
+	  , conf = require('../../config.js');
 	
 	// retrieve CBUI url for recipient toekn creation
 	app.get('/api/payments/token', function(req, res) {
@@ -33,6 +34,35 @@ module.exports = function(app, db) {
 				res.writeHead(401);
 				res.write(JSON.stringify({
 					error : 'You must be logged in to generate a recipient token.'
+				}));
+				res.end();
+			}
+		});
+	});
+	
+	// removes the callers recipient token
+	app.post('/api/payments/unauthorize', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				user.aws.recipientId = null;
+				user.aws.refundId = null;
+				user.save(function(err) {
+					if (!err) {
+						res.end();
+					}
+					else {
+						res.writeHead(500);
+						res.write(JSON.stringify({
+							error : err
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to make account changes.'
 				}));
 				res.end();
 			}
@@ -170,7 +200,6 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
 				db.invoice.find({
-					_id : req.params.invoiceId,
 					$or : [
 						{ owner : user._id },
 						{ recipient : user._id }
@@ -250,37 +279,51 @@ module.exports = function(app, db) {
 							recipientTokenId : user.aws.recipientId,
 							refundTokenId : user.aws.refundId
 						},
-						publicViewId : utils.generateKey()
+						publicViewId : utils.generateKey({})
 					});
 					// add reference
 					invoice[invoice.type] = body[body.type];
-					invoice.amount = utils.calculateTotalFromTasks(invoice.tasks);
-					// if there isn't an external recipient defined
-					// then we need to get the reference owner (job or project)
-					if (body.externalRecipient) {
-						invoice.externalRecipient = body.externalRecipient;
-						validateTasks(invoice, finalize);
-					}
-					else {
-						db[invoice.type].findOne({
-							_id : body[body.type]
-						})
-						.populate('owner')
-						.exec(function(err, jobOrProject) {
-							if (!err && jobOrProject) {
-								invoice.recipient = jobOrProject.owner._id;
-								invoice.externalRecipient = jobOrProject.owner.email;
+					utils.tasks.calculateTotal(invoice.tasks, db, onAmount);
+					
+					function onAmount(err, amount) {
+						if (!err) {
+							invoice.amount = amount;
+						
+							// if there isn't an external recipient defined
+							// then we need to get the reference owner (job or project)
+							if (body.externalRecipient) {
+								invoice.externalRecipient = body.externalRecipient;
 								validateTasks(invoice, finalize);
 							}
 							else {
-								res.writeHead((err) ? 500 : 404);
-								res.write(JSON.stringify({
-									error : err || 'Could not find job or project referenced in request.'
-								}));
-								res.end();
+								db[invoice.type].findOne({
+									_id : body[body.type]
+								})
+								.populate('owner')
+								.exec(function(err, jobOrProject) {
+									if (!err && jobOrProject) {
+										invoice.recipient = jobOrProject.owner._id;
+										invoice.externalRecipient = jobOrProject.owner.email;
+										validateTasks(invoice, finalize);
+									}
+									else {
+										res.writeHead((err) ? 500 : 404);
+										res.write(JSON.stringify({
+											error : err || 'Could not find job or project referenced in request.'
+										}));
+										res.end();
+									}
+								});
 							}
-						});
-					}
+						} 
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : err
+							}));
+							res.end();
+						}
+					};
 					
 					function validateTasks(invoice, callback) {
 						// query all tasks in invoice
@@ -329,13 +372,21 @@ module.exports = function(app, db) {
 											res.write(JSON.stringify(invoice));
 											res.end();
 											
-											// attach populated user to invoice
-											var mail_data = invoice.toObject();
-											mail_data.owner = user;
-											mail_data.paymentUrl = conf.domain + 'invoice/' + invoice._id + '?publicViewKey=' + invoice.publicViewKey;
-											// fire off email notification to externalRecipient
-											mailer.send('invoice', mail_data);
-											
+											db.invoice.findOne({
+												_id : invoice._id
+											})
+											.populate('owner')
+											.exec(function(err, invoice) {
+												if (!err && invoice) {
+													// attach populated user to invoice
+													var mail_data = invoice.toObject();
+													mail_data.owner = user;
+													mail_data.email = invoice.externalRecipient;
+													mail_data.paymentUrl = conf.domain + 'invoice/' + invoice._id + '?publicViewId=' + invoice.publicViewId;
+													// fire off email notification to externalRecipient
+													mailer.send('invoice', mail_data);
+												}
+											});
 											// mark the tasks as billed
 											invoice.tasks.forEach(function(val) {
 												db.task.findOne({ _id : val }).exec(function(err, task) {
@@ -395,7 +446,6 @@ module.exports = function(app, db) {
 	// token generation for invoice payment
 	app.get('/api/invoice/pay/:invoiceId', function(req, res) {
 		if (req.query.errorMessage) {
-			res.writeHead(400);
 			res.redirect('/invoice/' + req.params.invoiceId + '?error=' + req.query.errorMessage);
 		}
 		else {

@@ -59,8 +59,8 @@ module.exports = function(db) {
 					recipientPaysFee : 'True',
 					returnURL : config.domain + 'api/payments/token/confirm' // where to redirect confirm
 				}, function(err, data) {
-					if (!err && data.status === 'SR') {
-						callback.call(this, null, user);
+					if (!err) {
+						callback.call(this, null, data);
 					}
 					else {
 						callback.call(this, err || data.errorMessage, data);
@@ -84,15 +84,15 @@ module.exports = function(db) {
 			if (!err && ref) {				
 				send('SingleUse', {
 					callerReference : ref._id.toString(),
-					itemTotal : invoice.amount,
 					paymentMethod : 'CC',
-					paymentReason : invoice.description,
+					itemTotal : invoice.amount,
+					paymentReason : invoice.description.replace(/'/g, '%27'), // for some reason single3 quote break the shit?
 					recipientToken : invoice.aws.recipientTokenId,
 					transactionAmount : invoice.amount,
 					returnURL : config.domain + 'api/invoice/pay/' + invoice._id // where to redirect confirm
 				}, function(err, data) {
-					if (!err && data.status === 'SC') { // success for credit card
-						callback.call(this, null, invoice);
+					if (!err) { // success for credit card
+						callback.call(this, null, data);
 					}
 					else {
 						callback.call(this, err || data.errorMessage, data);

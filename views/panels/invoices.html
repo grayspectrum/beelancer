@@ -1,0 +1,24 @@
+<div id="invoices_nav" class="navigation light-gradient center-pane animated fadeInUp">
+	<div id="filter_invoices">
+		Show: 
+		<select>
+			<option value="inbox" selected="selected">Recieved</option>
+			<option value="sent">Sent</option>
+		</select>
+	</div>
+	<ul>
+		<li>
+			<a href="/#!/invoices?create=true" class="new_message">Create Invoice</a>
+		</li>
+		<li>
+			<a href="" class="">Pay</a>
+		</li>
+		<li>
+			<a href="" class="">Refund</a>
+		</li>
+	</ul>
+</div>
+<div id="invoices" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">Invoices</h4>
+	<div id="invoice_lists"></div>
+</div>

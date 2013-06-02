@@ -32,7 +32,8 @@
 
 #np_submit,
 #recover_account,
-#authorize_aws {
+#authorize_aws,
+#unauthorize_aws {
 	display: block;
 	width: 100%;
 	font-size: 28px;
@@ -82,6 +83,15 @@
 
 #authorize_aws {
 	background: url('/assets/images/mono/black/key_icon&32.png') 12px center no-repeat;
+}
+
+#unauthorize_aws {
+	background: url('/assets/images/mono/black/undo_icon&32.png') 12px center no-repeat;
+}
+
+#unauthorize_aws:hover {
+	background: url('/assets/images/mono/black/undo_icon&32.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
 }
 
 #np_submit:hover {
