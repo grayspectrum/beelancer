@@ -677,10 +677,14 @@ module.exports = function(app, db) {
 							body.listing.isPromoted = (body.isPromoted) ? body.isPromoted : false;
 							body.listing.start = (body.listingDateStart) ? body.listingDateStart : null;
 							body.listing.end = (body.listingDateEnd) ? body.listingDateEnd : null;
-							if (body.tasks instanceof Array) {
+							if (body.tasks && body.tasks instanceof Array) {
 								// already an array, no need to do anything
 							} else {
-								body.tasks = [body.tasks];
+								if (body.tasks) {
+									body.tasks = [body.tasks];
+								} else {
+									body.tasks = [];
+								}								
 							}
 							
 							utils.tasks.updateReferencedJobs(db, job.tasks, body.tasks, job._id);
@@ -923,7 +927,9 @@ module.exports = function(app, db) {
 													}
 													else {
 														res.writeHead(500);
-														res.write(JSON.stringify(err));
+														res.write(JSON.stringify({
+															error : err
+														}));
 														res.end();
 													}
 												});

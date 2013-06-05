@@ -121,7 +121,7 @@
 
 			$('#job_task_list').parent().remove();
 
-			getTasks(false);
+			getTasks(false, null);
 			getCategories(null);
 			bindNewJobPanel();
 			bee.ui.loader.hide();
@@ -164,7 +164,7 @@
 						$('input, select, textarea').not('#unpublish_job').prop('disabled', true);
 						$('.add_req, #job_unass_group').remove();
 					} else {
-						getTasks(true);
+						getTasks(true, res.tasks);
 					}
 
 					getCategories(res.category.id);
@@ -180,18 +180,39 @@
 		bee.ui.loader.hide();
 	};
 
-	function getTasks(isEdit) {
+	function getTasks(isEdit, tasks) {
 		bee.api.send(
 			'GET',
 			'/tasks/unassigned',
 			{},
 			function(res) {
 				if (res.length > 0) {
-					var taskList = $('#job_unassigned_task_list')
-					  , tmpl = $('#tmpl-taskForJobs').html()
-		  			  , source = Handlebars.compile(tmpl);
+					if (tasks) {
+						// if tasks is already assigned to job, don't display it
+						$.each(tasks, function(key, val) {
+							$.each(res, function(index, value) {
+								if (value._id === val._id) {
+									res.splice(index, 1);
+								}
+							});
+						});
 
-		  			taskList.html(source(res));
+						if (res.length > 0) {
+							var taskList = $('#job_unassigned_task_list')
+							  , tmpl = $('#tmpl-taskForJobs').html()
+				  			  , source = Handlebars.compile(tmpl);
+
+				  			taskList.html(source(res));
+						} else {
+							$('#job_unassigned_task_list').parent().remove();
+						}
+					} else {
+						var taskList = $('#job_unassigned_task_list')
+						  , tmpl = $('#tmpl-taskForJobs').html()
+			  			  , source = Handlebars.compile(tmpl);
+
+			  			taskList.html(source(res));
+					}
 		  		} else {
 		  			if (!isEdit) {
 		  				$('.create_job_container').html('You must create a task in order to create a job for it.');
@@ -381,7 +402,25 @@
 						},
 						function(err) {
 							bee.ui.loader.hide();
-							bee.ui.notifications.notify('err', err);
+							try {
+								err = JSON.parse(err);
+								if (err.error && err.error.name) {
+									var error = err.error.name;
+									// issue validating the user cc info
+									if (error === 'card_error') {
+										var ccTmpl = Handlebars.compile($('#tmpl-ccspan').html())({ message : 'Some of your information appears to be incorrect.  Please review and try again.'});
+										$('.credit-card-info').prepend(ccTmpl);
+									} else if (error === 'api_error') {
+										// stripe api is down
+										var ccTmpl = Handlebars.compile($('#tmpl-ccspan').html())({ message : 'Our credit card processing system is temporarily offline.  Please try again later.'});
+										$('.credit-card-info').prepend(ccTmpl);
+									}
+								} else {
+									bee.ui.notifications.notify('err', err);
+								}
+							} catch (e) {
+								bee.ui.notifications.notify('err', err);
+							}
 						}
 					);
 				}
@@ -821,7 +860,25 @@
 												},
 												function(jobErr) {
 													bee.ui.loader.hide();
-													bee.ui.notifications.notify('err', jobErr);
+													try {
+														jobErr = JSON.parse(jobErr);
+														if (jobErr.error && jobErr.error.name) {
+															var error = jobErr.error.name;
+															// issue validating the user cc info
+															if (error === 'card_error') {
+																var ccTmpl = Handlebars.compile($('#tmpl-ccspan').html())({ message : 'Some of your information appears to be incorrect.  Please review and try again.'});
+																$('.credit-card-info').prepend(ccTmpl);
+															} else if (error === 'api_error') {
+																// stripe api is down
+																var ccTmpl = Handlebars.compile($('#tmpl-ccspan').html())({ message : 'Our credit card processing system is temporarily offline.  Please try again later.'});
+																$('.credit-card-info').prepend(ccTmpl);
+															}
+														} else {
+															bee.ui.notifications.notify('err', jobErr);
+														}
+													} catch (e) {
+														bee.ui.notifications.notify('err', jobErr);
+													}
 												}
 											);
 										}

@@ -401,6 +401,13 @@ li.req a {
 #credit-popup .popup-options {
 	clear: both;
 }
+#credit-popup .cc-error {
+	color: red;
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0 20px;
+	display: block;
+}
 
 .no-job {
 	display: block;
