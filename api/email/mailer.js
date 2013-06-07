@@ -86,7 +86,7 @@ module.exports.send = function(tmpl, tmpl_data) {
 			};
 
 			mlserver.send(emailMsgConfig[tmpl], function(err, message) { 
-				console.log(err || 'Email to ' + tmpl + ' sent to "' + tmpl_data.email + '".'); 
+				console.log(err || 'Email to ' + tmpl + ' sent.'); 
 			});
 		}
 	});

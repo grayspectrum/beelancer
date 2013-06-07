@@ -74,7 +74,8 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
 				var tokenId = req.query.tokenID
-				  , refundId = req.query.refundTokenID;
+				  , refundId = req.query.refundTokenID
+				  , redirect = '/#!/account';
 				  
 				user.aws = {
 					recipientId : tokenId,
@@ -83,10 +84,10 @@ module.exports = function(app, db) {
 
 				user.save(function(err) {
 					if (!err) {
-						res.redirect('/#!/account?awsTokenSuccess=true');
+						res.redirect(redirect + '?awsTokenSuccess=true');
 					}
 					else {
-						res.redirect('/#!/account?error=' + err);
+						res.redirect(redirect + '?error=' + err);
 					}
 				});
 			}
@@ -144,11 +145,23 @@ module.exports = function(app, db) {
 				.populate('job')
 				.populate('project')
 				.populate('tasks')
-				.populate('user', 'profile')
+				.populate('owner', 'profile')
+				.populate('recipient', 'profile')
 				.exec(function(err, invoice) {
 					if (!err && invoice) {
-						res.write(JSON.stringify(invoice));
-						res.end();
+						populateProfiles(invoice, function(err, invoice) {
+							if (!err && invoice) {
+								res.write(JSON.stringify(invoice));
+								res.end();
+							}
+							else {
+								res.writeHead(500);
+								res.write(JSON.stringify({
+									error : err 
+								}));
+								res.end();
+							}
+						});
 					}
 					else {
 						res.writeHead(400);
@@ -168,11 +181,23 @@ module.exports = function(app, db) {
 					.populate('job')
 					.populate('project')
 					.populate('tasks')
-					.populate('user', 'profile')
+					.populate('owner', 'profile')
+					.populate('recipient', 'profile')
 					.exec(function(err, invoice) {
 						if (!err && invoice) {
-							res.write(JSON.stringify(invoice));
-							res.end();
+							populateProfiles(invoice, function(err, invoice) {
+								if (!err && invoice) {
+									res.write(JSON.stringify(invoice));
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err 
+									}));
+									res.end();
+								}
+							});
 						}
 						else {
 							res.writeHead((err) ? 500 : 401);
@@ -192,6 +217,38 @@ module.exports = function(app, db) {
 				}
 			}
 		});
+		// profile populator
+		function populateProfiles(invoice, callback) {
+			var ivc = invoice.toObject()
+			  , owner = invoice.owner.profile
+			  , recipient = (invoice.recipient) ? invoice.recipient.profile : null;
+			db.profile.findOne({
+				_id : owner
+			}).exec(function(err, own) {
+				if (!err && own) {
+					ivc.owner.profile = own;
+					if (recipient) {
+						db.profile.findOne({
+							_id : recipient
+						}).exec(function(err, recip) {
+							if (!err && recip) {
+								ivc.recipient.profile = recip;
+								callback(null, ivc);
+							}
+							else {
+								callback(err || 'No recipient found.');
+							}
+						});
+					}
+					else {
+						callback(null, ivc);
+					}
+				}
+				else {
+					callback(err || 'No owner found.');
+				}
+			});
+		};
 	});
 	
 	// get a list of the users invoices
