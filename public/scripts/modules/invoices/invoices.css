@@ -1,0 +1,11 @@
+/*
+ * beelancer - invoices.css
+ * Author: Gordon Hall
+ */
+
+.invoice_container {
+	padding: 0;
+	margin: 12px 24px;
+	border-top: 1px solid #c1c1c1;
+	font-size: 14px;
+}
