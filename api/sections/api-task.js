@@ -222,11 +222,16 @@ module.exports = function(app, db) {
 							if (!task.job) allowed.push('assignee');
 							updateAllowed(task, allowed);
 						}
+
+						// if the task has been unassigned, set to null
+						if (req.body.assignee === '' || req.body.assignee === null) {
+							task.assignee = null;
+						}
 						
 						// if user is assignee
 						// ---
 						// hoursWorked, isComplete
-						if (task.assignee.toString() === user._id.toString()) {
+						if (task.assignee && (task.assignee.toString() === user._id.toString())) {
 							var allowed = [
 								'hoursWorked',
 								'isComplete'
@@ -235,7 +240,7 @@ module.exports = function(app, db) {
 						}
 						
 						// if the task is published or it is active...
-						if (task.job.isPublished || (job.status === 'IN_PROGRESS' && job.assignee)) {
+						if (task.job && (task.job.isPublished || (task.job.status === 'IN_PROGRESS' && task.job.assignee))) {
 							var allowed = [
 								'hoursWorked',
 								'isComplete'

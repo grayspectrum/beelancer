@@ -9,16 +9,14 @@
 	
 	var newTask = _.querystring.get('newTask')
 	  , viewTask = _.querystring.get('viewTask')
-	  , editTask = _.querystring.get('taskId')
+	  , editTask = _.querystring.get('editTask')
 	  , showCategory = _.querystring.get('show');
 	
 	if (newTask) {
 		new_task();
-		if (editTask) {
-			edit_task();
-		} else {
-			bee.ui.loader.hide();
-		}
+	} else if (editTask) {
+		editTask = _.querystring.get('taskId');
+		edit_task();
 	} else if (viewTask) {
 		view_task();
 	} else {
@@ -43,13 +41,16 @@
 	function new_task() {
 		$('.center-pane, #tasks_nav, #task_view').not('#tasks_create').remove();
 		$('#tasks_create').show();
-		populateNewTaskProjectList();
+		populateNewTaskProjectList(null);
+		bee.ui.loader.hide();
 	};
 	
 	// Edit Task
 	function edit_task() {
+		$('.center-pane, #tasks_nav, #task_view').not('#tasks_create').remove();
+		$('#tasks_create').show();
 		$('#tasks_create > h4:first').html('Edit Task');
-		$('.no_edit').remove();
+
 		// load task
 		bee.ui.loader.show();
 		bee.api.send(
@@ -68,11 +69,21 @@
 						$('#save_task').remove();
 				}
 
-				// if assignee or the job is published
-				if (task.assignee && task.assignee.profile === bee.get('profile')._id || (task.job && task.job.isPublished)) {
-					$('#create_task input').attr('disabled', 'disabled');
+				// // if assignee or the job is published
+				// if (task.assignee && task.assignee.profile === bee.get('profile')._id || (task.job && task.job.isPublished)) {
+					
+				// }
+
+				if (task.worklog.length) {
+					$('.no_edit').remove();
+					$('#create_task input, #create_task select').attr('disabled', 'disabled');
 					// $('#create_task label').unbind(); can't find this binding, where is it?
 					$('#save_task').remove();
+				} else {
+					populateNewTaskProjectList(task.project);
+					if (task.assignee) {
+						$('#newtask_assignee').data('assignee', task.assignee._id);
+					}
 				}
 
 				bee.ui.loader.hide();
@@ -171,13 +182,13 @@
 				}
 
 				// if assignee of task
-				if (task.assignee && (task.assignee.profile === bee.get('profile')._id)) {
+				if (task.assignee && (task.assignee.profile === bee.get('profile')._id) && (task.owner.profile !== bee.get('profile')._id)) {
 					$('#tasks_nav .edit_task').remove();
 				}
 
 				// if owner of task
-				if (task.owner.profile === bee.get('profile')._id) {
-					$('#task_timer_controls .timer, .worklog .timer, #tasks_nav .close_task').remove();
+				if (task.owner.profile === bee.get('profile')._id && (task.assignee && (task.assignee.profile !== task.owner.profile))) {
+					$('#task_timer_controls .timer, .worklog .timer, #tasks_nav .close_task, .work_log button').remove();
 				}
 
 				bee.ui.loader.hide();
@@ -343,7 +354,7 @@
 		return $('<div/>').append(img).html();
 	};
 	
-	function populateNewTaskProjectList() {
+	function populateNewTaskProjectList(projectId) {
 		var list = $('#newtask_project')
 		  , tmpl = $('#tmpl-projectForTask').html()
 		  , source = Handlebars.compile(tmpl);
@@ -354,8 +365,8 @@
 			function(proj) {
 				var defaultProj = _.querystring.get('projectId');
 				list.html(source(proj));
-				if (defaultProj) {
-					list.val(defaultProj);
+				if (defaultProj || projectId) {
+					list.val(defaultProj || projectId);
 				}
 				list.trigger('change');
 			},
@@ -443,8 +454,10 @@
 	});
 	
 	$('#newtask_project').bind('change', function() {
-		var projectId = $(this).val()
+		var project = $(this)
+		  , projectId = project.val()
 		  , list = $('#newtask_assignee')
+		  , assigneeId = list.data('assignee')
 		  , tmpl = $('#tmpl-assigneeForTask').html()
 		  , source = Handlebars.compile(tmpl);
 		list.html('<option value="null">Loading team...</option>');
@@ -455,6 +468,12 @@
 				{},
 				function(team) {
 					list.html(source(team));
+					$.each($('option', list), function(key, val) {
+						if ($(val).val() === assigneeId) {
+							$(val).attr('selected', 'selected');
+							return false;
+						}
+					});
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', err, true);
@@ -484,7 +503,6 @@
 					bee.ui.notifications.notify('success', 'Task Deleted!');
 				},
 				function(err) {
-					console.log(err)
 					bee.ui.loader.hide();
 					bee.ui.notifications.notify('err', err);
 				}
