@@ -69,11 +69,6 @@
 						$('#save_task').remove();
 				}
 
-				// // if assignee or the job is published
-				// if (task.assignee && task.assignee.profile === bee.get('profile')._id || (task.job && task.job.isPublished)) {
-					
-				// }
-
 				if (task.worklog.length) {
 					$('.no_edit').remove();
 					$('#create_task input, #create_task select').attr('disabled', 'disabled');
@@ -189,6 +184,12 @@
 				// if owner of task
 				if (task.owner.profile === bee.get('profile')._id && (task.assignee && (task.assignee.profile !== task.owner.profile))) {
 					$('#task_timer_controls .timer, .worklog .timer, #tasks_nav .close_task, .work_log button').remove();
+
+					// if any work has been done on this task, then it has been assigned and its in progress
+					// so the owner cannot delete or edit the task, therefore remove nav completely
+					if (task.worklog.length) {
+						$('#tasks_nav').remove();
+					}
 				}
 
 				bee.ui.loader.hide();
