@@ -123,7 +123,7 @@ module.exports = (function() {
 						// if the job is not promoted, the job owner must pay
 						// the posting fee - we already have the charge, so let's
 						// make some money...
-						if (!bid.job.isPromoted) {
+						if (!bid.job.listing.isPromoted) {
 							stripe.charges.capture(bid.job.listing.chargeId, function(err, data) {
 								if (!err) {
 									assignTasks(db, to._id, bid.job.tasks, callback);

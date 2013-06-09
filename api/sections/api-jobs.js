@@ -99,7 +99,14 @@ module.exports = function(app, db) {
 	////
 	app.get('/api/jobs/search/:search', function(req, res) {
 		db.job.find({
-			title : new RegExp(req.params.search, 'i'),
+			$or : [
+				{
+					title : new RegExp(req.params.search, 'i')
+				},
+				{
+					description : new RegExp(req.params.search, 'i')
+				}
+			],
 			isPublished : true
 		}).exec(function(err, jobs) {
 			if (!err && jobs) {

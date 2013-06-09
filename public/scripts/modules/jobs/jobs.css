@@ -45,6 +45,10 @@
 	display: none;
 }
 
+#job_search_result p {
+	margin-left: 15px;
+}
+
 #jobs_promoted ul, #jobs_new ul, #jobs_mine ul, #jobs_create ul, #jobs_watched ul, #job_search_result ul {
 	margin: 0;
 	padding: 0;
