@@ -2,7 +2,7 @@
 	<div id="filter_invoices">
 		Show: 
 		<select>
-			<option value="inbox" selected="selected">Recieved</option>
+			<option value="received" selected="selected">Received</option>
 			<option value="sent">Sent</option>
 		</select>
 	</div>
@@ -18,8 +18,30 @@
 		</li>
 	</ul>
 </div>
-<div id="invoices" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">Invoices</h4>
-	<div id="invoice_lists"></div>
+<div id="invoices_received" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">Received Invoices</h4>
+	<div id="invoices_received_list">
+		<div class="loader"></div>
+	</div>
+	<div class="pagination">
+		<button class="pageLeft">&laquo;</button>
+		<span class="pageLocation">
+			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+		</span>
+		<button class="pageRight">&raquo;</button>
+	</div>
+</div>
+<div id="invoices_sent" class="light-gradient center-pane animated fadeInUp">
+	<h4 class="gold-gradient">Sent invoices</h4>
+	<div id="invoices_sent_list">
+		<div class="loader"></div>
+	</div>
+	<div class="pagination">
+		<button class="pageLeft">&laquo;</button>
+		<span class="pageLocation">
+			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+		</span>
+		<button class="pageRight">&raquo;</button>
+	</div>
 </div>
 <div id="view_invoice" class="light-gradient center-pane animated fadeInUp"></div>

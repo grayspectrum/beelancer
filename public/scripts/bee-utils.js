@@ -123,6 +123,21 @@ bee.utils = (function() {
 	    return hours + ':' + minutes + amPm;
 	};
 	
+	function getTimeWorked(worklog) {
+		var time = 0
+		  , parsedTime; 
+		for (var l = 0; l < worklog.length; l++) {
+			var started = new Date(worklog[l].started)
+			  , ended = (worklog[l].ended) ? new Date(worklog[l].ended) : new Date();
+			time = time + (ended.getTime() - started.getTime());
+		}
+		var hours = time / (1000 * 60 * 60)
+		  , minutes = (time % (1000 * 60 * 60)) / (1000 * 60)
+		  , seconds =  ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
+		parsedTime = hours.toFixed() + '<em>h</em> : ' + minutes.toFixed() + '<em>m</em>';
+		return parsedTime;
+	};
+	
 	return {
 		daysUntil : daysUntil,
 		onTeam : onTeam,
@@ -130,6 +145,7 @@ bee.utils = (function() {
 		checkMessages : checkMessages,
 		checkEndorse : checkEndorse,
 		stdTime : stdTime,
+		getTimeWorked : getTimeWorked
 	};
 
 })();

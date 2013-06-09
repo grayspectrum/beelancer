@@ -222,6 +222,11 @@ module.exports = function(app, db) {
 			var ivc = invoice.toObject()
 			  , owner = invoice.owner.profile
 			  , recipient = (invoice.recipient) ? invoice.recipient.profile : null;
+			  
+			// remove the aws props we don't want to serve
+			delete ivc.aws.recipientTokenId;
+			delete ivc.aws.refundTokenId;
+			
 			db.profile.findOne({
 				_id : owner
 			}).exec(function(err, own) {
@@ -265,7 +270,7 @@ module.exports = function(app, db) {
 					if (!err && invoices) {
 						var response = {
 							sent : [],
-							recieved : []
+							received : []
 						};
 						// organize the invoices
 						invoices.forEach(function(val) {
@@ -276,6 +281,9 @@ module.exports = function(app, db) {
 								response.received.push(val);
 							}
 						});
+						// reverse order
+						response.received.reverse();
+						response.sent.reverse();
 						// send em back
 						res.write(JSON.stringify(response));
 						res.end();
@@ -503,7 +511,7 @@ module.exports = function(app, db) {
 	// token generation for invoice payment
 	app.get('/api/invoice/pay/:invoiceId', function(req, res) {
 		if (req.query.errorMessage) {
-			res.redirect('/invoice/' + req.params.invoiceId + '?error=' + req.query.errorMessage);
+			res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + req.query.errorMessage);
 		}
 		else {
 			// we use the recipientTokenId and the senderTokenId from
@@ -527,21 +535,21 @@ module.exports = function(app, db) {
 							// got what we need, let's finish up
 							invoice.save(function(err) {
 								if (!err) {
-									res.redirect('/invoice/' + req.params.invoiceId);
+									res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId);
 								}
 								else {
-									res.redirect('/invoice/' + req.params.invoiceId + '?error=' + err);
+									res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + err);
 								}
 							});
 						}
 						else {
-							res.redirect('/invoice/' + req.params.invoiceId + '?error=' + err);
+							res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + err);
 							res.end();
 						}
 					});
 				}
 				else {
-					res.redirect('/invoice/' + req.params.invoiceId + '?error=' + (err || 'Could not find invoice.'));
+					res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + (err || 'Could not find invoice.'));
 					res.end();
 				}
 			});

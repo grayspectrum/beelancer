@@ -112,7 +112,7 @@ module.exports.tasks = {
 			var diff = val.ended - val.started;
 			time = time + diff;
 		});
-		return Math.round(((time % 86400000) % 3600000) / 60000);
+		return Math.round((time / 1000) / 60);
 	},
 	calculateTotal : function(tasks, db, callback) {
 		// build query

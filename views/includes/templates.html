@@ -926,6 +926,9 @@
 			{{#if error}}
 				Couldn't load invoice.
 			{{else}}
+				{{#if isPaid}}
+					<div class="invoice_paid">PAID</div>
+				{{/if}}
 				<div class="float_wrap">
 					<div class="half_list">
 						<h3>From:</h3>
@@ -954,27 +957,27 @@
 						<em>ID: {{_id}}</em>
 					</div>
 				</div>
-				<table>
+				<table cellspacing="0">
 					<thead>
 						<tr>
-							<td>Task Name</td>
-							<td>Minutes Worked</td>
-							<td>Rate</td>
+							<th style="width: 60%;">Task</th>
+							<th>Time</th>
+							<th>Rate</th>
 						</tr>
 					</thead>
 					<tbody>
 						{{#each tasks}}
 							<tr>
 								<td>
-									<strong>{{this.title}}</strong><br />
+									{{this.title}}<br />
 									{{#if this.job}}
 										<em>{{this.job.title}}</em>
 									{{else}}
 										<em>{{this.project.title}}</em>
 									{{/if}}
 								</td>
-								<td>
-									{{this.minutesWorked}}
+								<td class="time_worked_task">
+									<em>Calculating...</em>
 								</td>
 								<td>$ {{this.rate}} {{#if this.isFixed}}(Fixed){{else}}(Hourly){{/if}}</td>
 							</tr>
@@ -982,7 +985,9 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td>Total: $ {{amount}}</td>
+							<td>&nbsp;</td>
+							<td>Total: </td>
+							<td>$ {{amount}}</td>
 						</tr>
 					</tfoot>
 				</table>
@@ -997,4 +1002,22 @@
 			{{/if}}
 		</div>
 	</div>
+</script>
+
+<!-- Invoices List -->
+<script id="tmpl-invoices_list" type="text/x-handlebars-template">
+	{{#if this.length}}
+		<ul>
+			{{#each this}}
+				<li>
+					<a href="/#!/invoices?viewInvoice={{_id}}" {{#if pastDue}}class="overdue"{{/if}}>
+						<strong>To: </strong>{{externalRecipient}}
+						<span class="invoice_amount">{{amount}}</span>
+					</a>
+				</li>
+			{{/each}}
+		</ul>
+	{{else}}
+		<p class="no_invoices">No invoices to display.</p>
+	{{/if}}
 </script>

@@ -111,20 +111,7 @@
 		);
 	};
 	
-	function getTimeWorked(worklog) {
-		var time = 0
-		  , parsedTime; 
-		for (var l = 0; l < worklog.length; l++) {
-			var started = new Date(worklog[l].started)
-			  , ended = (worklog[l].ended) ? new Date(worklog[l].ended) : new Date();
-			time = time + (ended.getTime() - started.getTime());
-		}
-		var hours = time / (1000 * 60 * 60)
-		  , minutes = (time % (1000 * 60 * 60)) / (1000 * 60)
-		  , seconds =  ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
-		parsedTime = hours.toFixed() + '<em>h</em> : ' + minutes.toFixed() + '<em>m</em>';
-		return parsedTime;
-	};
+	// getTimeWorked moved to bee-utils
 	
 	function timeBetween(startDate, endDate) {
 		var time = (endDate.getTime() - startDate.getTime());
@@ -163,7 +150,7 @@
 				  , timerTmpl = Handlebars.compile(timerSrc)
 				  , timerView = timerTmpl((log.length) ? log[0] : { ended : true });
 				timerCtr.html(timerView);
-				$('.hours-worked-clock .time').html(getTimeWorked(task.worklog));
+				$('.hours-worked-clock .time').html(bee.utils.getTimeWorked(task.worklog));
 				// update nav url
 				var base_url = $('#tasks_nav .edit_task').attr('href');
 				$('#tasks_nav .edit_task').attr('href', base_url + task._id);
