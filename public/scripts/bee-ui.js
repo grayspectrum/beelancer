@@ -234,6 +234,42 @@ bee.ui = (function() {
 			}
 		});
 	};
+
+	$.fn.tooltip = function() {
+		var attr;
+
+		this.unbind().bind({
+			mousemove : move,
+			mouseenter : show,
+			mouseleave : hide
+		});
+
+		function show(event) {
+			$('div.tooltip').remove();
+			if (typeof $(this).attr('title') !== 'undefined' && $(this).attr('title') !== false) {
+				attr = $(this).attr('title');
+				$(this).removeAttr('title').data('title', attr);	// do this to hide the standard title
+				if ($(this).data('title')) {
+					$('<div class="tooltip fadeInUp animated">' + $(this).data('title') + '</div>').appendTo('body');
+				}
+				move(event);
+			}
+		};
+
+		function hide(event) {
+			if ($(this).data('title')) {
+				$(this).attr('title', attr);
+			}
+			$('div.tooltip').hide();
+		};
+
+		function move(event) {
+			var tooltipX = event.pageX - 8
+			  , tooltipY = event.pageY + 8;
+
+			$('div.tooltip').css({top: tooltipY, left: tooltipX});
+		};
+	};
 	
 	////
 	// Pagination Constructor

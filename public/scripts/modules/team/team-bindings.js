@@ -168,6 +168,7 @@
 		function populateResults(results) {
 			var resultUi = Handlebars.compile($('#tmpl-list_member').html())(results || {});
 			$('#search_results').html(resultUi);
+			$('#search_results .member_item').tooltip();
 		};
 		
 		search_input.bind('keypress', doSearch);

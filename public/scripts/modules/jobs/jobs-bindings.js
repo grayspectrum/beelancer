@@ -336,6 +336,7 @@
 														hireBid(val, res);
 													}
 												});
+												$('.job-bids .bid .profile').tooltip();
 											},
 											function(jobErr) {
 												// ??

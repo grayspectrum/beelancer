@@ -162,7 +162,7 @@
 	{{#if this.length}}
 		<ul>
 			{{#each this}}
-				<li{{#if this.ratings.average}} title="Rating: {{this.ratings.average}}, # of Ratings: {{this.ratings.total}}"{{/if}}>
+				<li class="member_item"{{#if this.ratings.average}} title="Rating: {{this.ratings.average}}, # of Ratings: {{this.ratings.total}}"{{/if}}>
 					<a href="/#!/team?viewProfile={{_id}}">
 						<img src="{{avatarPath}}" width="32px" height="32px" />
 						<span class="member-name">{{firstName}} {{lastName}}</span>
@@ -848,7 +848,7 @@
 <script id="tmpl-jobbidlist" type="text/x-handlebars-template">
 	<li class="bid">
 		<a href="#" data-id="{{this._id}}">
-			<div class="profile">
+			<div class="profile"{{#if profile.ratings.average}} title="Rating: {{profile.ratings.average}}, # of Ratings: {{profile.ratings.total}}"{{/if}}>
 				<img src="{{profile.avatarPath}}" width="32px" height="32px" />
 				<span class="member-name">{{profile.firstName}} {{profile.lastName}}</span>
 				<p>{{this.message}}</p>

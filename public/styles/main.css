@@ -831,3 +831,15 @@ p.no_projects {
 .user_showcase a:hover {
 	background: url('/assets/images/mono/black/export_icon&32.png') center center no-repeat;
 }
+
+.tooltip {
+	border-radius: 6px;
+	margin: 8px;
+	padding: 8px;
+	outline: none;
+	background: rgba(0, 0, 0, 0.3);
+	color: white;
+	position: absolute;
+	z-index: 998;
+	font-size: 12px;
+}
