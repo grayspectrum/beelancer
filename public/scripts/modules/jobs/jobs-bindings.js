@@ -215,7 +215,7 @@
 					}
 		  		} else {
 		  			if (!isEdit) {
-		  				$('.create_job_container').html('You must create a task in order to create a job for it.');
+		  				$('.create_job_container').html('<p>You must create a task in order to create a job for it.</p>');
 		  			} else {
 		  				$('#job_unassigned_task_list').parent().remove();
 		  			}

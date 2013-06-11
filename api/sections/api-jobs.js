@@ -1176,7 +1176,7 @@ module.exports = function(app, db) {
 											job.save(function(err) {
 												// add to callers watch list
 												if (user.jobs.watched.indexOf(job._id) === -1) {
-													user.jobs.watched.push(bid._id);
+													user.jobs.watched.push(job._id);
 													user.save();
 												}
 

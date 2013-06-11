@@ -39,6 +39,7 @@ module.exports = function(app, db) {
 						task.isComplete = false;
 						task.project = projectId;
 						task.projectOwner = project.owner;
+						task.isFixedRate = (body.isFixedRate && body.isFixedRate === 'true') ? true : false; 
 						
 						task.save(function(err) {
 							if (err) {
@@ -212,10 +213,12 @@ module.exports = function(app, db) {
 						// isFixed, rate, title, assignee, isComplete
 						if (task.owner.toString() === user._id.toString()) {
 							var allowed = [
-								'isFixed',
+								'isFixedRate',
 								'rate',
 								'title',
-								'isComplete'
+								'isComplete',
+								'project',
+								'assignee'
 							];
 							// only allow the assignee to be updated if
 							// there is not a job tied to it
@@ -249,6 +252,7 @@ module.exports = function(app, db) {
 						}
 						
 						task.isComplete = (req.body.isComplete) ? true : false;
+						task.isFixedRate = (req.body.isFixedRate && req.body.isFixedRate === 'true') ? true : false;
 										
 						task.save(function(err) {
 							if (!err) {

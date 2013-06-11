@@ -238,7 +238,7 @@
 		<div class="messageview_body">
 			<ul>
 				{{#each this}}
-					<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this.from._id}}">
+					<li class="message {{#if this.isRead}}isRead{{/if}}" data-id="{{this.from._id}}" data-message="{{this._id}}">
 						<div class="msg_from">
 							{{#if this.isCurrent}}
 								<div class="this_user">

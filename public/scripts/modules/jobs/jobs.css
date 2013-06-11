@@ -158,6 +158,10 @@ li.req a {
 	margin: 6px 24px;
 }
 
+.create_job_container p {
+	margin: 15px;
+}
+
 .job_buttons {
 	margin: 10px 30px;
 	overflow: auto;

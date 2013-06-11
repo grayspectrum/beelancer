@@ -227,7 +227,7 @@
 					},
 					function(res) {
 						bee.ui.notifications.notify('success', 'Invitation accepted.');
-						$(this).parent('.msg_attachment').remove();
+						$('li.message[data-message="' + messageId + '"]').remove();
 						bee.ui.loader.hide();
 					},
 					function(err) {
