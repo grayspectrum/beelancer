@@ -131,3 +131,77 @@
 	right: 50px;
 	top: 98px
 }
+
+#invoices_received ul,
+#invoices_sent ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+li.invoice_list_item a {
+	padding: 0;
+	margin: 3px 0;
+	display: block;
+	text-decoration: none;
+	border-radius: 6px;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+	font-size: 14px;
+	border: 1px solid #e2e2e2;
+	overflow: hidden;
+	background-color: #fff;
+	box-shadow: 0 2px 4px #d2d2d2;
+}
+
+li.invoice_list_item a > strong {
+	float: right;
+	padding: 14px;
+	width: 56px;
+	color: #fff;
+	text-shadow: none;
+	text-transform: uppercase;
+	font-size: 12px;
+	height: 46px;
+	border-left: 1px solid #e2e2e2
+}
+
+li.invoice_list_item a > strong.unpaid {
+	color: #DF0101;
+}
+
+li.invoice_list_item a > strong.paid {
+	color: green;
+}
+
+li.invoice_list_item a > em {
+	float: left;
+	padding: 12px 12px;
+	width: 348px;
+}
+
+li.invoice_list_item a:hover {
+	background-color: #f6f6f6;
+	border: 1px solid #d2d2d2;
+	border-color: #d2d2d2;
+}
+
+li.invoice_list_item a .invoice_amount {
+	float: right;
+	text-align: right;
+	padding: 12px;
+	font-weight: bold;
+	border-left: 1px solid #e2e2e2;
+	width: 74px;
+	height: 50px;
+}
+
+li.invoice_list_item .description {
+	float: left;
+	margin: 0 12px;
+	font-size: 12px;
+	width: 348px;
+	height: 18px;
+	margin-bottom: 12px;
+	overflow: hidden;
+}
