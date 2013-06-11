@@ -1009,15 +1009,19 @@
 	{{#if this.length}}
 		<ul>
 			{{#each this}}
-				<li>
+				<li class="invoice_list_item">
 					<a href="/#!/invoices?viewInvoice={{_id}}" {{#if pastDue}}class="overdue"{{/if}}>
-						<strong>To: </strong>{{externalRecipient}}
-						<span class="invoice_amount">{{amount}}</span>
+						<em><strong>To: {{externalRecipient}}</strong></em>
+						<strong class="{{#if isPaid}}paid{{else}}unpaid{{/if}}">
+							{{#if isPaid}}paid{{else}}unpaid{{/if}}
+						</strong>
+						<span class="invoice_amount">$ {{amount}}</span>
+						<span class="description">{{description}}</span>
 					</a>
 				</li>
 			{{/each}}
 		</ul>
 	{{else}}
-		<p class="no_invoices">No invoices to display.</p>
+		<p class="no_projects">No invoices to display.</p>
 	{{/if}}
 </script>

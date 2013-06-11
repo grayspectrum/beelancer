@@ -190,7 +190,7 @@ module.exports = function(db) {
 			SignatureVersion : '2',
 			SignatureMethod : 'HmacSHA256',
 			Timestamp : new Date().toJSON(),
-			Version : '2009-01-09'
+			Version : '2010-08-28'
 		} : {
 			// CBUI common params
 			callerKey : config.aws.accessKeyId,
