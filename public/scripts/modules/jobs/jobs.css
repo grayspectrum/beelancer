@@ -110,6 +110,20 @@ li.bid a span.accept {
 	float: right;
 }
 
+li.bid span.accept {
+	font-size: 12px;
+	padding: 6px 12px;
+	font-weight: bold;
+	border-radius: 3px;
+	border: 1px solid #FFC60B;
+	text-shadow: 0 1px 0 #FFC60B;
+}
+
+li.bid span.accept:hover {
+	background: #FFC60B;
+	cursor: pointer;
+}
+
 li.req {
 	display: block;
 }
