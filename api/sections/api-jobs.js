@@ -1155,10 +1155,12 @@ module.exports = function(app, db) {
 								job : job._id
 							}).exec(function(err, bid) {
 								if (!err) {
+									var isUpdate = false;
 									if (bid) {
 										bid.message = body.message;
 										bid.placedOn = new Date();
 										bid.isAccepted = false;
+										isUpdate = true;
 									}
 									else {
 										bid = new db.bid({
@@ -1172,13 +1174,26 @@ module.exports = function(app, db) {
 
 									bid.save(function(err) {
 										if (!err) {
-											job.bids.push(bid._id);
+											// only push the bid if it's not an updated bid
+											if (!isUpdate) job.bids.push(bid._id);
 											job.save(function(err) {
 												// add to callers watch list
-												if (user.jobs.watched.indexOf(job._id) === -1) {
+												if (!user.jobs.watched.length) {
 													user.jobs.watched.push(job._id);
 													user.save();
+												} else {
+													user.jobs.watched.forEach(function(val, key) {
+														if (!val._id.equals(job._id)) {
+															user.jobs.watched.push(job._id);
+															user.save();
+														}
+													});
 												}
+												
+												// if (user.jobs.watched.indexOf(job._id) === -1) {
+												// 	user.jobs.watched.push(job._id);
+												// 	user.save();
+												// }
 
 												// send an email to the owner to alert
 												// them that they've received a bid
