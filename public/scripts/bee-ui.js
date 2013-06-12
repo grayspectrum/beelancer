@@ -236,29 +236,36 @@ bee.ui = (function() {
 	};
 
 	$.fn.tooltip = function() {
-		var attr;
+		var element = $(this)
+		  , attr;
 
-		this.unbind().bind({
+		this.unbind({
 			mousemove : move,
 			mouseenter : show,
 			mouseleave : hide
+		}).bind({
+			mousemove : move,
+			mouseenter : show,
+			mouseleave : hide,
+			click : hide	// ensures the element is removed on click so it doesn't exist in the DOM on a new page render
 		});
 
 		function show(event) {
 			$('div.tooltip').remove();
-			if (typeof $(this).attr('title') !== 'undefined' && $(this).attr('title') !== false) {
-				attr = $(this).attr('title');
-				$(this).removeAttr('title').data('title', attr);	// do this to hide the standard title
-				if ($(this).data('title')) {
-					$('<div class="tooltip fadeInUp animated">' + $(this).data('title') + '</div>').appendTo('body');
+			var title = element.attr('title');
+			if (typeof title !== 'undefined' && title !== false) {
+				attr = title;
+				element.removeAttr('title').data('title', attr);	// do this to hide the standard title
+				if (element.data('title')) {
+					$('<div class="tooltip fadeInUp animated">' + element.data('title') + '</div>').appendTo('body');
 				}
 				move(event);
 			}
 		};
 
 		function hide(event) {
-			if ($(this).data('title')) {
-				$(this).attr('title', attr);
+			if (element.data('title')) {
+				element.attr('title', attr);
 			}
 			$('div.tooltip').hide();
 		};

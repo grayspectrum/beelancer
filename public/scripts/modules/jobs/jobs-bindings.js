@@ -330,11 +330,14 @@
 												$('.job-bids ul').append(bidTmpl);
 
 												// dunno how else to bind this right now
-												$('a[data-id="' + val._id + '"]').click(function(e) {
-													e.preventDefault();
+												$('div[data-id="' + val._id + '"] span.accept').click(function() {
 													if (!val.isAccepted) {
 														hireBid(val, res);
 													}
+												});
+												$('div[data-id="' + val._id + '"] .profile').click(function() {
+													console.log('in click');
+													location.href = '/#!/team?viewProfile=' + val.profile._id;
 												});
 												$('.job-bids .bid .profile').tooltip();
 											},

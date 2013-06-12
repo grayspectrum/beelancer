@@ -847,7 +847,7 @@
 <!-- Job Bid List Template -->
 <script id="tmpl-jobbidlist" type="text/x-handlebars-template">
 	<li class="bid">
-		<a href="#" data-id="{{this._id}}">
+		<div class="bid_container" data-id="{{this._id}}">
 			<div class="profile"{{#if profile.ratings.average}} title="Rating: {{profile.ratings.average}}, # of Ratings: {{profile.ratings.total}}"{{/if}}>
 				<img src="{{profile.avatarPath}}" width="32px" height="32px" />
 				<span class="member-name">{{profile.firstName}} {{profile.lastName}}</span>
@@ -858,7 +858,7 @@
 			{{else}}
 				<span class="gold-gradient accept">Accept Bid</span>
 			{{/if}}
-		</a>
+		</div>
 	</li>
 </script>
 
