@@ -44,4 +44,35 @@
 		<button class="pageRight">&raquo;</button>
 	</div>
 </div>
-<div id="view_invoice" class="light-gradient center-pane animated fadeInUp"></div>
+<div id="invoice_create" class="light-gradient center-pane animated fadeInUp">
+	<form id="create_invoice">
+		<h4 class="gold-gradient">New Invoice</h4>
+		<div class="float_wrap">
+			<div class="half_list">
+				<label class="big_radio" for="type_project">
+					<input id="type_project" type="radio" name="type" value="project" /> Project
+					<p>
+						Bill for tasks completed on a project.
+					</p>
+					<select id="project_ref" name="project" disabled="disabled">
+						<option>Loading Projects...</option>
+					</select>
+				</label>
+			</div>
+			<div class="half_list">
+				<label class="big_radio" for="type_job">
+					<input id="type_job" type="radio" name="type" value="job" /> Job
+					<p>
+						Bill for a completed job.
+					</p>
+					<select id="job_ref" name="job" disabled="disabled">
+						<option>Loading Jobs...</option>
+					</select>
+				</label>
+			</div>
+		</div>
+		<div class="new_invoice_submit_wrapper gold-gradient">
+			<input type="submit" id="send_invoice" value="Send Invoice" />
+		</div>
+	</form>
+</div>

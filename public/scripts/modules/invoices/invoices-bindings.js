@@ -39,7 +39,7 @@
 	
 	function showViewInvoice(invoiceId) {
 		// hide stuff
-		$('#filter_invoices, #invoices_nav, #invoices_nav ul li, #invoices_sent, #invoices_received').hide();
+		$('#filter_invoices, #invoices_nav, #invoices_nav ul li, #invoices_sent, #invoices_received, #invoice_create').hide();
 		// prepare template
 		var tmpl = Handlebars.compile($('#tmpl-invoice').html());
 		bee.ui.loader.show();
@@ -99,12 +99,19 @@
 	};
 	
 	function showCreateInvoice() {
-		
+		// hide stuff
+		$('#invoices_nav, #view_invoice, #invoices_sent, #invoices_received').hide();
+		bee.ui.loader.hide();
+		// initialize tabbed invoice type view
+		// here - user can create invoice for "job"
+		// or "project" - user can select which and
+		// then choose to add tasks from the selected
+		// job/project
 	};
 	
 	function showListInvoices() {
 		// hide stuff
-		$('.refund_invoice, .pay_invoice, #view_invoice').hide();
+		$('.refund_invoice, .pay_invoice, #view_invoice, #invoice_create').hide();
 		bee.ui.loader.show();
 		
 		// get the invoices
@@ -131,7 +138,7 @@
 		$('#invoices_received_list').html(tmpl(invoices.received));
 		
 		var receivedPager = new bee.ui.Paginator(
-			$('#invoices.received .pagination'),
+			$('#invoices_received .pagination'),
 			$('#invoices_received_list ul li'),
 			10
 		);
