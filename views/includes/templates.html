@@ -692,6 +692,9 @@
 	<div class="group">
 		<label for="newjob_reqs" class="req_label">
 			<span>Requirements: </span>
+			<p class="hint">
+				This should be a list of requirements that both you and the eventual assignee agree to.<br />(ex. 'Create Design', 'Implement Design', 'Create Documentation', etc.)
+			</p>
 			<div class="job_req_list">
 				<ul>
 					<li class="req">
@@ -717,8 +720,8 @@
 		</label>
 	</div>
 	<div class="group">
-		<label class="listing">Listing Date:</label>
-		<p class="hint listing-date-desc">Some description about listing dates / costs</p>
+		<label class="listing">Posting Date:</label>
+		<p class="hint listing-date-desc">This determines when the job will be posted to the jobs board and for how long.  The longer the amount of the time, the higher the cost associated with posting the job becomes.</p>
 		<label for="listingDateStart">
 			<span>Start: </span>
 			<input type="text" id="listingDateStart" placeholder="" name="listingDateStart"{{#if listing.start}}value="{{listing.start}}"{{/if}} />
@@ -731,7 +734,7 @@
 	<label class="big_radio" for="newjob_isPromoted">
 		<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true"{{#if listing.isPromoted}}checked{{/if}} /> Promote this job
 		<p>
-			By promoting this job, it will show up before other unpromoted jobs on the jobs board.
+			By promoting this job, it will be given priority and will show up before other unpromoted jobs on the jobs board and when searching for jobs.  An additional fee applies.
 		</p>
 	</label>
 	<div class="job_buttons">
@@ -797,13 +800,13 @@
 			<div class="job-dates group">
 				{{#if listing.start}}
 					<div class="job-start-date">
-						<strong>Listing Start:</strong>
+						<strong>Posting Date:</strong>
 						<span>{{listing.start}}</span>
 					</div>
 				{{/if}}
 				{{#if listing.end}}
 					<div class="job-end-date">
-						<strong>Listing End:</strong>
+						<strong>Posting End Date:</strong>
 						<span>{{listing.end}}</span>
 					</div>
 				{{/if}}

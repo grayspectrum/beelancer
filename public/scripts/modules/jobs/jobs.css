@@ -358,6 +358,18 @@ li.req a {
 	height: 32px;
 }
 
+.job-dates .job-start-date {
+	float: left;
+}
+
+.job-dates .job-end-date {
+	float: right;
+}
+
+.job-dates span {
+	display: block;
+}
+
 #credit-popup {
 	position: fixed;
 	top: 0;
