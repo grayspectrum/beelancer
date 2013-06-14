@@ -107,6 +107,29 @@
 		// or "project" - user can select which and
 		// then choose to add tasks from the selected
 		// job/project
+		populateInvoiceTypeOptions('projects', 'projects', '#project_ref');
+		populateInvoiceTypeOptions('jobs/mine', 'jobs', '#job_ref');
+		
+	};
+	
+	// load jobs and projects lists into select menus
+	// on job creation panel
+	function populateInvoiceTypeOptions(endpoint, type, container) {
+		bee.api.send(
+			'GET', 
+			'/' + endpoint, 
+			{}, 
+			function(data) {
+				$(container).html(
+					Handlebars.compile(
+						$('#tmpl-invoice_type_options').html()
+					)(data)
+				);
+			}, 
+			function(err) {
+				$(container).html('<option>Failed to get ' + type + '.</option>');
+			}
+		);
 	};
 	
 	function showListInvoices() {
@@ -154,6 +177,13 @@
 	
 	$('#filter_invoices select').bind('change', function() {
 		location.href = '/#!/invoices?show=' + $(this).val();
+	});
+	
+	$('#type_project, #type_job').bind('change', function() {
+		$('#project_ref, #job_ref').attr('disabled', 'disabled');
+		if ($(this).is(':checked')) {
+			$(this).siblings('select').removeAttr('disabled');
+		}
 	});
 	
 })();

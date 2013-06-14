@@ -71,6 +71,26 @@
 				</label>
 			</div>
 		</div>
+		<label class="full_block" for="invoice_tasks">
+			<span>Tasks</span>
+			<div id="invoice_tasks">
+				<p><small><em>Select a Job or Project to choose the tasks you wish to bill for.</em></small></p>
+			</div>
+		</label>
+		<div class="group">
+			<label for="invoice_dueDate">
+				<span>Due Date: </span>
+				<input type="text" id="invoice_dueDate" placeholder="" name="dueDate" />
+			</label>
+			<label for="invoice_amount">
+				<span>Total: </span>
+				<input type="text" disabled="disabled" id="invoice_amount" placeholder="" name="amount" />
+			</label>
+		</div>
+		<label class="full_block" for="invoice_description">
+			<span>Description:</span>
+			<textarea id="invoice_description" class="required" name="description" maxlength="3000"></textarea>
+		</label>
 		<div class="new_invoice_submit_wrapper gold-gradient">
 			<input type="submit" id="send_invoice" value="Send Invoice" />
 		</div>

@@ -1025,3 +1025,16 @@
 		<p class="no_projects">No invoices to display.</p>
 	{{/if}}
 </script>
+
+<!-- Invoice Type Options -->
+<script id="tmpl-invoice_type_options" type="text/x-handlebars-template">
+	{{#if assigned}}
+		{{#each assigned}}
+			<option value="{{_id}}">{{title}}</option>
+		{{/each}}
+	{{else}}
+		{{#each this}}
+			<option value="{{_id}}">{{title}}</option>
+		{{/each}}
+	{{/if}}
+</script>
