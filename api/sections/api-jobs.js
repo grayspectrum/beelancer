@@ -108,7 +108,10 @@ module.exports = function(app, db) {
 				}
 			],
 			isPublished : true
-		}).exec(function(err, jobs) {
+		})
+		.sort({ 'listing.start' : -1 })
+		.sort({'listing.isPromoted' : 1 })
+		.exec(function(err, jobs) {
 			if (!err && jobs) {
 				res.write(JSON.stringify(jobs));
 				res.end();
