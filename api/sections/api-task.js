@@ -145,6 +145,36 @@ module.exports = function(app, db) {
 			}
 		});
 	});
+	
+	////
+	// GET - /api/tasks/cost
+	// Takes array of task ids and returns calculated cost of all tasks
+	////
+	app.get('/api/tasks/cost', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err) {
+				utils.tasks.calculateTotal(req.query.tasks || [], db, function(err, total) {
+					if (!err) {
+						res.write(JSON.stringify({
+							total : total
+						}));
+						res.end();
+					}
+					else {
+						res.writeHead(500);
+						res.write(JSON.stringify({
+							error : err
+						}));
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write('You must be logged in to calculate invoice total.');
+				res.end();
+			}
+		});
+	});
 
 	////
 	// GET - /api/tasks/unassigned

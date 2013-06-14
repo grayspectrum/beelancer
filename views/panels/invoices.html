@@ -84,12 +84,12 @@
 			</label>
 			<label for="invoice_amount">
 				<span>Total: </span>
-				<input type="text" disabled="disabled" id="invoice_amount" placeholder="" name="amount" />
+				<input type="text" disabled="disabled" id="invoice_amount" value="$ 0.00" name="amount" />
 			</label>
 		</div>
 		<label class="full_block" for="invoice_description">
 			<span>Description:</span>
-			<textarea id="invoice_description" class="required" name="description" maxlength="3000"></textarea>
+			<textarea id="invoice_description" class="required" name="description" maxlength="3000" placeholder="It was a pleasure working together!"></textarea>
 		</label>
 		<div class="new_invoice_submit_wrapper gold-gradient">
 			<input type="submit" id="send_invoice" value="Send Invoice" />

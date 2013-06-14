@@ -179,16 +179,16 @@
 		);
 	};
 	
-	function loadTaskListByIds(taskIds) {
+	function loadTaskListByIds(tasks) {
 		var source = $('#tmpl-project_tasks').html()
 		  , tmpl = Handlebars.compile(source)
 		  , target = $('#project_tasks')
 		  , loaded = false;
 		// get tasks and populate them
-		$.each(taskIds, function(key, val) {
+		$.each(tasks, function(key, val) {
 			bee.api.send(
 				'GET',
-				'/task/' + val,
+				'/task/' + val._id,
 				{},
 				function(task) {
 					if (!loaded) target.html('');

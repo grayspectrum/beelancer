@@ -32,6 +32,7 @@ module.exports = function(app, db) {
 					})
 					.populate('owner', 'profile email')
 					.populate('members', 'profile')
+					.populate('tasks')
 				.exec(function(err, project) {
 					if (err || !project) {
 						res.writeHead(404);

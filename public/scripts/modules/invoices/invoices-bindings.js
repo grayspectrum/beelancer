@@ -109,7 +109,13 @@
 		// job/project
 		populateInvoiceTypeOptions('projects', 'projects', '#project_ref');
 		populateInvoiceTypeOptions('jobs/mine', 'jobs', '#job_ref');
-		
+	};
+	
+	// validate create invoice
+	function valid() {
+		var result = true;
+		// do validation
+		return result;
 	};
 	
 	// load jobs and projects lists into select menus
@@ -182,8 +188,83 @@
 	$('#type_project, #type_job').bind('change', function() {
 		$('#project_ref, #job_ref').attr('disabled', 'disabled');
 		if ($(this).is(':checked')) {
-			$(this).siblings('select').removeAttr('disabled');
+			$(this).siblings('select').removeAttr('disabled').trigger('change');
 		}
+	});
+	
+	$('#project_ref, #job_ref').bind('change', function() {
+		var that = $(this)
+		  , refId = that.val()
+		  , name = that.attr('name');
+		
+		$('#invoice_tasks').html('<div class="loader"></div>');
+		$('#invoice_amount').val('$ 0.00');
+		
+		bee.api.send(
+			'GET',
+			'/' + name + '/' + refId,
+			{},
+			function(data) {
+				var tmpl = Handlebars.compile($('#tmpl-invoice_task_list').html());
+				$('#invoice_tasks').html(tmpl(data));
+				bindTaskItemBehavior();
+			},
+			function(err) {
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	});
+	
+	$('#invoice_dueDate').datepicker({ minDate : 0 });
+	
+	function bindTaskItemBehavior() {
+		
+		$('.invoice_task').bind('change', function() {
+			var that = $(this)
+			  , tasks = [];
+			
+			if (that.is(':checked')) {
+				that.parent().addClass('selected');
+			}
+			else {
+				that.parent().removeClass('selected');
+			}
+			
+			// get task ids
+			$('#invoice_tasks .selected .invoice_task').each(function() {
+				tasks.push(this.value);
+			});
+			
+			if (tasks.length) {
+				$('#invoice_amount').val('Calculating...');
+				bee.api.send(
+					'GET',
+					'/tasks/cost',
+					{ tasks : tasks },
+					function(data) {
+						$('#invoice_amount').val('$ ' + bee.utils.prettyNumber(data.total));
+					},
+					function(err) {
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			}
+			else {
+				$('#invoice_amount').val('$ 0.00');
+			}
+			
+		});
+	};
+	
+	$('#create_invoice').bind('submit', function(event) {
+		event.preventDefault();
+		if (valid()) {
+			bee.ui.loader.show();
+			// gather selected tasks
+			
+			// send create api call
+		}
+		
 	});
 	
 })();

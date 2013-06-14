@@ -1041,3 +1041,25 @@
 		{{/each}}
 	{{/if}}
 </script>
+
+<!-- Invoice Task List -->
+<script id="tmpl-invoice_task_list" type="text/x-handlebars-template">
+	{{#if tasks.length}}
+		<ul>
+			{{#each tasks}}
+				{{#if isPaid}}
+					<!-- Don't list -->
+				{{else}}
+					<li>
+						<label>
+							<input type="checkbox" value="{{_id}}" name="tasks" class="invoice_task" />
+							<span>{{title}}</span>
+						</label>
+					</li>
+				{{/if}}
+			{{/each}}
+		</ul>
+	{{else}}
+		<p><small><em>There are no completed tasks to bill for.</em></small></p>
+	{{/if}}
+</script>
