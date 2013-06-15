@@ -60,7 +60,7 @@ module.exports.send = function(tmpl, tmpl_data) {
 					]
 				},
 				'invoice' : {
-					text : 'Invoice recieved from: ' + tmpl_data.owner.profile.firstName + ' ' + tmpl_data.owner.profile.lastName, 
+					text : 'You have received an invoice!', 
 					from : 'Beelancer <noreply@beelancer.com>', 
 					to : '<' + tmpl_data.externalRecipient + '>',
 					subject : 'Invoice Recieved',
@@ -72,7 +72,7 @@ module.exports.send = function(tmpl, tmpl_data) {
 					]
 				},
 				'bid' : {
-					text : 'Bid recieved from: ' + tmpl_data.bid.profile.firstName + ' ' + tmpl_data.bid.profile.lastName, 
+					text : 'You have recieved a bid!', 
 					from : 'Beelancer <noreply@beelancer.com>', 
 					to : '<' + tmpl_data.owner.email + '>',
 					subject : 'Bid Recieved',

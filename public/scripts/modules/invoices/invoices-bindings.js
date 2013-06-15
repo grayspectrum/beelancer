@@ -50,11 +50,11 @@
 			{},
 			function(invoice) {
 				// append invoice to panel
-				$('#view_invoice').html(tmpl(invoice));
+				$('#view_invoice').html(tmpl(invoice)).show();
 				// get the time worked for each task
 				updateInvoiceTimeWorked(invoice.tasks);
 				// can we pay or refund?
-				if (invoice.recipient.profile._id === bee.get('profile')._id) {
+				if (invoice.recipient && invoice.recipient.profile._id === bee.get('profile')._id) {
 					// user is the recipient
 					if (!invoice.isPaid) {
 						$('#invoices_nav').show();
@@ -64,9 +64,11 @@
 				}
 				else {
 					// user is the sender
+					$('#invoices_nav').show();
 					if (invoice.isPaid) {
-						$('#invoices_nav, #invoices_nav .refund_invoice').show();
+						$('#invoices_nav .refund_invoice').parent().show()
 					}
+					$('#invoices_nav .delete_invoice').parent().show();
 				}
 				
 				bee.ui.loader.hide();
@@ -74,7 +76,7 @@
 			function(err) {
 				$('#view_invoice').html(tmpl({
 					error : true
-				}));
+				})).show();
 				bee.ui.loader.hide();
 				bee.ui.notifications.notify('err', err);
 			}
@@ -113,8 +115,46 @@
 	
 	// validate create invoice
 	function valid() {
-		var result = true;
+		bee.ui.notifications.dismiss();
+		
+		var result = true
+		  , required = $('#invoice_create .required');
 		// do validation
+		required.each(function() {
+			var field = $(this);
+			if (!field.val()) {
+				result = false;
+				field.addClass('invald');
+				bee.ui.notifications.notify('err', field.attr('name') + ' is a required field.', true);
+			}
+			else {
+				field.removeClass('invald');
+			}
+		});
+		// make sure there are tasks selected
+		if (!$('.invoice_task:checked').length) {
+			result = false;
+			$('label[for="invoice_tasks"]').addClass('invalid');
+			bee.ui.notifications.notify('err', 'Please select some tasks to bill.', true);
+		}
+		else {
+			$('label[for="invoice_tasks"]').removeClass('invalid');
+		}
+		// validate the recipient email address
+		if (_.validate.email($('#invoice_externalRecipient').val())) {
+			$('#invoice_externalRecipient').parent().removeClass('invalid');
+		}
+		else {
+			$('#invoice_externalRecipient').parent().addClass('invalid');
+			bee.ui.notifications.notify('err', 'Recipient email address is invalid.', true);
+			result = false;
+		}
+		
+		if (!$('input[name="type"]:checked').val()) {
+			bee.ui.notifications.notify('err', 'Please select an invoice type.', true);
+			result = false;
+		}
+		
 		return result;
 	};
 	
@@ -140,7 +180,7 @@
 	
 	function showListInvoices() {
 		// hide stuff
-		$('.refund_invoice, .pay_invoice, #view_invoice, #invoice_create').hide();
+		$('.delete_invoice, .refund_invoice, .pay_invoice, #view_invoice, #invoice_create').hide();
 		bee.ui.loader.show();
 		
 		// get the invoices
@@ -181,6 +221,30 @@
 		sentPager.init();
 	};
 	
+	// iterate over tasks and return only the ones
+	// that the user should be able to bill for
+	function filterTasks(data) {
+		// rules - this should also be checked in API
+		// --> if user is the job/project owner, they may bill for any task
+		// 	   this is because they may pass on a bill they paid to their client
+		// --> if user is not the job/project owner, they can only bill for tasks
+		// 	   they are the assignee for
+		var filtered = {
+			tasks : []
+		};
+		if (data.owner._id === bee.get('profile').user) {
+			return data;
+		}
+		else {
+			$.each(data.tasks, function(key, val) {
+				if (val.assignee === bee.get('profile').user && !val.isPaid && val.isComplete) {
+					filtered.tasks.push(val);
+				}
+			});
+		}
+		return filtered;
+	};
+	
 	$('#filter_invoices select').bind('change', function() {
 		location.href = '/#!/invoices?show=' + $(this).val();
 	});
@@ -205,9 +269,29 @@
 			'/' + name + '/' + refId,
 			{},
 			function(data) {
-				var tmpl = Handlebars.compile($('#tmpl-invoice_task_list').html());
-				$('#invoice_tasks').html(tmpl(data));
+				var tmpl = Handlebars.compile($('#tmpl-invoice_task_list').html())
+				  , filtered = filterTasks(data);
+				$('#invoice_tasks').html(tmpl(filtered));
 				bindTaskItemBehavior();
+				// update other fields
+				if (data.owner.email === data.client) {
+					if (data.owner._id === bee.get('profile').user) { // if the creator is the owner and client
+						// they will need to change the recipient
+						$('#invoice_externalRecipient').removeAttr('disabled').val('').parent().show();
+						$('#invoice_recipient').show();
+						$('#invoice_recipient .note').show();
+					}
+					else {
+						$('#invoice_externalRecipient').val(data.client).attr('disabled','disabled').parent().show();
+						$('#invoice_recipient').show();
+						$('#invoice_recipient .note').hide();
+					}
+				}
+				else {
+					$('#invoice_recipient').hide();
+					$('#invoice_externalRecipient').attr('disabled','disabled').parent().hide();
+					$('#invoice_recipient .note').hide();
+				}
 			},
 			function(err) {
 				bee.ui.notifications.notify('err', err);
@@ -261,10 +345,57 @@
 		if (valid()) {
 			bee.ui.loader.show();
 			// gather selected tasks
-			
+			var tasks = []
+			  , data
+			  , type = $('input[name="type"]:checked').val();
+			$('.invoice_task:checked').each(function() {
+				tasks.push(this.value);
+			});
+			data = {
+				tasks : tasks,
+				type : type,
+				description : $('#invoice_description').val(),
+				dueDate : $('#invoice_dueDate').val(),
+				externalRecipient : $('#invoice_externalRecipient').val()
+			};
+			data[type] = $('select[name="' + type + '"]').val();
 			// send create api call
+			bee.api.send(
+				'POST',
+				'/invoice',
+				data,
+				function(data) {
+					bee.ui.notifications.notify('success', 'Invoice sent to ' + data.externalRecipient);
+					location.href = '/#!/invoices?viewInvoice=' + data._id;
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', JSON.parse(err).error);
+				}
+			);
 		}
 		
+	});
+	
+	$('#invoices_nav .delete_invoice').bind('click', function() {
+		var invoice = viewInvoice;
+		if (invoice) {
+			bee.ui.confirm('Are you sure you wish to delete this invoice?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'DELETE',
+					'/invoice/' + invoice,
+					{},
+					function(data) {
+						location.href = '/#!/invoices';
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		}
 	});
 	
 })();

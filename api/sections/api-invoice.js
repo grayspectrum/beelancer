@@ -130,6 +130,40 @@ module.exports = function(app, db) {
 		});
 	});
 	
+	// delete a single invoice by it's id
+	app.del('/api/invoice/:invoiceId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.invoice.findOne({
+					_id : req.params.invoiceId,
+					owner : user._id
+				}).exec(function(err, invoice) {
+					if (!err) {
+						invoice.remove(function(err) {
+							if (!err) {
+								res.end();
+							}
+						});
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Invoice not found or you are not authorized to delete it.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to delete invoices.'
+				}));
+				res.end();
+			}
+		});
+	});
+	
 	// retrieve a single invoice by it's id
 	app.get('/api/invoice/:invoiceId', function(req, res) {
 		var body = req.body;

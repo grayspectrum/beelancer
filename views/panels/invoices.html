@@ -16,6 +16,9 @@
 		<li>
 			<a class="refund_invoice">Refund</a>
 		</li>
+		<li>
+			<a class="delete_invoice">Delete</a>
+		</li>
 	</ul>
 </div>
 <div id="invoices_received" class="light-gradient center-pane animated fadeInUp">
@@ -44,6 +47,7 @@
 		<button class="pageRight">&raquo;</button>
 	</div>
 </div>
+<div id="view_invoice" class="light-gradient center-pane animated fadeInUp"></div>
 <div id="invoice_create" class="light-gradient center-pane animated fadeInUp">
 	<form id="create_invoice">
 		<h4 class="gold-gradient">New Invoice</h4>
@@ -80,11 +84,23 @@
 		<div class="group">
 			<label for="invoice_dueDate">
 				<span>Due Date: </span>
-				<input type="text" id="invoice_dueDate" placeholder="" name="dueDate" />
+				<input type="text" id="invoice_dueDate" class="required" placeholder="" name="dueDate" />
 			</label>
 			<label for="invoice_amount">
 				<span>Total: </span>
 				<input type="text" disabled="disabled" id="invoice_amount" value="$ 0.00" name="amount" />
+			</label>
+		</div>
+		<div class="group" id="invoice_recipient">
+			<label for="invoice_externalRecipient">
+				<span>Recipient: </span>
+				<input type="text" id="invoice_externalRecipient" disabled="disabled" placeholder="" name="externalRecipient" />
+			</label>
+			<label class="note">
+				<span><strong>Note: </strong></span>
+				<p>
+					You are currently set as the recipient of this invoice. Please specify the email address of the intended recipient.
+				</p>
 			</label>
 		</div>
 		<label class="full_block" for="invoice_description">

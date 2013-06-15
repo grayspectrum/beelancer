@@ -15,6 +15,27 @@
 	background: url('/assets/images/mono/black/doc_import_icon&24.png') 12px center no-repeat;
 }
 
+.delete_invoice {
+	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+}
+
+#invoice_recipient {
+	display: none;
+}
+
+#invoice_recipient .note {
+	color: red;
+}
+
+#invoice_recipient .note p {
+	font-size: 12px;
+	margin: 0 24px;
+}
+
+#view_invoice {
+	display: none;
+}
+
 #filter_invoices {
 	float: left;
 	margin: 12px;
