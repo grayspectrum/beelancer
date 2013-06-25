@@ -284,8 +284,16 @@
 		  , source = Handlebars.compile(tmpl)
 		  , activeList = source({ tasks : tasks.active, active : true })
 		  , closedList = source({ tasks : tasks.closed, active : false });
-		$('#tasks_active_list').html(activeList);
-		$('#tasks_closed_list').html(closedList);
+		
+		// only render the visible list
+		if (showCategory) {
+			$('#tasks_' + showCategory + '_list').html(
+				(showCategory === 'active') ? activeList : closedList
+			);
+		}
+		else {
+			$('#tasks_active_list').html(activeList);
+		}
 		
 		var mine = new bee.ui.Paginator(
 			$('.pagination.pag-task-mine'),

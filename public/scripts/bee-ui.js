@@ -388,6 +388,10 @@ bee.ui = (function() {
 					message : $('#wlog_message', form).val()
 				};
 				event.preventDefault();
+				// clear error
+				$('#wlog_startTime, #wlog_endTime', form).parent().removeClass('invalid');
+				$('#wlog_error').hide();
+					
 				if (updateExisting && log.isValid(data)) {
 					bee.ui.loader.show();
 					bee.api.send(
@@ -428,7 +432,8 @@ bee.ui = (function() {
 					});
 				}
 				else {
-					console.log('oops')
+					$('#wlog_startTime, #wlog_endTime', form).parent().addClass('invalid');
+					$('#wlog_error').html('The date range is not valid.').show();
 				}
 				
 			});
@@ -633,7 +638,12 @@ $('#logout').bind('click', function() {
 // Live Bindings
 $(document).on('click', '.big_radio', function(){
 	$('.big_radio').removeClass('selected');
-	$(this).addClass('selected');
+	if ($('input', this).is(':checked')) {
+		$(this).addClass('selected');
+	}
+	else {
+		$(this).removeClass('selected');
+	}
 });
 
 $(document).on('focus', 'input, textarea', function() {
@@ -642,4 +652,21 @@ $(document).on('focus', 'input, textarea', function() {
 
 $(document).on('blur', 'input, textarea', function() {
 	$(this).prev().removeClass('focused');
+});
+
+$(document).on('focus', 'li.req input', function(e) {
+	$('#job_add_req').trigger('click');
+});
+		
+$(document).on('blur', 'li.req input', function(e) {
+	if (!$(this).val()) {
+		var reqs = $('li.req input');
+		reqs.splice(0, 1);
+		
+		reqs.each(function() {
+			if (!$(this).val()) {
+				$(this).parent().remove();
+			}
+		});
+	}
 });

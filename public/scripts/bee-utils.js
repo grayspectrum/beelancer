@@ -20,6 +20,7 @@ bee.utils = (function() {
 	function updateContextAndRenderView(firstTime) {
 		// remove team list widget
 		$('#bee-ui_teamlist').remove();
+		bee.ui.loader.show();
 		
 		if (location.hash.indexOf('login') === -1 &&
 			_.querystring.get('newProfile') != 'true' &&
@@ -43,6 +44,7 @@ bee.utils = (function() {
 
 					bee.utils.checkMessages();
 					bee.utils.checkEndorse();
+					bee.ui.loader.hide();
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', 'Failed to identify you.');
@@ -52,6 +54,7 @@ bee.utils = (function() {
 		} else {
 			bee.ui.refresh();
 			bee.ui.menu.update();
+			bee.ui.loader.hide();
 		}
 	};
 	

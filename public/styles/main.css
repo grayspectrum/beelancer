@@ -466,7 +466,7 @@ input:focus, textarea:focus {
 
 .group input, .group select {
 	display: block;
-	margin-left: 24px;
+	margin: 12px 24px;
 	font-size: 14px;
 	padding: 6px 10px;
 	width: 206px;
@@ -842,4 +842,19 @@ p.no_projects {
 	position: absolute;
 	z-index: 998;
 	font-size: 12px;
+}
+
+#wlog_error {
+	padding: 6px 0 0 0;
+	text-align: center;
+	color: red;
+	font-size: 14px;
+}
+
+#bee-ui_add_worklog_entry label.invalid {
+	color: red;
+}
+
+#bee-ui_add_worklog_entry label.invalid input {
+	border-color: red;
 }

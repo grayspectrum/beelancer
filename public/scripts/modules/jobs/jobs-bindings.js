@@ -43,18 +43,19 @@
 					if (res.length) {
 						var pro_tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
 						$('#promoted_jobs_list').html(pro_tmpl);
-
-						var proPager = new bee.ui.Paginator(
-							$('#jobs_promoted .pagination'),
-							$('#jobs_promoted li.job'),
-							10
-						);
-						proPager.init();
-					} else {
-						var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'There are no promoted jobs to view.' })
+					} 
+					else {
+						var no_tmpl = Handlebars.compile(
+							$('#tmpl-nojobspan').html()
+						)({ message : 'There are no promoted jobs to view.' });
 						$('#promoted_jobs_list').html(no_tmpl);
 					}
-					
+					var proPager = new bee.ui.Paginator(
+						$('#jobs_promoted .pagination'),
+						$('#jobs_promoted li.job'),
+						10
+					);
+					proPager.init();
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', err);
@@ -540,6 +541,7 @@
 				$('#job_search_result').html('').hide();
 			}
 		});
+		$('.search_job_btn').bind('click', doSearch);
 
 		bee.ui.loader.hide();
 	};
@@ -598,6 +600,8 @@
 			{},
 			function(res) {
 				location.href = '/#!/jobs';
+				bee.ui.notifications.notify('success', 'Job deleted!');
+				bee.ui.loader.hide();
 			},
 			function(err) {
 				bee.ui.notifications.notify('err', err);
@@ -633,46 +637,50 @@
 		$('.job_del_nav').click(function(e) {
 			e.preventDefault();
 
-			if (!job.isPublished) {
-				deleteJob(job._id);
-			} else {
-				bee.api.send(
-					'POST',
-					'/job/unpublish',
-					{
-						jobId : job._id
-					},
-					function(res) {
-						if (res.message) {
+			bee.ui.confirm('Are you sure you want to delete this job?', function() {
+				bee.ui.loader.show();
+				
+				if (!job.isPublished) {
+					deleteJob(job._id);
+				} else {
+					bee.api.send(
+						'POST',
+						'/job/unpublish',
+						{
+							jobId : job._id
+						},
+						function(res) {
+							if (res.message) {
+								bee.ui.loader.hide();
+								bee.ui.confirm(res.message, function() {
+									bee.ui.loader.show();
+									bee.api.send(
+										'POST',
+										'/job/unpublish/confirm',
+										{
+											jobId : res.job._id,
+											publishId : res.job.listing.publishId
+										},
+										function(job) {
+											deleteJob(job._id);
+										},
+										function(jobErr) {
+											bee.ui.loader.hide();
+											bee.ui.notifications.notify('err', jobErr);
+										}
+									);				
+								});
+							} else {
+								deleteJob(job._id);
+							}
+						},
+						function(err) {
+							bee.ui.notifications.notify('err', err);
 							bee.ui.loader.hide();
-							bee.ui.confirm(res.message, function() {
-								bee.ui.loader.show();
-								bee.api.send(
-									'POST',
-									'/job/unpublish/confirm',
-									{
-										jobId : res.job._id,
-										publishId : res.job.listing.publishId
-									},
-									function(job) {
-										deleteJob(job._id);
-									},
-									function(jobErr) {
-										bee.ui.loader.hide();
-										bee.ui.notifications.notify('err', jobErr);
-									}
-								);				
-							});
-						} else {
-							deleteJob(job._id);
 						}
-					},
-					function(err) {
-						bee.ui.notifications.notify('err', err);
-						bee.ui.loader.hide();
-					}
-				);
-			}
+					);
+				}
+			});
 		});
 
 		$('.job_bid_nav').click(function(e) {
@@ -775,7 +783,6 @@
 
 			$('.job_req_rem', tmpl).click(function(e) {
 				e.preventDefault();
-
 				$(this).parent().remove();
 			});
 		});

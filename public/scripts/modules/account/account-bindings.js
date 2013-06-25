@@ -50,6 +50,8 @@
 		bee.ui.loader.hide();
 	}
 	
+	$('input[type="radio"]:checked').parent().trigger('click');
+	
 	$('#np_firstName').focus();
 	
 	$('#create_profile').bind('submit', function(e) {
