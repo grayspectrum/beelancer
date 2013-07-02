@@ -355,9 +355,12 @@
 				tasks : tasks,
 				type : type,
 				description : $('#invoice_description').val(),
-				dueDate : $('#invoice_dueDate').val(),
-				externalRecipient : $('#invoice_externalRecipient').val()
+				dueDate : $('#invoice_dueDate').val()
 			};
+			// only send over external recipient if it's not predefined
+			if (!$('#invoice_externalRecipient').is(':disabled')) {
+				data.externalRecipient = $('#invoice_externalRecipient').val();
+			}
 			data[type] = $('select[name="' + type + '"]').val();
 			// send create api call
 			bee.api.send(
