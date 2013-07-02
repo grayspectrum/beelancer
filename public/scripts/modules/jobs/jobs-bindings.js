@@ -14,15 +14,20 @@
 
 	if (jobSearch) {
 		showJobSearchPanel();
-	} else if(newJob || editJob) {
+	} 
+	else if (newJob || editJob) {
 		showNewJobPanel();
-	} else if(myJobs) {
+	} 
+	else if (myJobs) {
 		showMyJobsPanel();
-	} else if(viewJob || bidJob) {
+	} 
+	else if (viewJob || bidJob) {
 		showJobView();
-	} else if(bidJob) {
+	} 
+	else if (bidJob) {
 		showBidView();
-	} else {
+	} 
+	else {
 		generateJobHomePage();
 	}
 
