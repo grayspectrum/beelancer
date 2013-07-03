@@ -566,14 +566,16 @@ module.exports = function(app, db) {
 							 */
 							invoice.aws.transactionId = data.TransactionId;
 							invoice.aws.transactionStatus = data.TransactionStatus;
-							// got what we need, let's finish up
-							invoice.save(function(err) {
-								if (!err) {
-									res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId);
-								}
-								else {
-									res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + err);
-								}
+							updateInvoiceStatus(invoice.aws.transactionStatus, invoice, function(invoice) {
+								// got what we need, let's finish up
+								invoice.save(function(err) {
+									if (!err) {
+										res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId);
+									}
+									else {
+										res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + err);
+									}
+								});
 							});
 						}
 						else {
@@ -610,7 +612,9 @@ module.exports = function(app, db) {
 									 * DO WE NEED TO SET refundPending HERE?
 									 */									
 									invoice.aws.transactionStatus = data.TransactionStatus;
-									invoice.save();
+									updateInvoiceStatus(invoice.aws.transactionStatus, invoice, function(invoice) {
+										invoice.save();
+									});
 									res.write(JSON.stringify({
 										refundStatus : data.TransactionStatus
 									}));
@@ -665,31 +669,38 @@ module.exports = function(app, db) {
 					date : data.transactionDate,
 					result : data.status
 				};
-				if (data.transactionStatus === 'SUCCESS') {
-					switch(req.params.operation) {
-						case 'pay':
-							invoice.isPaid = true;
-							invoice.paymentPending = false;
-							// mark tasks as paid
-							invoice.tasks.forEach(function(val) {
-								db.task.findOne({ _id : val }).exec(function(err, task) {
-									if (!err && task) {
-										task.isPaid = true;
-										task.save();
-									}
-								});
-							});
-							break;
-						case 'refund':
-							invoice.isRefunded = true;
-							invoice.refundPending = false;
-							break;
-						default:
-					}
-				}
-				invoice.save();
+				updateInvoiceStatus(data.transactionStatus, invoice, function(invoice) {
+					invoice.save();
+					res.end();
+				});
 			}
 		});
 	});
+	
+	function updateInvoiceStatus(status, invoice, callback) {
+		if (status === 'SUCCESS') {
+			switch(req.params.operation) {
+				case 'pay':
+					invoice.isPaid = true;
+					invoice.paymentPending = false;
+					// mark tasks as paid
+					invoice.tasks.forEach(function(val) {
+						db.task.findOne({ _id : val }).exec(function(err, task) {
+							if (!err && task) {
+								task.isPaid = true;
+								task.save();
+							}
+						});
+					});
+					break;
+				case 'refund':
+					invoice.isRefunded = true;
+					invoice.refundPending = false;
+					break;
+				default:
+			}
+		}
+		if (callback) callback(invoice);
+	}
 	
 };

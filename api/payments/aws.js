@@ -190,7 +190,7 @@ module.exports = function(db) {
 			SignatureVersion : '2',
 			SignatureMethod : 'HmacSHA256',
 			Timestamp : new Date().toJSON(),
-			Version : '2010-08-28'
+			Version : '2008-09-17'
 		} : {
 			// CBUI common params
 			callerKey : config.aws.accessKeyId,
@@ -215,8 +215,8 @@ module.exports = function(db) {
 		body[(useCoBrandedUI) ? 'signature' : 'Signature'] = requestSignature(requestData);
 		// send the request
 		if (!useCoBrandedUI) {
-			request.get(config.aws.fpsAPI, { 
-				form : body 
+			request.post(config.aws.fpsAPI, {
+				form : body
 			}, function(err, res, body) {
 				if (!err) {
 					callback.call(this, null, body);
