@@ -208,14 +208,16 @@ module.exports = function(db) {
 		// sign the request
 		var requestData = {
 			host : parsedUrl.host,
-			method : (useCoBrandedUI) ? 'GET' : 'POST',
+			method : 'GET',
 			path : parsedUrl.pathname,
 			query : buildSignableQuery(body)
 		};
 		body[(useCoBrandedUI) ? 'signature' : 'Signature'] = requestSignature(requestData);
 		// send the request
 		if (!useCoBrandedUI) {
-			request.post(config.aws.fpsAPI, {
+			console.log(config.aws.fpsAPI + '?' + require('querystring').stringify(body));
+			
+			request.get(config.aws.fpsAPI, {
 				form : body
 			}, function(err, res, body) {
 				if (!err) {
