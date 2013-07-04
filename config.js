@@ -21,7 +21,8 @@ module.exports = (function(env) {
 				publicKey : 'pk_test_y0bemPul6jvmnZmb8VTGJaAM'
 			},
 			aws : {
-				fpsAPI : 'https://fps.sandbox.amazonaws.com/',
+				region : 'FPS-SANDBOX',
+				fpsAPI : 'fps.sandbox.amazonaws.com',
 				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
 				accessKeySecret : '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'
@@ -41,7 +42,8 @@ module.exports = (function(env) {
 				publicKey : 'pk_test_y0bemPul6jvmnZmb8VTGJaAM'
 			},
 			aws : {
-				fpsAPI : 'https://fps.sandbox.amazonaws.com/',
+				region : 'FPS-SANDBOX',
+				fpsAPI : 'fps.sandbox.amazonaws.com',
 				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
 				accessKeySecret : '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'
@@ -61,6 +63,7 @@ module.exports = (function(env) {
 				publicKey : 'pk_live_BrN5Flr0rT52bCuVrbM87AEL'
 			},
 			aws : {
+				region : 'FPS-PROD',
 				fpsAPI : '',
 				coBrandedUI : '',
 				accessKeyId : '',

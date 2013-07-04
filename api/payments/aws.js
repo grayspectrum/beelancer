@@ -13,7 +13,15 @@ var crypto = require('crypto')
   , request = require('request')
   , url = require('url')
   , qs = require('querystring')
-  , Buffer = require('buffer').Buffer;
+  , Buffer = require('buffer').Buffer
+  , amazonFPS = require('awssum-amazon-fps');
+
+// let's try using this module since i apparently suck
+var fps = new amazonFPS.Fps({
+    accessKeyId : config.aws.accessKeyId,
+    secretAccessKey : config.aws.accessKeyId,
+    region : config.aws.region
+});
 
 module.exports = function(db) {
 	
@@ -164,19 +172,21 @@ module.exports = function(db) {
 		});
 	};
 	
-	function buildSignableQuery(body) {
+	function buildSignableQuery(body, caseSensitive) {
 		var data = {}
+		  , query = []
 		// get the keys in order
 		  , keys = Object.keys(body).sort();
-		
+						
 		keys.forEach(function(val, key) {
+			query.push(val + '=' + body[val]);
 			data[val] = body[val];
 		});
-
+	//	return qs.stringify(qs.parse(query.join('&')));
 		return qs.stringify(data);
 	};
 	
-	function insertSignature(sig, querystr) {
+	function insertSignature(sig, querystr, prop) {
 		var query = qs.parse(querystr);
 		query.signature = sig;
 		return buildSignableQuery(query);
@@ -200,11 +210,12 @@ module.exports = function(db) {
 			signatureMethod : 'HmacSHA256',
 			version : '2009-01-09'
 		}
-		  , parsedUrl = url.parse(config.aws.coBrandedUI);
+		  , parsedUrl = (useCoBrandedUI) ? url.parse(config.aws.coBrandedUI) : url.parse(config.aws.fpsAPI);
 		// supplement the body with provided data
 		for (var prop in data) {
 			body[prop] = data[prop];
 		};
+		
 		// sign the request
 		var requestData = {
 			host : parsedUrl.host,
@@ -212,21 +223,16 @@ module.exports = function(db) {
 			path : parsedUrl.pathname,
 			query : buildSignableQuery(body)
 		};
-		body[(useCoBrandedUI) ? 'signature' : 'Signature'] = requestSignature(requestData);
+		
+		if (useCoBrandedUI) {
+			body.signature = requestSignature(requestData, useCoBrandedUI);
+		}
 		// send the request
 		if (!useCoBrandedUI) {
-			console.log(config.aws.fpsAPI + '?' + require('querystring').stringify(body));
-			
-			request.get(config.aws.fpsAPI, {
-				form : body
-			}, function(err, res, body) {
-				if (!err) {
-					callback.call(this, null, body);
-				}
-				else {
-					callback.call(this, err, null);
-				}
-				console.log(body);
+			// and apparently i don't suck because
+			// this throws the same fucking error
+			fps[pipeline](body, function(err, data) {
+				console.log(err.Body.Response.Errors, data);
 			});
 		}
 		else {

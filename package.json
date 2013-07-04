@@ -28,7 +28,9 @@
 		"marked" : "0.2.6",
 		"stripe" : "git+https://github.com/abh/node-stripe.git",
 		"socket.io" : "0.9.x",
-		"request" : "2.21.x"
+		"request" : "2.21.x",
+		"awssum-amazon-fps" : "1.0.0",
+		"awssum-amazon-sts" : "1.0.0"
 	},
 	"analyze": false,
 	"engines": {
