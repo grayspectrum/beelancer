@@ -130,10 +130,8 @@ module.exports = function(db) {
 					OverrideIPNURL : config.domain + 'api/payments/ipn/pay',
 					RecipientTokenId : invoice.aws.recipientTokenId,
 					SenderTokenId : invoice.aws.senderTokenId,
-					TransactionAmount : { 
-						CurrencyCode : 'USD',
-						Value : invoice.amount
-					}
+					'TransactionAmount.CurrencyCode' : 'USD',
+					'TransactionAmount.Value' : invoice.amount
 				}, function(err, data) {
 					if (!err) { 
 						callback.call(this, null, data);
@@ -241,7 +239,7 @@ module.exports = function(db) {
 					callback(err, data);
 				}
 				else {
-					try{console.log(util.inspect(err, { depth : null }))}catch(e){}
+					try{console.log(err.Body.Response.Errors)}catch(e){}
 					try {
 						callback(err.Message, null);
 					} catch(e) {

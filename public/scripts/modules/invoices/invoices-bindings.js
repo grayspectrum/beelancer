@@ -401,4 +401,25 @@
 		}
 	});
 	
+	$('#invoices_nav .refund_invoice').bind('click', function() {
+		var invoice = viewInvoice;
+		if (invoice) {
+			bee.ui.confirm('Are you sure you wish to refund this invoice?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'GET',
+					'/invoice/refund/' + invoice,
+					{},
+					function(data) {
+						location.href = '/#!/invoices';
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		}
+	});
+	
 })();

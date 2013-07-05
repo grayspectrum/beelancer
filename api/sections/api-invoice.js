@@ -564,8 +564,24 @@ module.exports = function(app, db) {
 							/*
 							 * DO WE NEED TO SET paymentPending HERE?
 							 */
-							invoice.aws.transactionId = data.TransactionId;
-							invoice.aws.transactionStatus = data.TransactionStatus;
+							console.log(data)
+							try {
+								invoice.aws.transactionId = data.Body.PayResponse.PayResult.TransactionId;
+								invoice.aws.transactionStatus = data.Body.PayResponse.PayResult.TransactionStatus;
+								// is the invoice good to mark as "paid"
+								switch(invoice.aws.transactionStatus) {
+									case 'Pending':
+									case 'Success':
+									case 'Reserved':
+										invoice.isPaid = true;
+										break;
+									case 'Cancelled':
+									case 'Failure':
+										invoice.isPaid = false;
+										break;
+									default:
+								}
+							} catch(e) {}
 							updateInvoiceStatus(invoice.aws.transactionStatus, invoice, function(invoice) {
 								// got what we need, let's finish up
 								invoice.save(function(err) {
@@ -579,8 +595,16 @@ module.exports = function(app, db) {
 							});
 						}
 						else {
-							res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + err);
-							res.end();
+							AWS.getSingleUseToken(invoice, function(err, tokenData) {
+								if (!err && data) {
+									invoice.aws.paymentUrl = tokenData.redirectTo;
+									// save the invoice
+									invoice.save(function(err) {
+										res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + err);
+										res.end();
+									});
+								}
+							});
 						}
 					});
 				}
@@ -600,7 +624,7 @@ module.exports = function(app, db) {
 			if (!err && user) {
 				// find the invoice
 				db.invoice.findOne({
-					_id : req.params.id,
+					_id : req.params.invoiceId,
 					owner : user._id
 				}).exec(function(err, invoice) {
 					if (!err && invoice) {
@@ -611,12 +635,22 @@ module.exports = function(app, db) {
 									/*
 									 * DO WE NEED TO SET refundPending HERE?
 									 */									
-									invoice.aws.transactionStatus = data.TransactionStatus;
+									try {
+										invoice.aws.transactionStatus = data.Body.PayResponse.PayResult.TransactionStatus;
+										invoice.isPaid = false;
+									} catch(e) {}
 									updateInvoiceStatus(invoice.aws.transactionStatus, invoice, function(invoice) {
-										invoice.save();
+										// redo singleuse token
+										AWS.getSingleUseToken(invoice, function(err, tokenData) {
+											if (!err && data) {
+												invoice.aws.paymentUrl = tokenData.redirectTo;
+												// save the invoice
+												invoice.save();
+											}
+										});
 									});
 									res.write(JSON.stringify({
-										refundStatus : data.TransactionStatus
+										refundStatus : invoice.aws.transactionStatus
 									}));
 									res.end();
 								}
@@ -659,6 +693,7 @@ module.exports = function(app, db) {
 	// recieves IPN and updates invoice
 	app.get('/api/payments/ipn/:operation', function(req, res) {
 		var data = req.query;
+		console.log('IPN:', data);
 		// get the transactionId and find the invoice
 		db.invoice.findOne({
 			'aws.transactionId' : data.transactionId
