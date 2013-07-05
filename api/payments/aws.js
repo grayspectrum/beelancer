@@ -123,7 +123,6 @@ module.exports = function(db) {
 			description : 'CapturePayment'
 		}, function(err, ref) {
 			if (!err && ref) {
-				console.log(invoice.amount)		
 				send('Pay', {
 					CallerReference : ref._id.toString(),
 					ChargeFeeTo : 'Recipient',

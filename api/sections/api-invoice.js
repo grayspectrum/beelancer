@@ -636,7 +636,7 @@ module.exports = function(app, db) {
 									 * DO WE NEED TO SET refundPending HERE?
 									 */									
 									try {
-										invoice.aws.transactionStatus = data.Body.PayResponse.PayResult.TransactionStatus;
+										invoice.aws.transactionStatus = data.Body.RefundResponse.RefundResult.TransactionStatus;
 										invoice.isPaid = false;
 									} catch(e) {}
 									updateInvoiceStatus(invoice.aws.transactionStatus, invoice, function(invoice) {
