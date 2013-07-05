@@ -347,8 +347,8 @@ module.exports = function(app, db) {
 									job.save(function(err) {
 										if (!err) {
 											res.write(JSON.stringify({
-												job : job,
-												message : 'It will cost $' + job.listing.cost + ' to publish this job (payment will be collected upon hiring).  Please confirm that you wish to publish this job.'	
+												job : job
+												//message : 'It will cost $' + job.listing.cost + ' to publish this job (payment will be collected upon hiring).  Please confirm that you wish to publish this job.'	
 											}));
 											res.end();
 										}

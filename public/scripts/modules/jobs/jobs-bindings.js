@@ -150,6 +150,7 @@
 					var req_tmpl = Handlebars.compile($('#tmpl-jobeditreqlist').html())(res.requirements);
 					$('.job_req_list ul').html(req_tmpl);
 
+					$('input[name="requirements"]:first').addClass('required');
 					$('.job_req_rem:first').remove();
 					$('.job_req_rem').click(function(e) {
 						e.preventDefault();
@@ -836,7 +837,7 @@
 
 								// unpromoted job, don't collect payment
 								if (!res.listing.isPromoted) {
-									bee.ui.confirm(pub.message, function() {
+									bee.ui.confirm('Are you sure you want to publish this job?', function() {
 										bee.ui.loader.show();
 										publishConfirm(pub, null,
 											function(job) {

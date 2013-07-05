@@ -651,7 +651,7 @@
 <!-- Job Requirement List Template -->
 <script id="tmpl-jobreqlist" type="text/x-handlebars-template">
 	<li class="req">
-		<input type="text" name="requirements" class="required" placeholder="Start typing a requirement..." />
+		<input type="text" name="requirements" placeholder="Start typing a requirement..." />
 		<a href="#" class="job_req_rem"></a>
 	</li>
 </script>
@@ -660,7 +660,7 @@
 <script id="tmpl-jobeditreqlist" type="text/x-handlebars-template">
 	{{#each this}}
 		<li class="req">
-			<input type="text" name="requirements" class="required" value="{{this}}" placeholder="Start typing a requirement..." />
+			<input type="text" name="requirements" value="{{this}}" placeholder="Start typing a requirement..." />
 			<a href="#" class="job_req_rem"></a>
 		</li>
 	{{/each}}	

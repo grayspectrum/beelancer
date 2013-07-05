@@ -12,7 +12,7 @@ module.exports = function(db, job, callback) {
 		calc.cost = cost;
 		calc.publishId = require('../utils.js').generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 });
 		
-		if (calc.cost) {
+		if (calc.cost || calc.cost === 0) {
 			callback.call(this, null, calc);
 		}
 		else {
@@ -28,7 +28,7 @@ module.exports = function(db, job, callback) {
 		if (tasks.length) {
 			for (var i = 0; i < tasks.length; i++) {
 				dailyTaskCost(tasks[i], function(costErr, dailyCost) {
-					if (!costErr && dailyCost) {
+					if (!costErr && (dailyCost || !job.listing.isPromoted)) {
 						totalCost = parseFloat(totalCost) + parseFloat(dailyCost);
 						numCalculated++;
 						if (numCalculated === tasks.length) {
@@ -53,7 +53,7 @@ module.exports = function(db, job, callback) {
 			if (!projectErr && project) {
 				if (project.deadline.getTime() > new Date().getTime()) {
 					var promoted_rate = 0.035 // returned amount is in cents
-					  , standard_rate = 0.025 // returned amount is in cents
+					  , standard_rate = 0.00 // returned amount is in cents
 					  , multiplier = (task.isFixed) ? parseInt(task.rate) : estimatedRate(task, project);
 					daily_cost = (((job.listing.isPromoted) ? promoted_rate : standard_rate) * multiplier);
 				} else {
