@@ -14,12 +14,13 @@ var crypto = require('crypto')
   , url = require('url')
   , qs = require('querystring')
   , Buffer = require('buffer').Buffer
-  , amazonFPS = require('awssum-amazon-fps');
+  , amazonFPS = require('awssum-amazon-fps')
+  , util = require('util');
 
 // let's try using this module since i apparently suck
 var fps = new amazonFPS.Fps({
     accessKeyId : config.aws.accessKeyId,
-    secretAccessKey : config.aws.accessKeyId,
+    secretAccessKey : config.aws.accessKeySecret,
     region : config.aws.region
 });
 
@@ -121,14 +122,18 @@ module.exports = function(db) {
 			data : invoice._id,
 			description : 'CapturePayment'
 		}, function(err, ref) {
-			if (!err && ref) {				
+			if (!err && ref) {
+				console.log(invoice.amount)		
 				send('Pay', {
 					CallerReference : ref._id.toString(),
 					ChargeFeeTo : 'Recipient',
 					OverrideIPNURL : config.domain + 'api/payments/ipn/pay',
 					RecipientTokenId : invoice.aws.recipientTokenId,
 					SenderTokenId : invoice.aws.senderTokenId,
-					TransactionAmount : invoice.amount
+					TransactionAmount : { 
+						CurrencyCode : 'USD',
+						Value : invoice.amount
+					}
 				}, function(err, data) {
 					if (!err) { 
 						callback.call(this, null, data);
@@ -200,7 +205,7 @@ module.exports = function(db) {
 			SignatureVersion : '2',
 			SignatureMethod : 'HmacSHA256',
 			Timestamp : new Date().toJSON(),
-			Version : '2008-09-17'
+			Version : '2010-08-28'
 		} : {
 			// CBUI common params
 			callerKey : config.aws.accessKeyId,
@@ -232,7 +237,17 @@ module.exports = function(db) {
 			// and apparently i don't suck because
 			// this throws the same fucking error
 			fps[pipeline](body, function(err, data) {
-				console.log(err.Body.Response.Errors, data);
+				if (!err) {
+					callback(err, data);
+				}
+				else {
+					try{console.log(util.inspect(err, { depth : null }))}catch(e){}
+					try {
+						callback(err.Message, null);
+					} catch(e) {
+						callback('An unknown error occurred.', null);
+					}
+				}
 			});
 		}
 		else {
