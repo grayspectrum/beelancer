@@ -8,7 +8,9 @@
 	var viewInvoice = _.querystring.get('viewInvoice')
 	  , createInvoice = _.querystring.get('createInvoice')
 	  , hasError = _.querystring.get('error')
-	  , showCategory = _.querystring.get('show');;
+	  , showCategory = _.querystring.get('show')
+	  , projectId = _.querystring.get('projectId')
+	  , jobId = _.querystring.get('jobId');
 	  
 	if (viewInvoice) {
 		showViewInvoice(viewInvoice);
@@ -17,7 +19,7 @@
 		}
 	}
 	else if (createInvoice) {
-		showCreateInvoice();
+		showCreateInvoice(projectId);
 	}
 	else {
 		showListInvoices();
@@ -166,14 +168,37 @@
 			'/' + endpoint, 
 			{}, 
 			function(data) {
+				var tmpl_data = { 
+					job : (endpoint === 'jobs/mine'),
+					list : (endpoint === 'jobs/mine') ? data.assigned : data
+				};
 				$(container).html(
 					Handlebars.compile(
 						$('#tmpl-invoice_type_options').html()
-					)(data)
+					)(tmpl_data)
 				);
+				// if there is a projectId
+				if (projectId) {
+					$('#project_ref').val(projectId);
+					setTimeout(function() { $('#project_ref').parent().click() }, 200); 
+					// not sure why this isn't ready on val change? 
+					// maybe handlebars compiler is hogging?
+				}
+				// if there is a jobId
+				if (jobId) {
+					$('#job_ref').val(jobId);
+					setTimeout(function() { $('#job_ref').parent().click() }, 200); 
+					// not sure why this isn't ready on val change? 
+					// maybe handlebars compiler is hogging?
+				}
+				// disable the input if there is nothing available
+				if ($(container).val() === 'none') {
+					$('input', $(container).parent()).attr('disabled', 'disabled');
+					$(container).parent().css('opacity', '0.4').addClass('disabled');
+				}
 			}, 
 			function(err) {
-				$(container).html('<option>Failed to get ' + type + '.</option>');
+				$(container).html('<option>Failed to get ' + type + 's.</option>');
 			}
 		);
 	};
@@ -261,42 +286,44 @@
 		  , refId = that.val()
 		  , name = that.attr('name');
 		
-		$('#invoice_tasks').html('<div class="loader"></div>');
-		$('#invoice_amount').val('$ 0.00');
-		
-		bee.api.send(
-			'GET',
-			'/' + name + '/' + refId,
-			{},
-			function(data) {
-				var tmpl = Handlebars.compile($('#tmpl-invoice_task_list').html())
-				  , filtered = filterTasks(data);
-				$('#invoice_tasks').html(tmpl(filtered));
-				bindTaskItemBehavior();
-				// update other fields
-				if (data.owner.email === data.client) {
-					if (data.owner._id === bee.get('profile').user) { // if the creator is the owner and client
-						// they will need to change the recipient
-						$('#invoice_externalRecipient').removeAttr('disabled').val('').parent().show();
-						$('#invoice_recipient').show();
-						$('#invoice_recipient .note').show();
+		if (!($(this).val() === 'none')) { 
+			$('#invoice_tasks').html('<div class="loader"></div>');
+			$('#invoice_amount').val('$ 0.00');
+			
+			bee.api.send(
+				'GET',
+				'/' + name + '/' + refId,
+				{},
+				function(data) {
+					var tmpl = Handlebars.compile($('#tmpl-invoice_task_list').html())
+					  , filtered = filterTasks(data);
+					$('#invoice_tasks').html(tmpl(filtered));
+					bindTaskItemBehavior();
+					// update other fields
+					if (data.owner.email === data.client) {
+						if (data.owner._id === bee.get('profile').user) { // if the creator is the owner and client
+							// they will need to change the recipient
+							$('#invoice_externalRecipient').removeAttr('disabled').val('').parent().show();
+							$('#invoice_recipient').show();
+							$('#invoice_recipient .note').show();
+						}
+						else {
+							$('#invoice_externalRecipient').val(data.client).attr('disabled','disabled').parent().show();
+							$('#invoice_recipient').show();
+							$('#invoice_recipient .note').hide();
+						}
 					}
 					else {
-						$('#invoice_externalRecipient').val(data.client).attr('disabled','disabled').parent().show();
-						$('#invoice_recipient').show();
+						$('#invoice_recipient').hide();
+						$('#invoice_externalRecipient').attr('disabled','disabled').parent().hide();
 						$('#invoice_recipient .note').hide();
 					}
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err);
 				}
-				else {
-					$('#invoice_recipient').hide();
-					$('#invoice_externalRecipient').attr('disabled','disabled').parent().hide();
-					$('#invoice_recipient .note').hide();
-				}
-			},
-			function(err) {
-				bee.ui.notifications.notify('err', err);
-			}
-		);
+			);
+		}
 	});
 	
 	$('#invoice_dueDate').datepicker({ minDate : 0 });

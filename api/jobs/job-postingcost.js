@@ -51,14 +51,18 @@ module.exports = function(db, job, callback) {
 		var daily_cost = null;
 		db.project.findOne({ _id : task.project }).exec(function(projectErr, project) {
 			if (!projectErr && project) {
-				if (project.deadline.getTime() > new Date().getTime()) {
+			/*
+			 * Uncomment the sections below to force project to be before deadline
+			 * to create a job that references it's tasks
+			 */
+			//	if (project.deadline.getTime() > new Date().getTime()) {
 					var promoted_rate = 0.035 // returned amount is in cents
 					  , standard_rate = 0.00 // returned amount is in cents
 					  , multiplier = (task.isFixed) ? parseInt(task.rate) : estimatedRate(task, project);
 					daily_cost = (((job.listing.isPromoted) ? promoted_rate : standard_rate) * multiplier);
-				} else {
-					projectErr = 'The deadline for this project has already passed.';
-				}
+			//	} else {
+			//		projectErr = 'The deadline for this project has already passed.';
+			//	}
 			}
 			if (next && typeof next === 'function') next(projectErr, parseFloat(daily_cost).toFixed(2));
 		});

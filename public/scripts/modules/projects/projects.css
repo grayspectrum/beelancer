@@ -198,7 +198,7 @@
 	display: block;
 	float: none !important;
 	margin-top: 0 !important;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .task-list-hours {
@@ -209,4 +209,18 @@
 	font-weight: normal !important;
 	padding-left: 22px;
 	background: url('/assets/images/mono/black/clock_icon&16.png') left center no-repeat;
+}
+
+.task-list-status {
+	font-weight: normal !important;
+	font-size: 12px;
+	padding-left: 24px;
+}
+
+.task-list-status.open {
+	background: url('/assets/images/icons/current-work.png') left center no-repeat;
+}
+
+.task-list-status.complete {
+	background: url('/assets/images/icons/check.png') left center no-repeat;
 }

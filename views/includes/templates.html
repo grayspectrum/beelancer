@@ -129,7 +129,7 @@
 				</div>
 				<div id="viewproject_tasks" class="half_list">
 					<h5 class="half-list-header">
-						Open Tasks
+						Project Tasks
 						<button class="btn-add" id="project_add_task">Add a Task</button>
 					</h5>
 					{{#if tasks.length}}
@@ -147,15 +147,17 @@
 
 <!-- Project Tasks List -->
 <script id="tmpl-project_tasks" type="text/x-handlebars-template">
-{{#if isComplete}}
-{{else}}
 	<li class="list-task" id="task-{{this._id}}">
 		<a href="/#!/tasks?viewTask={{_id}}">
 			<span class="task-list-title">{{title}}</span>
-			<span class="task-list-hours">{{hoursWorked}} hours tracked.</span>
+			{{#if isComplete}}
+				<span class="task-list-status complete">Task Completed</span>
+			{{else}}
+				<span class="task-list-status open">Task Open</span>
+			{{/if}}
+		<!--<span class="task-list-hours">{{hoursWorked}} hours tracked.</span>-->
 		</a>
 	</li>
-{{/if}}
 </script>
 
 <!-- Member List Item -->
@@ -518,7 +520,7 @@
 		<p class="no_projects">No tasks are {{#if this.active}}assigned to{{else}}completed by{{/if}} others.</p>
 	{{/if}}
 	<h3 class="light-gradient">
-		<span class="users">Unassigned</span>
+		<span class="inbox">Unassigned</span>
 	</h3>
 	{{#if this.tasks.unassigned.length}}
 		<ul class="task-unassigned">
@@ -761,74 +763,91 @@
 	<div class="light-gradient center-pane animated fadeInUp">
 		<div id="job_details" data-id="{{_id}}">
 			<h4 class="gold-gradient">{{title}}</h4>
-			<div class="job-published">{{status}}</div>
+			{{#if isPublished}}
+				<div class="job-published published">Published</div>
+			{{else}}
+				{{#if assignee}}
+					<div class="job-published in_progress">In Progress</div>
+				{{else}}
+					<div class="job-published unpublished">Unpublished</div>
+				{{/if}}
+			{{/if}}
 			<div class="job-watch">
 				<button class="job-watch-btn">Watch Job</button>
 				<button class="job-unwatch-btn">Unwatch Job</button>
 			</div>
-			<div class="job-own-contain group">
-				<div class="job-owner">
-					<strong>Job Owner:</strong>
+			<div class="job-own-contain">
+				<strong>This job is owned by:</strong>
+				<div>
+					<div class="user_showcase">
+						<img src="{{owner.profile.avatarPath}}" width="48px" height="48px">
+						<strong>{{owner.profile.firstName}} {{owner.profile.lastName}}</strong>
+						<em>{{owner.profile.title}}</em>
+						<a href="/#!/team?viewProfile={{owner.profile._id}}">View Profile</a>
+					</div>
+				</div>				
+			</div>
+			{{#if assignee}}
+				<div class="job-assignee">
+					<strong>This job is assigned to:</strong>
 					<div>
-						<div class="job-owner-showcase">
-							<a href="/#!/team?viewProfile={{owner.profile._id}}">
-								<img src="{{owner.profile.avatarPath}}" height="24px" width="24px" />
-								<strong>{{owner.profile.firstName}} {{owner.profile.lastName}}</strong>
-							</a>
+						<div class="user_showcase">
+							<img src="{{assignee.avatarPath}}" width="48px" height="48px">
+							<strong>{{assignee.firstName}} {{assignee.lastName}}</strong>
+							<em>{{assignee.title}}</em>
+							<a href="/#!/team?viewProfile={{assignee._id}}">View Profile</a>
 						</div>
 					</div>
 				</div>
-				<div class="job-cat">
-					<strong>Category:</strong>
-					<span>{{category.title}}
+			{{/if}}
+			<div class="job-cat">
+				<strong>Category:</strong>
+				<span>{{category.title}}
+			</div>
+			<div class="job-desc full-block">
+				<div class="markdown rollout">
+					{{description}}
 				</div>
 			</div>
-			<div class="job-desc group">
-				<strong>Description:</strong>
-				<p>{{description}}</p>
-			</div>
-			<div class="job-reqs group">
-				<strong>Requirements:</strong>
-				<span class="req-desc">A list of requirements for this job.  Each requirement has to be agreed upon by both the owner and bidder of this job.</span>
-				<ul>
-					{{#each requirements}}
-						<li>
-							<span>{{this}}</span>
-							<a href="#" data-req="{{this}}" class="req-bid-accept">Accept</a>
-						</li>
-					{{/each}}
-				</ul>
-			</div>
-			<div class="job-tasks group"></div>
-			<div class="job-dates group">
-				{{#if listing.start}}
-					<div class="job-start-date">
-						<strong>Posting Date:</strong>
-						<span>{{listing.start}}</span>
-					</div>
+			<div class="job-posting-stats">
+				{{#if assignee}}
+					Job is closed for bidding.
+				{{else}}
+					{{#if listing.end}}
+						Job is available for bidding until <strong>{{listing.end}}</strong>.
+					{{else}}
+						Job has not been published for bidding.
+					{{/if}}
 				{{/if}}
-				{{#if listing.end}}
-					<div class="job-end-date">
-						<strong>Posting End Date:</strong>
-						<span>{{listing.end}}</span>
-					</div>
-				{{/if}}
+			</div>
+			<div class="float_wrap">
+				<div class="job-tasks half_list">
+					<h5 class="half-list-header">Tasks:</h5>
+					<ul class="rollout none">
+						{{#each tasks}}
+							<li>
+								<span>{{title}}</span>
+								<span class="task-rate">${{rate}} {{#if isFixed}}(fixed){{else}}(hourly){{/if}}</span>
+							</li>
+						{{/each}}
+					</ul>
+				</div>
+				<div class="job-reqs half_list">
+					<h5 class="half-list-header">Requirements:</h5>
+					<ul class="rollout none">
+						{{#each requirements}}
+							<li>
+								<span>{{this}}</span>
+								<a href="#" data-req="{{this}}" class="req-bid-accept">Accept</a>
+							</li>
+						{{/each}}
+					</ul>
+				</div>
 			</div>
 			<div class="job-bids group">
 				<strong>Bids:</strong>
 				<ul></ul>
 			</div>
-			{{#if assignee}}
-				<div class="job-assignee group">
-					<strong>Assigned To:</strong>
-					<div class="job-owner-showcase">
-						<a href="/#!/team?viewProfile={{assignee._id}}">
-							<img src="{{assignee.avatarPath}}" height="24px" width="24px" />
-							<strong>{{assignee.firstName}} {{assignee.lastName}}</strong>
-						</a>
-					</div>
-				</div>
-			{{/if}}
 			<div class="job-bid-view">
 				<strong>Message:</strong>
 				<textarea class="required" id="message" name="message" placeholder="Type message here..."></textarea>
@@ -842,10 +861,13 @@
 
 <!-- Job Task List Template -->
 <script id="tmpl-jobtasklist" type="text/x-handlebars-template">
-	<strong>Tasks:</strong>
-	<ul>
+	<h5 class="half-list-header">Tasks:</h5>
+	<ul class="rollout none">
 		{{#each this}}
-			<li>{{title}}</li>
+			<li>
+				<span>{{title}}</span>
+				<span class="task-rate">${{rate}} {{#if isFixed}}(fixed){{else}}(hourly){{/if}}</span>
+			</li>
 		{{/each}}
 	</ul>
 </script>
@@ -1034,14 +1056,12 @@
 
 <!-- Invoice Type Options -->
 <script id="tmpl-invoice_type_options" type="text/x-handlebars-template">
-	{{#if assigned}}
-		{{#each assigned}}
+	{{#if list.length}}
+		{{#each list}}
 			<option value="{{_id}}">{{title}}</option>
 		{{/each}}
 	{{else}}
-		{{#each this}}
-			<option value="{{_id}}">{{title}}</option>
-		{{/each}}
+			<option value="none">No {{#if job}}Jobs{{else}}Projects{{/if}}</option>
 	{{/if}}
 </script>
 

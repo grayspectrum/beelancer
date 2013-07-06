@@ -222,8 +222,10 @@
 					}
 		  		} else {
 		  			if (!isEdit) {
-		  				$('.create_job_container').html('<p>You must create a task in order to create a job for it.</p>');
+		  				$('#create_job').remove();
+		  				$('.not-enough-tasks').show();
 		  			} else {
+		  				$('#create_job').show();
 		  				$('#job_unassigned_task_list').parent().remove();
 		  			}
 		  		}
@@ -282,6 +284,8 @@
 
 				var tmpl = Handlebars.compile($('#tmpl-jobview').html())(res);
 				$('#job_view').html(tmpl);
+				// convert description to markdown!
+				$('.markdown').html(marked(_.trim($('.markdown').html())));
 
 				if (viewJob) {
 					$('.req-bid-accept, .job-bid-view').remove();

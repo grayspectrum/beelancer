@@ -76,6 +76,14 @@ h3 span.user {
 	background: url('/assets/images/mono/black/user_icon&16.png') 12px center no-repeat;
 }
 
+h3 span.users {
+	background: url('/assets/images/mono/black/users_icon&16.png') 12px center no-repeat;
+}
+
+h3 span.inbox {
+	background: url('/assets/images/mono/black/inbox_icon&16.png') 12px center no-repeat;
+}
+
 h3 span.worklog {
 	background: url('/assets/images/mono/black/stop_watch_icon&16.png') 12px center no-repeat;
 }
@@ -522,6 +530,12 @@ p.desc {
 	background: #fbfbfb;
 	cursor: pointer;
 	box-shadow: 0 3px 5px rgba(0,0,0,0.4);
+}
+
+.big_radio.disabled:hover {
+	background: #EBEBEB !important;
+	cursor: default !important;
+	box-shadow: none !important;
 }
 
 .big_radio.selected {
