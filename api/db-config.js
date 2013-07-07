@@ -17,6 +17,15 @@ module.exports = (function(env) {
 			name : 'beelancer-dev'
 		},
 		
+		// beta config
+		beta : {
+			user : '',
+			pass : '​',
+			host : 'cloud.gordonwritescode.com',
+			port : 27017,
+			name : 'beelancer-dev'
+		},
+		
 		// qa config
 		qa : {
 			user : '',
