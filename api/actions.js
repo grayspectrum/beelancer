@@ -124,15 +124,15 @@ module.exports = (function() {
 						// the posting fee - we already have the charge, so let's
 						// make some money...
 						if (bid.job.listing && !bid.job.listing.isPromoted) {
-							stripe.charges.capture(bid.job.listing.chargeId, function(err, data) {
-								if (!err) {
+							//stripe.charges.capture(bid.job.listing.chargeId, function(err, data) {
+								//if (!err) {
 									assignTasks(db, to._id, bid.job.tasks, callback);
 									finalizeHire(db, to._id, bid.job.owner, bid, message, callback);
-								}
-								else {
-									callback.call(this, err);
-								}
-							});
+								// }
+								// else {
+								// 	callback.call(this, err);
+								// }
+							//});
 						}
 						else {
 							assignTasks(db, to._id, bid.job.tasks, callback);

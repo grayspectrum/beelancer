@@ -865,21 +865,21 @@ module.exports = function(app, db) {
 										else {
 											// yes, this job is a standard post
 											// and the user now needs to pay
-											var pmtData = utils.hasValidPaymentData(req.body.payment);
-											if (pmtData.valid) {
-												stripe.charges.create({
-													card : req.body.payment,
-													currency : 'usd',
-													amount : (job.listing.cost * 100),
-													capture : false, // don't capture until job is accepted
-													description : 'Job ID: ' + job._id + ', User: ' + user.email
-												}, function(err, data) {
-													if (!err) {
+											// var pmtData = utils.hasValidPaymentData(req.body.payment);
+											// if (pmtData.valid) {
+											// 	stripe.charges.create({
+											// 		card : req.body.payment,
+											// 		currency : 'usd',
+											// 		amount : (job.listing.cost * 100),
+											// 		capture : false, // don't capture until job is accepted
+											// 		description : 'Job ID: ' + job._id + ', User: ' + user.email
+											// 	}, function(err, data) {
+											// 		if (!err) {
 														// lets store the charge id, so we can charge it later when the assignee
 														// accepts the job
-														job.listing.chargeId = data.id;
-														job.save(function(err) {
-															if (!err) {
+														//job.listing.chargeId = data.id;
+														//job.save(function(err) {
+															//if (!err) {
 																// mark bid as accepted
 																bid.isAccepted = true;
 																bid.save(function(err) {
@@ -925,33 +925,33 @@ module.exports = function(app, db) {
 																		res.end();	
 																	}
 																});
-															}
-															else {
-																res.writeHead(500);
-																res.write(JSON.stringify({
-																	error : 'Failed to save charge ID.'
-																}));
-																res.end();
-															}
-														});
-													}
-													else {
-														res.writeHead(500);
-														res.write(JSON.stringify({
-															error : err
-														}));
-														res.end();
-													}
-												});
-											}
-											else {
-												res.writeHead(400);
-												res.write(JSON.stringify({
-													error : 'Missing required properties.',
-													data : pmtData.missing
-												}));
-												res.end();
-											}
+														// 	}
+														// 	else {
+														// 		res.writeHead(500);
+														// 		res.write(JSON.stringify({
+														// 			error : 'Failed to save charge ID.'
+														// 		}));
+														// 		res.end();
+														// 	}
+														// });
+												// 	}
+												// 	else {
+												// 		res.writeHead(500);
+												// 		res.write(JSON.stringify({
+												// 			error : err
+												// 		}));
+												// 		res.end();
+												// 	}
+												// });
+											// }
+											// else {
+											// 	res.writeHead(400);
+											// 	res.write(JSON.stringify({
+											// 		error : 'Missing required properties.',
+											// 		data : pmtData.missing
+											// 	}));
+											// 	res.end();
+											// }
 										}
 									}
 									else {

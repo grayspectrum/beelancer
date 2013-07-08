@@ -215,7 +215,8 @@
 		
 		// Accept Invite
 		$('.msg_action_accept').bind('click', function() {
-			var messageId = $(this).attr('data-id');
+			var messageId = $(this).attr('data-id')
+			  , actionType = $(this).attr('data-action');
 			bee.ui.confirm('Are you sure you want to accept this invitaion?', function() {
 				bee.ui.loader.show();
 				bee.api.send(
@@ -229,6 +230,9 @@
 						bee.ui.notifications.notify('success', 'Invitation accepted.');
 						$('li.message[data-message="' + messageId + '"]').remove();
 						bee.ui.loader.hide();
+						if (actionType && actionType === 'job_invite') {
+							location.href = '/#!/jobs?myJobs=true';
+						}
 					},
 					function(err) {
 						bee.ui.loader.hide();

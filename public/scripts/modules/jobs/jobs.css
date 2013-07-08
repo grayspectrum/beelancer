@@ -128,6 +128,10 @@ li.req {
 	margin: 6px 0;
 }
 
+.job-reqs ul {
+	overflow: auto;
+}
+
 li.req input {
 	float: left;
 	width: 432px;
@@ -588,7 +592,11 @@ li.job_task_option input {
 }
 
 .job-reqs li {
-	
+	clear: both;
+	display: block;
+	float: left;
+	line-height: 18px;
+	width: 100%;
 }
 
 .job-reqs li span {
@@ -596,13 +604,14 @@ li.job_task_option input {
 	background: url('/assets/images/icons/check.png') left center no-repeat;
 	display: block;
 	font-size: 12px;
+	float: left;
 }
 
 .job-tasks li,
 .job-reqs li {
 	margin: 4px 0 !important;
-	border-bottom: 1px solid #e2e2e2;
-	padding: 8px 0;
+	/*border-bottom: 1px solid #e2e2e2;*/
+	/*padding: 8px 0;*/
 }
 
 .job-tasks li:last-of-type,

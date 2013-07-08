@@ -385,32 +385,33 @@
 
 		function hireBid(bid, job) {
 			job.hireCall = true;
-			var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(job);
-			$('body').append(tmpl);
+			//var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(job);
+			//$('body').append(tmpl);
 
-			$('#credit-popup #bee-ui_confirm_ok').click(function(e) {
-				e.preventDefault();
+			//$('#credit-popup #bee-ui_confirm_ok').click(function(e) {
+				//e.preventDefault();
 
-				if (jobDataIsValid(false)) {
-					bee.ui.loader.show();
-					var payment = {
-						name : $('#name').val(),
-						number : $('#number').val(),
-						cvc : $('#cvc').val(),
-						exp_month : Number($('#exp_month').val()),
-						exp_year : Number($('#exp_year').val())
-					};
+			if (jobDataIsValid(false)) {
+				//bee.ui.loader.show();
+				bee.ui.confirm('Are you sure you want to hire for this job?', function() {
+					// var payment = {
+					// 	name : $('#name').val(),
+					// 	number : $('#number').val(),
+					// 	cvc : $('#cvc').val(),
+					// 	exp_month : Number($('#exp_month').val()),
+					// 	exp_year : Number($('#exp_year').val())
+					// };
 					bee.api.send(
 						'POST',
 						'/job/hire',
 						{
 							bidId : bid._id,
 							jobId : job._id,
-							requirements : job.requirements,
-							payment : payment
+							requirements : job.requirements
+							//payment : payment
 						},
 						function(hire) {
-							$('#credit-popup').remove();
+							//$('#credit-popup').remove();
 							bee.ui.loader.hide();
 							bee.ui.notifications.notify('success', 'Hire request sent!');
 							location.href = '/#!/jobs?myJobs=true';
@@ -438,13 +439,14 @@
 							}
 						}
 					);
-				}
-			});
+				});
+			}
+			//});
 			
-			$('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
-				e.preventDefault();
-				$('#credit-popup').remove();
-			});
+			// $('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
+			// 	e.preventDefault();
+			// 	$('#credit-popup').remove();
+			// });
 		};
 	};
 
@@ -582,6 +584,14 @@
 	function saveJob(update, success, failure) {
 		if (jobDataIsValid(true)) {
 			bee.ui.loader.show();
+
+			// if any of the requirements are empty (excluding the first one that was already validated), don't send over
+			$('input[name="requirements"]').each(function() {
+				if ($(this).val() === '') {
+					$(this).remove();
+				}
+			});
+
 			var jobData = $('#create_job input, #create_job select, #create_job textarea').serializeArray();
 			bee.api.send(
 				(update) ? 'PUT' : 'POST',
@@ -740,7 +750,11 @@
 
 		$('.req-bid-accept').click(function(e) {
 			e.preventDefault();
-			$(this).addClass('accepted').unbind();
+			if ($(this).hasClass('accepted')) {
+				$(this).removeClass('accepted');
+			} else {
+				$(this).addClass('accepted');
+			}
 		});
 
 		$('#bid_job').click(function(e) {
