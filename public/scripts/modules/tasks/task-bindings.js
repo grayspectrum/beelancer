@@ -165,7 +165,7 @@
 
 				// if assignee of task
 				if (task.assignee && (task.assignee.profile === bee.get('profile')._id) && (task.owner.profile !== bee.get('profile')._id)) {
-					$('#tasks_nav .edit_task').remove();
+					$('#tasks_nav .edit_task, #tasks_nav .delete_task').remove();
 				}
 
 				// if owner of task
