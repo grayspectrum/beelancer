@@ -179,6 +179,10 @@
 					}
 				}
 
+				if (!task.assignee) {
+					$('#task_timer_controls .timer, .worklog .timer').remove();
+				}
+
 				bee.ui.loader.hide();
 				bindTaskWorkLogEditor();
 				bindTimerControls();
