@@ -10,7 +10,8 @@
 	  , hasError = _.querystring.get('error')
 	  , showCategory = _.querystring.get('show')
 	  , projectId = _.querystring.get('projectId')
-	  , jobId = _.querystring.get('jobId');
+	  , jobId = _.querystring.get('jobId')
+	  , isAllowed = false;
 	  
 	if (viewInvoice) {
 		showViewInvoice(viewInvoice);
@@ -19,6 +20,26 @@
 		}
 	}
 	else if (createInvoice) {
+		// asynchronously check the user's aws 
+		// authorization status
+		bee.api.send(
+			'GET',
+			'/payments/accountStatus',
+			{},
+			function(data) {
+				if (!data.isAuthorized) {
+					bee.ui.confirm(
+						'You are not currently set up to receive payments. Setup payments now?', 
+						function() {
+							location.href = '/#!/account?hasFocus=aws_account_setup';
+						},
+						function() {
+							history.back();
+						}
+					);
+				}
+			}
+		);
 		showCreateInvoice(projectId);
 	}
 	else {
