@@ -180,7 +180,7 @@ module.exports = function(app, db) {
 			_id : jobId
 		})
 		.populate('tasks')
-		.populate('owner', 'profile')
+		.populate('owner', 'profile email')
 		.exec(function(err, job) {
 			if (!err && job) {
 				db.user.findOne({

@@ -327,17 +327,23 @@
 							$('#invoice_externalRecipient').removeAttr('disabled').val('').parent().show();
 							$('#invoice_recipient').show();
 							$('#invoice_recipient .note').show();
+							console.log(1)
 						}
 						else {
 							$('#invoice_externalRecipient').val(data.client).attr('disabled','disabled').parent().show();
 							$('#invoice_recipient').show();
 							$('#invoice_recipient .note').hide();
+							console.log(2)
 						}
 					}
 					else {
 						$('#invoice_recipient').hide();
-						$('#invoice_externalRecipient').attr('disabled','disabled').parent().hide();
+						$('#invoice_externalRecipient')
+							.val(data.client || data.owner.email)
+							.attr('disabled','disabled')
+							.parent().hide();
 						$('#invoice_recipient .note').hide();
+						console.log(3)
 					}
 				},
 				function(err) {
