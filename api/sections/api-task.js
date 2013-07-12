@@ -189,14 +189,20 @@ module.exports = function(app, db) {
 						assignee : null
 					})
 					.populate('owner', 'profile')
-					.populate('project','title')
+					.populate('project','title deadline')
 				.exec(function(err, tasks) {
 					if (err | !tasks) {
 						res.writeHead(404);
 						res.write('Could not get tasks.');
 						res.end();
 					} else {
-						res.write(JSON.stringify(tasks));
+						var taskArray = [];
+						for (var i = 0; i < tasks.length; i++) {
+							if (new Date(tasks[i].project.deadline) > new Date()) {
+								taskArray.push(tasks[i]);
+							}
+						}
+						res.write(JSON.stringify(taskArray));
 						res.end();
 					}
 				});

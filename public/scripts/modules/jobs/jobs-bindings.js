@@ -871,6 +871,7 @@
 									});
 								// promoted job, collect payment
 								} else {
+									pub.job.listing.cost = pub.job.listing.cost.toFixed(2);
 									var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(pub.job);
 									$('body').append(tmpl);
 
