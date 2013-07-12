@@ -4,7 +4,12 @@
 	"version": "0.5.0",
 	"author": "Gordon Hall <gordon@gordonwritescode.com>",
 	"description": "social project management for busy bees",
-	"contributors": [],
+	"contributors": [
+		{
+			"name" : "Chris Williams",
+			"email" : "datzun@gmail.com"
+		}
+	],
 	"scripts": {
 		"start": "node ./app.js",
 		"predeploy": "",

@@ -6,7 +6,8 @@
 (function() {
 	
 	var newProfile = _.querystring.get('newProfile')
-	  , newEndorse = _.querystring.get('endorsements');
+	  , newEndorse = _.querystring.get('endorsements')
+	  , hasFocus = _.querystring.get('hasFocus');
 	
 	if (!newProfile) {
 		// kill welcome stuff

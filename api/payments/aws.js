@@ -95,7 +95,7 @@ module.exports = function(db) {
 					callerReference : ref._id.toString(),
 					paymentMethod : 'CC',
 					itemTotal : invoice.amount,
-					paymentReason : invoice.description.replace(/'/g, '%27'), // for some reason single3 quote break the shit?
+				//	paymentReason : invoice.description.replace(/'/g, '%27'), // for some reason single3 quote break the shit?
 					recipientToken : invoice.aws.recipientTokenId,
 					transactionAmount : invoice.amount,
 					returnURL : config.domain + 'api/invoice/pay/' + invoice._id // where to redirect confirm

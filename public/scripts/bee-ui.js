@@ -204,7 +204,7 @@ bee.ui = (function() {
 	////
 	// Confirm Action
 	////
-	function confirm(msg, callback) {
+	function confirm(msg, callback, cancel) {
 		var tmpl = $('#tmpl-bee-ui_confirm').html()
 		  , source = Handlebars.compile(tmpl)
 		  , ui = source({ message : msg });
@@ -225,6 +225,9 @@ bee.ui = (function() {
 		
 		cancelB.bind('click', function() {
 			dismiss();
+			if (cancel) {
+				cancel.call(window);
+			}
 		});
 		
 		confirmB.bind('click', function() {
