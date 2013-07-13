@@ -6,10 +6,11 @@
  */
 
 var crypto = require('crypto')
-  , mailer = require('../email/mailer.js')
   , utils = require('../utils.js')
   , actions = require('../actions.js')
-  , clients = require('../../sockets.js').clients;
+  , clients = require('../../sockets.js').clients
+  , config = require('../../config.js')
+  , Mailer = require('beelancer-mailer')(config);
 
 module.exports = function(app, db) {
 	

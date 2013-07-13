@@ -6,13 +6,13 @@
  */
 
 var crypto = require('crypto')
-  , mailer = require('../email/mailer.js')
   , utils = require('../utils.js')
   , actions = require('../actions.js')
   , clients = require('../../sockets.js').clients
   , jobCategories = require('../jobs/job-categories.js')
   , calculateJobPostingCost = require('../jobs/job-postingcost.js')
   , config = require('../../config.js')
+  , Mailer = require('beelancer-mailer')(config)
   , stripe = require('stripe')(config.stripe.privateKey);
   
 module.exports = function(app, db) {
@@ -1208,7 +1208,8 @@ module.exports = function(app, db) {
 														job.owner = owner;
 														job.bid = user;
 
-														mailer.send('bid', job);
+														var email = new Mailer('bid', job);
+														email.send(owner.email, 'Bid Received');
 													});
 												});
 

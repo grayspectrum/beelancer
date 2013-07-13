@@ -7,10 +7,11 @@
 
 // Get Models
 var crypto = require('crypto')
-  , mailer = require('../email/mailer.js')
   , utils = require('../utils.js')
   , handlebars = require('handlebars')
-  , fs = require('fs');
+  , fs = require('fs')
+  , config = require('../../config.js')
+  , Mailer = require('beelancer-mailer')(config);
 
 module.exports = function(app, db) {
 	////

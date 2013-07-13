@@ -8,9 +8,9 @@
 module.exports = function(app, db) {
 
 	var AWS = require('../payments/aws.js')(db)
-	  , mailer = require('../email/mailer.js')
 	  , utils = require('../utils.js')
-	  , conf = require('../../config.js');
+	  , conf = require('../../config.js')
+	  , Mailer = require('beelancer-mailer')(conf);
 	
 	// retrieve CBUI url for recipient toekn creation
 	app.get('/api/payments/token', function(req, res) {
@@ -480,10 +480,10 @@ module.exports = function(app, db) {
 													// attach populated user to invoice
 													var mail_data = invoice.toObject();
 													mail_data.owner = user;
-													mail_data.email = invoice.externalRecipient;
 													mail_data.paymentUrl = conf.domain + 'invoice/' + invoice._id + '?publicViewId=' + invoice.publicViewId;
 													// fire off email notification to externalRecipient
-													mailer.send('invoice', mail_data);
+													var email = new Mailer('invoice', mail_data);
+													email.send(invoice.externalRecipient, 'Invoice Received');
 												}
 											});
 											// mark the tasks as billed

@@ -6,9 +6,9 @@
  */
 
 var crypto = require('crypto')
-  , mailer = require('../email/mailer.js')
   , utils = require('../utils.js')
   , config = require('../../config.js')
+  , Mailer = require('beelancer-mailer')(config)
   , fs = require('fs')
   , path = require('path');
 

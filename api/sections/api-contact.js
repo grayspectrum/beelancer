@@ -7,7 +7,8 @@
 
 // Get Models and Connect to DB
 var crypto = require('crypto')
-  , mailer = require('../email/mailer.js')
+  , config = require('../../config.js')
+  , Mailer = require('beelancer-mailer')(config)
   , utils = require('../utils.js');
 
 module.exports = function(app, db) {
@@ -21,8 +22,8 @@ module.exports = function(app, db) {
 						user : user._id,
 						comment : body.comment
 					};
-					
-					mailer.send('contact', contact);
+					var email = new Mailer('contact', contact);
+					email.send('support@beelancer.com', 'Beelancer User Feedback');
 					res.end();
 				}
 			} else {

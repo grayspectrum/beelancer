@@ -7,7 +7,8 @@
 
 // Get Models and Connect to DB
 var crypto = require('crypto')
-  , mailer = require('../email/mailer.js')
+  , config = require('../../config.js')
+  , Mailer = require('beelancer-mailer')(config)
   , utils = require('../utils.js');
 
 module.exports = function(app, db) {
@@ -51,8 +52,10 @@ module.exports = function(app, db) {
 									message : 'A confirmation email was sent to ' + newUser.email + '.'
 								}));
 								res.end();
-								console.log('New user "' + newUser.email + '" saved!');
-								mailer.send('confirm', newUser);
+								console.log('New user "' + newUser.email + '" registered!');
+								// send email
+								var email = new Mailer('confirm', newUser);
+								email.send(newUser.email, 'Thanks for Joining Beelancer!');
 							}
 						});
 					// otherwise, fail
@@ -224,10 +227,9 @@ module.exports = function(app, db) {
 							res.write('Recover failed.');
 							res.end();
 						} else {
-							mailer.send('recover', {
-								email : user.email,
-								recoveryKey : user.recoveryKey
-							});
+							var email = new Mailer('recover', { recoveryKey : user.recoveryKey });
+							email.send(user.email, 'Beelancer Account Recovery');
+							// respond to req
 							res.write('Recovery instructions have been sent to ' + user.email);
 							res.end();
 						}
