@@ -198,7 +198,7 @@
 						// if tasks is already assigned to job, don't display it
 						$.each(tasks, function(key, val) {
 							$.each(res, function(index, value) {
-								if (value._id === val._id) {
+								if (val && value && (value._id === val._id)) {
 									res.splice(index, 1);
 								}
 							});
@@ -211,7 +211,7 @@
 
 				  			taskList.html(source(res));
 						} else {
-							$('#job_unassigned_task_list').parent().remove();
+							$('#job_unassigned_task_list').html('There are no unassigned jobs.');
 						}
 					} else {
 						var taskList = $('#job_unassigned_task_list')
@@ -226,7 +226,7 @@
 		  				$('.not-enough-tasks').show();
 		  			} else {
 		  				$('#create_job').show();
-		  				$('#job_unassigned_task_list').parent().remove();
+		  				$('#job_unassigned_task_list').html('There are no unassigned jobs.');
 		  			}
 		  		}
 			},

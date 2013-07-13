@@ -196,13 +196,13 @@ module.exports = function(app, db) {
 						res.write('Could not get tasks.');
 						res.end();
 					} else {
-						var taskArray = [];
-						for (var i = 0; i < tasks.length; i++) {
-							if (new Date(tasks[i].project.deadline) > new Date()) {
-								taskArray.push(tasks[i]);
-							}
-						}
-						res.write(JSON.stringify(taskArray));
+						// var taskArray = [];
+						// for (var i = 0; i < tasks.length; i++) {
+						// 	if (new Date(tasks[i].project.deadline) > new Date()) {
+						// 		taskArray.push(tasks[i]);
+						// 	}
+						// }
+						res.write(JSON.stringify(tasks));
 						res.end();
 					}
 				});
