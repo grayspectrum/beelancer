@@ -182,12 +182,13 @@
 			function(res) {
 				if(res.length > 0) {
 					getFromUserInfo(res);
-					$('#endorsement_section').show();
 
 					// if coming from new endorsement notification
 					if(newEndorse) {
 						$(window).scrollTop($('#endorsement_section').offset().top);
 					}
+				} else {
+					$('.endorsements').remove();
 				}
 			},
 			function(err) {
