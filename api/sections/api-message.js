@@ -159,8 +159,16 @@ module.exports = function(app, db) {
 
 										// don't show attachment if the current user sent it
 										if (message[i].attachment && message[i].attachment.data) {
+											// messages for different actions
+											if (message[i].attachment.action === 'project_invite') {
+												message[i].body = 'You have invited ' + message[i].to.firstName + ' ' + message[i].to.lastName + ' to a project.';
+											} else if (message[i].attachment.action === 'team_invite') {
+												message[i].body = 'You have invited ' + message[i].to.firstName + ' ' + message[i].to.lastName + ' to your team.';
+											} else {
+												message[i].body = 'You have accepted ' + message[i].to.firstName + ' ' + message[i].to.lastName + '\'s bid on your job.';
+											}
+
 											message[i].attachment = null;
-											message[i].body = 'You have invited ' + message[i].to.firstName + ' ' + message[i].to.lastName + ' to a project.';
 										}
 									} else {
 										message[i].isCurrent = false;
