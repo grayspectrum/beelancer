@@ -89,7 +89,7 @@ bee.utils = (function() {
 	};
 
 	function checkEndorse() {
-		if (_.cookies.get('apikey') && _.cookies.get('userid') && bee.get('profile')) {
+		if (_.cookies.get('apikey') && _.cookies.get('userid') && (bee.get('profile') && bee.get('profile')._id)) {
 			bee.api.send(
 				'GET',
 				'/ratings/getEndorsements',

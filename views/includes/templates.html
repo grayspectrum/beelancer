@@ -558,6 +558,11 @@
 	{{/if}}
 </script>
 
+<!-- Task Project List -->
+<script id="tmpl-noProjectForTaskView" type="text/x-handlebars-template">
+	<p class="noProject">In order to create a new task, you must first create a project to assign it to. Click <a href="/#!/projects?newProject=true">here</a> to get started creating a new project.</p>
+</script>
+
 <!-- Job Category List -->
 <script id="tmpl-catsForJob" type="text/x-handlebars-template">
 	{{#if this.length}}

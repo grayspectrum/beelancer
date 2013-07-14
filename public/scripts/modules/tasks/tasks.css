@@ -323,3 +323,8 @@ button.timer:hover {
 #tasks_nav .task_status {
 	display: none;
 }
+
+#tasks_create p.noProject {
+	margin: 20px;
+	text-align: center;
+}

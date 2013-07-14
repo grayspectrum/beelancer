@@ -358,17 +358,23 @@
 		var list = $('#newtask_project')
 		  , tmpl = $('#tmpl-projectForTask').html()
 		  , source = Handlebars.compile(tmpl);
+
 		bee.api.send(
 			'GET',
 			'/projects',
 			{},
 			function(proj) {
-				var defaultProj = _.querystring.get('projectId');
-				list.html(source(proj));
-				if (defaultProj || projectId) {
-					list.val(defaultProj || projectId);
+				if (proj.length > 0) {
+					var defaultProj = _.querystring.get('projectId');
+					list.html(source(proj));
+					if (defaultProj || projectId) {
+						list.val(defaultProj || projectId);
+					}
+					list.trigger('change');
+				} else {
+					$('#create_task').remove();
+					$('#tasks_create').append(Handlebars.compile($('#tmpl-noProjectForTaskView').html()));
 				}
-				list.trigger('change');
 			},
 			function(err) {
 				bee.ui.notifications.notify('err', err, true);
