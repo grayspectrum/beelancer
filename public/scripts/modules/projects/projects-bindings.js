@@ -131,7 +131,7 @@
 						.removeClass('close_project')
 					.html('Reopen');
 				}
-				var userid = _.cookies.get('userid');
+				var userid = bee.get('profile').user;
 				
 				if (userid === project.owner._id) {
 					$('#projects_nav .leave_project').remove();

@@ -146,9 +146,10 @@ module.exports = function(app, db) {
 								res.write('Error generating new API key.');
 								res.end();
 							} else {
+							//	res.cookie('userid', user._id, { /*expires: null,*/ httpOnly: false });
+								res.cookie('apikey', user.apiKey, { /*expires: null,*/ httpOnly: true });
 								res.write(JSON.stringify({
 									userId : user._id,
-									apiKey : user.apiKey,
 									profile : user.profile || false
 								}));
 								res.end();
@@ -186,6 +187,8 @@ module.exports = function(app, db) {
 				user.apiKey = null;
 				user.save(function(err) {
 					if (err) {
+						res.clearCookie('userid')
+						res.clearCookie('apikey')
 						res.writeHead(500);
 						res.write('Unable to logout.');
 						res.end();

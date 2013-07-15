@@ -35,7 +35,7 @@ bee.ui = (function() {
 	////
 	function refresh() {
 		var view = (location.hash) ? location.hash.split('/')[1].split('?')[0] : false
-		  , isLoggedIn = _.cookies.get('userid') && _.cookies.get('apikey');
+		  , isLoggedIn = _.cookies.get('userid');
 		
 		if (!view && isLoggedIn) {
 			location.href = ' /#!/projects';

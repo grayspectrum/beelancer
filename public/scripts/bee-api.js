@@ -14,8 +14,7 @@ bee.api = (function() {
 	
 	var creds = function() {
 		return {
-			userId : _.cookies.get('userid'),
-			apiKey : _.cookies.get('apikey')
+			userId : _.cookies.get('userid')
 		};
 	};
 	
@@ -54,8 +53,7 @@ bee.api = (function() {
 				password : password
 			},
 			function(data) {
-				_.cookies.set({ name : 'userid', value : data.userId, HTTPOnly : options.authAsHttpOnly });
-				_.cookies.set({ name : 'apikey', value : data.apiKey, HTTPOnly : options.authAsHttpOnly });
+				_.cookies.set({ name : 'userid', value : data.userId });
 				var flags = {
 					profile : data.profile
 				};

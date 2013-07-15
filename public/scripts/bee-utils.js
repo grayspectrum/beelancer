@@ -24,7 +24,7 @@ bee.utils = (function() {
 		
 		if (location.hash.indexOf('login') === -1 &&
 			_.querystring.get('newProfile') != 'true' &&
-			_.cookies.get('userid') && _.cookies.get('apikey')) {
+			_.cookies.get('userid')) {
 			bee.api.send(
 				'GET',
 				'/me',
@@ -59,7 +59,7 @@ bee.utils = (function() {
 	};
 	
 	function checkMessages() {
-		if (_.cookies.get('apikey') && _.cookies.get('userid') && bee.get('profile')) {
+		if (bee.get('profile')) {
 			//console.log('in check message');
 			bee.api.send(
 				'GET',
@@ -89,7 +89,7 @@ bee.utils = (function() {
 	};
 
 	function checkEndorse() {
-		if (_.cookies.get('apikey') && _.cookies.get('userid') && (bee.get('profile') && bee.get('profile')._id)) {
+		if (_.cookies.get('userid') && (bee.get('profile') && bee.get('profile')._id)) {
 			bee.api.send(
 				'GET',
 				'/ratings/getEndorsements',

@@ -248,7 +248,7 @@
 			unassigned : []
 		};
 		// match them up
-		var userid = _.cookies.get('userid');
+		var userid = bee.get('profile').user;
 		$.each(tasks, function(key, val) {
 			if (val.assignee && (val.assignee._id === userid)) {
 				divided.assignedToMe.push(val);
