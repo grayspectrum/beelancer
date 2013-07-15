@@ -392,7 +392,24 @@ module.exports = function(app, db) {
 							// then we need to get the reference owner (job or project)
 							if (body.externalRecipient) {
 								invoice.externalRecipient = body.externalRecipient;
-								validateTasks(invoice, finalize);
+								// here we want to make sure the external recipient is
+								// not a user - else we will use that users account to send the invoice
+								// also make sure the recipient is not the user who is sending
+								db.users.findOne({
+									email : body.exyernalRecipient
+								}).exec(function(err, user) {
+									if (!err && user) {
+										invoice.recipient = user._id;
+										validateTasks(invoice, finalize);
+									}
+									else {
+										res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err || 'Failed to assign recipient.'
+										}));
+										res.end();
+									}
+								});
 							}
 							else {
 								db[invoice.type].findOne({
