@@ -398,7 +398,7 @@ module.exports = function(app, db) {
 								db.users.findOne({
 									email : body.exyernalRecipient
 								}).exec(function(err, user) {
-									if (!err)
+									if (!err) {
 										if (user) {
 											invoice.recipient = user._id;
 										}
