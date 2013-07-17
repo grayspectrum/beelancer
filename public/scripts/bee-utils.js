@@ -59,7 +59,7 @@ bee.utils = (function() {
 	};
 	
 	function checkMessages() {
-		if (bee.get('profile')) {
+		if (bee.get('profile') && _.cookies.get('userid')) {
 			//console.log('in check message');
 			bee.api.send(
 				'GET',
