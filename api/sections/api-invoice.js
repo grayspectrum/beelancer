@@ -398,8 +398,10 @@ module.exports = function(app, db) {
 								db.users.findOne({
 									email : body.exyernalRecipient
 								}).exec(function(err, user) {
-									if (!err && user) {
-										invoice.recipient = user._id;
+									if (!err)
+										if (user) {
+											invoice.recipient = user._id;
+										}
 										validateTasks(invoice, finalize);
 									}
 									else {
