@@ -47,6 +47,7 @@
 		$('#recover_account').bind('click', recoverAccount);
 		
 	} else {
+		$('#menu ul').hide();
 		$('#security, #view_my_profile, #my_endorsements, #aws_account_setup').remove();
 		bee.ui.loader.hide();
 	}
@@ -100,7 +101,8 @@
 				(newProfile) ? 'POST' : 'PUT', 
 				(newProfile) ? '/profile/create' : '/profile/update', 
 				profile, 
-				function(res) { 
+				function(res) {
+					$('#menu ul').show(); 
 					bee.ui.loader.hide();
 					bee.ui.notifications.notify('success', 'Profile Saved!', false);
 					if (newProfile) {

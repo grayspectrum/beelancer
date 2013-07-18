@@ -19,8 +19,10 @@ module.exports.clients.online = function(id, returnClient) {
 	// clients aray
 	var clients = module.exports.clients;
 	for (var i = 0; i < clients.length; i++) {
-		if (clients[i].userId.toString() === id.toString()) {
-			return (returnClient) ? clients[i] : true;
+		if (clients[i].userId) {
+			if (clients[i].userId.toString() === id.toString()) {
+				return (returnClient) ? clients[i] : true;
+			}
 		}
 	}
 	return (returnClient) ? null : false;
