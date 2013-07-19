@@ -6,23 +6,39 @@
 module.exports = [
 	{
 		id : 'SFTDEV',
-		title : 'Software Development'
+		title : 'Web Design and Software Development'
 	},
 	{
 		id : 'DESIGN',
-		title : 'Graphics and Web Design'
+		title : 'Graphic Design and Media'
 	},
 	{
-		id : 'AUTOMO',
-		title : 'Automotive'
+		id : 'WRITIN',
+		title : 'Writing and Content'
 	},
 	{
 		id : 'ACCNTG',
-		title : 'Accounting and Finance'
+		title : 'Accounting and Legal'
 	},
 	{
-		id : 'CNSTRC',
-		title : 'Construction'
+		id : 'DTADMN',
+		title : 'Data Entry and Admin'
+	},
+	{
+		id : 'SCIENC',
+		title : 'Engineering and Science'
+	},
+	{
+		id : 'SALESM',
+		title : 'Marketing and Sales'
+	},
+	{
+		id : 'PRODCT',
+		title : 'Product Design'
+	},
+	{
+		id : 'OTHER',
+		title : 'Other'
 	}
 ];
 
