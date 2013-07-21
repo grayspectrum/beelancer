@@ -90,6 +90,7 @@ module.exports = function(app, db) {
 					.populate('owner', 'profile')
 					.populate('assignee', 'profile')
 					.populate('worklog', 'started ended message')
+					.populate('project', 'title')
 					.populate('job')
 				.exec(function(err, task) {
 					if (err || !task) {
