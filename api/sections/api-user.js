@@ -14,6 +14,59 @@ var crypto = require('crypto')
 module.exports = function(app, db) {
 	
 	////
+	// GET - /api/beta/request
+	// Creates a new tester account
+	//
+	// Params => email, firstName, lastName
+	////
+	app.get('/api/beta/request', function(req, res) {
+		var body = req.query;
+		if (body.firstName && body.lastName && body.email) {
+			db.tester.findOne({ email : body.email }).exec(function(err, tester) {
+				// make sure it doens't already exist
+				if (!tester) {
+					var tester = new db.tester(body);
+					// add dateCreated
+					tester.dateCreated = new Date();
+					tester.isActivated = false;
+					tester.save(function(err) {
+						if (!err) {
+							res.write(utils.jsonpwrap(body.callback, {
+								message : 'Invitation for ' + body.email + ' requested!'
+							}));
+							res.end();
+							// send off beta email notification
+							var email = new Mailer('betarequest', tester);
+							email.send(tester.email, 'Your Beelancer Beta Request');
+						}
+						else {
+							res.writeHead(500);
+							res.write(utils.jsonpwrap(body.callback, {
+								error : err
+							}));
+							res.end();
+						}
+					});
+				}
+				else {
+					res.writeHead(400);
+					res.write(utils.jsonpwrap(body.callback, {
+						error : 'The email ' + body.email + ' already has a pending invitation request.'
+					}));
+					res.end();
+				}
+			});
+		}
+		else {
+			res.writeHead(400);
+			res.write(utils.jsonpwrap(body.callback, {
+				error : 'Missing a required paramter.'
+			}));
+			res.end();
+		}
+	});
+
+	////
 	// POST - /api/user/create
 	// Registers a new user, and sends a confirmation email
 	//
@@ -32,32 +85,81 @@ module.exports = function(app, db) {
 				} else {
 					// if all is good, then create the new user account
 					if (!user) {
-						var newUser = new db.user({
-							email : body.email,
-							hash : crypto.createHash('sha1').update(body.password).digest(),
-							apiKey : utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 }),
-							memberSince : new Date().toDateString(),
-							isConfirmed : false,
-							isPro : false,
-							confirmCode : utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 })
-						});
-						newUser.save(function(err) {
-							if (err) {
-								res.writeHead(500);
-								res.write('User could not be created.');
-								res.end();
-							} else {
-								res.write(JSON.stringify({
-									userId : newUser._id,
-									message : 'A confirmation email was sent to ' + newUser.email + '.'
-								}));
-								res.end();
-								console.log('New user "' + newUser.email + '" registered!');
-								// send email
-								var email = new Mailer('confirm', newUser);
-								email.send(newUser.email, 'Thanks for Joining Beelancer!');
+						// if we are in beta mode, then we need to
+						// make sure there is an activated tester
+						if (config.env === 'BETA') {
+							db.tester.findOne({
+								email : body.email
+							}).exec(function(err, tester) {
+								if (err) {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+								else {
+									if (tester) {
+										// we have a test, so let's make sure they are 
+										// activated 
+										if (tester.isActivated) {
+											createUser(tester);
+										}
+										else {
+											res.writeHead(400);
+											res.write(JSON.stringify({
+												error : 'Your beta invitation is still pending.'
+											}));
+											res.end();
+										}
+									}
+									else {
+										res.writeHead(400);
+										res.write(JSON.stringify({
+											error : 'No beta invitation request found for ' + body.email
+										}));
+										res.end();
+									}
+								}
+							});
+						}
+						else {
+							createUser();
+						}
+
+						function createUser(tester) {
+							var newUser = new db.user({
+								email : body.email,
+								hash : crypto.createHash('sha1').update(body.password).digest(),
+								apiKey : utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 }),
+								memberSince : new Date().toDateString(),
+								isConfirmed : false,
+								isPro : false,
+								confirmCode : utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 })
+							});
+							if (tester && tester._id) {
+								newUser.tester = tester._id;
 							}
-						});
+							newUser.save(function(err) {
+								if (err) {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								} else {
+									res.write(JSON.stringify({
+										userId : newUser._id,
+										message : 'A confirmation email was sent to ' + newUser.email + '.'
+									}));
+									res.end();
+									console.log('New user "' + newUser.email + '" registered!');
+									// send email
+									var email = new Mailer('confirm', newUser);
+									email.send(newUser.email, 'Thanks for Joining Beelancer!');
+								}
+							});
+						};
 					// otherwise, fail
 					} else {
 						res.writeHead(400);

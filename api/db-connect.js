@@ -11,13 +11,14 @@ module.exports = function(onConnect) {
 	  , conf = require('./db-config.js')
 	  , creds = (conf.user && conf.pass) ? conf.user + ':' + conf.pass + '@' : ''
 	  , connect = 'mongodb://' + creds + conf.host + ':' + conf.port + '/' + conf.name
-	  , db = mongoose.createConnection(connect);
+	  , db = mongoose.createConnection(connect)
+	  , models = require('./models.js')(db);
 	
 	db.on('error', console.error.bind(console, 'connection error:'));
 	
 	db.once('open', function() {
 		console.log('Beelancer connected to database "' + conf.name + '".');
-		if (onConnect) onConnect.call(this);
+		if (onConnect) onConnect.call(this, models);
 	});
 	
 	console.log(
@@ -32,5 +33,5 @@ module.exports = function(onConnect) {
 	);
 	console.log('Beelancer connecting to database...');
 	
-	return require('./models.js')(db);
+	return models;
 };

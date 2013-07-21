@@ -144,3 +144,10 @@ module.exports.tasks = {
 		});
 	}
 };
+
+module.exports.jsonpwrap = function(callback_name, data) {
+	if (!callback_name) {
+		return JSON.stringify(data);
+	}
+	return callback_name + '(' + JSON.stringify(data) + ')';
+};

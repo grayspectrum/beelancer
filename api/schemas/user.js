@@ -11,6 +11,10 @@ module.exports = new Schema({
 	hash : String,
 	email : String,
 	apiKey : String,
+	tester : {
+		type : ObjectId,
+		ref : 'tester'
+	},
 	profile : {
 		type : ObjectId,
 		ref : 'profile'

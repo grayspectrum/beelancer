@@ -145,7 +145,7 @@
 	
 	function loginError(message) {
 		var errUi = $('#loginError');
-		errUi.html(message).addClass('animated bounceInUp').show();
+		errUi.html(JSON.parse(message).error).addClass('animated bounceInUp').show();
 	};
 	
 	// bind events
