@@ -88,6 +88,10 @@ h3 span.worklog {
 	background: url('/assets/images/mono/black/stop_watch_icon&16.png') 12px center no-repeat;
 }
 
+h3 span.project {
+	background: url('/assets/images/mono/black/notepad_2_icon&16.png') 12px center no-repeat;
+}
+
 h4 {
 	font-family: Raleway;
 	border: 1px solid #FFC60B;

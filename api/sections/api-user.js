@@ -332,7 +332,7 @@ module.exports = function(app, db) {
 							res.write('Recover failed.');
 							res.end();
 						} else {
-							var email = new Mailer('recover', { recoveryKey : user.recoveryKey });
+							var email = new Mailer('recover', { email: user.email, recoveryKey : user.recoveryKey });
 							email.send(user.email, 'Beelancer Account Recovery');
 							// respond to req
 							res.write('Recovery instructions have been sent to ' + user.email);

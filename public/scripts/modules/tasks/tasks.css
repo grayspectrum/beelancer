@@ -117,6 +117,10 @@ li.task a em strong span {
 	
 }
 
+p.proj-name {
+	margin: 20px;
+}
+
 #bee-ui_add_worklog_entry {
 	z-index: 997;
 	position: fixed;
