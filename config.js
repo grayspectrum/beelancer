@@ -57,11 +57,14 @@ module.exports = (function(env) {
 				publicKey : 'pk_test_y0bemPul6jvmnZmb8VTGJaAM'
 			},
 			aws : {
-				region : 'FPS-PROD',
-				fpsAPI : '',
-				coBrandedUI : '',
-				accessKeyId : '',
-				accessKeySecret : ''
+				/* 
+				** CHANGE TO PROD CONFIG
+				*/ 
+				region : 'FPS-SANDBOX', 
+				fpsAPI : 'fps.sandbox.amazonaws.com', 
+				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
+				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
+				accessKeySecret : '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'
 			}
 		},
 		
