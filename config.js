@@ -27,25 +27,6 @@ module.exports = (function(env) {
 			}
 		},
 		
-		// beta config
-		beta : {
-			env : "BETA",
-			app_port : 80,
-			useSSL : false,
-			domain : 'http://app.beelancer.com/',
-			stripe :  {
-				privateKey : 'sk_test_fErCx0Lcb25yHmuxYqiG6Pym',
-				publicKey : 'pk_test_y0bemPul6jvmnZmb8VTGJaAM'
-			},
-			aws : {
-				region : 'FPS-SANDBOX',
-				fpsAPI : 'fps.sandbox.amazonaws.com',
-				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
-				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
-				accessKeySecret : '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'
-			}
-		},
-		
 		// qa config
 		qa : {
 			env : "TEST",
@@ -62,6 +43,25 @@ module.exports = (function(env) {
 				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
 				accessKeySecret : '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'
+			}
+		},
+
+		// beta config
+		beta : {
+			env : "BETA",
+			app_port : 80,
+			useSSL : false,
+			domain : 'http://app.beelancer.com/',
+			stripe :  {
+				privateKey : 'sk_test_fErCx0Lcb25yHmuxYqiG6Pym',
+				publicKey : 'pk_test_y0bemPul6jvmnZmb8VTGJaAM'
+			},
+			aws : {
+				region : 'FPS-PROD',
+				fpsAPI : '',
+				coBrandedUI : '',
+				accessKeyId : '',
+				accessKeySecret : ''
 			}
 		},
 		

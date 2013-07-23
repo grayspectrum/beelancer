@@ -12,7 +12,7 @@ module.exports = (function(env) {
 		dev : {
 			user : '',
 			pass : '​',
-			host : 'cloud.gordonwritescode.com',
+			host : 'sandbox.beelancer.com',
 			port : 27017,
 			name : 'beelancer-dev'
 		},
@@ -21,7 +21,7 @@ module.exports = (function(env) {
 		beta : {
 			user : '',
 			pass : '​',
-			host : 'cloud.gordonwritescode.com',
+			host : 'db1.beelancer.com',
 			port : 27017,
 			name : 'beelancer-beta'
 		},
@@ -30,9 +30,9 @@ module.exports = (function(env) {
 		qa : {
 			user : '',
 			pass : '​',
-			host : 'cloud.gordonwritescode.com',
+			host : 'sandbox.beelancer.com',
 			port : 27017,
-			name : 'beelancer-dev'
+			name : 'beelancer-qa'
 		},
 		
 		//prod config
