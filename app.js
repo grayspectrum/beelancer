@@ -21,8 +21,9 @@ module.exports = (function() {
 	// Build Certificate Object if needed
 	if (config.useSSL) {
 		var certs = {
-			key : fs.readFileSync('./certs/ssl-key.pem').toString(),
-			cert : fs.readFileSync('./certs/ssl-cert.pem').toString()
+			key : fs.readFileSync('./certs/beelancer.key').toString(),
+			cert : fs.readFileSync('./certs/beelancer.com.crt').toString(),
+			ca : fs.readFileSync('./certs/sf_bundle-g2.crt').toString()
 		};
 		module.exports = app = express(certs);
 	} else {
