@@ -51,7 +51,7 @@ module.exports = (function(env) {
 		// beta config
 		beta : {
 			env : "BETA",
-			app_port : 80,
+			app_port : 443,
 			useSSL : true,
 			domain : 'https://app.beelancer.com/',
 			stripe :  {
