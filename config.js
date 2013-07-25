@@ -52,8 +52,8 @@ module.exports = (function(env) {
 		beta : {
 			env : "BETA",
 			app_port : 80,
-			useSSL : false,
-			domain : 'http://app.beelancer.com/',
+			useSSL : true,
+			domain : 'https://app.beelancer.com/',
 			stripe :  {
 				privateKey : 'sk_live_Ye1CbExTpCl22KytY2E25eh1',
 				publicKey : 'pk_live_BrN5Flr0rT52bCuVrbM87AEL'
