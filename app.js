@@ -105,6 +105,12 @@ module.exports = (function() {
 				server.listen(config.app_port, function() {
 					console.log('Beelancer listening on port ' + config.app_port + '.\n');
 				});
+				// we want to force all http traffic to https
+				var redirect = express();
+				redirect.all('*', function(req, res) {
+					res.redirect('https://' + req.headers.host + req.url);
+				});
+				redirect.listen(80);
 			}
 			else { 
 				server.listen(config.app_port, function() {
