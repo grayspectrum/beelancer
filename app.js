@@ -23,7 +23,10 @@ module.exports = (function() {
 		var certs = {
 			key : fs.readFileSync('./certs/beelancer.key').toString(),
 			cert : fs.readFileSync('./certs/beelancer.com.crt').toString(),
-			ca : fs.readFileSync('./certs/sf_bundle-g2.crt').toString(),
+			ca : [
+				fs.readFileSync('./certs/sf_bundle-g2-1.crt').toString(),
+				fs.readFileSync('./certs/sf_bundle-g2-2.crt').toString()
+			],
 			passphrase : fs.readFileSync('./certs/passphrase.txt').toString()
 		};
 		module.exports = app = express(certs);
