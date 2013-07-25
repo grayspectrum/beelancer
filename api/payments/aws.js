@@ -64,7 +64,7 @@ module.exports = function(db) {
 				// got reference, so create a token for user
 				send('Recipient', {
 					callerReference : ref._id.toString(),
-					marketplaceVariableFee : config.aws.marketPlaceFee,
+					maxVariableFee : config.aws.marketplaceFee,
 					paymentMethod : 'CC',
 					recipientPaysFee : 'True',
 					returnURL : config.domain + 'api/payments/token/confirm' // where to redirect confirm
@@ -127,7 +127,7 @@ module.exports = function(db) {
 				send('Pay', {
 					CallerReference : ref._id.toString(),
 					ChargeFeeTo : 'Recipient',
-					MarketplaceVariableFee : config.aws.marketPlaceFee,
+					MarketplaceVariableFee : config.aws.marketplaceFee,
 					OverrideIPNURL : config.domain + 'api/payments/ipn/pay',
 					RecipientTokenId : invoice.aws.recipientTokenId,
 					SenderTokenId : invoice.aws.senderTokenId,
