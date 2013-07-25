@@ -53,16 +53,13 @@ module.exports = (function(env) {
 			useSSL : false,
 			domain : 'http://app.beelancer.com/',
 			stripe :  {
-				privateKey : 'sk_test_fErCx0Lcb25yHmuxYqiG6Pym',
-				publicKey : 'pk_test_y0bemPul6jvmnZmb8VTGJaAM'
+				privateKey : 'sk_live_Ye1CbExTpCl22KytY2E25eh1',
+				publicKey : 'pk_live_BrN5Flr0rT52bCuVrbM87AEL'
 			},
 			aws : {
-				/* 
-				** CHANGE TO PROD CONFIG
-				*/ 
-				region : 'FPS-SANDBOX', 
-				fpsAPI : 'fps.sandbox.amazonaws.com', 
-				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
+				region : 'FPS-PROD', 
+				fpsAPI : 'fps.amazonaws.com', 
+				coBrandedUI : 'https://authorize.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
 				accessKeySecret : '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'
 			}
@@ -79,11 +76,11 @@ module.exports = (function(env) {
 				publicKey : 'pk_live_BrN5Flr0rT52bCuVrbM87AEL'
 			},
 			aws : {
-				region : 'FPS-PROD',
-				fpsAPI : '',
-				coBrandedUI : '',
-				accessKeyId : '',
-				accessKeySecret : ''
+				region : 'FPS-PROD', 
+				fpsAPI : 'fps.amazonaws.com', 
+				coBrandedUI : 'https://authorize.amazon.com/cobranded-ui/actions/start',
+				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
+				accessKeySecret : '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'
 			}
 		}
 	};
