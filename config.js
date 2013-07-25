@@ -23,7 +23,8 @@ module.exports = (function(env) {
 				fpsAPI : 'fps.sandbox.amazonaws.com',
 				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
-				accessKeySecret : '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'
+				accessKeySecret : 'RROveZaYvUx6mbYeyHauzqBN1QpylvzW2qkXyOTM',
+				marketplaceFee : 2
 			}
 		},
 		
@@ -42,7 +43,8 @@ module.exports = (function(env) {
 				fpsAPI : 'fps.sandbox.amazonaws.com',
 				coBrandedUI : 'https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
-				accessKeySecret : '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'
+				accessKeySecret : 'RROveZaYvUx6mbYeyHauzqBN1QpylvzW2qkXyOTM',
+				marketplaceFee : 2
 			}
 		},
 
@@ -61,7 +63,8 @@ module.exports = (function(env) {
 				fpsAPI : 'fps.amazonaws.com', 
 				coBrandedUI : 'https://authorize.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
-				accessKeySecret : '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'
+				accessKeySecret : 'RROveZaYvUx6mbYeyHauzqBN1QpylvzW2qkXyOTM',
+				marketplaceFee : 2
 			}
 		},
 		
@@ -80,7 +83,8 @@ module.exports = (function(env) {
 				fpsAPI : 'fps.amazonaws.com', 
 				coBrandedUI : 'https://authorize.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
-				accessKeySecret : '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'
+				accessKeySecret : 'RROveZaYvUx6mbYeyHauzqBN1QpylvzW2qkXyOTM',
+				marketplaceFee : 2
 			}
 		}
 	};
