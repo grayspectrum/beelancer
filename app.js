@@ -26,8 +26,7 @@ module.exports = (function() {
 			ca : [
 				fs.readFileSync('./certs/sf_bundle-g2-1.crt').toString(),
 				fs.readFileSync('./certs/sf_bundle-g2-2.crt').toString()
-			],
-			passphrase : fs.readFileSync('./certs/passphrase.txt').toString()
+			]
 		};
 		module.exports = app = express(certs);
 	} else {
@@ -98,9 +97,20 @@ module.exports = (function() {
 		// bind sockets
 		sockets.bind(app, function(server) {
 			// start server
-			server.listen(config.app_port, function() {
-				console.log('Beelancer listening on port ' + config.app_port + '.\n');
-			});
+			if (config.useSSL) {
+				var https = require('https')
+				// create a normal https server
+				  , server = https.createServer(certs, app);
+				// spin it up!
+				server.listen(config.app_port, function() {
+					console.log('Beelancer listening on port ' + config.app_port + '.\n');
+				});
+			}
+			else { 
+				server.listen(config.app_port, function() {
+					console.log('Beelancer listening on port ' + config.app_port + '.\n');
+				});
+			}
 		});
 	});
 	
