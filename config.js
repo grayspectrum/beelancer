@@ -61,7 +61,7 @@ module.exports = (function(env) {
 			aws : {
 				region : 'FPS-PROD', 
 				fpsAPI : 'fps.amazonaws.com', 
-				coBrandedUI : 'https://authorize.amazon.com/cobranded-ui/actions/start',
+				coBrandedUI : 'https://authorize.payments.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
 				accessKeySecret : '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',
 				marketplaceFee : 2
@@ -81,7 +81,7 @@ module.exports = (function(env) {
 			aws : {
 				region : 'FPS-PROD', 
 				fpsAPI : 'fps.amazonaws.com', 
-				coBrandedUI : 'https://authorize.amazon.com/cobranded-ui/actions/start',
+				coBrandedUI : 'https://authorize.payments.amazon.com/cobranded-ui/actions/start',
 				accessKeyId : 'AKIAJVYQI2CRC3MFJKLA',
 				accessKeySecret : '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',
 				marketplaceFee : 2
