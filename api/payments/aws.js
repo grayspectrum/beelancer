@@ -209,6 +209,7 @@ module.exports = function(db) {
 			// CBUI common params
 			callerKey : config.aws.accessKeyId,
 			cobrandingStyle : 'logo',
+			cobrandingUrl : 'https://beelancer.com/assets/images/beelancer-logo-white-bg.png',
 			pipelineName : pipeline,
 			signatureVersion : '2',
 			signatureMethod : 'HmacSHA256',
