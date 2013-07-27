@@ -1113,67 +1113,74 @@
 	</p>
 	<div class="payment_account_status">
 		<div class="payment_method">
-			<div class="status exists-{{paymentCard.exists}}">
+			<h3 class="light-gradient status exists-{{paymentCard.exists}}">
 				<strong>Payment Account:</strong>
 				{{#if paymentCard.exists}}
 					<em>XXXXXXXXXXXX-{{paymentsCard.account}}</em>
 				{{else}}
 					<em>None</em>
 				{{/if}}
+				<button data-action="new_credit_card" class="save">Save</button>
 				{{#if paymentCard.exists}}<button class="remove">Remove</button>{{/if}}
 				<button class="update">Change</button>
-				<button data-action="new_credit_card" class="save">Save</button>
-			</div>
+			</h3>
 			<p class="hint">This is the credit or debit card used to send payments.</p>
 			<form class="payment-method-new" id="new_credit_card">
-				<label for="card-cardNumber">
-					<span>Card Number:</span>
-					<input type="text" id="" name="cardNumber" placeholder="" />
-				</label>
-				<label>
-					<span>Expiration:</span>
-					<input type="text" name="expirationMonth" maxlength="2" placeholder="MM" />
-					<input type="text" name="expirationYear" maxlength="4" placeholder="YYYY" />
-				</label>
-				<label for="card-securityCode">
-					<span>Security Code:</span>
-					<input type="text" id="card-securityCode" name="securityCode" placeholder="CVV" />
-				</label>
+				<div class="group">
+					<label for="card-cardNumber">
+						<span>Card Number:</span>
+						<input type="text" id="" name="cardNumber" placeholder="" />
+					</label>
+					<label for="card-securityCode">
+						<span>Security Code:</span>
+						<input type="text" id="card-securityCode" name="securityCode" placeholder="CVV" />
+					</label>
+					<label>
+						<span>Exp. Month:</span>
+						<input type="text" name="expirationMonth" maxlength="2" placeholder="MM" />
+					</label>
+					<label>
+						<span>Exp. Year:</span>
+						<input type="text" name="expirationYear" maxlength="4" placeholder="YYYY" />
+					</label>
+				</div>
 			</form>
 		</div>
 		<div class="payment_method">
-			<div class="status exists-{{bankAccount.exists}}">
+			<h3 class="light-gradient status exists-{{bankAccount.exists}}">
 				<strong>Payout Account:</strong>
 				{{#if bankAccount.exists}}
 					<em>XXXXXXXXXXXX-{{bankAccount.account}}</em>
 				{{else}}
 					<em>None</em>
 				{{/if}}
+				<button data-action="new_bank_account" class="save">Save</button>
 				{{#if bankAccount.exists}}<button class="remove">Remove</button>{{/if}}
 				<button class="update">Change</button>
-				<button data-action="new_bank_account" class="save">Save</button>
-			</div>
+			</h3>
 			<p class="hint">This is the bank account to which you will receive payments from others.</p>
 			<form class="payment-method-new" id="new_bank_account">
-			<label for="bank-name">
-					<span>Name on Account:</span>
-					<input type="text" id="bank-name" name="name" />
-				</label>
-				<label for="bank-accountNumber">
-					<span>Account Number:</span>
-					<input type="text" id="bank-accountNumber" name="accountNumber" />
-				</label>
-				<label for="bank-routingNumber">
-					<span>Routing Number:</span>
-					<input type="text" id="bank-routingNumber" name="routingNumber" />
-				</label>
-				<label for="bank-type">
-					<span>Account Type:</span>
-					<select id="bank-type" name="type">
-						<option value="checking">Checking</select>
-						<option value="savings">Savings</select>
-					</select>
-				</label>
+				<div class="group">
+					<label for="bank-name">
+						<span>Name on Account:</span>
+						<input type="text" id="bank-name" name="name" />
+					</label>
+					<label for="bank-accountNumber">
+						<span>Account Number:</span>
+						<input type="text" id="bank-accountNumber" name="accountNumber" />
+					</label>
+					<label for="bank-routingNumber">
+						<span>Routing Number:</span>
+						<input type="text" id="bank-routingNumber" name="routingNumber" />
+					</label>
+					<label for="bank-type">
+						<span>Account Type:</span>
+						<select id="bank-type" name="type">
+							<option value="checking">Checking</option>
+							<option value="savings">Savings</option>
+						</select>
+					</label>
+				</div>
 			</form>
 		</div>
 	</div>
