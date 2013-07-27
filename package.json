@@ -32,11 +32,9 @@
 		"commander" : "1.1.x",
 		"spijs" : "0.3.0",
 		"marked" : "0.2.6",
-		"stripe" : "git+https://github.com/abh/node-stripe.git",
 		"socket.io" : "0.9.x",
 		"request" : "2.21.x",
-		"awssum-amazon-fps" : "git+https://github.com/gordonwritescode/awssum-amazon-fps.git",
-		"awssum-amazon-sts" : "1.0.0"
+		"balanced-official" : "0.3.x"
 	},
 	"analyze": false,
 	"engines": {

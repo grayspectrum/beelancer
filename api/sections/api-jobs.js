@@ -12,8 +12,7 @@ var crypto = require('crypto')
   , jobCategories = require('../jobs/job-categories.js')
   , calculateJobPostingCost = require('../jobs/job-postingcost.js')
   , config = require('../../config.js')
-  , Mailer = require('beelancer-mailer')(config)
-  , stripe = require('stripe')(config.stripe.privateKey);
+  , Mailer = require('beelancer-mailer')(config);
   
 module.exports = function(app, db) {
 	
@@ -415,72 +414,28 @@ module.exports = function(app, db) {
 					if (!err && job) {
 						if (job.listing.isPromoted) {
 							// require credit car info
-							var card = req.body.payment;
-							if (!card) {
-								res.writeHead(400);
-								res.write(JSON.stringify({
-									error : 'Payment information is required for promoted posts.'
-								}));
-								res.end();
-							}
-							else {
-								var pmtData = utils.hasValidPaymentData(card);
-								// process payment
-								if (pmtData.valid) {
-									var body = req.body;
-
-									stripe.charges.create({
-										card : body.payment,
-										currency : 'usd',
-										amount : (job.listing.cost * 100),
-										capture : true,
-										description : 'Job ID: ' + job._id + ', User: ' + user.email
-									}, function(err, data) {
-										// if all is good, post it
-										if (!err) {
-											job.status = 'PUBLISHED';
-											job.isPublished = true;
-											job.listing.publishId = null;
-											job.save(function(err) {
-												if (!err) {
-													var resp = {
-														job : job,
-														confirmation : data
-													};
-													res.write(JSON.stringify(resp));
-													res.end();
-												}
-												else {
-													res.writeHead(500);
-													res.write(JSON.stringify({
-														error : err
-													}));
-													res.end();
-												}
-											});
-											// save the charge id for reference
-											job.listing.start = new Date();
-											job.listing.chargeId = data.id;
-											job.save();
-										}
-										else {
-											res.writeHead(500);
-											res.write(JSON.stringify({
-												error : err
-											}));
-											res.end();
-										}
-									});
+							var body = req.body;
+							job.status = 'PUBLISHED';
+							job.isPublished = true;
+							job.listing.publishId = null;
+							job.listing.start = new Date();
+							job.save(function(err) {
+								if (!err) {
+									var resp = {
+										job : job,
+										confirmation : data
+									};
+									res.write(JSON.stringify(resp));
+									res.end();
 								}
 								else {
-									res.writeHead(400);
+									res.writeHead(500);
 									res.write(JSON.stringify({
-										error : 'Missing required properties.',
-										data : pmtData.missing
+										error : err
 									}));
-									res.end();	
+									res.end();						
 								}
-							}
+							});
 						}
 						else {
 							// do it

@@ -17,7 +17,6 @@ module.exports = function(db) {
 		bid     : db.model('bid', require('./schemas/bid.js')),
 		job     : db.model('job', require('./schemas/job.js')),
 		worklog : db.model('worklog', require('./schemas/worklog.js')),
-		awsreq  : db.model('worklog', require('./schemas/awsrequest.js')),
 		tester  : db.model('tester', require('./schemas/tester.js'))
 	};
 };

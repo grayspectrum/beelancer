@@ -9,6 +9,7 @@ var mongoose = require('mongoose')
 
 module.exports = new Schema({
 	amount : Number,
+	fee : Number,
 	type: String, // job / project
 	// only one of job or project references
 	// this is for historical purposes and no
@@ -30,6 +31,7 @@ module.exports = new Schema({
 		ref : 'task'
 	}],
 	isPaid : Boolean,
+	isPaidOut : Boolean,
 	isRefunded : Boolean,
 	paymentPending : Boolean,
 	refundPending : Boolean,
@@ -44,18 +46,8 @@ module.exports = new Schema({
 		ref : 'user'
 	},
 	dueDate : Date,
-	aws : {
-		senderTokenId : String,
-		recipientTokenId : String,
-		refundTokenId : String,
-		transactionId : String,
-		transactionStatus : String,
-		paymentUrl : String,
-		ipn : {
-			date : Date,
-			result : String,
-			operation : String
-		}
+	payments : {
+		recipientUri : String
 	},
 	publicViewId : String
 });

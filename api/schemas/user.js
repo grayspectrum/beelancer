@@ -51,8 +51,10 @@ module.exports = new Schema({
 	isConfirmed : Boolean,
 	confirmCode : String,
 	recoveryKey : String,
-	aws : {
-		recipientId : String,
-		refundId : String
+	payments : {
+		customerUri : String,
+		paymentUri : String,
+		payoutUri : String,
+		last4ofCard : String
 	}
 });

@@ -7,48 +7,133 @@
 
 module.exports = function(app, db) {
 
-	var AWS = require('../payments/aws.js')(db)
-	  , utils = require('../utils.js')
+	var utils = require('../utils.js')
 	  , conf = require('../../config.js')
-	  , Mailer = require('beelancer-mailer')(conf);
+	  , Mailer = require('beelancer-mailer')(conf)
+	  // require the balancer API
+	  , Balanced = require('balanced-official')
+	  , payments;
+
+	// initialize balanced api
+	payments = new Balanced(conf.balanced_api);
 	
-	// retrieve CBUI url for recipient toekn creation
-	app.get('/api/payments/token', function(req, res) {
+	// retrieve token for passed credit card information
+	app.post('/api/payments/card', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
-				AWS.getRecipientToken(user, function(err, data) {
-					if (!err && user) {
-						res.write(JSON.stringify(data));
-						res.end();
-					}
-					else {
-						res.writeHead(400);
-						res.write(JSON.stringify({
-							error : err
-						}));
-						res.end();
-					}
-				});
+				var body = req.body;
+				if (body.cardNumber && body.expirationYear && body.expirationMonth && body.securityCode) {
+					payments.Cards.create({
+					    card_number: body.cardNumber,
+					    expiration_year: body.expirationYear,
+					    expiration_month: body.expirationMonth,
+					    security_code: body.securityCode
+					}, function(err, card) {
+					    if (err) {
+					    	res.writeHead(500);
+							res.write(JSON.stringify({
+								error : err
+							}));
+							res.end();
+					    }
+					    else {
+					    	user.payments.paymentUri = card.uri;
+					    	user.payments.last4ofCard = body.cardNumber.substr(body.cardNumber.length-4, body.cardNumber.length);
+					    	// create a customer if needed
+					    	if (user.payments.customerUri) {
+					    		attachCard()
+					    	}
+					    	else {
+						    	// create a customer in balanced api
+						    	payments.Customers.create({ 
+						    		name: user.profile.firstName + ' ' + user.profile.lastName
+						    	}, function(err, newCustomer) {
+								    if (err) {
+								        res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+								    }
+								    else {
+								    	// here we get an customer specific context of balanced() to work with. this is necessary for
+									    // customer specific actions.
+									    var customer = payments.Customer.balanced(newCustomer);
+									    user.payments.customerUri = newCustomer.uri;
+									    attachCard()
+								    }
+								});
+							}
+							function attachCard() {
+								// add the credit card
+								customer.Customers.addCard(user.payments.paymentUri, function(err, response) {
+									if (!err) {
+										console.log('AddCardToAccountResult:', response);
+										user.save(function(err) {
+								    		if (!err) {
+								    			res.write(JSON.stringify(card));
+								    			res.end();
+								    		}
+								    		else {
+												res.writeHead(500);
+												res.write(JSON.stringify({
+													error : err
+												}));
+												res.end();
+								    		}
+								    	});
+								    }
+								    else {
+								    	res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+								    }
+								});
+							};
+					    }
+					});
+				}
+				else {
+					res.writeHead(400);
+					res.write(JSON.stringify({
+						error : 'Missing at least one of: cardNumber, expirationYear, expirationMonth, securityCode'
+					}));
+					res.end();
+				}
 			}
 			else {
 				res.writeHead(401);
 				res.write(JSON.stringify({
-					error : 'You must be logged in to generate a recipient token.'
+					error : 'You must be logged in to enable payments.'
 				}));
 				res.end();
 			}
 		});
 	});
 	
-	// removes the callers recipient token
-	app.post('/api/payments/unauthorize', function(req, res) {
+	// removes the callers payment uri
+	app.del('/api/payments/card', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
-				user.aws.recipientId = null;
-				user.aws.refundId = null;
-				user.save(function(err) {
+				payments.Cards.unstore(user.payments.paymentUri, function(err, response) {
 					if (!err) {
-						res.end();
+						user.payments.paymentUri = null;
+						user.payments.last4ofCard = null;
+						// save the user
+						user.save(function(err) {
+							if (!err) {
+								res.end();
+							}
+							else {
+								res.writeHead(500);
+								res.write(JSON.stringify({
+									error : err
+								}));
+								res.end();
+							}
+						});
 					}
 					else {
 						res.writeHead(500);
@@ -68,54 +153,155 @@ module.exports = function(app, db) {
 			}
 		});
 	});
-	
-	// redirect here after completed CBUI Recipient Token request
-	app.get('/api/payments/token/confirm', function(req, res) {
+
+	// retrieve token for passed credit card information
+	app.post('/api/payments/bank', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
-				var tokenId = req.query.tokenID
-				  , refundId = req.query.refundTokenID
-				  , redirect = '/#!/account';
-				  
-				user.aws = {
-					recipientId : tokenId,
-					refundId : refundId
-				};
+				var body = req.body;
+				if (body.name && body.accountNumber && body.routingNumber && body.type) {
+					payments.BankAccounts.create({
+					    name: body.name,
+					    account_number: body.accountNumber,
+					    routingNumber: body.routingNumber,
+					    type: body.type
+					}, function(err, bankacct) {
+					    if (err) {
+					    	res.writeHead(500);
+							res.write(JSON.stringify({
+								error : err
+							}));
+							res.end();
+					    }
+					    else {
+					    	user.payments.payoutUri = bankacct.uri;
+					    	// create a customer if needed
+					    	if (user.payments.customerUri) {
+					    		attachBankAccount()
+					    	}
+					    	else {
+						    	// create a customer in balanced api
+						    	payments.Customers.create({ 
+						    		name: user.profile.firstName + ' ' + user.profile.lastName
+						    	}, function(err, newCustomer) {
+								    if (err) {
+								        res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+								    }
+								    else {
+								    	// here we get an customer specific context of balanced() to work with. this is necessary for
+									    // customer specific actions.
+									    var customer = payments.Customer.balanced(newCustomer);
+									    user.payments.customerUri = newCustomer.uri;
+									    attachBankAccount()
+								    }
+								});
+							}
+							// add the credit card
+							function attachBankAccount() {
+								customer.Customers.addBankAccount(user.payments.payoutUri, function(err, response) {
+									if (!err) {
+										console.log('AddCardToAccountResult:', response);
+										user.save(function(err) {
+								    		if (!err) {
+								    			res.write(JSON.stringify(card));
+								    			res.end();
+								    		}
+								    		else {
+												res.writeHead(500);
+												res.write(JSON.stringify({
+													error : err
+												}));
+												res.end();
+								    		}
+								    	});
+								    }
+								    else {
+								    	res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+								    }
+								});
+							}
+					    }
+					});
+				}
+				else {
+					res.writeHead(400);
+					res.write(JSON.stringify({
+						error : 'Missing at least one of: name, accountNumber, routingNumber, type'
+					}));
+					res.end();
+				}
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to enable payouts.'
+				}));
+				res.end();
+			}
+		});
+	});
 
-				user.save(function(err) {
+	// removes the callers payout uri
+	app.del('/api/payments/bank', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				payments.BankAccounts.unstore(user.payments.payoutUri, function(err, response) {
 					if (!err) {
-						res.redirect(redirect + '?awsTokenSuccess=true');
+						user.payments.payoutUri = null;
+						// save the user
+						user.save(function(err) {
+							if (!err) {
+								res.end();
+							}
+							else {
+								res.writeHead(500);
+								res.write(JSON.stringify({
+									error : err
+								}));
+								res.end();
+							}
+						});
 					}
 					else {
-						res.redirect(redirect + '?error=' + err);
+						res.writeHead(500);
+						res.write(JSON.stringify({
+							error : err
+						}));
+						res.end();
 					}
 				});
 			}
 			else {
 				res.writeHead(401);
 				res.write(JSON.stringify({
-					error : 'You must be logged in to confirm your recipient token.'
+					error : 'You must be logged in to make account changes.'
 				}));
 				res.end();
 			}
 		});
 	});
-	
+		
 	// check the caller's status for recipient token generation
 	app.get('/api/payments/accountStatus', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
-				if (user.aws && user.aws.recipientId && user.aws.refundId) {
+				if (user.payments && user.payments.customerUri && user.payments.paymentUri) {
 					res.write(JSON.stringify({
-						isAuthorized : true,
-						tokens : user.aws
+						isAuthorized : true
 					}));
 					res.end();
 				}
 				else {
 					res.write(JSON.stringify({
-						isAuthorized : false,
-						tokens : null
+						isAuthorized : false
 					}));
 					res.end();
 				}
@@ -123,7 +309,7 @@ module.exports = function(app, db) {
 			else {
 				res.writeHead(401);
 				res.write(JSON.stringify({
-					error : 'You must be logged in to check AWS account status.'
+					error : 'You must be logged in to check account status.'
 				}));
 				res.end();
 			}
@@ -348,7 +534,8 @@ module.exports = function(app, db) {
 				// make sure we have all the required data
 				var body = req.body
 				  , required
-				  , valid = true;
+				  , valid = true
+				  , owner = user;
 				  
 				required = [
 					'description',
@@ -372,18 +559,17 @@ module.exports = function(app, db) {
 						description : body.description,
 						tasks : body.tasks,
 						isPaid : false,
-						owner : user._id,
+						owner : owner._id,
 						dueDate : new Date(body.dueDate),
-						aws : {
-							recipientTokenId : user.aws.recipientId,
-							refundTokenId : user.aws.refundId
+						payments : {
+							recipientUri : user.payments.customerUri
 						},
 						publicViewId : utils.generateKey({})
 					});
 					// add reference
 					invoice[invoice.type] = body[body.type];
 					utils.tasks.calculateTotal(invoice.tasks, db, onAmount);
-					
+
 					function onAmount(err, amount) {
 						if (!err) {
 							invoice.amount = amount;
@@ -396,11 +582,15 @@ module.exports = function(app, db) {
 								// not a user - else we will use that users account to send the invoice
 								// also make sure the recipient is not the user who is sending
 								db.users.findOne({
-									email : body.exyernalRecipient
+									email : body.externalRecipient
 								}).exec(function(err, user) {
 									if (!err) {
 										if (user) {
 											invoice.recipient = user._id;
+											invoice.fee = utils.getMarketplaceFee(amount, owner.isPro);
+										}
+										else {
+											invoice.fee = utils.getMarketplaceFee(amount);
 										}
 										validateTasks(invoice, finalize);
 									}
@@ -478,60 +668,33 @@ module.exports = function(app, db) {
 					
 					function finalize(err, invoice) {
 						if (!err && invoice) {	
-							// generate payment URL
-							AWS.getSingleUseToken(invoice, function(err, data) {
-								if (!err && data) {
-									invoice.aws.paymentUrl = data.redirectTo;
-									// save the invoice
-									// if all goes well send out the payment link
-									invoice.save(function(err) {
-										if (!err) {
-											// respond back
-											res.write(JSON.stringify(invoice));
-											res.end();
-											
-											db.invoice.findOne({
-												_id : invoice._id
-											})
-											.populate('owner')
-											.exec(function(err, invoice) {
-												if (!err && invoice) {
-													// attach populated user to invoice
-													var mail_data = invoice.toObject();
-													mail_data.owner = user;
-													mail_data.paymentUrl = conf.domain + 'invoice/' + invoice._id + '?publicViewId=' + invoice.publicViewId;
-													// fire off email notification to externalRecipient
-													var email = new Mailer('invoice', mail_data);
-													email.send(invoice.externalRecipient, 'Invoice Received');
-												}
-											});
-											// mark the tasks as billed
-											invoice.tasks.forEach(function(val) {
-												db.task.findOne({ _id : val }).exec(function(err, task) {
-													if (!err && task) {
-														task.isBilled = true;
-														task.save();
-													}
-												});
-											});
-										}
-										else {
-											res.writeHead(500);
-											res.write(JSON.stringify({
-												error : err
-											}));
-											res.end();
-										}
-									});
-								}
-								else {
-									res.writeHead(500);
-									res.write(JSON.stringify({
-										error : err || 'Could not create payment token.'
-									}));
-									res.end();
+							res.write(JSON.stringify(invoice));
+							res.end();
+							
+							db.invoice.findOne({
+								_id : invoice._id
+							})
+							.populate('owner')
+							.exec(function(err, invoice) {
+								if (!err && invoice) {
+									// attach populated user to invoice
+									var mail_data = invoice.toObject();
+									mail_data.owner = user;
+									mail_data.paymentUrl = conf.domain + 'invoice/' + invoice._id + '?publicViewId=' + invoice.publicViewId;
+									// fire off email notification to externalRecipient
+									var email = new Mailer('invoice', mail_data);
+									email.send(invoice.externalRecipient, 'Invoice Received');
 								}
 							});
+							// mark the tasks as billed
+							invoice.tasks.forEach(function(val) {
+								db.task.findOne({ _id : val }).exec(function(err, task) {
+									if (!err && task) {
+										task.isBilled = true;
+										task.save();
+									}
+								});
+							});			
 						}
 						else {
 							res.writeHead(400);
@@ -560,79 +723,89 @@ module.exports = function(app, db) {
 		});
 	});
 	
-	// pays an invoice - redirect here after successful single
-	// token generation for invoice payment
-	app.get('/api/invoice/pay/:invoiceId', function(req, res) {
-		if (req.query.errorMessage) {
-			res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + req.query.errorMessage);
-		}
-		else {
-			// we use the recipientTokenId and the senderTokenId from
-			// Single Use Token request (CBUI) to complete the transaction
-			// we update the invoice if necessary and then redirect back to 
-			// the beelancer UI
+	// pays an invoice 
+	app.post('/api/invoice/pay/:invoiceId', function(req, res) {
+		var body = req.body;
+		utils.verifyUser(req, db, function(err, user) {
+			if (user) {
+				// if this is a user, we need to use their on file details
+				charge(user);
+			}
+			else {
+				// otherwise, we need to collect new details
+				collectPaymentDetails();
+			}
+		});
+		
+		function charge(user) {
+			// find the invoice
 			db.invoice.findOne({
 				_id : req.params.invoiceId
-			}).exec(function(err, invoice) {
+			})
+			.populate('owner')
+			.exec(function(err, invoice) {
 				if (!err && invoice) {
-					// get the senderTokenId
-					invoice.aws.senderTokenId = req.query.tokenID
-					// capture that shit
-					AWS.capturePayment(invoice, function(err, data) {
+					// go ahead and charge the caller
+					payments.Debits.create({
+						appears_on_statement_as : 'Beelancer - Invoice Payment Sent: ' + invoice._id,
+						source_uri : user.payments.paymentUri,
+						on_behalf_of_uri : invoice.payments.recipientUri,
+						amount : invoice.amount
+					}, function(err, response) {
 						if (!err) {
-							/*
-							 * DO WE NEED TO SET paymentPending HERE?
-							 */
-							console.log(data)
-							try {
-								invoice.aws.transactionId = data.Body.PayResponse.PayResult.TransactionId;
-								invoice.aws.transactionStatus = data.Body.PayResponse.PayResult.TransactionStatus;
-								// is the invoice good to mark as "paid"
-								switch(invoice.aws.transactionStatus) {
-									case 'Pending':
-									case 'Success':
-									case 'Reserved':
-										invoice.isPaid = true;
-										break;
-									case 'Cancelled':
-									case 'Failure':
-										invoice.isPaid = false;
-										break;
-									default:
-								}
-							} catch(e) {}
-							updateInvoiceStatus(invoice.aws.transactionStatus, invoice, function(invoice) {
-								// got what we need, let's finish up
-								invoice.save(function(err) {
-									if (!err) {
-										res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId);
-									}
-									else {
-										res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + err);
-									}
-								});
-							});
+							initiatePayout();
+							//
+							//
+							//
+							// send confirmation email to user who paid here
+							//
+							//
+							//
+							invoice.isPaid = true;
+							invoice.save();
+							res.write(JSON.stringify(response));
+							res.end();
 						}
 						else {
-							AWS.getSingleUseToken(invoice, function(err, tokenData) {
-								if (!err && data) {
-									invoice.aws.paymentUrl = tokenData.redirectTo;
-									// save the invoice
-									invoice.save(function(err) {
-										res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + err);
-										res.end();
-									});
-								}
-							});
+							console.log('PayInvoiceError:', err);
 						}
 					});
+
+					// use the recipientUri to perform payout
+					// be sure to subtract the invoice fee from
+					// the payout
+					function initiatePayout() {
+						payments.Credits.add({
+							credits_uri : invoice.owner.payments.payoutUri,
+							amount : (invoice.amount + invoice.fee) * 100, // usd cents
+							appears_on_statement_as : 'Beelancer - Invoice Payment Recieved: ' + invoice._id,
+						}, function(err, response) {
+							if (!err) {
+								//
+								//
+								//
+								// send confirmation email to user who paid here
+								//
+								//
+								//
+								invoice.isPaidOut = true;
+								invoice.save();
+							}
+							else {
+								console.log('InvoicePayoutError:', err);
+							}
+						});
+					};
 				}
 				else {
-					res.redirect('/#!/invoices?viewInvoice=' + req.params.invoiceId + '&error=' + (err || 'Could not find invoice.'));
+					res.writeHead((err) ? 500 : 400);
+					res.write(JSON.stringify({
+						error : err || 'Could not find invoice.'
+					}))
 					res.end();
 				}
 			});
-		}
+		};
 	});
 	
 	// refunds an invoice

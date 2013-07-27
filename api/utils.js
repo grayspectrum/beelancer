@@ -151,3 +151,11 @@ module.exports.jsonpwrap = function(callback_name, data) {
 	}
 	return callback_name + '(' + JSON.stringify(data) + ')';
 };
+
+module.exports.getMarketplaceFee = function(amount, isPro) {
+	var balancedFee = (amount * 0.029) + 0.30; // 2.9% + 30 cents
+	if (isPro) {
+		return balancedFee;
+	}
+	return amount * 0.05; // 5% fee for non-pro users
+};
