@@ -175,6 +175,7 @@ module.exports = function(app, db) {
 					    }
 					    else {
 					    	user.payments.payoutUri = bankacct.uri;
+					    	user.payments.last4ofBank = body.accountNumber.substr(body.accountNumber.length-4, body.accountNumber.length);;
 					    	// create a customer if needed
 					    	if (user.payments.customerUri) {
 					    		attachBankAccount()
@@ -256,6 +257,7 @@ module.exports = function(app, db) {
 				payments.BankAccounts.unstore(user.payments.payoutUri, function(err, response) {
 					if (!err) {
 						user.payments.payoutUri = null;
+						user.payments.last4ofBank = null;
 						// save the user
 						user.save(function(err) {
 							if (!err) {
@@ -293,18 +295,18 @@ module.exports = function(app, db) {
 	app.get('/api/payments/accountStatus', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
-				if (user.payments && user.payments.customerUri && user.payments.paymentUri) {
-					res.write(JSON.stringify({
-						isAuthorized : true
-					}));
-					res.end();
-				}
-				else {
-					res.write(JSON.stringify({
-						isAuthorized : false
-					}));
-					res.end();
-				}
+				res.write(JSON.stringify({
+					customer : { exists : !!user.payments.customerUri },
+					bankAccount : { 
+						exists : !!user.payments.payoutUri,
+						account : user.payments.last4ofBank || ''
+					},
+					paymentCard : {
+						exists : !!user.payments.paymentUri,
+						account : user.payments.last4ofCard || ''
+					}
+				}));
+				res.end();
 			}
 			else {
 				res.writeHead(401);

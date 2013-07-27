@@ -260,3 +260,9 @@
 	background-color: #e2e2e2;
 	cursor: pointer;
 }
+
+.payment_method button.save,
+.payment-method-new {
+	display: none;
+}
+
