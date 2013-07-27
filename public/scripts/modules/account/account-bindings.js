@@ -18,7 +18,7 @@
 		} else {
 			fillProfileFields();
 			getRatings();
-			checkAWSAccountStatus();
+			checkPaymentAccountStatus();
 			bee.ui.loader.hide();
 		}
 		
@@ -62,26 +62,17 @@
 	});
 	
 	// check AWS account status
-	function checkAWSAccountStatus() {
+	function checkPaymentAccountStatus() {
 		bee.api.send(
 			'GET',
 			'/payments/accountStatus',
 			{},
 			function(data) {
-				$('.aws_account_status').addClass(
-					(data.isAuthorized) ? 'authorized' : 'not_authorized'
-				);
-				$('.aws_account_status em').html(
-					(data.isAuthorized) ? 'You are setup to recieve payments!' : 'You are not setup to recieve payments.'
-				);
-				if (!data.isAuthorized) {
-					$('#authorize_aws').show();
-					$('#unauthorize_aws').hide();
-				}
-				else {
-					$('#authorize_aws').hide();
-					$('#unauthorize_aws').show();
-				}
+				var tmpl = Handlebars.compile(
+					$('#tmpl-paymentStatus').html()
+				)(data);
+				$('#payment_account_setup').html(tmpl);
+				bindPaymentForms();
 				bee.ui.loader.hide();
 			},
 			function(err) {
@@ -274,41 +265,36 @@
 			};
 		};
 	};
-	
-	$('#authorize_aws').bind('click', function(e) {
-		bee.ui.confirm('You will be briefly redirected to Amazon Payments. Click confirm to continue.', function() {
-			bee.ui.loader.show();
-			bee.api.send(
-				'GET',
-				'/payments/token',
-				{},
-				function(data) {
-					location.href = data.redirectTo;
-				},
-				function(err) {
-					bee.ui.loader.hide();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
+
+	function bindPaymentForms() {
+		$('.payment_method .status button.save').bind('click', function() {
+			var action = $(this).attr('data-action');
+			$('#' + action).trigger('submit');
 		});
-	});
-	
-	$('#unauthorize_aws').bind('click', function(e) {
-		bee.ui.confirm('Are you sure you wish to reset your payments account?', function() {
-			bee.ui.loader.show();
-			bee.api.send(
-				'POST',
-				'/payments/unauthorize',
-				{},
-				function(data) {
-					checkAWSAccountStatus();
-				},
-				function(err) {
-					bee.ui.loader.hide();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
+
+		$('.payment_method button.update').bind('click', function() {
+			if ($(this).hasClass('open')) {
+				$(this).removeClass('open').html('Change').siblings('button.save').toggle();
+			} else {
+				$(this).addClass('open').html('Cancel').siblings('button.save').toggle();
+			}
+			$(this).parent().siblings('.payment-method-new').toggle();
 		});
-	});
+
+		$('.payment_method button.remove').bind('click', function() {
+			// remove card or bank
+		});
+
+		$('#new_credit_card').bind('submit', function(e) {
+			e.preventDefault();
+			// update card
+		});
+
+		$('#new_bank_acccount').bind('submit', function(e) {
+			e.preventDefault();
+			// update bank account
+		});
+
+	};
 	
 })();
