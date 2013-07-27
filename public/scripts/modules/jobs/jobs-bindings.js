@@ -126,6 +126,7 @@
 			$('#create_job').prepend(tmpl);
 
 			$('#job_task_list').parent().remove();
+			if (!bee.get('profile').isPro) $('.isPromoted').remove();
 
 			getTasks(false, null);
 			getCategories(null);
@@ -146,6 +147,7 @@
 					$('.job_myjobs_nav, .job_search_nav, #create_job_heading').remove();
 					var tmpl = Handlebars.compile($('#tmpl-jobnew').html())(res);
 					$('#create_job').html(tmpl);
+					if (!bee.get('profile').isPro) $('.isPromoted').remove();
 
 					var req_tmpl = Handlebars.compile($('#tmpl-jobeditreqlist').html())(res.requirements);
 					$('.job_req_list ul').html(req_tmpl);
@@ -842,97 +844,132 @@
 			$('#listingDateEnd').addClass('required');
 
 			if ($('input[name="tasks"]:checked').length > 0) {
-				saveJob(updateJob || null,
+				bee.api.send(
+					'GET',
+					'/jobs/mine',
+					{},
 					function(res) {
-						bee.api.send(
-							'POST',
-							'/job/publish',
-							{
-								jobId : res._id
-							},
-							function(pub) {
-								bee.ui.loader.hide();
+						// check to see if the user has more than 2 active jobs.
+						var numJobs = 0
+						  , proJobs = 0;
 
-								// unpromoted job, don't collect payment
-								if (!res.listing.isPromoted) {
-									bee.ui.confirm('Are you sure you want to publish this job?', function() {
-										bee.ui.loader.show();
-										publishConfirm(pub, null,
-											function(job) {
-												bee.ui.loader.hide();
-												bee.ui.notifications.notify('success', 'Job published!');
-												location.href = '/#!/jobs';
-											},
-											function(jobErr) {
-												bee.ui.loader.hide();
-												bee.ui.notifications.notify('err', jobErr);
-											}
-										);
-									});
-								// promoted job, collect payment
-								} else {
-									pub.job.listing.cost = pub.job.listing.cost.toFixed(2);
-									var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(pub.job);
-									$('body').append(tmpl);
+						if (res.owned.length) {
+							$.each(res.owned, function(key, val) {
+								if (val.status !== 'UNPUBLISHED' && val.status !== 'COMPLETED') {
+									numJobs++;
+									if (val.isPromoted) proJobs++;
+								}
+							});
+						}
 
-									$('#credit-popup #bee-ui_confirm_ok').click(function(e) {
-										e.preventDefault();
+						if (numJobs >= 2 && !bee.get('profile').isPro) {
+							bee.ui.notifications.notify('err', 'You cannot have more than 2 active job postings at a time.');
+							bee.ui.loader.hide();
+						} else {
+							saveJob(updateJob || null,
+								function(res) {
+									bee.api.send(
+										'POST',
+										'/job/publish',
+										{
+											jobId : res._id
+										},
+										function(pub) {
+											bee.ui.loader.hide();
 
-										if (jobDataIsValid(false)) {
-											bee.ui.loader.show();
-											var payment = {
-												name : $('#name').val(),
-												number : $('#number').val(),
-												cvc : $('#cvc').val(),
-												exp_month : Number($('#exp_month').val()),
-												exp_year : Number($('#exp_year').val())
-											};
-											publishConfirm(pub, payment,
-												function(job) {
-													$('#credit-popup').remove();
-													bee.ui.loader.hide();
-													bee.ui.notifications.notify('success', 'Job published!');
-													location.href = '/#!/jobs?myJobs=true';
-												},
-												function(jobErr) {
-													bee.ui.loader.hide();
-													try {
-														jobErr = JSON.parse(jobErr);
-														if (jobErr.error && jobErr.error.name) {
-															var error = jobErr.error.name;
-															// issue validating the user cc info
-															if (error === 'card_error') {
-																var ccTmpl = Handlebars.compile($('#tmpl-ccspan').html())({ message : 'Some of your information appears to be incorrect.  Please review and try again.'});
-																$('.credit-card-info').prepend(ccTmpl);
-															} else if (error === 'api_error') {
-																// stripe api is down
-																var ccTmpl = Handlebars.compile($('#tmpl-ccspan').html())({ message : 'Our credit card processing system is temporarily offline.  Please try again later.'});
-																$('.credit-card-info').prepend(ccTmpl);
-															}
-														} else {
+											// unpromoted job, don't collect payment
+											if (!res.listing.isPromoted) {
+												bee.ui.confirm('Are you sure you want to publish this job?', function() {
+													bee.ui.loader.show();
+													publishConfirm(pub, null,
+														function(job) {
+															bee.ui.loader.hide();
+															bee.ui.notifications.notify('success', 'Job published!');
+															location.href = '/#!/jobs';
+														},
+														function(jobErr) {
+															bee.ui.loader.hide();
 															bee.ui.notifications.notify('err', jobErr);
 														}
-													} catch (e) {
-														bee.ui.notifications.notify('err', jobErr);
-													}
-												}
-											);
-										}
-									});
-									
-									$('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
-										e.preventDefault();
+													);
+												});
+											// promoted job, collect payment
+											} else {
+												// pub.job.listing.cost = pub.job.listing.cost.toFixed(2);
+												// var tmpl = Handlebars.compile($('#tmpl-creditcard').html())(pub.job);
+												// $('body').append(tmpl);
 
-										$('#credit-popup').remove();
-										location.href = '/#!/jobs?viewJob=' + pub.job._id;
-									});
+												// $('#credit-popup #bee-ui_confirm_ok').click(function(e) {
+												// 	e.preventDefault();
+
+													if (jobDataIsValid(false)) {
+														bee.ui.loader.show();
+														// var payment = {
+														// 	name : $('#name').val(),
+														// 	number : $('#number').val(),
+														// 	cvc : $('#cvc').val(),
+														// 	exp_month : Number($('#exp_month').val()),
+														// 	exp_year : Number($('#exp_year').val())
+														// };
+														if (proJobs >= 3) {
+															bee.ui.notifications.notify('err', 'You cannot have more than 3 active promoted job postings at a time.');
+															bee.ui.loader.hide();
+														} else {
+															publishConfirm(pub, null,
+																function(job) {
+																	//$('#credit-popup').remove();
+																	bee.ui.loader.hide();
+																	bee.ui.notifications.notify('success', 'Job published!');
+																	location.href = '/#!/jobs?myJobs=true';
+																},
+																function(jobErr) {
+																	bee.ui.loader.hide();
+																	bee.ui.notifications.notify('err', jobErr);
+																	// try {
+																	// 	jobErr = JSON.parse(jobErr);
+																	// 	if (jobErr.error && jobErr.error.name) {
+																	// 		var error = jobErr.error.name;
+																	// 		// issue validating the user cc info
+																	// 		if (error === 'card_error') {
+																	// 			var ccTmpl = Handlebars.compile($('#tmpl-ccspan').html())({ message : 'Some of your information appears to be incorrect.  Please review and try again.'});
+																	// 			$('.credit-card-info').prepend(ccTmpl);
+																	// 		} else if (error === 'api_error') {
+																	// 			// stripe api is down
+																	// 			var ccTmpl = Handlebars.compile($('#tmpl-ccspan').html())({ message : 'Our credit card processing system is temporarily offline.  Please try again later.'});
+																	// 			$('.credit-card-info').prepend(ccTmpl);
+																	// 		}
+																	// 	} else {
+																	// 		bee.ui.notifications.notify('err', jobErr);
+																	// 	}
+																	// } catch (e) {
+																	// 	bee.ui.notifications.notify('err', jobErr);
+																	// }
+																}
+															);
+														}
+													}
+												//});
+												
+												// $('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
+												// 	e.preventDefault();
+
+												// 	$('#credit-popup').remove();
+												// 	location.href = '/#!/jobs?viewJob=' + pub.job._id;
+												// });
+											}
+										},
+										function(noPub) {
+											bee.ui.notifications.notify('err', noPub);
+											bee.ui.loader.hide();
+										}
+									);
+								},
+								function(err) {
+									bee.ui.notifications.notify('err', err);
+									bee.ui.loader.hide();
 								}
-							},
-							function(noPub) {
-								bee.ui.notifications.notify('err', noPub);
-								bee.ui.loader.hide();
-							}
-						);
+							);
+						}
 					},
 					function(err) {
 						bee.ui.notifications.notify('err', err);

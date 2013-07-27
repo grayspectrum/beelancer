@@ -128,7 +128,7 @@ bee.utils = (function() {
 	
 	function getTimeWorked(worklog) {
 		var time = 0
-		  , parsedTime; 
+		  , parsedTime, timeData; 
 		for (var l = 0; l < worklog.length; l++) {
 			var started = new Date(worklog[l].started)
 			  , ended = (worklog[l].ended) ? new Date(worklog[l].ended) : new Date();
@@ -137,8 +137,11 @@ bee.utils = (function() {
 		var hours = time / (1000 * 60 * 60)
 		  , minutes = (time % (1000 * 60 * 60)) / (1000 * 60)
 		  , seconds =  ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
-		parsedTime = hours.toFixed() + '<em>h</em> : ' + minutes.toFixed() + '<em>m</em>';
-		return parsedTime;
+
+		var trueHour = Math.floor(hours);
+		parsedTime = trueHour + '<em>h</em> : ' + minutes.toFixed() + '<em>m</em>';
+		timeData = { html : parsedTime, time : hours};
+		return timeData;
 	};
 	
 	function prettyNumber(num) {

@@ -148,9 +148,11 @@
 				var timerCtr = $('#task_timer_controls')
 				  , timerSrc = $('#tmpl-task_timer').html()
 				  , timerTmpl = Handlebars.compile(timerSrc)
-				  , timerView = timerTmpl((log.length) ? log[0] : { ended : true });
+				  , timerView = timerTmpl((log.length) ? log[0] : { ended : true })
+				  , timeData = bee.utils.getTimeWorked(task.worklog);
+
 				timerCtr.html(timerView);
-				$('.hours-worked-clock .time').html(bee.utils.getTimeWorked(task.worklog));
+				$('.hours-worked-clock .time').html(timeData.html);
 				// update nav url
 				var base_url = $('#tasks_nav .edit_task').attr('href');
 				$('#tasks_nav .edit_task').attr('href', base_url + task._id);
@@ -182,6 +184,8 @@
 				if (!task.assignee) {
 					$('#task_timer_controls .timer, .worklog .timer').remove();
 				}
+
+				$('.calc-cost').html('$' + parseFloat(timeData.time * task.rate).toFixed(2));
 
 				bee.ui.loader.hide();
 				bindTaskWorkLogEditor();

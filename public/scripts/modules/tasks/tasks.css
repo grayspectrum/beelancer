@@ -291,6 +291,26 @@ button.wlog.delete {
 	color: #fff;
 }
 
+.total-cost {
+	margin: 8px 0px;
+	text-align: center;
+}
+
+.total-cost strong {
+	color: #555;
+	padding: 4px 12px;
+	text-shadow: 0 1px 0 #fff;
+	font-size: 14px;
+	text-align: center;
+	border-radius: 6px;
+	border: 1px solid #ededed;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.total-cost span {
+	color: green;
+}
+
 button.timer {
 	border: 1px solid #d2d2d2;
 	border-radius: 3px;

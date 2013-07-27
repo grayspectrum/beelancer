@@ -319,68 +319,94 @@ module.exports = function(app, db) {
 	app.post('/api/job/publish', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
-				var jobId = req.body.jobId;
-				db.job.findOne({
-					_id : jobId,
-					owner : user._id
-				})
-				.populate('tasks')
-				.exec(function(err, job) {
-					if (!err && job) {
-						// make sure there are tasks
-						if (job.tasks && job.tasks.length) {
-							calculateJobPostingCost(db, job, function(err, calc) {
-								if (!err) {
-									var listingDays = (new Date(job.listing.end) - new Date(job.listing.start)) / (1000*60*60*24);
-									job.listing.cost = calc.cost;
-									job.listing.publishId = calc.publishId;
-									job.listing.cost = parseFloat(listingDays * calc.cost).toFixed(2);
-									// caller must follow up with a second call
-									// to /api/job/publish/confirm while
-									// passing that id along with credit card
-									// information if it is a promoted job
-									// that endpoint will also attempt to process
-									// the payment via stripe api
-									// if it is not a promoted job, then the user
-									// must pay upon hiring a bidder and the 
-									job.save(function(err) {
+
+				// count number of jobs
+				db.job.find({
+					owner: user._id,
+					$or : [
+						{ status : 'UNPUBLISHED' },
+						{ status : 'COMPLETED' }
+					]
+				}).exec(function(err, userJobs) {
+					var count = 0, proCount = 0;
+					if (userJobs.length) {
+						for (var i = 0; i < userJobs.length; i++) {
+							count++;
+							if (userJobs[i].isPromoted) proCount++;
+						}
+					}
+
+					if (count >= 2 || proCount >= 3) {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'You have too many active jobs posted at this time.'
+						}));
+						res.end();
+					} else {
+						var jobId = req.body.jobId;
+						db.job.findOne({
+							_id : jobId,
+							owner : user._id
+						})
+						.populate('tasks')
+						.exec(function(err, job) {
+							if (!err && job) {
+								// make sure there are tasks
+								if (job.tasks && job.tasks.length) {
+									calculateJobPostingCost(db, job, function(err, calc) {
 										if (!err) {
-											res.write(JSON.stringify({
-												job : job
-												//message : 'It will cost $' + job.listing.cost + ' to publish this job (payment will be collected upon hiring).  Please confirm that you wish to publish this job.'	
-											}));
-											res.end();
+											var listingDays = (new Date(job.listing.end) - new Date(job.listing.start)) / (1000*60*60*24);
+											job.listing.cost = calc.cost;
+											job.listing.publishId = calc.publishId;
+											job.listing.cost = parseFloat(listingDays * calc.cost).toFixed(2);
+											// caller must follow up with a second call
+											// to /api/job/publish/confirm while
+											// passing that id along with credit card
+											// information if it is a promoted job
+											// that endpoint will also attempt to process
+											// the payment via stripe api
+											// if it is not a promoted job, then the user
+											// must pay upon hiring a bidder and the 
+											job.save(function(err) {
+												if (!err) {
+													res.write(JSON.stringify({
+														job : job
+														//message : 'It will cost $' + job.listing.cost + ' to publish this job (payment will be collected upon hiring).  Please confirm that you wish to publish this job.'	
+													}));
+													res.end();
+												}
+												else {
+													res.writeHead(500);
+													res.write(JSON.stringify({
+														error : err
+													}));
+													res.end();
+												}
+											});
 										}
 										else {
-											res.writeHead(500);
-											res.write(JSON.stringify({
-												error : err
-											}));
+											res.writeHead(400);
+											res.write(err);
 											res.end();
 										}
 									});
 								}
 								else {
 									res.writeHead(400);
-									res.write(err);
+									res.write(JSON.stringify({
+										error : 'Job must have tasks attached to it before posting.'
+									}));
 									res.end();
 								}
-							});
-						}
-						else {
-							res.writeHead(400);
-							res.write(JSON.stringify({
-								error : 'Job must have tasks attached to it before posting.'
-							}));
-							res.end();
-						}
-					}
-					else {
-						res.writeHead((err) ? 500 : 400);
-						res.write(JSON.stringify({
-							error : (err) ? err : 'Could not publish job.'
-						}));
-						res.end();
+							}
+							else {
+								res.writeHead((err) ? 500 : 400);
+								res.write(JSON.stringify({
+									error : (err) ? err : 'Could not publish job.'
+								}));
+								res.end();
+							}
+						});
 					}
 				});
 			}
@@ -412,32 +438,32 @@ module.exports = function(app, db) {
 					'listing.publishId' : publishId
 				}).exec(function(err, job) {
 					if (!err && job) {
-						if (job.listing.isPromoted) {
-							// require credit car info
-							var body = req.body;
-							job.status = 'PUBLISHED';
-							job.isPublished = true;
-							job.listing.publishId = null;
-							job.listing.start = new Date();
-							job.save(function(err) {
-								if (!err) {
-									var resp = {
-										job : job,
-										confirmation : data
-									};
-									res.write(JSON.stringify(resp));
-									res.end();
-								}
-								else {
-									res.writeHead(500);
-									res.write(JSON.stringify({
-										error : err
-									}));
-									res.end();						
-								}
-							});
-						}
-						else {
+						// if (job.listing.isPromoted) {
+						// 	// require credit car info
+						// 	var body = req.body;
+						// 	job.status = 'PUBLISHED';
+						// 	job.isPublished = true;
+						// 	job.listing.publishId = null;
+						// 	job.listing.start = new Date();
+						// 	job.save(function(err) {
+						// 		if (!err) {
+						// 			var resp = {
+						// 				job : job,
+						// 				confirmation : data
+						// 			};
+						// 			res.write(JSON.stringify(resp));
+						// 			res.end();
+						// 		}
+						// 		else {
+						// 			res.writeHead(500);
+						// 			res.write(JSON.stringify({
+						// 				error : err
+						// 			}));
+						// 			res.end();						
+						// 		}
+						// 	});
+						// }
+						// else {
 							// do it
 							job.status = 'PUBLISHED';
 							job.isPublished = true;
@@ -456,7 +482,7 @@ module.exports = function(app, db) {
 									res.end();
 								}
 							});
-						}
+						//}
 					}
 					else {
 						res.writeHead(400);

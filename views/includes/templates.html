@@ -421,6 +421,13 @@
 				</div>
 				<div id="task_timer_controls"></div>
 			</div>
+			{{#if isFixed}}
+
+			{{else}}
+				<div class="total-cost">
+					<strong class="light-gradient">Total So Far:  <span class="calc-cost"></span></strong>
+				</div>
+			{{/if}}
 			<h3 class="light-gradient">
 				<span class="worklog">Work Log<button class="timer entry">Add Entry</button></span>
 			</h3>
@@ -745,12 +752,12 @@
 			<input type="text" id="listingDateEnd" placeholder="" name="listingDateEnd"{{#if listing.end}}value="{{listing.end}}"{{/if}} />
 		</label>
 	</div>
-	<!--<label class="big_radio" for="newjob_isPromoted">
+	<label class="big_radio isPromoted" for="newjob_isPromoted">
 		<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true"{{#if listing.isPromoted}}checked{{/if}} /> Promote this job
 		<p>
-			By promoting this job, it will be given priority and will show up before other unpromoted jobs on the jobs board and when searching for jobs.  An additional fee applies.
+			By promoting this job, it will be given priority and will show up before other unpromoted jobs on the jobs board and when searching for jobs.  You are limited to three promoted jobs at a time.
 		</p>
-	</label>-->
+	</label>
 	<div class="job_buttons">
 		{{#if isPublished}}
 			<div class="unpublish_job_submit_wrapper gold-gradient" id="unpublish_btn">
