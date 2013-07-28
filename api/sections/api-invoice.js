@@ -41,7 +41,19 @@ module.exports = function(app, db) {
 					    	user.payments.last4ofCard = body.cardNumber.substr(body.cardNumber.length-4, body.cardNumber.length);
 					    	// create a customer if needed
 					    	if (user.payments.customerUri) {
-					    		attachCard()
+					    		payments.Customers.get(user.payments.customerUri, function(err, existingCustomer) {
+					    			if (err) {
+								        res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+								    }
+								    else {
+								    	var customer = payments.Customers.balanced(existingCustomer);
+								    	attachCard(customer);
+									}
+					    		});
 					    	}
 					    	else {
 						    	// create a customer in balanced api
@@ -58,13 +70,14 @@ module.exports = function(app, db) {
 								    else {
 								    	// here we get an customer specific context of balanced() to work with. this is necessary for
 									    // customer specific actions.
-									    var customer = payments.Customer.balanced(newCustomer);
+									    console.log(newCustomer)
+									    var customer = payments.Customers.balanced(newCustomer);
 									    user.payments.customerUri = newCustomer.uri;
-									    attachCard()
+									    attachCard(customer);
 								    }
 								});
 							}
-							function attachCard() {
+							function attachCard(customer) {
 								// add the credit card
 								customer.Customers.addCard(user.payments.paymentUri, function(err, response) {
 									if (!err) {
@@ -163,7 +176,7 @@ module.exports = function(app, db) {
 					payments.BankAccounts.create({
 					    name: body.name,
 					    account_number: body.accountNumber,
-					    routingNumber: body.routingNumber,
+					    routing_number: body.routingNumber,
 					    type: body.type
 					}, function(err, bankacct) {
 					    if (err) {
@@ -178,7 +191,19 @@ module.exports = function(app, db) {
 					    	user.payments.last4ofBank = body.accountNumber.substr(body.accountNumber.length-4, body.accountNumber.length);;
 					    	// create a customer if needed
 					    	if (user.payments.customerUri) {
-					    		attachBankAccount()
+					    		payments.Customers.get(user.payments.customerUri, function(err, existingCustomer) {
+					    			if (err) {
+								        res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+								    }
+								    else {
+								    	var customer = payments.Customers.balanced(existingCustomer);
+								    	attachBankAccount(customer);
+									}
+					    		});
 					    	}
 					    	else {
 						    	// create a customer in balanced api
@@ -197,18 +222,18 @@ module.exports = function(app, db) {
 									    // customer specific actions.
 									    var customer = payments.Customer.balanced(newCustomer);
 									    user.payments.customerUri = newCustomer.uri;
-									    attachBankAccount()
+									    attachBankAccount(customer);
 								    }
 								});
 							}
 							// add the credit card
-							function attachBankAccount() {
+							function attachBankAccount(customer) {
 								customer.Customers.addBankAccount(user.payments.payoutUri, function(err, response) {
 									if (!err) {
-										console.log('AddCardToAccountResult:', response);
+										console.log('AddBankToAccountResult:', response);
 										user.save(function(err) {
 								    		if (!err) {
-								    			res.write(JSON.stringify(card));
+								    			res.write(JSON.stringify(bankacct));
 								    			res.end();
 								    		}
 								    		else {

@@ -295,7 +295,7 @@
 .payment_account_status .status {
 	padding: 6px 12px;
 	font-size: 14px;
-	margin-top: 0;
+	margin: 0;
 	overflow: hidden;
 }
 

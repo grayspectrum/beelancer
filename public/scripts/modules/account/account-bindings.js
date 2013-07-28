@@ -283,18 +283,94 @@
 
 		$('.payment_method button.remove').bind('click', function() {
 			// remove card or bank
+			var type = $(this).attr('data-type');
+			// send request
+			bee.ui.confirm('Are you sure you want to remove this payment data?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'DELETE',
+					'/payments/' + type,
+					{},
+					function(resp) {
+						bee.ui.loader.hide();
+						checkPaymentAccountStatus();
+						bee.ui.notifications.notify('success', 'Payment information removed!');
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
 		});
 
 		$('#new_credit_card').bind('submit', function(e) {
 			e.preventDefault();
 			// update card
+			if (validateAccountInfo(this)) {
+				var data = $(this).serialize();
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/payments/card',
+					data,
+					function(resp) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('success', 'Payment account added!');
+						checkPaymentAccountStatus();
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			}
 		});
 
-		$('#new_bank_acccount').bind('submit', function(e) {
+		$('#new_bank_account').bind('submit', function(e) {
 			e.preventDefault();
 			// update bank account
+			if (validateAccountInfo(this)) {
+				var data = $(this).serialize();
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/payments/bank',
+					data,
+					function(resp) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('success', 'Payout account added!');
+						checkPaymentAccountStatus();
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			}
 		});
 
+	};
+
+	function validateAccountInfo(form) {
+		var isValid = true;
+		$('input', form).each(function() {
+			if (!$(this).val()) {
+				isValid = false;
+				$(this).parent().addClass('hasError');
+				bee.ui.notifications.notify('err', $(this).attr('name') + ' is required.');
+			}
+			else {
+				$(this).parent().removeClass('hasError');
+			}
+			// field specific validation
+			switch($(this).attr('name')) {
+
+				default:
+					// do nothing
+			}
+		});
+		return isValid;
 	};
 	
 })();

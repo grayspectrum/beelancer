@@ -27,11 +27,11 @@
 			'/payments/accountStatus',
 			{},
 			function(data) {
-				if (!data.isAuthorized) {
+				if (!data.bankAccount.exists) {
 					bee.ui.confirm(
 						'You are not currently set up to receive payments. Setup payments now?', 
 						function() {
-							location.href = '/#!/account?hasFocus=aws_account_setup';
+							location.href = '/#!/account?hasFocus=payment_account_setup';
 						},
 						function() {
 							history.back();

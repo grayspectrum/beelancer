@@ -1116,12 +1116,12 @@
 			<h3 class="light-gradient status exists-{{paymentCard.exists}}">
 				<strong>Payment Account:</strong>
 				{{#if paymentCard.exists}}
-					<em>XXXXXXXXXXXX-{{paymentsCard.account}}</em>
+					<em>XXXXXXXXXXXX-{{paymentCard.account}}</em>
 				{{else}}
 					<em>None</em>
 				{{/if}}
 				<button data-action="new_credit_card" class="save">Save</button>
-				{{#if paymentCard.exists}}<button class="remove">Remove</button>{{/if}}
+				{{#if paymentCard.exists}}<button class="remove" data-type="card">Remove</button>{{/if}}
 				<button class="update">Change</button>
 			</h3>
 			<p class="hint">This is the credit or debit card used to send payments.</p>
@@ -1155,7 +1155,7 @@
 					<em>None</em>
 				{{/if}}
 				<button data-action="new_bank_account" class="save">Save</button>
-				{{#if bankAccount.exists}}<button class="remove">Remove</button>{{/if}}
+				{{#if bankAccount.exists}}<button class="remove" data-type="bank">Remove</button>{{/if}}
 				<button class="update">Change</button>
 			</h3>
 			<p class="hint">This is the bank account to which you will receive payments from others.</p>
