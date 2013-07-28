@@ -140,7 +140,7 @@ bee.utils = (function() {
 
 		var trueHour = Math.floor(hours);
 		parsedTime = trueHour + '<em>h</em> : ' + minutes.toFixed() + '<em>m</em>';
-		timeData = { html : parsedTime, time : hours};
+		timeData = { html : parsedTime, hour : hours, min : minutes, sec : seconds};
 		return timeData;
 	};
 	
