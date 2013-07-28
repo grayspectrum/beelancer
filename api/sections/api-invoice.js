@@ -38,7 +38,7 @@ module.exports = function(app, db) {
 					    }
 					    else {
 					    	user.payments.paymentUri = card.uri;
-					    	user.payments.last4ofCard = body.cardNumber.substr(body.cardNumber.length-4, body.cardNumber.length);
+					    	user.payments.cardId = body.cardNumber.substr(body.cardNumber.length-4, body.cardNumber.length);
 					    	// create a customer if needed
 					    	if (user.payments.customerUri) {
 					    		payments.Customers.get(user.payments.customerUri, function(err, existingCustomer) {
@@ -133,7 +133,7 @@ module.exports = function(app, db) {
 				payments.Cards.unstore(user.payments.paymentUri, function(err, response) {
 					if (!err) {
 						user.payments.paymentUri = null;
-						user.payments.last4ofCard = null;
+						user.payments.cardId = null;
 						// save the user
 						user.save(function(err) {
 							if (!err) {
@@ -188,7 +188,7 @@ module.exports = function(app, db) {
 					    }
 					    else {
 					    	user.payments.payoutUri = bankacct.uri;
-					    	user.payments.last4ofBank = body.accountNumber.substr(body.accountNumber.length-4, body.accountNumber.length);;
+					    	user.payments.bankId = body.accountNumber.substr(0, body.accountNumber.length - 5);;
 					    	// create a customer if needed
 					    	if (user.payments.customerUri) {
 					    		payments.Customers.get(user.payments.customerUri, function(err, existingCustomer) {
@@ -282,7 +282,7 @@ module.exports = function(app, db) {
 				payments.BankAccounts.unstore(user.payments.payoutUri, function(err, response) {
 					if (!err) {
 						user.payments.payoutUri = null;
-						user.payments.last4ofBank = null;
+						user.payments.bankId = null;
 						// save the user
 						user.save(function(err) {
 							if (!err) {
@@ -324,11 +324,11 @@ module.exports = function(app, db) {
 					customer : { exists : !!user.payments.customerUri },
 					bankAccount : { 
 						exists : !!user.payments.payoutUri,
-						account : user.payments.last4ofBank || ''
+						account : user.payments.bankId || ''
 					},
 					paymentCard : {
 						exists : !!user.payments.paymentUri,
-						account : user.payments.last4ofCard || ''
+						account : user.payments.cardId || ''
 					}
 				}));
 				res.end();
@@ -420,10 +420,10 @@ module.exports = function(app, db) {
 				});
 			}
 			else {
-				if (body.publicViewKey) {
+				if (body.publicViewId) {
 					db.invoice.findOne({
 						_id : req.params.invoiceId,
-						publicViewKey : body.publicViewKey
+						publicViewId : body.publicViewId
 					})
 					.populate('job')
 					.populate('project')
@@ -469,10 +469,6 @@ module.exports = function(app, db) {
 			var ivc = invoice.toObject()
 			  , owner = invoice.owner.profile
 			  , recipient = (invoice.recipient) ? invoice.recipient.profile : null;
-			  
-			// remove the aws props we don't want to serve
-			delete ivc.aws.recipientTokenId;
-			delete ivc.aws.refundTokenId;
 			
 			db.profile.findOne({
 				_id : owner
@@ -590,8 +586,7 @@ module.exports = function(app, db) {
 						dueDate : new Date(body.dueDate),
 						payments : {
 							recipientUri : user.payments.customerUri
-						},
-						publicViewId : utils.generateKey({})
+						}
 					});
 					// add reference
 					invoice[invoice.type] = body[body.type];
@@ -600,7 +595,7 @@ module.exports = function(app, db) {
 					function onAmount(err, amount) {
 						if (!err) {
 							invoice.amount = amount;
-						
+							invoice.fee = utils.getMarketplaceFee(invoice.amount, owner.isPro);
 							// if there isn't an external recipient defined
 							// then we need to get the reference owner (job or project)
 							if (body.externalRecipient) {
@@ -608,16 +603,15 @@ module.exports = function(app, db) {
 								// here we want to make sure the external recipient is
 								// not a user - else we will use that users account to send the invoice
 								// also make sure the recipient is not the user who is sending
-								db.users.findOne({
+								db.user.findOne({
 									email : body.externalRecipient
 								}).exec(function(err, user) {
 									if (!err) {
 										if (user) {
 											invoice.recipient = user._id;
-											invoice.fee = utils.getMarketplaceFee(amount, owner.isPro);
 										}
 										else {
-											invoice.fee = utils.getMarketplaceFee(amount);
+											invoice.publicViewId = utils.generateKey({});
 										}
 										validateTasks(invoice, finalize);
 									}
@@ -669,7 +663,10 @@ module.exports = function(app, db) {
 						function checkTask(task) {
 							db.task.findOne({
 								_id : task,
-								isComplete : true,
+							// you should be able to bill more than once per task
+							// however, below we will go ahead and complete the task
+							// task
+							//	isComplete : true,
 								isPaid : false
 							}).exec(function(err, task) {
 								if (!err && task) {
@@ -694,34 +691,56 @@ module.exports = function(app, db) {
 					};
 					
 					function finalize(err, invoice) {
-						if (!err && invoice) {	
-							res.write(JSON.stringify(invoice));
-							res.end();
-							
-							db.invoice.findOne({
-								_id : invoice._id
-							})
-							.populate('owner')
-							.exec(function(err, invoice) {
-								if (!err && invoice) {
-									// attach populated user to invoice
-									var mail_data = invoice.toObject();
-									mail_data.owner = user;
-									mail_data.paymentUrl = conf.domain + 'invoice/' + invoice._id + '?publicViewId=' + invoice.publicViewId;
-									// fire off email notification to externalRecipient
-									var email = new Mailer('invoice', mail_data);
-									email.send(invoice.externalRecipient, 'Invoice Received');
+						if (!err && invoice) {
+							invoice.save(function(err) {
+								if (!err) {
+									res.write(JSON.stringify(invoice));
+									res.end();
+									updateTasks(invoice);
+									notifyRecipient(invoice);
 								}
-							});
-							// mark the tasks as billed
-							invoice.tasks.forEach(function(val) {
-								db.task.findOne({ _id : val }).exec(function(err, task) {
-									if (!err && task) {
-										task.isBilled = true;
-										task.save();
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});	
+							
+							function notifyRecipient(invoice) {
+								db.invoice.findOne({
+									_id : invoice._id
+								})
+								.populate('owner')
+								.exec(function(err, invoice) {
+									if (!err && invoice) {
+										// attach populated user to invoice
+										var mail_data = invoice.toObject()
+										  , path = (invoice.publicViewId) ? 
+										  			'invoice/' + invoice._id + '?publicViewId=' + invoice.publicViewId 
+										  		  : '#!/invoices?viewInvoice=' + invoice._id;
+										mail_data.owner = user;
+										mail_data.paymentUrl = conf.domain + path;
+										// fire off email notification to externalRecipient
+										var email = new Mailer('invoice', mail_data);
+										email.send(invoice.externalRecipient, 'Invoice Received');
 									}
 								});
-							});			
+							};
+
+							function updateTasks(invoice) {
+								// mark the tasks as billed
+								invoice.tasks.forEach(function(val) {
+									db.task.findOne({ _id : val }).exec(function(err, task) {
+										if (!err && task) {
+											task.isComplete = true;
+											task.isBilled = true;
+											task.save();
+										}
+									});
+								});	
+							};		
 						}
 						else {
 							res.writeHead(400);

@@ -82,7 +82,6 @@
 					if (!invoice.isPaid) {
 						$('#invoices_nav').show();
 						$('#invoices_nav .pay_invoice').parent().show();
-						$('#invoices_nav .pay_invoice').attr('href', invoice.aws.paymentUrl);
 					}
 				}
 				else {
@@ -327,13 +326,13 @@
 							$('#invoice_externalRecipient').removeAttr('disabled').val('').parent().show();
 							$('#invoice_recipient').show();
 							$('#invoice_recipient .note').show();
-							console.log(1)
+						//	console.log(1)
 						}
 						else {
 							$('#invoice_externalRecipient').val(data.client).attr('disabled','disabled').parent().show();
 							$('#invoice_recipient').show();
 							$('#invoice_recipient .note').hide();
-							console.log(2)
+						//	console.log(2)
 						}
 					}
 					else {
@@ -343,7 +342,7 @@
 							.attr('disabled','disabled')
 							.parent().hide();
 						$('#invoice_recipient .note').hide();
-						console.log(3)
+					//	console.log(3)
 					}
 				},
 				function(err) {
@@ -409,7 +408,8 @@
 				tasks : tasks,
 				type : type,
 				description : $('#invoice_description').val(),
-				dueDate : $('#invoice_dueDate').val()
+				dueDate : $('#invoice_dueDate').val(),
+				externalRecipient : $('#invoice_externalRecipient').val()
 			};
 			// only send over external recipient if it's not predefined
 			if (!$('#invoice_externalRecipient').is(':disabled')) {

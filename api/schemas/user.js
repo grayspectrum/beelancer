@@ -55,7 +55,7 @@ module.exports = new Schema({
 		customerUri : String,
 		paymentUri : String,
 		payoutUri : String,
-		last4ofCard : String,
-		last4ofBank : String
+		cardId : String,
+		bankId : String
 	}
 });
