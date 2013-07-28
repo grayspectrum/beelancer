@@ -553,6 +553,12 @@ module.exports = function(app, db) {
 	// creates an invoice
 	app.post('/api/invoice', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
+			// make sure the owner is able to recieve a
+			// payment (they have a payments.payoutUri)
+			// if they do, go ahead and create the invoice
+			// otherwise, send back a 400 with details
+
+
 			if (!err && user) {
 				// make sure we have all the required data
 				var body = req.body
@@ -789,8 +795,15 @@ module.exports = function(app, db) {
 				_id : req.params.invoiceId
 			})
 			.populate('owner')
+			.populate('recipient')
 			.exec(function(err, invoice) {
 				if (!err && invoice) {
+					// first check if there is a recipient
+					// if there is, then make sure they can
+					// pay (they have a payments.paymentUri)
+					// if they do, go ahead and charge em
+					// otherwise, send back a 400 with details
+
 					// go ahead and charge the caller
 					payments.Debits.create({
 						appears_on_statement_as : 'Beelancer - Invoice Payment Sent: ' + invoice._id,
@@ -855,7 +868,7 @@ module.exports = function(app, db) {
 	});
 	
 	// refunds an invoice
-	app.get('/api/invoice/refund/:invoiceId', function(req, res) {
+	app.post('/api/invoice/refund/:invoiceId', function(req, res) {
 		// using the stored transactionId for the invoice
 		// make a Refund API request
 		utils.verifyUser(req, db, function(err, user) {
@@ -927,53 +940,5 @@ module.exports = function(app, db) {
 			}
 		});
 	});
-	
-	// recieves IPN and updates invoice
-	app.get('/api/payments/ipn/:operation', function(req, res) {
-		var data = req.query;
-		console.log('IPN:', data);
-		// get the transactionId and find the invoice
-		db.invoice.findOne({
-			'aws.transactionId' : data.transactionId
-		}).exec(function(err, invoice) {
-			if (!err && invoice) {
-				invoice.aws.ipn = {
-					operation : data.operation,
-					date : data.transactionDate,
-					result : data.status
-				};
-				updateInvoiceStatus(data.transactionStatus, invoice, function(invoice) {
-					invoice.save();
-					res.end();
-				});
-			}
-		});
-	});
-	
-	function updateInvoiceStatus(status, invoice, callback) {
-		if (status === 'SUCCESS') {
-			switch(req.params.operation) {
-				case 'pay':
-					invoice.isPaid = true;
-					invoice.paymentPending = false;
-					// mark tasks as paid
-					invoice.tasks.forEach(function(val) {
-						db.task.findOne({ _id : val }).exec(function(err, task) {
-							if (!err && task) {
-								task.isPaid = true;
-								task.save();
-							}
-						});
-					});
-					break;
-				case 'refund':
-					invoice.isRefunded = true;
-					invoice.refundPending = false;
-					break;
-				default:
-			}
-		}
-		if (callback) callback(invoice);
-	}
 	
 };

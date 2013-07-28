@@ -454,6 +454,14 @@
 			});
 		}
 	});
+
+	$('#invoices_nav .pay_invoice').bind('click', function() {
+		// first check accountStatus to see if the user
+		// is able to pay the invoice
+		// if they are not able to pay the invoice
+		// prompt them to set up their payment account
+		// otherwise just do business as usual
+	});
 	
 	$('#invoices_nav .refund_invoice').bind('click', function() {
 		var invoice = viewInvoice;
