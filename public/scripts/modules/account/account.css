@@ -266,3 +266,75 @@
 	display: none;
 }
 
+.payment-account {
+	
+}
+
+.payment_account_status {
+	margin: 24px;
+}
+
+.payment_account_status .hint {
+	margin: 8px 24px;
+}
+
+.payment_account_status .payment_method {
+	background: #fff;
+	border: 1px solid #e2e2e2;
+	margin-bottom: 12px;
+}
+
+.payment_account_status .status.exists-true {
+	
+}
+
+.payment_account_status .status.exists-false {
+	
+}
+
+.payment_account_status .status {
+	padding: 6px 12px;
+	font-size: 14px;
+	margin-top: 0;
+	overflow: hidden;
+}
+
+.payment_account_status .status strong {
+	display: inline-block;
+	margin-top: 4px;
+}
+
+.payment_account_status .status em {
+	display: inline-block;
+	margin-top: 4px;
+}
+
+.payment_account_status .status button {
+	float: right;
+}
+
+.payment_account_status .status button.update {
+	
+}
+
+.payment_account_status .status button.save {
+	
+}
+
+.payment_account_status .status button.remove {
+	
+}
+
+.payment-method-new {
+	margin: 12px;
+	background: #f1f1f1;
+	border: 1px solid #e2e2e2;
+}
+
+.payment-method-new .group input {
+	width: 170px;
+}
+
+.payment-method-new .group select{
+	width: 192px;
+}
