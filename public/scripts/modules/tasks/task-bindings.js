@@ -117,9 +117,10 @@
 		var time = (endDate.getTime() - startDate.getTime());
 		
 		var hours = time / (1000 * 60 * 60)
+		  , trueHour = Math.floor(hours)
 		  , minutes = (time % (1000 * 60 * 60)) / (1000 * 60)
 		  , seconds =  ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000
-		  , parsedTime = hours.toFixed() + ' hours ' + minutes.toFixed() + ' minutes';
+		  , parsedTime = trueHour + ' hours ' + minutes.toFixed() + ' minutes';
 		return parsedTime;
 	};
 	
@@ -151,8 +152,29 @@
 				  , timerView = timerTmpl((log.length) ? log[0] : { ended : true })
 				  , timeData = bee.utils.getTimeWorked(task.worklog);
 
-				timerCtr.html(timerView);
+				// window.clearInterval(timer);
+				// window.clearInterval();
+
+				// var timer = window.setInterval(function() {
+				// 	bee.api.send(
+				// 		'GET',
+				// 		'/task/' + taskId,
+				// 		{},
+				// 		function(thisTask) {
+				// 			$('.hours-worked-clock .time').html(bee.utils.getTimeWorked(thisTask.worklog).html);
+				// 			$('.calc-cost').html('$' + parseFloat(bee.utils.getTimeWorked(thisTask.worklog).hour * task.rate).toFixed(2));
+				// 		},
+				// 		function(err) {
+				// 			// fail silently
+				// 		}
+				// 	);
+				// }, 60000);
+
 				$('.hours-worked-clock .time').html(timeData.html);
+				$('.calc-cost').html('$' + parseFloat(timeData.hour * task.rate).toFixed(2));
+
+				timerCtr.html(timerView);
+				//$('.hours-worked-clock .time').html(timeData.html);
 				// update nav url
 				var base_url = $('#tasks_nav .edit_task').attr('href');
 				$('#tasks_nav .edit_task').attr('href', base_url + task._id);
@@ -185,11 +207,11 @@
 					$('#task_timer_controls .timer, .worklog .timer').remove();
 				}
 
-				$('.calc-cost').html('$' + parseFloat(timeData.time * task.rate).toFixed(2));
-
 				bee.ui.loader.hide();
 				bindTaskWorkLogEditor();
-				bindTimerControls();
+				_.load(['/scripts/lib/stopwatch.js'], function() {
+					bindTimerControls(bee.utils.getTimeWorked(task.worklog));
+				});
 				updateWorklogListView();
 
 				// init pager for worklog
@@ -430,12 +452,25 @@
 		}
 	};
 	
-	function bindTimerControls() {
+	function bindTimerControls(timeObj) {
+		var w = new Stopwatch();
+
+		if ($('#task_timer_controls .stop').length) {
+			w.setElapsed(timeObj.hour, timeObj.min, timeObj.sec);
+			w.start();
+		}
+
 		$('#task_timer_controls .start').bind('click', function() {
 			bee.ui.loader.show();
 			// start timer
 			var taskId = $('#task_details').attr('data-id');
 			bee.api.send('POST', '/task/start/' + taskId, {}, function(success) {
+				w.setListener(function() {
+					if ($('#task_timer_controls .stop').length) {
+						$('#task_timer_controls .status').html('Timing: ' + w.toString());
+					}
+				});
+				w.start();
 				bee.ui.notifications.notify('info', 'Task Started');
 				view_task();
 			}, function(err) {
@@ -449,6 +484,12 @@
 			// collect message and stop timer
 			var taskId = $('#task_details').attr('data-id');
 			bee.api.send('PUT', '/task/stop/' + taskId, {}, function(success) {
+				w.stop();
+				w.removeListener(function() {
+					$('#task_timer_controls .status').html('Paused');
+				});
+				w.reset();
+				w = null;
 				bee.ui.notifications.notify('info', 'Task Stopped');
 				view_task();
 			}, function(err) {
