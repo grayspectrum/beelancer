@@ -558,8 +558,7 @@ module.exports = function(app, db) {
 			// if they do, go ahead and create the invoice
 			// otherwise, send back a 400 with details
 
-
-			if (!err && user) {
+			if (!err && user && user.payments.payoutUri) {
 				// make sure we have all the required data
 				var body = req.body
 				  , required
@@ -766,9 +765,9 @@ module.exports = function(app, db) {
 				}
 			}
 			else {
-				res.writeHead(401);
+				res.writeHead((user && !user.payments.payoutUri) ? 400 : 401);
 				res.write(JSON.stringify({
-					error : 'You must be logged in to create invoices.'
+					error : (user && !user.payments.payoutUri) ? 'No payout information found.' : 'You must be logged in to create invoices.'
 				}));
 				res.end();
 			}
@@ -789,6 +788,56 @@ module.exports = function(app, db) {
 			}
 		});
 		
+		function collectPaymentDetails() {
+			var required = [
+				'email',
+				'cardNumber',
+				'expirationYear',
+				'expirationMonth',
+				'securityCode'
+			] , valid = true
+			  , missing = [];
+			// check required props
+			required.forEach(function(val) {
+				if (!body[val]) {
+					valid = false;
+					missing.push(val);
+				}
+			});
+			if (valid && !missing.length) {
+				payments.Cards.create({
+				    card_number: body.cardNumber,
+				    expiration_year: body.expirationYear,
+				    expiration_month: body.expirationMonth,
+				    security_code: body.securityCode
+				}, function(err, card) {
+					if (!err) {
+						charge({
+							email : body.email,
+							payments : {
+								paymentUri : card.uri
+							}
+						});
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : err
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(400);
+				res.write(JSON.stringify({
+					error : 'Missing required information for non-user.',
+					missing : missing
+				}));
+				res.end();
+			}
+		}
+
 		function charge(user) {
 			// find the invoice
 			db.invoice.findOne({
@@ -803,32 +852,40 @@ module.exports = function(app, db) {
 					// pay (they have a payments.paymentUri)
 					// if they do, go ahead and charge em
 					// otherwise, send back a 400 with details
+					if (invoice.recipient && !invoice.recipient.payments.paymentUri) {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'No payment method on file.'
+						}));
+						res.end();
+					}
+					else {
+						// go ahead and charge the caller
+						payments.Debits.create({
+							appears_on_statement_as : 'Beelancer - Invoice Payment Sent: ' + invoice._id,
+							source_uri : user.payments.paymentUri,
+							on_behalf_of_uri : invoice.payments.recipientUri,
+							amount : invoice.amount
+						}, function(err, response) {
+							if (!err) {
+								initiatePayout();
+								// send confirmation email
+								var email = new Mailer('invoicerecipientpaid', { invoice : invoice, recipient : user });
+								email.send(user.email, 'Payment Sent');
 
-					// go ahead and charge the caller
-					payments.Debits.create({
-						appears_on_statement_as : 'Beelancer - Invoice Payment Sent: ' + invoice._id,
-						source_uri : user.payments.paymentUri,
-						on_behalf_of_uri : invoice.payments.recipientUri,
-						amount : invoice.amount
-					}, function(err, response) {
-						if (!err) {
-							initiatePayout();
-							//
-							//
-							//
-							// send confirmation email to user who paid here
-							//
-							//
-							//
-							invoice.isPaid = true;
-							invoice.save();
-							res.write(JSON.stringify(response));
-							res.end();
-						}
-						else {
-							console.log('PayInvoiceError:', err);
-						}
-					});
+								invoice.payments.refundUri = response.refunds_uri;
+								invoice.payments.senderUri = user.payments.paymentUri;
+								invoice.isPaid = true;
+								invoice.save(function(err) {
+									res.write(JSON.stringify(response));
+									res.end();
+								});
+							}
+							else {
+								console.log('PayInvoiceError:', err);
+							}
+						});
+					}
 
 					// use the recipientUri to perform payout
 					// be sure to subtract the invoice fee from
@@ -840,13 +897,11 @@ module.exports = function(app, db) {
 							appears_on_statement_as : 'Beelancer - Invoice Payment Recieved: ' + invoice._id,
 						}, function(err, response) {
 							if (!err) {
-								//
-								//
-								//
-								// send confirmation email to user who paid here
-								//
-								//
-								//
+								
+								// send confirmation email
+								var email = new Mailer('invoicepaymentreceived', { invoice : invoice, recipient : user });
+								email.send(invoice.owner.email, 'Payment Received');
+
 								invoice.isPaidOut = true;
 								invoice.save();
 							}
@@ -880,39 +935,38 @@ module.exports = function(app, db) {
 				}).exec(function(err, invoice) {
 					if (!err && invoice) {
 						// make sure the invoice can be refunded
-						if (invoice.isPaid && !invoice.isRefunded) {
-							AWS.captureRefund(invoice, function(err, data) {
-								if (!err) {
-									/*
-									 * DO WE NEED TO SET refundPending HERE?
-									 */									
-									try {
-										invoice.aws.transactionStatus = data.Body.RefundResponse.RefundResult.TransactionStatus;
-										invoice.isPaid = false;
-									} catch(e) {}
-									updateInvoiceStatus(invoice.aws.transactionStatus, invoice, function(invoice) {
-										// redo singleuse token
-										AWS.getSingleUseToken(invoice, function(err, tokenData) {
-											if (!err && data) {
-												invoice.aws.paymentUrl = tokenData.redirectTo;
-												// save the invoice
-												invoice.save();
+						if (invoice.isPaid && !invoice.isRefunded && invoice.payments.refundUri) {
+							payments.Refunds.create(
+								invoice.payments.refundUri,
+								{
+									amount : invoice.amount
+								},
+								function(err, response) {
+									if (!err) {
+										invoice.isRefunded = true;
+										invoice.save(function(err) {
+											if (!err) {
+												res.write(JSON.stringify(invoice));
+												res.end()
+											}
+											else {
+												res.writeHead(500);
+												res.write(JSON.stringify({
+													error : err
+												}));
+												res.end();
 											}
 										});
-									});
-									res.write(JSON.stringify({
-										refundStatus : invoice.aws.transactionStatus
-									}));
-									res.end();
+									}
+									else {
+										res.writeHead(400);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+									}
 								}
-								else {
-									res.writeHead(500);
-									res.write(JSON.stringify({
-										error : err
-									}));
-									res.end();
-								}
-							});
+							);
 						}
 						else {
 							res.writeHead(400);

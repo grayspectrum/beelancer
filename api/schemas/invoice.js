@@ -47,7 +47,9 @@ module.exports = new Schema({
 	},
 	dueDate : Date,
 	payments : {
-		recipientUri : String
+		recipientUri : String,
+		senderUri : String,
+		refundUri : String // debit uri
 	},
 	publicViewId : String
 });
