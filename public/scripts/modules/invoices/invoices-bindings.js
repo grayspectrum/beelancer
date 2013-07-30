@@ -458,10 +458,49 @@
 	$('#invoices_nav .pay_invoice').bind('click', function() {
 		// first check accountStatus to see if the user
 		// is able to pay the invoice
-		// if they are not able to pay the invoice
-		// prompt them to set up their payment account
-		// otherwise just do business as usual
+		bee.api.send(
+			'GET',
+			'/invoice/accountStatus',
+			{},
+			function(resp) {
+				if (resp.paymentCard.exists) {
+					payInvoice();
+				}
+				// if they are not able to pay the invoice
+				// prompt them to set up their payment account
+				else {
+					bee.ui.loader.hide();
+					bee.ui.confirm(
+						'You are not currently set up to send payments. Setup payments now?', 
+						function() {
+							location.href = '/#!/account?hasFocus=payment_account_setup';
+						}
+					);
+				}
+			},
+			function(err) {
+				bee.ui.loader.hide();
+				bee.ui.notifications.notify('err', err);
+			}
+		);
 	});
+
+	function payInvoice() {
+		bee.api.send(
+			'POST',
+			'/invoice/pay/' + viewInvoice,
+			{},
+			function(resp) {
+				bee.ui.loader.hide();
+				bee.ui.notifications.notify('success', 'Invoice paid!');
+				bee.ui.refresh();
+			},
+			function(err) {
+				bee.ui.loader.hide();
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	};
 	
 	$('#invoices_nav .refund_invoice').bind('click', function() {
 		var invoice = viewInvoice;
