@@ -34,28 +34,16 @@
 	function generateJobHomePage() {
 		$('#job_search_result, #jobs_search, #jobs_create, #jobs_mine, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
 
-		getJobs();
-		bindCategoryChange();
-		getCategories(null);
+		getPromotedJobs();
+		getLatestJobs();
+		getWatchedJobs();
 		bee.ui.loader.hide();
 
-		function getJobs() {
-			var category = $('#category').val();
-			if (category !== 'all') {
-				var query = { category: category };
-			} else {
-				var query = {};
-			}
-
-			getPromotedJobs(query);
-			getLatestJobs(query);
-		};
-
-		function getPromotedJobs(query) {
+		function getPromotedJobs() {
 			bee.api.send(
 				'GET',
 				'/jobs/promoted',
-				query,
+				{},
 				function(res) {
 					if (res.length) {
 						var pro_tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
@@ -70,7 +58,7 @@
 					var proPager = new bee.ui.Paginator(
 						$('#jobs_promoted .pagination'),
 						$('#jobs_promoted li.job'),
-						3
+						10
 					);
 					proPager.init();
 				},
@@ -80,11 +68,11 @@
 			);
 		};
 
-		function getLatestJobs(query) {
+		function getLatestJobs() {
 			bee.api.send(
 				'GET',
 				'/jobs',
-				query,
+				{},
 				function(res) {
 					if (res.length) {
 						var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
@@ -93,7 +81,7 @@
 						var newPager = new bee.ui.Paginator(
 							$('#jobs_new .pagination'),
 							$('#jobs_new li.job'),
-							20
+							10
 						);
 						newPager.init();
 					} else {
@@ -105,12 +93,24 @@
 					bee.ui.notifications.notify('err', err);
 				}
 			);
-		};
+		}
 
-		function bindCategoryChange() {
-			$('#category').bind('change', function() {
-				getJobs();
-			});
+		function getWatchedJobs() {
+			var watched = bee.get('profile').jobs.watched;
+			if (watched.length > 0) {
+				var wat_tmpl = Handlebars.compile($('#tmpl-joblist').html())(watched);
+				$('#watched_jobs_list').html(wat_tmpl);
+
+				var watchPager = new bee.ui.Paginator(
+					$('#jobs_watched .pagination'),
+					$('#jobs_watched li.job'),
+					10
+				);
+				watchPager.init();
+			} else {
+				var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'There are no current jobs to view.' })
+				$('#watched_jobs_list').html(no_tmpl);
+			}
 		};
 	};
 
@@ -250,7 +250,7 @@
 					  , catTmpl = $('#tmpl-catsForJob').html()
 					  , catSource = Handlebars.compile(catTmpl);
 
-					catList.append(catSource(res));
+					catList.html(catSource(res));
 
 					// if edit default
 					if (cat) {
@@ -502,25 +502,6 @@
 				bee.ui.notifications.notify('err', err, true);
 			}
 		);
-		getWatchedJobs();
-
-		function getWatchedJobs() {
-			var watched = bee.get('profile').jobs.watched;
-			if (watched.length > 0) {
-				var wat_tmpl = Handlebars.compile($('#tmpl-joblist').html())(watched);
-				$('#watched_jobs_list').html(wat_tmpl);
-
-				var watchPager = new bee.ui.Paginator(
-					$('#jobs_watched .pagination'),
-					$('#jobs_watched li.job'),
-					10
-				);
-				watchPager.init();
-			} else {
-				var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'There are no current jobs to view.' })
-				$('#watched_jobs_list').html(no_tmpl);
-			}
-		};
 
 		bee.ui.loader.hide();
 	};

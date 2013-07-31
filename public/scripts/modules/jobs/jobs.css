@@ -27,12 +27,6 @@
 	background: url('/assets/images/mono/black/target_icon&32.png') 12px center no-repeat;
 }
 
-#jobs_list #jobs_category {
-	margin: -10px 176px -10px 282px !important;
-	padding: 10px;
-	text-align: center;
-}
-
 #search_jobs {
 	float: left;
 	width: 400px;
