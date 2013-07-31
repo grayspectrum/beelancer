@@ -36,7 +36,7 @@ module.exports.bind = function(app, onComplete) {
 	  , io = socket_io(server);
 	*/  
 	
-	var server = new require('http').Server(app)
+	var server = new require((conf.useSSL) ? 'https' : 'http').Server(app)
 	  , io = socket_io.listen(server);
 	  
 	io.set('log level', 1);

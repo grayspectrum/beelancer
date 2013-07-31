@@ -21,7 +21,7 @@ module.exports = (function(env) {
 		beta : {
 			user : '',
 			pass : '​',
-			host : 'db1.beelancer.com',
+			host : 'sandbox.beelancer.com',
 			port : 27017,
 			name : 'beelancer-beta'
 		},
