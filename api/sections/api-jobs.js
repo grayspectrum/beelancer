@@ -23,12 +23,12 @@ module.exports = function(app, db) {
 	app.get('/api/jobs/promoted', function(req, res) {
 		var today = new Date();
 		db.job.find({
-			// $gte : {
-			// 	'listing.start' : today
-			// },
-			// $lte : {
-			// 	'listing.end' : today
-			// },
+			'listing.start' : {
+				$lte : today
+			},
+			'listing.end' :  {
+				$gte : today
+			},
 			isPublished : true,
 			'listing.isPromoted' : true
 		})
@@ -67,12 +67,12 @@ module.exports = function(app, db) {
 	app.get('/api/jobs', function(req, res) {
 		var today = new Date();
 		db.job.find({
-			// $gte : {
-			// 	'listing.start' : today
-			// },
-			// $lte : {
-			// 	'listing.end' : today
-			// },
+			'listing.start' : {
+				$lte : today
+			},
+			'listing.end' :  {
+				$gte : today
+			},
 			isPublished : true,
 			'listing.isPromoted' : false
 		})
