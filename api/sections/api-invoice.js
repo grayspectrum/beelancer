@@ -187,7 +187,7 @@ module.exports = function(app, db) {
 							res.end();
 					    }
 					    else {
-					    	user.payments.payoutUri = bankacct.uri;
+					    	user.payments.payoutUri = bankacct.credits_uri;
 					    	user.payments.bankId = body.accountNumber.substr(0, body.accountNumber.length - 5);;
 					    	// create a customer if needed
 					    	if (user.payments.customerUri) {
@@ -352,11 +352,20 @@ module.exports = function(app, db) {
 					owner : user._id
 				}).exec(function(err, invoice) {
 					if (!err) {
-						invoice.remove(function(err) {
-							if (!err) {
-								res.end();
-							}
-						});
+						if (invoice.isPaid) {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'Cannot delete an invoice after it has already been paid.'
+							}));
+							res.end();
+						}
+						else {
+							invoice.remove(function(err) {
+								if (!err) {
+									res.end();
+								}
+							});
+						}
 					}
 					else {
 						res.writeHead(400);
@@ -862,10 +871,11 @@ module.exports = function(app, db) {
 					else {
 						// go ahead and charge the caller
 						payments.Debits.create({
-							appears_on_statement_as : 'Beelancer - Invoice Payment Sent: ' + invoice._id,
+							appears_on_statement_as : 'Beelancer-InvoicePaid',
 							source_uri : user.payments.paymentUri,
+							customer_uri : user.payments.customerUri,
 							on_behalf_of_uri : invoice.payments.recipientUri,
-							amount : invoice.amount
+							amount : invoice.amount * 100 // usd cents
 						}, function(err, response) {
 							if (!err) {
 								initiatePayout();
@@ -883,6 +893,11 @@ module.exports = function(app, db) {
 							}
 							else {
 								console.log('PayInvoiceError:', err);
+								res.writeHead(400);
+								res.write(JSON.stringify({
+									error : err.description
+								}));
+								res.end();
 							}
 						});
 					}
@@ -891,24 +906,25 @@ module.exports = function(app, db) {
 					// be sure to subtract the invoice fee from
 					// the payout
 					function initiatePayout() {
-						payments.Credits.add({
-							credits_uri : invoice.owner.payments.payoutUri,
-							amount : (invoice.amount + invoice.fee) * 100, // usd cents
-							appears_on_statement_as : 'Beelancer - Invoice Payment Recieved: ' + invoice._id,
-						}, function(err, response) {
-							if (!err) {
-								
-								// send confirmation email
-								var email = new Mailer('invoicepaymentreceived', { invoice : invoice, recipient : user });
-								email.send(invoice.owner.email, 'Payment Received');
+						payments.Credits.add(
+							invoice.owner.payments.payoutUri, // credit_uri
+							(invoice.amount - invoice.fee) * 100, // usd cents (amount)
+							'Beelancer-InvoicePaid', // appears_on_statement_as
+							function(err, response) {
+								if (!err) {
+									
+									// send confirmation email
+									var email = new Mailer('invoicepaymentreceived', { invoice : invoice, recipient : user });
+									email.send(invoice.owner.email, 'Payment Received');
 
-								invoice.isPaidOut = true;
-								invoice.save();
+									invoice.isPaidOut = true;
+									invoice.save();
+								}
+								else {
+									console.log('InvoicePayoutError:', err);
+								}
 							}
-							else {
-								console.log('InvoicePayoutError:', err);
-							}
-						});
+						);
 					};
 				}
 				else {
@@ -936,37 +952,65 @@ module.exports = function(app, db) {
 					if (!err && invoice) {
 						// make sure the invoice can be refunded
 						if (invoice.isPaid && !invoice.isRefunded && invoice.payments.refundUri) {
-							payments.Refunds.create(
-								invoice.payments.refundUri,
-								{
-									amount : invoice.amount
-								},
-								function(err, response) {
+							
+							chargeInvoiceOwner(payInvoiceRecipient);
+
+							function chargeInvoiceOwner(callback) {
+								payments.Debits.create({
+									appears_on_statement_as : 'Beelancer-InvRefund',
+									source_uri : user.payments.paymentUri,
+									customer_uri : user.payments.customerUri,
+									on_behalf_of_uri : invoice.payments.recipientUri,
+									amount : (invoice.amount - invoice.fee) * 100 // usd cents
+								}, function(err, response) {
 									if (!err) {
-										invoice.isRefunded = true;
-										invoice.save(function(err) {
-											if (!err) {
-												res.write(JSON.stringify(invoice));
-												res.end()
-											}
-											else {
-												res.writeHead(500);
-												res.write(JSON.stringify({
-													error : err
-												}));
-												res.end();
-											}
-										});
+										callback();
 									}
 									else {
+										console.log('PayRefundError:', err);
 										res.writeHead(400);
 										res.write(JSON.stringify({
-											error : err
+											error : err.description
 										}));
 										res.end();
 									}
-								}
-							);
+								});
+							};
+
+							function payInvoiceRecipient() {
+								payments.Refunds.create(
+									invoice.payments.refundUri,
+									{
+										amount : invoice.amount * 100 // usd cents
+									},
+									function(err, response) {
+										if (!err) {
+											invoice.isRefunded = true;
+											invoice.isPaid = false;
+											invoice.save(function(err) {
+												if (!err) {
+													res.write(JSON.stringify(invoice));
+													res.end()
+												}
+												else {
+													res.writeHead(500);
+													res.write(JSON.stringify({
+														error : err
+													}));
+													res.end();
+												}
+											});
+										}
+										else {
+											res.writeHead(400);
+											res.write(JSON.stringify({
+												error : err
+											}));
+											res.end();
+										}
+									}
+								);
+							};
 						}
 						else {
 							res.writeHead(400);

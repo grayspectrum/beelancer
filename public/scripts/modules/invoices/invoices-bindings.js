@@ -87,10 +87,11 @@
 				else {
 					// user is the sender
 					$('#invoices_nav').show();
+					$('#invoices_nav .delete_invoice').parent().show();
 					if (invoice.isPaid) {
+						$('#invoices_nav .delete_invoice').parent().hide();
 						$('#invoices_nav .refund_invoice').parent().show()
 					}
-					$('#invoices_nav .delete_invoice').parent().show();
 				}
 				
 				bee.ui.loader.hide();
@@ -458,13 +459,18 @@
 	$('#invoices_nav .pay_invoice').bind('click', function() {
 		// first check accountStatus to see if the user
 		// is able to pay the invoice
+		bee.ui.loader.show();
 		bee.api.send(
 			'GET',
-			'/invoice/accountStatus',
+			'/payments/accountStatus',
 			{},
 			function(resp) {
 				if (resp.paymentCard.exists) {
-					payInvoice();
+					bee.ui.loader.hide();
+					bee.ui.confirm(
+						'Pay this invoice using your credit card ending in ' + resp.paymentCard.account + ' ?',
+						payInvoice
+					);
 				}
 				// if they are not able to pay the invoice
 				// prompt them to set up their payment account
@@ -486,6 +492,7 @@
 	});
 
 	function payInvoice() {
+		bee.ui.loader.show();
 		bee.api.send(
 			'POST',
 			'/invoice/pay/' + viewInvoice,
@@ -508,7 +515,7 @@
 			bee.ui.confirm('Are you sure you wish to refund this invoice?', function() {
 				bee.ui.loader.show();
 				bee.api.send(
-					'GET',
+					'POST',
 					'/invoice/refund/' + invoice,
 					{},
 					function(data) {
