@@ -96,37 +96,28 @@ module.exports = (function() {
 			viewDir : __dirname + '/views/panels'
 		}).init(app);
 
-		var app_server
-		  , secure_server;
-
-		// pass sockets.js the right app instance
 		if (config.useSSL) {
+			var https = require('https');
 			// create a normal https server
-			secure_server = https.createServer(certs, app);
+			app = https.createServer(certs, app);
 		}
-		var app_server = (config.useSSL) ? secure_server : app;
+
 		// bind sockets
-		sockets.bind(app_server, function(server) {
+		sockets.bind(app, function(server) {
 			// start server
 			if (config.useSSL) {
-				// spin it up!
-				server.listen(config.app_port, function() {
-					console.log('Beelancer listening on port ' + config.app_port + '.');
-				});
 				// we want to force all http traffic to https
 				var redirect = express();
 				redirect.all('*', function(req, res) {
 					res.redirect('https://' + req.headers.host + req.url);
 				});
 				redirect.listen(80, function() {
-					console.log('Beelancer redirecting port 80 to ' + config.app_port + '.\n');
+					console.log('Beelancer redirecting port 80 to ' + config.app_port + '.');
 				});
 			}
-			else { 
-				server.listen(config.app_port, function() {
-					console.log('Beelancer listening on port ' + config.app_port + '.\n');
-				});
-			}
+			server.listen(config.app_port, function() {
+				console.log('Beelancer listening on port ' + config.app_port + '.\n');
+			});
 		});
 	});
 	

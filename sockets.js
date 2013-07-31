@@ -4,7 +4,9 @@
  */
 
 var socket_io = require('socket.io')
-  , conf = require('./config.js');
+  , conf = require('./config.js')
+  , http = require('http')
+  , https = require('https');
 
 module.exports.clients = [];
 
@@ -35,8 +37,9 @@ module.exports.bind = function(app, onComplete) {
 	var server = require('http').Server(app)
 	  , io = socket_io(server);
 	*/  
-	
-	var server = new require((conf.useSSL) ? 'https' : 'http').Server(app)
+
+	var alreadyServerInstance = (app instanceof http.Server) || (app instanceof https.Server)
+	  , server = (alreadyServerInstance) ? app : new require((conf.useSSL) ? 'https' : 'http').Server(app)
 	  , io = socket_io.listen(server);
 	  
 	io.set('log level', 1);
