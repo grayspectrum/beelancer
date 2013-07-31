@@ -32,6 +32,12 @@
 </div>
 <div id="job_search_result" class="light-gradient center-pane animated fadeInUp"></div>
 <div id="jobs_list">
+	<div id="jobs_category" class="light-gradient center-pane animated fadeInUp">
+		<span>Category:</span>
+		<select id="category" name="category">
+			<option value="all">All</option>
+		</select>
+	</div>
 	<div id="jobs_promoted" class="light-gradient center-pane animated fadeInUp">
 		<h4 class="gold-gradient">Promoted Jobs</h4>
 		<div id="promoted_jobs_list">
@@ -58,7 +64,7 @@
 			<button class="pageRight">&raquo;</button>
 		</div>
 	</div>
-	<div id="jobs_watched" class="light-gradient center-pane animated fadeInUp">
+	<!-- <div id="jobs_watched" class="light-gradient center-pane animated fadeInUp">
 		<h4 class="gold-gradient">Jobs I'm Watching</h4>
 		<div id="watched_jobs_list">
 			<div class="loader"></div>
@@ -70,7 +76,7 @@
 			</span>
 			<button class="pageRight">&raquo;</button>
 		</div>
-	</div>
+	</div> -->
 </div>
 <div id="jobs_mine" class="light-gradient center-pane animated fadeInUp">
 	<h4 class="gold-gradient">My Jobs</h4>
@@ -94,6 +100,21 @@
 			<span class="user">Jobs Assigned to Me</span>
 		</h3>
 		<div id="assigned_jobs_list">
+			<div class="loader"></div>
+		</div>
+		<div class="pagination">
+			<button class="pageLeft">&laquo;</button>
+			<span class="pageLocation">
+				Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
+			</span>
+			<button class="pageRight">&raquo;</button>
+		</div>
+	</div>
+	<div id="jobs_watched">
+		<h3 class="light-gradient">
+			<span class="user">Jobs I'm Watching</span>
+		</h3>
+		<div id="watched_jobs_list">
 			<div class="loader"></div>
 		</div>
 		<div class="pagination">
