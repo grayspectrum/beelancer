@@ -21,8 +21,9 @@ module.exports = function(app, db) {
 	// Returns the current promoted jobs
 	////
 	app.get('/api/jobs/promoted', function(req, res) {
-		var today = new Date();
-		db.job.find({
+		var today = new Date()
+		  , data = req.query
+		  , query = {
 			'listing.start' : {
 				$lte : today
 			},
@@ -31,7 +32,13 @@ module.exports = function(app, db) {
 			},
 			isPublished : true,
 			'listing.isPromoted' : true
-		})
+		};
+
+		if (data.category) {
+			query['category.id'] = data.category;
+		}
+
+		db.job.find(query)
 		.sort({ 'listing.start' : -1 })
 		.exec(function(err, promotedJobs) {
 			if (!err && promotedJobs) {
@@ -65,8 +72,9 @@ module.exports = function(app, db) {
 	// optionally filtered by search criteria
 	////
 	app.get('/api/jobs', function(req, res) {
-		var today = new Date();
-		db.job.find({
+		var today = new Date()
+		  , data = req.query
+		  , query = {
 			'listing.start' : {
 				$lte : today
 			},
@@ -75,7 +83,13 @@ module.exports = function(app, db) {
 			},
 			isPublished : true,
 			'listing.isPromoted' : false
-		})
+		};
+
+		if (data.category) {
+			query['category.id'] = data.category;
+		}
+
+		db.job.find(query)
 		.sort({ 'listing.start' : -1 })
 		.exec(function(err, jobs) {
 			if (!err && jobs) {
@@ -1134,87 +1148,117 @@ module.exports = function(app, db) {
 						}
 						
 						if (requirementsMatch) {
-							db.bid.findOne({
-								user : user._id,
-								job : job._id
-							}).exec(function(err, bid) {
-								if (!err) {
-									var isUpdate = false;
-									if (bid) {
-										bid.message = body.message;
-										bid.placedOn = new Date();
-										bid.isAccepted = false;
-										isUpdate = true;
-									}
-									else {
-										bid = new db.bid({
-											user : user._id,
-											job : job._id,
-											isAccepted : false,
-											placedOn : new Date(),
-											message : body.message
-										});
-									}
-
-									bid.save(function(err) {
-										if (!err) {
-											// only push the bid if it's not an updated bid
-											if (!isUpdate) job.bids.push(bid._id);
-											job.save(function(err) {
-												// add to callers watch list
-												if (!user.jobs.watched.length) {
-													user.jobs.watched.push(job._id);
-													user.save();
-												} else {
-													user.jobs.watched.forEach(function(val, key) {
-														if (!val._id.equals(job._id)) {
-															user.jobs.watched.push(job._id);
-															user.save();
-														}
-													});
-												}
-												
-												// if (user.jobs.watched.indexOf(job._id) === -1) {
-												// 	user.jobs.watched.push(job._id);
-												// 	user.save();
-												// }
-
-												// send an email to the owner to alert
-												// them that they've received a bid
-												db.user.findOne({ _id : job.owner })
-												.exec(function(err, owner) {
-													db.user.findOne({ _id : bid.user })
-													.populate('profile').exec(function(err, user) {
-														job = job.toObject();
-														job.owner = owner;
-														job.bid = user;
-
-														var email = new Mailer('bid', job);
-														email.send(owner.email, 'Bid Received');
-													});
-												});
-
-												res.write(JSON.stringify(bid));
-												res.end();
-											});
+							// check if user has bid on more than 10 active jobs
+							if (!user.isPro) {
+								db.bid.find({
+									user : user._id
+								}).exec(function(err, bids) {
+									if (!err) {
+										var countBids = 0;
+										if (bids.length) {
+											for (var i = 0; i < bids.length; i++) {
+												if (!bids[i].isAccepted) countBids++
+											}
 										}
-										else {
-											res.writeHead(500);
+
+										if (countBids >= 10) {
+											res.writeHead(400);
 											res.write(JSON.stringify({
-												error : err
+												error : 'You cannot bid on more than 10 active jobs at a time.'
 											}));
 											res.end();
+										} else {
+											createBid();
 										}
-									});
-								}
-								else {
-									res.writeHead(500);
-									res.write(JSON.stringify({
-										error : err
-									}));
-									res.end();
-								}
-							});
+									}
+								});
+							} else {
+								createBid();
+							}
+
+							function createBid() {
+								db.bid.findOne({
+									user : user._id,
+									job : job._id
+								}).exec(function(err, bid) {
+									if (!err) {
+										var isUpdate = false;
+										if (bid) {
+											bid.message = body.message;
+											bid.placedOn = new Date();
+											bid.isAccepted = false;
+											isUpdate = true;
+										}
+										else {
+											bid = new db.bid({
+												user : user._id,
+												job : job._id,
+												isAccepted : false,
+												placedOn : new Date(),
+												message : body.message
+											});
+										}
+
+										bid.save(function(err) {
+											if (!err) {
+												// only push the bid if it's not an updated bid
+												if (!isUpdate) job.bids.push(bid._id);
+												job.save(function(err) {
+													// add to callers watch list
+													if (!user.jobs.watched.length) {
+														user.jobs.watched.push(job._id);
+														user.save();
+													} else {
+														user.jobs.watched.forEach(function(val, key) {
+															if (!val._id.equals(job._id)) {
+																user.jobs.watched.push(job._id);
+																user.save();
+															}
+														});
+													}
+													
+													// if (user.jobs.watched.indexOf(job._id) === -1) {
+													// 	user.jobs.watched.push(job._id);
+													// 	user.save();
+													// }
+
+													// send an email to the owner to alert
+													// them that they've received a bid
+													db.user.findOne({ _id : job.owner })
+													.exec(function(err, owner) {
+														db.user.findOne({ _id : bid.user })
+														.populate('profile').exec(function(err, user) {
+															job = job.toObject();
+															job.owner = owner;
+															job.bid = user;
+
+															var email = new Mailer('bid', job);
+															email.send(owner.email, 'Bid Received');
+														});
+													});
+
+													res.write(JSON.stringify(bid));
+													res.end();
+												});
+											}
+											else {
+												res.writeHead(500);
+												res.write(JSON.stringify({
+													error : err
+												}));
+												res.end();
+											}
+										});
+									}
+									else {
+										res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+									}
+								});
+							};
 						}
 						else {
 							res.writeHead(400);
