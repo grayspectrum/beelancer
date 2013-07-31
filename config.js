@@ -40,8 +40,7 @@ module.exports = (function(env) {
 			domain : 'https://app.beelancer.com/',
 			balanced_api : {
 				marketplace_uri : '/v1/marketplaces/MP668ieafdEpPXUWi6uy0Tki',
-				secret : 'c83b48b2f6d011e2a713026ba7f8ec28
-'
+				secret : 'c83b48b2f6d011e2a713026ba7f8ec28'
 			}
 		},
 		
@@ -53,8 +52,7 @@ module.exports = (function(env) {
 			domain : 'https://app.beelancer.com/',
 			balanced_api : {
 				marketplace_uri : '/v1/marketplaces/MP668ieafdEpPXUWi6uy0Tki',
-				secret : 'c83b48b2f6d011e2a713026ba7f8ec28
-'
+				secret : 'c83b48b2f6d011e2a713026ba7f8ec28'
 			}
 		}
 	};
