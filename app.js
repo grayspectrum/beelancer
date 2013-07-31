@@ -94,17 +94,17 @@ module.exports = (function() {
 		spi.config({
 			viewDir : __dirname + '/views/panels'
 		}).init(app);
+
+		if (config.useSSL) {
+			var https = require('https');
+			// create a normal https server
+			app = https.createServer(certs, app);
+		}
+
 		// bind sockets
 		sockets.bind(app, function(server) {
 			// start server
 			if (config.useSSL) {
-				var https = require('https')
-				// create a normal https server
-				  , server = https.createServer(certs, app);
-				// spin it up!
-				server.listen(config.app_port, function() {
-					console.log('Beelancer listening on port ' + config.app_port + '.\n');
-				});
 				// we want to force all http traffic to https
 				var redirect = express();
 				redirect.all('*', function(req, res) {
@@ -112,11 +112,9 @@ module.exports = (function() {
 				});
 				redirect.listen(80);
 			}
-			else { 
-				server.listen(config.app_port, function() {
-					console.log('Beelancer listening on port ' + config.app_port + '.\n');
-				});
-			}
+			server.listen(config.app_port, function() {
+				console.log('Beelancer listening on port ' + config.app_port + '.\n');
+			});
 		});
 	});
 	
