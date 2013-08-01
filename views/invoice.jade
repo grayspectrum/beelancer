@@ -1,2 +1,34 @@
 // - Point to layout
 extends invoice_layout
+
+block content
+	div#invoice_options.navigation.light-gradient.center-pane.animated.fadeInUp
+		ul#invoice_options
+			li
+				a.payinvoice(href='/invoice/pay/#{invoiceId}') Pay Invoice
+	div#invoice_container
+	script(type='application/javascript')
+		| $(function() {
+		|	var id = '#{invoiceId}';
+		|	bee.invoice.get(id);
+		| });
+	div#payment_information
+		form#pay_invoice.light-gradient
+			div.group
+				label(for='public_invoice_email')
+					span Email:
+					input#public_invoice_email(type='text', name='email', placeholder='me@example.com')
+			div.group
+				label(for='public_invoice_cardNumber')
+					span Card Number:
+					input#public_invoice_cardNumber(type='text', name='cardNumber', placeholder='')
+				label(for='public_invoice_securityCode')
+					span Security Code:
+					input#public_invoice_securityCode(type='text', name='securityCode', placeholder='me@example.com')
+				label(for='public_invoice_expirationMonth')
+					span Exp. Month:
+					input#public_invoice_expirationMonth(type='text', name='expirationMonth', placeholder='MM', maxlength='2')
+				label(for='public_invoice_expirationYear')
+					span Exp. Year:
+					input#public_invoice_expirationYear(type='text', name='expirationYear', placeholder='YYYY', maxlength='4')
+			input#public_submit_invoice.gold-gradient(type='submit', value='Pay Invoice')

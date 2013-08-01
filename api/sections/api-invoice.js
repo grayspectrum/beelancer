@@ -388,7 +388,7 @@ module.exports = function(app, db) {
 	
 	// retrieve a single invoice by it's id
 	app.get('/api/invoice/:invoiceId', function(req, res) {
-		var body = req.body;
+		var body = req.query;
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
 				db.invoice.findOne({
@@ -439,26 +439,26 @@ module.exports = function(app, db) {
 					.populate('tasks')
 					.populate('owner', 'profile')
 					.populate('recipient', 'profile')
-					.exec(function(err, invoice) {
-						if (!err && invoice) {
-							populateProfiles(invoice, function(err, invoice) {
-								if (!err && invoice) {
+					.exec(function(err2, invoice) {
+						if (!err2 && invoice) {
+							populateProfiles(invoice, function(err3, invoice) {
+								if (!err3 && invoice) {
 									res.write(JSON.stringify(invoice));
 									res.end();
 								}
 								else {
 									res.writeHead(500);
 									res.write(JSON.stringify({
-										error : err 
+										error : err3 
 									}));
 									res.end();
 								}
 							});
 						}
 						else {
-							res.writeHead((err) ? 500 : 401);
+							res.writeHead((err2) ? 500 : 401);
 							res.write(JSON.stringify({
-								error : err || 'You cannot view this invoice.'
+								error : err2 || 'You cannot view this invoice.'
 							}));
 							res.end();
 						}
@@ -467,7 +467,7 @@ module.exports = function(app, db) {
 				else {
 					res.writeHead(401);
 					res.write(JSON.stringify({
-						error : err || 'You cannot view this invoice.'
+						error : 'You cannot view this invoice.'
 					}));
 					res.end();
 				}
