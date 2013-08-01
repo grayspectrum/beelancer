@@ -77,22 +77,24 @@ module.exports = function(app, db) {
 	////
 	app.get('/api/task/:taskId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
-			if (!err) {
-				db.task
-					.findOne({ 
-						_id : req.params.taskId
+		//	if (!err) {
+				var cursor = db.task.findOne({ 
+					_id : req.params.taskId
 						// $or : [ 
 						// 	{ owner : user._id }, 
 						// 	{ assignee : user._id },
 						// 	{ projectOwner : user._id }
 						// ]
-					})
-					.populate('owner', 'profile')
-					.populate('assignee', 'profile')
-					.populate('worklog', 'started ended message')
-					.populate('project', 'title')
-					.populate('job')
-				.exec(function(err, task) {
+				})
+				.populate('owner', 'profile')
+				.populate('assignee', 'profile')
+				.populate('worklog', 'started ended message')
+				.populate('project', 'title')
+				.populate('job');
+
+				if (!user) cursor.select('worklog');
+
+				cursor.exec(function(err, task) {
 					if (err || !task) {
 						res.writeHead(500);
 						res.write('Cannot view this task.');
@@ -106,11 +108,11 @@ module.exports = function(app, db) {
 						res.end();
 					}
 				});
-			} else {
-				res.writeHead(401);
-				res.write('You must be logged in to view this task.');
-				res.end();
-			}
+		//	} else {
+		//		res.writeHead(401);
+		//		res.write('You must be logged in to view this task.');
+		//		res.end();
+		//	}
 		});
 	});
 	

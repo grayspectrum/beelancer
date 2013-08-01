@@ -113,11 +113,11 @@
 			}, function(task) {
 				var ctr = $('.time_worked_task')[index]
 				  , time = bee.utils.getTimeWorked(task.worklog);
-				$(ctr).html(time);
+				$(ctr).html(time.html);
 			}, function(err) {
 				var ctr = $('.time_worked_task')[index]
 				  , time = '?';
-				$(ctr).html(time);
+				$(ctr).html(time.html);
 				bee.ui.notifications.notify('err', err);
 			});
 		});

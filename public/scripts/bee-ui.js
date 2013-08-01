@@ -12,15 +12,15 @@ bee.ui = (function() {
 	////
 	var loader = (function() {
 		
-		var elm = $('#bee_loader');
+		var elm = '#bee_loader';
 		
 		function show() {
-			elm
+			$(elm)
 			.fadeIn(100);
 		};
 		
 		function hide() {
-			elm
+			$(elm)
 			.fadeOut(100);
 		};
 		

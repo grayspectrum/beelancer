@@ -793,11 +793,11 @@ module.exports = function(app, db) {
 			}
 			else {
 				// otherwise, we need to collect new details
-				collectPaymentDetails();
+				collectPaymentDetails({});
 			}
 		});
 		
-		function collectPaymentDetails() {
+		function collectPaymentDetails(user) {
 			var required = [
 				'email',
 				'cardNumber',
@@ -821,10 +821,38 @@ module.exports = function(app, db) {
 				    security_code: body.securityCode
 				}, function(err, card) {
 					if (!err) {
-						charge({
+						user = {
 							email : body.email,
 							payments : {
 								paymentUri : card.uri
+							}
+						};
+						payments.Customers.create({
+							name : 'ExternalUser (' + body.email + ')'
+						}, function(err, customer) {
+							if (!err) {
+								user.payments.customerUri = customer.uri;
+								customer = payments.Customers.balanced(customer);
+								// attach card to customer
+								customer.Customers.addCard(user.payments.paymentUri, function(err, response) {
+									if (!err) {
+										charge(user);										
+								    }
+								    else {
+								    	res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+								    }
+								});
+							}
+							else {
+								res.writeHead(400);
+								res.write(JSON.stringify({
+									error : err
+								}));
+								res.end();
 							}
 						});
 					}
