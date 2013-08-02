@@ -13,7 +13,7 @@ module.exports = (function(env) {
 			env : 'DEVELOPMENT',
 			app_port : 1337,
 			useSSL : false,
-			google_analytics : true,
+			google_analytics : false,
 			domain : 'http://localhost:1337/',
 			balanced_api : {
 				marketplace_uri : '/v1/marketplaces/TEST-MP5GNh5VTLNBZ9SURu42GNV',
