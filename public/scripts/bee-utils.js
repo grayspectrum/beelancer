@@ -24,7 +24,7 @@ bee.utils = (function() {
 		
 		if ('ga' in window) {
 			try {
-				ga('send', 'pageview');
+				ga('send', 'pageview', location.hash);
 			} catch(e) {
 				// do nothing
 			}
