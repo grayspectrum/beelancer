@@ -13,6 +13,7 @@ module.exports = (function(env) {
 			env : 'DEVELOPMENT',
 			app_port : 1337,
 			useSSL : false,
+			google_analytics : true,
 			domain : 'http://localhost:1337/',
 			balanced_api : {
 				marketplace_uri : '/v1/marketplaces/TEST-MP5GNh5VTLNBZ9SURu42GNV',
@@ -25,6 +26,7 @@ module.exports = (function(env) {
 			env : "TEST",
 			app_port : 80,
 			useSSL : false,
+			google_analytics : false,
 			domain : 'http://test.beelancer.com/',
 			balanced_api : {
 				marketplace_uri : '/v1/marketplaces/TEST-MP5GNh5VTLNBZ9SURu42GNV',
@@ -37,6 +39,7 @@ module.exports = (function(env) {
 			env : "BETA",
 			app_port : 443,
 			useSSL : true,
+			google_analytics : true,
 			domain : 'https://app.beelancer.com/',
 			balanced_api : {
 				marketplace_uri : '/v1/marketplaces/MP668ieafdEpPXUWi6uy0Tki',
@@ -49,6 +52,7 @@ module.exports = (function(env) {
 			env : 'PRODUCTION',
 			app_port : 443,
 			useSSL : true,
+			google_analytics : true,
 			domain : 'https://app.beelancer.com/',
 			balanced_api : {
 				marketplace_uri : '/v1/marketplaces/MP668ieafdEpPXUWi6uy0Tki',

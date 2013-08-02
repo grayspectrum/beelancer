@@ -18,6 +18,9 @@ html
 		script(type='application/javascript', src='/scripts/lib/tappa.2.0.js')
 		script(type='application/javascript', src='/scripts/lib/marked.js')
 		script(type='application/javascript', src='/spi/lib')
+		// - Google Analytics
+		if google_analytics
+			include ./includes/google-analytics.html
 		//- Application Init
 		script(type='application/javascript', src='/scripts/bee-init.js')
 		//- Templates
