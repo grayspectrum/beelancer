@@ -150,7 +150,6 @@
 	padding: 32px 0;
 	-webkit-transform: rotate(10deg);
 	right: 50px;
-	top: 98px
 }
 
 #invoices_received ul,
@@ -303,4 +302,24 @@ li.invoice_list_item .description {
 
 #project_ref, #job_ref {
 	width: 100%;
+}
+
+.public_link_invoice {
+	display: none;
+}
+
+.public_link_invoice p {
+	margin: 12px 24px;
+	font-size: 14px;
+}
+
+.payment_link {
+	margin: 0 24px 12px 24px;
+	background: #e2e2e2;
+	border: 1px solid #fff;
+	padding: 12px;
+}
+
+.payment_link a {
+	font-size: 12px;
 }

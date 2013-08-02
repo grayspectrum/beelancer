@@ -18,6 +18,7 @@ _.load([
 	'/scripts/bee-ui.js',
 	'/scripts/bee-utils.js'
 ], function() {
+	bee.socket.bindListeners(bee.socket);
 	bee.utils.updateContextAndRenderView(true);
 });
 

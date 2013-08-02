@@ -40,7 +40,6 @@ bee.utils = (function() {
 					bee.socket.emit('online', {
 						userId : bee.get('profile')._id
 					});
-					bee.socket.bindListeners(bee.socket);
 
 					bee.utils.checkMessages();
 					bee.utils.checkEndorse();

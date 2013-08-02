@@ -73,7 +73,7 @@
 			{},
 			function(invoice) {
 				// append invoice to panel
-				$('#view_invoice').html(tmpl(invoice)).show();
+				$('#invoice_view').html(tmpl(invoice)).parent().show();
 				// get the time worked for each task
 				updateInvoiceTimeWorked(invoice.tasks);
 				// can we pay or refund?
@@ -88,6 +88,12 @@
 					// user is the sender
 					$('#invoices_nav').show();
 					$('#invoices_nav .delete_invoice').parent().show();
+					if (invoice.publicViewId) {
+						var url = location.href.split('/')[2] + '/invoice/' + invoice._id + '?publicViewId' + invoice.publicViewId;
+						$('.public_link_invoice .payment_link a')
+							.attr('href', url).html(url)
+						$('.public_link_invoice').show();
+					}
 					if (invoice.isPaid) {
 						$('#invoices_nav .delete_invoice').parent().hide();
 						$('#invoices_nav .refund_invoice').parent().show()
