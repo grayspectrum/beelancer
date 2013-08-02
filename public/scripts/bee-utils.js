@@ -22,6 +22,14 @@ bee.utils = (function() {
 		$('#bee-ui_teamlist').remove();
 		bee.ui.loader.show();
 		
+		if ('ga' in window) {
+			try {
+				ga('send', 'pageview');
+			} catch(e) {
+				// do nothing
+			}
+		}
+
 		if (location.hash.indexOf('login') === -1 &&
 			_.querystring.get('newProfile') != 'true' &&
 			_.cookies.get('userid')) {
