@@ -11,6 +11,9 @@ var bee = new spi.App({
 	container : 'main'
 });
 
+// Google Analytics Fallback
+if (!window._gaq) window._gaq = [];
+
 // Load API Library
 _.load([
 	'/scripts/bee-api.js',
