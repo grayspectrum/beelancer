@@ -62,7 +62,7 @@ module.exports = function(app, db) {
 											res.write(JSON.stringify(profile));
 											res.end();
 										} else {
-											res.writeHead(401);
+											res.writeHead(400);
 											res.write('You must be on this user\'s team to view this profile.');
 											res.end();
 										}
