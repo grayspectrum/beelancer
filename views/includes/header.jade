@@ -2,16 +2,18 @@ div#header
 	div.container
 		h1.logo
 			a(href='/') Beelancer
+		//- Menu
+		include ./menu.jade
 		div#user
 			div#welcome
 		div#notifications
-	//- Menu
-	include ./menu.jade
 div#user_menu
 	ul
 		li
-			a.profile(href='') View Profile
+			a.profile(href='') My Profile
 		li
 			a.settings(href='/#!/account') Account Settings
+		li
+			a.report(href='https://github.com/gordonwritescode/beelancer-issues/issues', target='_blank') Report Issue
 		li.last
 			span#logout Logout

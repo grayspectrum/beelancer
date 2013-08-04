@@ -47,7 +47,7 @@
 		$('#recover_account').bind('click', recoverAccount);
 		
 	} else {
-		$('#menu ul').hide();
+		$('#menu').hide();
 		$('#security, #view_my_profile, #my_endorsements, #aws_account_setup').remove();
 		bee.ui.loader.hide();
 	}

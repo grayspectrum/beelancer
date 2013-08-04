@@ -9,8 +9,8 @@ html, body {
 	margin: 0;
 	padding: 0;
 	background-color: #f1f1f1;
-/*	background : url('/assets/images/bg-blue.png') center center repeat #333;
-*/	font-family: OpenSans, Helvetica, sans-serif;
+	background : url('/assets/images/bg-blue.png') center center repeat #333;
+	font-family: OpenSans, Helvetica, sans-serif;
 }
 
 #app {
@@ -32,7 +32,7 @@ html, body {
 #main {
 	position: relative;
 	z-index: 996;
-	top: 120px;
+	top: 72px;
 }
 
 .container {
@@ -70,15 +70,24 @@ html, body {
 }
 
 h1.logo {
-	width: 248px;
+	width: 62px;
 	float: left;
-	margin: 6px 0;
+	padding: 6px 0;
+	border-right: 1px solid #ededed;
+	border-left: 1px solid #ededed;
+	margin: 0;
+}
+
+h1.logo:hover {
+	background: #fff;
 }
 
 h1.logo a {
 	display: block;
 	background: url('/assets/images/beelancer-logo-white-bg.png') left center no-repeat;
 	height: 62px;
+	width: 40px;
+	margin: auto;
 	text-indent: -999px;
 	background-size: 200px;
 }
@@ -148,7 +157,8 @@ h4 {
 	border-right: 1px solid #fff;
 }
 
-#welcome .user:hover {
+#welcome .user:hover,
+#welcome .user.open {
 	background-color: #fff;
 	cursor: pointer;
 }
@@ -237,6 +247,14 @@ h4 {
 	background: url('/assets/images/mono/white/cogs_icon&16.png') left center no-repeat;
 }
 
+#user_menu li a.report {
+	background: url('/assets/images/mono/black/bug_icon&16.png') left center no-repeat;
+}
+
+#user_menu li:hover a.report {
+	background: url('/assets/images/mono/white/bug_icon&16.png') left center no-repeat;
+}
+
 li #logout {
 	background: url('/assets/images/mono/black/on-off_icon&16.png') left center no-repeat;
 }
@@ -317,119 +335,121 @@ label.hasError input {
 }
 
 #menu {
-	background : url('/assets/images/bg-blue.png') center center repeat #333;
+/*	background : url('/assets/images/bg-blue.png') center center repeat #333;
 	box-shadow: inset -2px 0px 6px, inset 2px 0px 6px;
+*/	float: left;
 	display: none;
 	z-index: 997;
 	overflow: hidden;
+	padding: 20px 4px;
+	border-left: 1px solid #fff;
 }
 
 #menu ul {
 	list-style-type: none;
 	overflow: hidden;
-	margin: 6px 0 0 0;
+	margin: 0;
 	padding-left: 0;
 }
 
 #menu li {
 	background-size: 20px !important;
 	float: left;
-	margin-right: 32px;
+	margin-left: 6px;
 }
 
 #menu ul li a {
-	padding: 8px 18px 14px 38px;
+	padding: 8px 18px 8px 38px;
 	display: block;
 	text-align: left;
 	text-decoration: none;
-	color: white;
-	font-size: 16px;
-	text-shadow: 0 2px 3px black;
+	color: #222;
+	font-size: 14px;
+	text-shadow: 0 1px 0 #fff;
 }
 
 #menu ul li:hover,
 #menu ul li.active {
-	border-radius: 4px 4px 0 0;
-	text-shadow: none;
-	background-color: #fff;
+	border-radius: 4px;
+	background: url('/assets/images/bg-blue.png') center center repeat #333;;
 }
 
 #menu ul li a:hover,
 #menu ul li.active a {
-	color: #000;
-	text-shadow: none;
+	color: #fff;
+	text-shadow: 0 2px 4px #000;
 }
 
 #menu .projects a {
-	background: url('/assets/images/mono/white/notepad_2_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/black/notepad_2_icon&16.png') 12px center no-repeat;
 }
 
 #menu .tasks a {
-	background: url('/assets/images/mono/white/clock_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/black/clock_icon&16.png') 12px center no-repeat;
 }
 
 #menu .team a {
-	background: url('/assets/images/mono/white/users_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/black/users_icon&16.png') 12px center no-repeat;
 }
 
 #menu .messages a {
-	background: url('/assets/images/mono/white/spechbubble_2_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/black/spechbubble_2_icon&16.png') 12px center no-repeat;
 }
 
 #menu .jobs a {
-	background: url('/assets/images/mono/white/case_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/black/case_icon&16.png') 12px center no-repeat;
 }
 
 #menu .invoice a {
-	background: url('/assets/images/mono/white/money_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/black/money_icon&16.png') 12px center no-repeat;
 }
 
 #menu .settings a {
-	background: url('/assets/images/mono/white/cog_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/black/cog_icon&16.png') 12px center no-repeat;
 }
 
 #menu .contact a {
-	background: url('/assets/images/mono/white/doc_edit_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/black/doc_edit_icon&16.png') 12px center no-repeat;
 }
 
 #menu .projects a:hover,
 #menu .projects.active a {
-	background: url('/assets/images/mono/black/notepad_2_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/white/notepad_2_icon&16.png') 12px center no-repeat;
 }
 
 #menu .tasks a:hover,
 #menu .tasks.active a {
-	background: url('/assets/images/mono/black/clock_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/white/clock_icon&16.png') 12px center no-repeat;
 }
 
 #menu .team a:hover,
 #menu .team.active a {
-	background: url('/assets/images/mono/black/users_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/white/users_icon&16.png') 12px center no-repeat;
 }
 
 #menu .messages a:hover,
 #menu .messages.active a {
-	background: url('/assets/images/mono/black/spechbubble_2_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/white/spechbubble_2_icon&16.png') 12px center no-repeat;
 }
 
 #menu .jobs a:hover,
 #menu .jobs.active a {
-	background: url('/assets/images/mono/black/case_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/white/case_icon&16.png') 12px center no-repeat;
 }
 
 #menu .invoice a:hover,
 #menu .invoice.active a {
-	background: url('/assets/images/mono/black/money_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/white/money_icon&16.png') 12px center no-repeat;
 }
 
 #menu .settings a:hover,
 #menu .settings.active a {
-	background: url('/assets/images/mono/black/cog_icon&16.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/white/cog_icon&16.png') 12px center no-repeat;
 }
 
 #menu .contact a:hover,
 #menu .contact.active a {
-	background: url('/assets/images/mono/black/doc_edit_icon&24.png') 12px 12px no-repeat;
+	background: url('/assets/images/mono/white/doc_edit_icon&24.png') 12px center no-repeat;
 }
 
 .action {
@@ -459,7 +479,7 @@ h2#logo {
 }
 
 .center-pane {
-	margin: 42px 176px 36px 282px;
+	margin: 36px auto;
 	border-radius: 6px;
 	box-shadow: 0 0 16px black;
 	border: 3px solid white;

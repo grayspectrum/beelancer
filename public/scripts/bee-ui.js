@@ -68,19 +68,11 @@ bee.ui = (function() {
 	var menu = (function() {
 		
 		function show() {
-			$('#menu').removeClass('animated bounceOutLeft');
-			$('#header').removeClass('animated bounceOutUp');
-			
-			$('#menu').addClass('animated bounceInLeft').show();
-			$('#header').addClass('animated bounceInDown').show();
+			$('#menu, #header').show();
 		};
 		
 		function hide() {
-			$('#menu').removeClass('animated bounceInLeft');
-			$('#header').removeClass('animated bounceInDown');
-			
-			$('#menu').addClass('animated bounceOutLeft');
-			$('#header').addClass('animated bounceOutUp');
+			$('#menu, #header').hide();
 		};
 		
 		function update() {
@@ -102,12 +94,17 @@ bee.ui = (function() {
 	var user = (function() {
 
 		function update(profile) {
-			var welcome = $('#welcome')
-			  , source = $('#tmpl-welcome').html()
-			  , tmpl = Handlebars.compile(source)
-			  , url = '/#!/team?viewProfile=' + profile._id;
-			$('#welcome').html(tmpl(profile || {}));
-			$('#user_menu .profile').attr('href', url);
+			if (!profile._id) {
+				$('#welcome').hide();
+			}
+			else {
+				var welcome = $('#welcome')
+				  , source = $('#tmpl-welcome').html()
+				  , tmpl = Handlebars.compile(source)
+				  , url = '/#!/team?viewProfile=' + profile._id;
+				$('#welcome').html(tmpl(profile || {})).show();
+				$('#user_menu .profile').attr('href', url);
+			}
 		};
 
 		return {
@@ -682,7 +679,7 @@ $(document).on('click', '#welcome .user', function(e){
 	}
 });
 
-$(document).on('click', '#app', function(e){
+$(document).on('click', 'body', function(e){
 	$('#user_menu').hide();
 	$('#welcome .user').removeClass('open');
 });
