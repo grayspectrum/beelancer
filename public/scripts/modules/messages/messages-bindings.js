@@ -158,6 +158,7 @@
 		bee.ui.notifications.dismiss();
 		  
 		if (obj.to && obj.body) {
+			bee.ui.loader.show();
 			bee.api.send(
 				'POST',
 				'/message/send',
@@ -166,6 +167,7 @@
 				failure
 			);
 		} else {
+			bee.ui.loader.hide();
 			if (!obj.to) {
 				bee.ui.notifications.notify('err', 'No recipient selected.', true);
 			}
@@ -280,6 +282,7 @@
 			if (!$('#convo_compose').val()) {
 				$('#convo_compose').focus();
 			} else {
+
 				var convoObj = {
 					to : fromUser,
 					body : $('#convo_compose').val()
