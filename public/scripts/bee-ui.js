@@ -95,6 +95,25 @@ bee.ui = (function() {
 			update : update
 		};
 	})();
+
+	////
+	// Render User Menu
+	////
+	var user = (function() {
+
+		function update(profile) {
+			var welcome = $('#welcome')
+			  , source = $('#tmpl-welcome').html()
+			  , tmpl = Handlebars.compile(source)
+			  , url = '/#!/team?viewProfile=' + profile._id;
+			$('#welcome').html(tmpl(profile || {}));
+			$('#user_menu .profile').attr('href', url);
+		};
+
+		return {
+			update : update
+		};
+	})();
 	
 	////
 	// Notification System
@@ -621,7 +640,8 @@ bee.ui = (function() {
 		confirm : confirm,
 		Paginator : Paginator,
 		TeamList : TeamList,
-		WorkLogEditor : WorkLogEditor
+		WorkLogEditor : WorkLogEditor,
+		user : user
 	};
 })();
 
@@ -647,6 +667,24 @@ $(document).on('click', '.big_radio', function(){
 	else {
 		$(this).removeClass('selected');
 	}
+});
+
+$(document).on('click', '#welcome .user', function(e){
+	var that = $(this);
+	e.stopPropagation();
+	if (that.hasClass('open')) {
+		that.removeClass('open');
+		$('#user_menu').hide();
+	}
+	else {
+		that.addClass('open');
+		$('#user_menu').show();
+	}
+});
+
+$(document).on('click', '#app', function(e){
+	$('#user_menu').hide();
+	$('#welcome .user').removeClass('open');
 });
 
 $(document).on('focus', 'input, textarea', function() {

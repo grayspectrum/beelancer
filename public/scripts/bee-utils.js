@@ -49,6 +49,7 @@ bee.utils = (function() {
 						userId : bee.get('profile')._id
 					});
 
+					bee.ui.user.update(res);
 					bee.utils.checkMessages();
 					bee.utils.checkEndorse();
 					bee.ui.loader.hide();
