@@ -402,36 +402,65 @@
 
 <!-- Task Details -->
 <script id="tmpl-task_details" type="text/x-handlebars-template">
-	<div class="light-gradient center-pane animated fadeInUp">
+	<div class="top_options">
+		<strong class="gold-gradient option_button">
+			<a href="/#!/tasks?editTask=true&taskId={{_id}}" class="edit_task">Edit</a>
+		</strong>
+		<strong class="gold-gradient option_button">
+			<a class="delete_task">Delete</a>
+		</strong>
+		<strong class="gold-gradient option_button">
+			<a class="task_status"></a>
+		</strong>
+	</div>
+	<div class="two3rds">
 		<div id="task_details" data-id="{{_id}}">
-			<h4 class="gold-gradient">{{title}}</h4>
-			<h3 class="light-gradient">
-				<span class="project">Project</span>
-			</h3>
-			<p class="proj-name">{{project.title}}</p>
-			<div class="float_wrap">
-				<div class="hours-worked-clock">
-					<strong class="light-gradient">Time Worked:</strong> <span class="time"></span>
-				</div>
-				<div id="task-assigned-to"></div>
-				<div class="task-billed-at">
-					<strong class="light-gradient">Billed Rate:</strong> 
+			<h3 class="title">{{title}}</h4>
+			<div id="task_timer_controls"></div>
+			<ul class="task_info">
+				<li>
+					<strong>Assignee:</strong> 
+					{{#if assignee}}
+						<span id="task-assigned-to" data-assignee="{{assignee.profile}}"></span>
+					{{else}}
+						<em>Unassigned</em>
+					{{/if}}
+				</li>
+				<li>
+					<strong>Owner:</strong> 
+					<span id="task-owned-by" data-owner="{{owner.profile}}"></span>
+				</li>
+				<li>
+					<strong>Project:</strong> <a href="/#!/projects?viewProject={{project._id}}">{{project.title}}</a>
+				</li>
+				<li>
+					<strong>Rate:</strong> 
 					<span class="rate">${{rate}}</span>
-					<em class="rate-type">{{#if isFixed}}(fixed){{else}}per hour{{/if}}</em>
-				</div>
-				<div id="task_timer_controls"></div>
-			</div>
-			{{#if isFixed}}
-
-			{{else}}
-				<div class="total-cost">
-					<strong class="light-gradient">Total So Far:  <span class="calc-cost"></span></strong>
-				</div>
-			{{/if}}
-			<h3 class="light-gradient">
-				<span class="worklog">Work Log<button class="timer entry">Add Entry</button></span>
+					<em class="rate-type">{{#if isFixedRate}}(fixed){{else}}per hour{{/if}}</em>
+				</li>
+				<li>
+					<strong>Time Worked:</strong> 
+					<span class="time"></span>
+				</li>
+				<li>
+					{{#if isFixedRate}}
+						<strong>Unbilled:</strong> <span>${{rate}}</span>
+					{{else}}
+						<strong>Unbilled:</strong> <span class="calc-cost"></span>
+					{{/if}}
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="col3">
+		<div class="col-header worklog light-gradient">
+			<h3>
+				Work Log
+				<button class="timer entry">Add</button>
 			</h3>
-			{{#if this.worklog.length}}
+		</div>
+		<div id="task_worklog">
+			{{#if worklog.length}}
 				<ul class="work_log">
 					{{#each this.worklog}}
 						{{#if ended}}
@@ -448,15 +477,8 @@
 						{{/if}}
 					{{/each}}
 				</ul>
-				<div class="pagination">
-					<button class="pageLeft">&laquo;</button>
-					<span class="pageLocation">
-						Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-					</span>
-					<button class="pageRight">&raquo;</button>
-				</div>
 			{{else}}
-				<p class="no_projects">This task has no work history yet.</p>
+				<p class="no_projects">No work history yet.</p>
 			{{/if}}
 		</div>
 	</div>
@@ -466,7 +488,7 @@
 <script id="tmpl-task_timer" type="text/x-handlebars-template">
 	<!-- Compile With Last WorkLog Entry in worklog -->
 	{{#if ended}}
-		<strong class="light-gradient">Status: </strong>
+		<strong>Status: </strong>
 		<span class="status">Paused</span>
 		<button class="timer start">Start Working</button>
 	{{else}}
@@ -478,83 +500,51 @@
 
 <!-- Tasks List -->
 <script id="tmpl-tasks_list" type="text/x-handlebars-template">
-	<h3 class="light-gradient">
-		<span class="user">{{#if this.active}}Assigned To{{else}}Completed By{{/if}} You</span>
-	</h3>
-	{{#if this.tasks.assignedToMe.length}}
-		<ul class="task-mine">
-			{{#each this.tasks.assignedToMe}}
-				<li class="task">
-					<a href="/#!/tasks?viewTask={{_id}}" data-owner="{{owner.profile}}">
-						<strong>{{title}}</strong>
-						<em class="owner">
-							<strong>Owned by: </strong><span class="owner_name">Retrieving...</span>
-						</em>
-					</a>
+	{{#if length}}
+		<ul class="task_list">
+			{{#each this}}
+				<li>
+					{{#if assignee}}
+						<strong class="task_assignee" data-assignee="{{tasks.[0].assignee.profile}}"></strong>
+						<ul class="task_list">
+							{{#each tasks}}
+								<li>
+									<a href="/#!/tasks?viewTask={{_id}}">
+										<strong class="task_title">{{title}}</strong>
+										<em class="task_rate">
+											${{rate}}
+											{{#if isFixedRate}}
+												 total
+											{{else}}
+												 per hour
+											{{/if}}
+										</em>
+									</a>
+								</li>
+							{{/each}}
+						</ul>
+					{{else}}
+						<ul class="task_list">
+							<li>
+								<a href="/#!/tasks?viewTask={{_id}}">
+									<strong class="task_title">{{title}}</strong>
+									<em class="task_rate">
+										${{rate}}
+										{{#if isFixedRate}}
+											 total
+										{{else}}
+											 per hour
+										{{/if}}
+									</em>
+								</a>
+							</li>
+						</ul>
+					{{/if}}
 				</li>
 			{{/each}}
 		</ul>
-		<div class="pag-task-mine pagination">
-			<button class="pageLeft">&laquo;</button>
-			<span class="pageLocation">
-				Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-			</span>
-			<button class="pageRight">&raquo;</button>
-		</div>
 	{{else}}
-		<p class="no_projects">No tasks are {{#if this.active}}assigned to{{else}}completed by{{/if}} you.</p>
-	{{/if}}
-	<h3 class="light-gradient">
-		<span class="users">{{#if this.active}}Assigned To{{else}}Completed By{{/if}} Others</span>
-	</h3>
-	{{#if this.tasks.assignedToOthers.length}}
-		<ul class="task-others">
-			{{#each this.tasks.assignedToOthers}}
-				<li class="task">
-					<a href="/#!/tasks?viewTask={{_id}}" data-assignee="{{assignee.profile}}">
-						<strong>{{title}}</strong>
-						<em class="assignee">
-							<strong>Assigned to: </strong><span class="assignee_name">Retrieving...</span>
-						</em>
-					</a>
-				</li>
-			{{/each}}
-		</ul>
-		<div class="pag-task-others pagination">
-			<button class="pageLeft">&laquo;</button>
-			<span class="pageLocation">
-				Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-			</span>
-			<button class="pageRight">&raquo;</button>
-		</div>
-	{{else}}
-		<p class="no_projects">No tasks are {{#if this.active}}assigned to{{else}}completed by{{/if}} others.</p>
-	{{/if}}
-	<h3 class="light-gradient">
-		<span class="inbox">Unassigned</span>
-	</h3>
-	{{#if this.tasks.unassigned.length}}
-		<ul class="task-unassigned">
-			{{#each this.tasks.unassigned}}
-				<li class="task">
-					<a href="/#!/tasks?viewTask={{_id}}">
-						<strong>{{title}}</strong>
-						<em class="assignee">
-							<span class="assignee_name">Unassigned</span>
-						</em>
-					</a>
-				</li>
-			{{/each}}
-		</ul>
-		<div class="pag-task-unassigned pagination">
-			<button class="pageLeft">&laquo;</button>
-			<span class="pageLocation">
-				Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-			</span>
-			<button class="pageRight">&raquo;</button>
-		</div>
-	{{else}}
-		<p class="no_projects">No tasks are unassigned.</p>
+		<p class="no_projects"><em>None</em></p>
 	{{/if}}
 </script>
 
@@ -843,7 +833,7 @@
 						{{#each tasks}}
 							<li>
 								<span>{{title}}</span>
-								<span class="task-rate">${{rate}} {{#if isFixed}}(fixed){{else}}(hourly){{/if}}</span>
+								<span class="task-rate">${{rate}} {{#if isFixedRate}}(fixed){{else}}(hourly){{/if}}</span>
 							</li>
 						{{/each}}
 					</ul>
@@ -882,7 +872,7 @@
 		{{#each this}}
 			<li>
 				<span>{{title}}</span>
-				<span class="task-rate">${{rate}} {{#if isFixed}}(fixed){{else}}(hourly){{/if}}</span>
+				<span class="task-rate">${{rate}} {{#if isFixedRate}}(fixed){{else}}(hourly){{/if}}</span>
 			</li>
 		{{/each}}
 	</ul>
@@ -1023,7 +1013,7 @@
 								<td class="time_worked_task">
 									<em>Calculating...</em>
 								</td>
-								<td>$ {{this.rate}} {{#if this.isFixed}}(Fixed){{else}}(Hourly){{/if}}</td>
+								<td>$ {{this.rate}} {{#if this.isFixedRate}}(Fixed){{else}}(Hourly){{/if}}</td>
 							</tr>
 						{{/each}}
 					</tbody>
@@ -1192,4 +1182,12 @@
 		<strong>{{firstName}} {{lastName}}</strong>
 		<img src="{{avatarPath}}" width="28" height="28" />
 	</span>
+</script>
+
+<!-- Task List Assignee -->
+<script id="tmpl-task_list_assignee" type="text/x-handlebars-template">
+	<a href="/#!/team?viewProfile={{_id}}">
+		<img src="{{avatarPath}}" width="24px" height="24px">
+		<span>{{firstName}} {{lastName}}</span>
+	</a>
 </script>

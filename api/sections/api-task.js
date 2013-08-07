@@ -123,13 +123,17 @@ module.exports = function(app, db) {
 	app.get('/api/tasks', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
+				var query = {
+					$or : [ 
+						{ owner : user._id }, 
+						{ assignee : user._id }
+					]
+				};
+
+				if (req.query.projectId) query.project = req.query.projectId;
+
 				db.task
-					.find({
-						$or : [ 
-							{ owner : user._id }, 
-							{ assignee : user._id }
-						]
-					})
+					.find(query)
 					.populate('owner', 'profile')
 					.populate('assignee', 'profile')
 				.exec(function(err, tasks) {

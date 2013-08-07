@@ -144,7 +144,7 @@ bee.utils = (function() {
 		  , seconds =  ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
 
 		var trueHour = Math.floor(hours);
-		parsedTime = trueHour + '<em>h</em> : ' + minutes.toFixed() + '<em>m</em>';
+		parsedTime = trueHour + ' <em>hours</em> &amp; ' + minutes.toFixed() + ' <em>minutes</em>';
 		timeData = { html : parsedTime, hour : hours, min : minutes, sec : seconds};
 		return timeData;
 	};

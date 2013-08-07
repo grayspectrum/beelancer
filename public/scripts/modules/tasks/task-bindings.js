@@ -10,7 +10,7 @@
 	var newTask = _.querystring.get('newTask')
 	  , viewTask = _.querystring.get('viewTask')
 	  , editTask = _.querystring.get('editTask')
-	  , showCategory = _.querystring.get('show');
+	  , forProject = _.querystring.get('forProject');
 	
 	if (newTask) {
 		new_task();
@@ -21,20 +21,6 @@
 		view_task();
 	} else {
 		list_tasks();
-		if (showCategory) {
-			$('#filter_tasks select').val(showCategory);
-			if (showCategory === 'active') {
-				$('#tasks_active').show();
-				$('#tasks_closed').hide();
-			}
-			if (showCategory === 'closed') {
-				$('#tasks_active').hide();
-				$('#tasks_closed').show();
-			}
-		} else {
-			$('#tasks_active').show();
-			$('#tasks_closed').hide();
-		}
 	}
 	
 	// New Task
@@ -90,19 +76,50 @@
 		);
 	};
 	
+	// Populate select list with projects
+	function populateProjects() {
+		bee.api.send(
+			'GET',
+			'/projects',
+			{},
+			function(projects) {
+				var select = $('#task_filter')
+				$.each(projects, function(key, val) {
+					var opt = $('<option/>').val(val._id).html(val.title);
+					select.append(opt);
+				});
+				if (forProject) {
+					select.val(forProject);
+				}
+			},
+			function(err) {
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	};
+
 	// List Tasks
 	function list_tasks() {
-		// kill irrelevant menus items
-		$('#tasks_nav li a').not('li .new_task').remove();
 		bee.ui.loader.hide();
+		populateProjects();
 		// get tasks from api
 		bee.api.send(
 			'GET',
 			'/tasks',
-			{},
+			{
+				projectId : forProject
+			},
 			function(tasks) {
 				bee.ui.loader.hide();
-			//	generateTaskList(parseTasks(tasks));
+				var tasks = parseTasks(tasks);
+				// in progress
+				generateTaskList(tasks.in_progress, '#tasks_active_list');
+				// completed
+				generateTaskList(tasks.completed, '#tasks_closed_list');
+				// unassigned
+				generateTaskList(tasks.unassigned, '#tasks_unassigned_list');
+				// update lists by assignee
+				populateTaskAssignees();
 			},
 			function(err) {
 			//	bee.ui.loader.hide();
@@ -129,7 +146,7 @@
 		bee.ui.loader.show();
 		$('#filter_tasks, .new_task').remove();
 		$('#task_view').show();
-		$('.center-pane').not('#tasks_view, #tasks_nav').remove();
+		$('.center-pane').not('#task_view').remove();
 		
 		// retrieve task from api
 		var taskId = viewTask
@@ -152,33 +169,13 @@
 				  , timerView = timerTmpl((log.length) ? log[0] : { ended : true })
 				  , timeData = bee.utils.getTimeWorked(task.worklog);
 
-				// window.clearInterval(timer);
-				// window.clearInterval();
-
-				// var timer = window.setInterval(function() {
-				// 	bee.api.send(
-				// 		'GET',
-				// 		'/task/' + taskId,
-				// 		{},
-				// 		function(thisTask) {
-				// 			$('.hours-worked-clock .time').html(bee.utils.getTimeWorked(thisTask.worklog).html);
-				// 			$('.calc-cost').html('$' + parseFloat(bee.utils.getTimeWorked(thisTask.worklog).hour * task.rate).toFixed(2));
-				// 		},
-				// 		function(err) {
-				// 			// fail silently
-				// 		}
-				// 	);
-				// }, 60000);
-
-				$('.hours-worked-clock .time').html(timeData.html);
+				$('.task_info .time').html(timeData.html);
 				$('.calc-cost').html('$' + parseFloat(timeData.hour * task.rate).toFixed(2));
 
 				timerCtr.html(timerView);
 				//$('.hours-worked-clock .time').html(timeData.html);
 				// update nav url
-				var base_url = $('#tasks_nav .edit_task').attr('href');
-				$('#tasks_nav .edit_task').attr('href', base_url + task._id);
-				$('#tasks_nav .task_status').addClass(
+				$('.task_status').addClass(
 					(task.isComplete) ? 'reopen_task' : 'close_task'
 				).css({ display : 'block' }).html((task.isComplete) ? 'Reopen Task' : 'Complete Task');
 
@@ -189,12 +186,13 @@
 
 				// if assignee of task
 				if (task.assignee && (task.assignee.profile === bee.get('profile')._id) && (task.owner.profile !== bee.get('profile')._id)) {
-					$('#tasks_nav .edit_task, #tasks_nav .delete_task').remove();
+					$('.edit_task, .delete_task').parent().remove();
 				}
 
 				// if owner of task
 				if (task.owner.profile === bee.get('profile')._id && (task.assignee && (task.assignee.profile !== task.owner.profile))) {
-					$('#task_timer_controls .timer, .worklog .timer, #tasks_nav .close_task, .work_log button').remove();
+					$('#task_timer_controls .timer, .worklog .timer, .work_log button').remove();
+					$('.close_task').parent().remove();
 
 					// if any work has been done on this task, then it has been assigned and its in progress
 					// so the owner cannot delete or edit the task, therefore remove nav completely
@@ -212,15 +210,10 @@
 				_.load(['/scripts/lib/stopwatch.js'], function() {
 					bindTimerControls(bee.utils.getTimeWorked(task.worklog));
 				});
+				populateTaskViewAssignee();
+				populateTaskViewOwner();
+				bindTaskViewOptions();
 				updateWorklogListView();
-
-				// init pager for worklog
-				var logPager = new bee.ui.Paginator(
-					$('#task_details .pagination'),
-					$('#task_details ul.work_log li'),
-					5
-				);
-				logPager.init();
 			},
 			function(err) {
 				bee.ui.notifications.notify('err', err);
@@ -228,6 +221,48 @@
 			}
 		);
 		
+		function populateTaskViewAssignee() {
+			var assignee = $('#task-assigned-to');
+			if (assignee.length) {
+				var id = assignee.attr('data-assignee')
+				  , source = $('#tmpl-task_list_assignee').html()
+		  		  , tmpl = Handlebars.compile(source);
+				
+				bee.api.send(
+					'GET',
+					'/profile/' + id,
+					{},
+					function(profile) {
+						assignee.html(tmpl(profile));
+					},
+					function(err) {
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			}
+		};
+
+		function populateTaskViewOwner() {
+			var owner = $('#task-owned-by');
+			if (owner.length) {
+				var id = owner.attr('data-owner')
+				  , source = $('#tmpl-task_list_assignee').html()
+		  		  , tmpl = Handlebars.compile(source);
+				
+				bee.api.send(
+					'GET',
+					'/profile/' + id,
+					{},
+					function(profile) {
+						owner.html(tmpl(profile));
+					},
+					function(err) {
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			}
+		};
+
 		// convert json date strings to human readable
 		function updateWorklogListView() {
 			var worklogs = $('.work_log li');
@@ -253,12 +288,12 @@
 		// for task status
 		function updateNavStatusOptions(task) {
 			if (task.isActive) {
-				$('#tasks_nav .task_status')
+				$('.task_status')
 					.addClass('close_task')
 					.removeClass('reopen_task')
 				.html('Close');
 			} else {
-				$('#tasks_nav .task_status')
+				$('.task_status')
 					.addClass('reopen_task')
 					.removeClass('close_task')
 				.html('Reopen');
@@ -268,103 +303,81 @@
 	
 	// Helpers
 	function divideTasksByAssignee(tasks) {
-		var divided = {
-			assignedToMe : [],
-			assignedToOthers : [],
-			unassigned : []
-		};
+		var divided = {};
 		// match them up
 		var userid = _.cookies.get('userid');
 		$.each(tasks, function(key, val) {
 			if (val.assignee && (val.assignee._id === userid)) {
-				divided.assignedToMe.push(val);
+				if (!divided[userid]) divided[userid] = [];
+				divided[userid].push(val);
 			}
 			else {
 				if (val.assignee) {
-					divided.assignedToOthers.push(val);	
-				} else {
-					divided.unassigned.push(val);
+					if (!divided[val.assignee]) divided[val.assignee] = [];
+					divided[val.assignee].push(val);
 				}
 			}
 		});
-		return divided;
+		// convert to 2d array
+		var result = [];
+		for (var assignee in divided) {
+			var obj = {
+				assignee : assignee,
+				tasks : divided[assignee]
+			};
+			result.push(obj);
+		}
+		return result;
 	};
 	
 	function parseTasks(tasks) {
 		var status = {
-			active : [],
-			closed : []
+			active     : [],
+			closed     : [],
+			unassigned : []
 		};
 		$.each(tasks, function(key, val) {
-			if (val.isComplete) {
-				status.closed.push(val);
-			}
+			if (!val.assignee) {
+				status.unassigned.push(val);
+			} 
 			else {
-				status.active.push(val);
+				if (val.isComplete) {
+					status.closed.push(val);
+				}
+				else {
+					status.active.push(val);
+				}
 			}
 		});
 		return {
-			active : divideTasksByAssignee(status.active),
-			closed : divideTasksByAssignee(status.closed)
+			in_progress : divideTasksByAssignee(status.active),
+			completed   : divideTasksByAssignee(status.closed),
+			unassigned  : status.unassigned
 		};
 	};
 	
-	function generateTaskList(tasks) {
+	function generateTaskList(tasks, append_to) {
 		var tmpl = $('#tmpl-tasks_list').html()
-		  , source = Handlebars.compile(tmpl)
-		  , activeList = source({ tasks : tasks.active, active : true })
-		  , closedList = source({ tasks : tasks.closed, active : false });
-		
-		// only render the visible list
-		if (showCategory) {
-			$('#tasks_' + showCategory + '_list').html(
-				(showCategory === 'active') ? activeList : closedList
-			);
-		}
-		else {
-			$('#tasks_active_list').html(activeList);
-		}
-		
-		var mine = new bee.ui.Paginator(
-			$('.pagination.pag-task-mine'),
-			$('ul.task-mine li'),
-			5
-		);
-		mine.init();
-		
-		var others = new bee.ui.Paginator(
-			$('.pagination.pag-task-others'),
-			$('ul.task-others li'),
-			5
-		);
-		others.init();
+		  , source = Handlebars.compile(tmpl);
+		$(append_to).html(source(tasks));
+	};
 
-		var unassigned = new bee.ui.Paginator(
-			$('.pagination.pag-task-unassigned'),
-			$('ul.task-unassigned li'),
-			5
-		);
-		unassigned.init();
-		
-		// get owner/assignee profiles
-		var tasks = $('.task-mine li a, .task-others li a');
-		  
-		tasks.each(function(key, val) {
-			var owner = $(this).attr('data-owner')
-			  , assignee = $(this).attr('data-assignee')
-			  , task = $(this);
+	function populateTaskAssignees() {
+		var assignees = $('.task_assignee')
+		  , source = $('#tmpl-task_list_assignee').html()
+		  , tmpl = Handlebars.compile(source);
+		assignees.each(function() {
+			var that = $(this)
+			  , id = $(this).attr('data-assignee');
 			bee.api.send(
 				'GET',
-				'/profile/' + (owner || assignee),
+				'/profile/' + id,
 				{},
 				function(profile) {
-					$('.assignee_name, .owner_name', task).html(
-						avatar(profile.avatarPath) + 
-						'<span>' + profile.firstName + ' ' + profile.lastName + '</span>'
-					);
+					that.html(tmpl(profile));
 				},
 				function(err) {
-					$('.assignee_name, .owner_name', task).html(err);
+					bee.ui.notifications.notify('err', err);
 				}
 			);
 		});
@@ -542,49 +555,55 @@
 		saveTask(updateTask || null);
 	});
 	
-	$('#tasks_nav .delete_task').bind('click', function() {
-		bee.ui.confirm('Are you sure you want to delete this task?', function() {
-			bee.ui.loader.show();
-			bee.api.send(
-				'DELETE',
-				'/task/' + $('#task_details').attr('data-id'),
-				{},
-				function(success) {
-					location.href = '/#!/tasks';
-					bee.ui.notifications.notify('success', 'Task Deleted!');
-				},
-				function(err) {
-					bee.ui.loader.hide();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
+	function bindTaskViewOptions() {
+		$('.delete_task').bind('click', function() {
+			bee.ui.confirm('Are you sure you want to delete this task?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'DELETE',
+					'/task/' + $('#task_details').attr('data-id'),
+					{},
+					function(success) {
+						location.href = '/#!/tasks';
+						bee.ui.notifications.notify('success', 'Task Deleted!');
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
 		});
-	});
-	
-	$('#tasks_nav .task_status').bind('click', function() {
-		var isComplete = $(this).hasClass('close_task');
-		bee.ui.confirm(((isComplete) ? ' Complete' : 'Reopen') + ' this task?', function() {
-			bee.api.send(
-				'PUT',
-				'/task/update/' + $('#task_details').attr('data-id'),
-				(isComplete) ? {
-					isComplete : isComplete
-				} : { },
-				function(success) {
-					bee.ui.loader.hide();
-					bee.ui.notifications.notify('success', (isComplete) ? 'Task completed!' : 'Task reopened!');
-					bee.ui.refresh();
-				},
-				function(err) {
-					bee.ui.loader.hide();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
+		
+		$('.task_status').bind('click', function() {
+			var isComplete = $(this).hasClass('close_task');
+			bee.ui.confirm(((isComplete) ? ' Complete' : 'Reopen') + ' this task?', function() {
+				bee.api.send(
+					'PUT',
+					'/task/update/' + $('#task_details').attr('data-id'),
+					(isComplete) ? {
+						isComplete : isComplete
+					} : { },
+					function(success) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('success', (isComplete) ? 'Task completed!' : 'Task reopened!');
+						bee.ui.refresh();
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
 		});
+	};
+
+	$('#task_filter').bind('change', function() {
+		location.href = '/#!/tasks?forProject=' + $(this).val();
 	});
 	
 	function bindTaskWorkLogEditor() {
-		$('#task_details .timer.entry').bind('click', function() {
+		$('.timer.entry').bind('click', function() {
 			var taskId = $('#task_details').attr('data-id')
 			  , logEntry = new bee.ui.WorkLogEditor();
 			logEntry.renderFor(taskId);
