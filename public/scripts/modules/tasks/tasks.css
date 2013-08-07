@@ -39,6 +39,7 @@
 }
 
 .task_assignee {
+	border-left: 4px solid #002A38;
 	display: block;
 	padding: 6px;
 	background: #fafafa;
