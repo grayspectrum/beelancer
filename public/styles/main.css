@@ -31,6 +31,7 @@ html, body {
 
 #main {
 	padding-top: 76px;
+	padding-bottom: 24px;
 	overflow: hidden;
 }
 
@@ -771,6 +772,8 @@ input:focus, textarea:focus {
 
 .group {
 	overflow: hidden;
+	width: 600px;
+	margin: auto;
 }
 
 .group label {
@@ -792,6 +795,7 @@ input:focus, textarea:focus {
 	width: 206px;
 	border: 1px solid #ABABAB;
 	border-radius: 2px;
+	background: #fff;
 }
 
 .hint {
@@ -803,6 +807,8 @@ input:focus, textarea:focus {
 .full_block {
 	display: block;
 	margin: 12px 24px;
+	width: 552px;
+	margin: auto;
 }
 
 p.desc {
@@ -830,7 +836,7 @@ p.desc {
 }
 
 .big_radio {
-	margin: 12px 24px;
+	margin: 12px 0;
 	display: block;
 	padding: 12px;
 	border: 1px solid #E2E2E2;

@@ -114,10 +114,15 @@
 	background: url('/assets/images/mono/black/doc_plus_icon&16.png') 12px center no-repeat;
 }
 
+.save_task {
+	background: url('/assets/images/mono/black/checkmark_icon&16.png') 12px center no-repeat;
+}
+
 .new_task_submit_wrapper {
 	border-radius: 6px;
 	margin: 24px auto;
 	width: 230px;
+	display: none;
 }
 
 #task-assigned-to a,

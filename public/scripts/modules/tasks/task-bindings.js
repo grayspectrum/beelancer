@@ -554,6 +554,11 @@
 		var updateTask = _.querystring.get('taskId');
 		saveTask(updateTask || null);
 	});
+
+	$('.save_task').bind('click', function(e) {
+		e.preventDefault();
+		$('#create_task').trigger('submit');
+	});
 	
 	function bindTaskViewOptions() {
 		$('.delete_task').bind('click', function() {
