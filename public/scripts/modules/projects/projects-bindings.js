@@ -22,21 +22,10 @@
 	} else if (viewProject) {
 		view_project();
 	} else {
-		list_projects();
 		if (showCategory) {
-			$('#filter_projects select').val(showCategory);
-			if (showCategory === 'active') {
-				$('#projects_active').show();
-				$('#projects_closed').hide();
-			}
-			if (showCategory === 'closed') {
-				$('#projects_active').hide();
-				$('#projects_closed').show();
-			}
-		} else {
-			$('#projects_active').show();
-			$('#projects_closed').hide();
-		}
+			$('#project_filter').val(showCategory);
+		} 
+		list_projects();
 	}
 	
 	////
@@ -81,13 +70,14 @@
 	// List Projects
 	////
 	function list_projects() {
-		$('#projects_nav .leave_project, #project_view, #projects_create, #projects_nav .edit_project, #projects_nav .bill_client,  #projects_nav .project_status, #projects_nav .delete_project').remove();
-		$('#projects_closed').hide();
+		$('#project_view, #projects_create').remove();
 		
 		bee.api.send(
 			'GET',
 			'/projects',
-			{},
+			{
+				isActive : ($('#project_filter').val() === 'active')
+			},
 			function(res) {
 				bee.ui.loader.hide();
 				generateList(addDeadlineText(res));
@@ -267,24 +257,37 @@
 	////
 	function addDeadlineText(response) {
 		var projects = {
-			active : [],
-			closed : []
+			owned : [],
+			participating : []
 		};
 		for (var proj = 0; proj < response.length; proj++) {
 			var project = response[proj]
 			  , daysBetween = bee.utils.daysUntil(new Date(), new Date(project.deadline));
-			  
+			
 			if (project.isActive) {
-				if (new Date() < new Date(project.deadline)) {
+			  	if (new Date() < new Date(project.deadline)) {
 					project.deadlineText = 'Due in ' + daysBetween + ' days.';
-				} else {
+				} 
+				else {
 					project.deadlineText = 'Due ' + daysBetween + ' days ago.';
 					project.pastDue = true;
 				}
-				projects.active.push(project);
-			} else {
+			}
+			else {
 				project.deadlineText = 'Project closed.';
-				projects.closed.push(project);
+			}
+
+			var complete_tasks = 0;
+			// add percentComplete
+			$.each(project.tasks, function(key, task) {
+				if (task.isComplete) complete_tasks++;
+			});
+			project.percentComplete = ((complete_tasks / project.tasks.length).toFixed(2) * 100) || 0;
+
+			if (project.owner === _.cookies.get('userid')) {
+				projects.owned.push(project);
+			} else {
+				projects.participating.push(project);
 			}
 		}
 		return projects;
@@ -293,24 +296,10 @@
 	function generateList(projects) {
 		var tmpl = $('#tmpl-projects_list').html()
 		  , source = Handlebars.compile(tmpl)
-		  , activeList = source(projects.active)
-		  , closedList = source(projects.closed);
-		$('#projects_active_list').html(activeList);
-		$('#projects_closed_list').html(closedList);
-		
-		var activePager = new bee.ui.Paginator(
-			$('#projects_active .pagination'),
-			$('#projects_active_list ul li'),
-			10
-		);
-		activePager.init();
-		
-		var closedPager = new bee.ui.Paginator(
-			$('#projects_closed .pagination'),
-			$('#projects_closed_list ul li'),
-			10
-		);
-		closedPager.init();
+		  , owned = source(projects.owned)
+		  , participating = source(projects.participating);
+		$('#projects_owned_list').html(owned);
+		$('#projects_participating_list').html(participating);
 	};
 	
 	function tryCreateProject(event) {
@@ -424,7 +413,7 @@
 		);
 	});
 	
-	$('#filter_projects select').bind('change', function() {
+	$('#project_filter').bind('change', function() {
 		location.href = '/#!/projects?show=' + $(this).val();
 	});
 	

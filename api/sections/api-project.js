@@ -59,13 +59,23 @@ module.exports = function(app, db) {
 	app.get('/api/projects', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err) {
-				db.project.find({ 
+				var query = { 
 					$or : [ 
 						{ owner : user._id }, 
 						{ client : user._id }, 
 						{ members : user._id } 
 					] 
-				}).populate('members', 'profile').sort('deadline').exec(function(err, projects) {
+				};
+
+				if (req.query.isActive) {
+					query.isActive = (req.query.isActive === 'true') ? true : false;
+				}
+
+				db.project.find(query)
+					.populate('members', 'profile')
+					.populate('tasks')
+					.sort('deadline')
+				.exec(function(err, projects) {
 					if (err) {
 						res.writeHead(500);
 						res.write('Could not retrieve projects.');

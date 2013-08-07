@@ -54,12 +54,16 @@
 					<a href="/#!/projects?viewProject={{_id}}" {{#if pastDue}}class="overdue"{{/if}}>
 						<strong>{{title}}</strong>
 						<span class="project_due">{{deadlineText}}</span>
+						<em class="percent_bar">
+							<em class="progress" style="width:{{percentComplete}}%"></em>
+							<span class="percent">{{percentComplete}}% Complete</span>
+						</em>
 					</a>
 				</li>
 			{{/each}}
 		</ul>
 	{{else}}
-		<p class="no_projects">No projects to display.</p>
+		<p class="no_projects"><em>None</em></p>
 	{{/if}}
 </script>
 

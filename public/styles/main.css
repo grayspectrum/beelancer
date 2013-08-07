@@ -105,6 +105,10 @@ h2.panel_title.tasks {
 	background: url('/assets/images/mono/white/clock_icon&32.png') 12px center no-repeat;
 }
 
+h2.panel_title.projects {
+	background: url('/assets/images/mono/white/notepad_2_icon&32.png') 12px center no-repeat;
+}
+
 .two3rds {
 	float: left;
 	width: 664px;
@@ -122,6 +126,14 @@ h3.title {
 
 .col3 {
 	width: 322px;
+	float: left;
+	margin: 0 0 0 10px;
+	border: 1px solid #e2e2e2;
+	border-radius: 4px;
+}
+
+.col2 {
+	width: 492px;
 	float: left;
 	margin: 0 0 0 10px;
 	border: 1px solid #e2e2e2;
