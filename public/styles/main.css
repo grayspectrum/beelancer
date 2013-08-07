@@ -306,10 +306,10 @@ h4 {
 	list-style-type: none;
 	padding: 0;
 	margin: 0;
-	background-color: #f1f1f1;
+	background-color: #fff;
 	border-radius: 4px;
-	border: 1px solid #f6f6f6;
-	box-shadow: 0 5px 12px rgba(0,0,0,0.7);
+	border: 1px solid #f1f1f1;
+	box-shadow: 0px 4px 3px rgba(0,0,0,0.6);
 }
 
 #notifications .no_projects {
