@@ -150,6 +150,15 @@ module.exports = (function() {
 				if (!err && task) {
 					task.assignee = to;
 					task.save();
+					getProject(db, task._id, function(err, project) {
+						if (err) {
+							callback.call(this, 'Could not get project.', null);
+						} 
+						else {
+							project.members.push(to);
+							project.save();
+						}
+					});
 				} else {
 					callback.call(this, err);
 				}

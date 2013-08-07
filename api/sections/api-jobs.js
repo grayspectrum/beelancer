@@ -337,10 +337,7 @@ module.exports = function(app, db) {
 				// count number of jobs
 				db.job.find({
 					owner: user._id,
-					$or : [
-						{ status : 'UNPUBLISHED' },
-						{ status : 'COMPLETED' }
-					]
+					isPublished: true
 				}).exec(function(err, userJobs) {
 					var count = 0, proCount = 0;
 					if (userJobs.length) {
@@ -1283,6 +1280,39 @@ module.exports = function(app, db) {
 					error : 'You must be logged in to bid on a job.'
 				}));
 				res.end();
+			}
+		});
+	});
+
+	////
+	// DELETE - /api/bid
+	// Deletes an existing job
+	////
+	app.del('/api/bid/:bidId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			// deletes a job
+			// job must not be published to delete
+			// must be unpublished before deleting
+			// and is bound by unpublishing rules
+			if (!err && user) {
+				db.bid.findOne({
+					_id : req.params.bidId,
+					'user._id' : user._id,
+					isAccepted : false
+				}).exec(function(err, bid) {
+					if (err) {
+						res.writeHead(401);
+						res.write(JSON.stringify({
+							error : 'You must be the owner of this bid to retract it.'
+						}));
+						res.end();
+					} else {
+						bid.remove();
+						res.end();
+					}
+				});
+			} else {
+
 			}
 		});
 	});
