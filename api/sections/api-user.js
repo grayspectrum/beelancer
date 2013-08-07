@@ -163,7 +163,9 @@ module.exports = function(app, db) {
 					// otherwise, fail
 					} else {
 						res.writeHead(400);
-						res.write('The email supplied is already in use.');
+						res.write(JSON.stringify({
+							error : 'The email supplied is already in use.'
+						}));
 						res.end();
 					}
 				}
@@ -171,7 +173,9 @@ module.exports = function(app, db) {
 		// need more data
 		} else {
 			res.writeHead(400);
-			res.write('Missing required parameters.');
+			res.write(JSON.stringify({
+				error : 'Missing required parameters.'
+			}));
 			res.end();
 		}
 	});
@@ -190,19 +194,25 @@ module.exports = function(app, db) {
 			.exec(function(err, user) {
 				if (err || !user) {
 					res.writeHead(500);
-					res.write('Unable to confirm account.');
+					res.write(JSON.stringify({
+						error : 'Unable to confirm account.'
+					}));
 					res.end();
 				} else {
 					if (user.isConfirmed) {
 						res.writeHead(400);
-						res.write('Account is already confirmed.');
+						res.write(JSON.stringify({
+							error : 'Account is already confirmed.'
+						}));
 						res.end();
 					} else {
 						user.isConfirmed = true;
 						user.save(function(err) {
 							if (err) {
 								res.writeHead(500);
-								res.write('There was a problem confirming the account.');
+								res.write(JSON.stringify({
+									error : 'There was a problem confirming the account.'
+								}));
 								res.end();
 							} else {
 								res.write(JSON.stringify({
@@ -217,7 +227,9 @@ module.exports = function(app, db) {
 			});
 		} else {
 			res.writeHead(400);
-			res.write('Missing userId or confimCode.');
+			res.write(JSON.stringify({
+				error : 'Missing userId or confimCode.'
+			}));
 			res.end();
 		}
 	});
@@ -237,7 +249,9 @@ module.exports = function(app, db) {
 			.exec(function(err, user) {
 				if (err || !user) {
 					res.writeHead(401);
-					res.write('Incorrect email or password.');
+					res.write(JSON.stringify({
+						error : 'Incorrect email or password.'
+					}));
 					res.end();
 				} else {
 					if (user.isConfirmed) {
@@ -245,7 +259,9 @@ module.exports = function(app, db) {
 						user.save(function(err) {
 							if (err) {
 								res.write(500);
-								res.write('Error generating new API key.');
+								res.write(JSON.stringify({
+									error : 'Error generating new API key.'
+								}));
 								res.end();
 							} else {
 							//	res.cookie('userid', user._id, { /*expires: null,*/ httpOnly: false });
@@ -259,14 +275,18 @@ module.exports = function(app, db) {
 						});
 					} else {
 						res.writeHead(403);
-						res.write('Account is not confirmed. Check your email for a confirmation link.');
+						res.write(JSON.stringify({
+							error : 'Account is not confirmed. Check your email for a confirmation link.'
+						}));
 						res.end();
 					}
 				}
 			});
 		} else {
 			res.writeHead(401);
-			res.write('Email or password is missing.');
+			res.write(JSON.stringify({
+				error : 'Email or password is missing.'
+			}));
 			res.end();
 		}
 	});
@@ -292,10 +312,14 @@ module.exports = function(app, db) {
 						res.clearCookie('userid')
 						res.clearCookie('apikey')
 						res.writeHead(500);
-						res.write('Unable to logout.');
+						res.write(JSON.stringify({
+							error : 'Unable to logout.'
+						}));
 						res.end();
 					} else {
-						res.write('You have been securely logged out.');
+						res.write(JSON.stringify({ 
+							message : 'You have been securely logged out.' 
+						}));
 						res.end();
 					}
 				});
@@ -322,20 +346,26 @@ module.exports = function(app, db) {
 			.exec(function(err, user) {
 				if (err || !user) {
 					res.writeHead(404);
-					res.write('The account could not be found.');
+					res.write(JSON.stringify({
+						error : 'The account could not be found.'
+					}));
 					res.end();
 				} else {
 					user.recoveryKey = utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 });
 					user.save(function(err) {
 						if (err) {
 							res.writeHead(500);
-							res.write('Recover failed.');
+							res.write(JSON.stringify({
+								error : 'Recover failed.'
+							}));
 							res.end();
 						} else {
 							var email = new Mailer('recover', { email: user.email, recoveryKey : user.recoveryKey });
 							email.send(user.email, 'Beelancer Account Recovery');
 							// respond to req
-							res.write('Recovery instructions have been sent to ' + user.email);
+							res.write(JSON.stringify({
+								message : 'Recovery instructions have been sent to ' + user.email
+							}));
 							res.end();
 						}
 					});
@@ -357,7 +387,9 @@ module.exports = function(app, db) {
 		.exec(function(err, user) {
 			if (err || !user) {
 				res.writeHead(400);
-				res.write('Invalid email or recovery key.');
+				res.write(JSON.stringify({
+					error : 'Invalid email or recovery key.'
+				}));
 				res.end();
 			} else {
 				user.hash = crypto.createHash('sha1').update(body.password).digest();
@@ -365,10 +397,14 @@ module.exports = function(app, db) {
 				user.save(function(err) {
 					if (err) {
 						res.writeHead(500);
-						res.write('The password could not be updated.');
+						res.write(JSON.stringify({
+							error : 'The password could not be updated.'
+						}));
 						res.end();
 					} else {
-						res.write('The password was successfully updated.');
+						res.write(JSON.stringify({
+							message : 'The password was successfully updated.'
+						}));
 						res.end();
 					}
 				});
@@ -389,13 +425,17 @@ module.exports = function(app, db) {
 						res.end();
 					} else {
 						res.writeHead(500);
-						res.write('Could not get team.');
+						res.write(JSON.stringify({
+							error : 'Could not get team.'
+						}));
 						res.end();
 					}
 				});
 			} else {
 				res.writeHead(401);
-				res.write('You must be logged in to view your team.');
+				res.write(JSON.stringify({
+					error : 'You must be logged in to view your team.'
+				}));
 				res.end();
 			}
 		});
@@ -414,13 +454,17 @@ module.exports = function(app, db) {
 						res.end();
 					} else {
 						res.writeHead(500);
-						res.write('Could not get user.');
+						res.write(JSON.stringify({
+							error : 'Could not get user.'
+						}));
 						res.end();
 					}
 				});
 			} else {
 				res.writeHead(401);
-				res.write('You must be logged in to view your team.');
+				res.write(JSON.stringify({
+					error : 'You must be logged in to view your team.'
+				}));
 				res.end();
 			}
 		});

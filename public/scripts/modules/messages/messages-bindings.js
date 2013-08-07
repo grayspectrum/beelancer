@@ -163,8 +163,14 @@
 				'POST',
 				'/message/send',
 				obj,
-				success,
-				failure
+				function(res) {
+					bee.ui.loader.hide();
+					if (success) success(res);
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					if (failure) failure(err);
+				}
 			);
 		} else {
 			bee.ui.loader.hide();

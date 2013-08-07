@@ -41,9 +41,6 @@ bee.utils = (function() {
 					bee.set('profile', res);
 					bee.ui.refresh();
 					bee.ui.menu.update();
-					if (firstTime) {
-						bee.ui.notifications.notify('info', 'Welcome back, ' + res.firstName + '!');
-					}
 					// notify the sytem we are logged in
 					bee.socket.emit('online', {
 						userId : bee.get('profile')._id

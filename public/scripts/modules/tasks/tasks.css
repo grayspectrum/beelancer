@@ -3,6 +3,12 @@
  * Author: Gordon Hall
  */
 
+#tasks {
+	overflow: hidden;
+	padding-bottom: 24px;
+	background: #fff;
+}
+
 #tasks_create,
 #task_view {
 	display: none;
@@ -18,30 +24,59 @@
 	margin-left: 12px;
 }
 
-#tasks_nav .new_task {
-	background: url('/assets/images/mono/black/doc_plus_icon&24.png') 12px center no-repeat;
+.col-header.in-progress h3 {
+	background: url('/assets/images/mono/black/clock_icon&16.png') right center no-repeat;
+}
+
+.col-header.completed h3 {
+	background: url('/assets/images/mono/black/checkbox_checked_icon&16.png') right center no-repeat;
+}
+
+.col-header.unassigned h3 {
+	background: url('/assets/images/mono/black/inbox_icon&16.png') right center no-repeat;
 }
 
 #tasks_nav .edit_task {
-	background: url('/assets/images/mono/black/doc_edit_icon&24.png') 12px center no-repeat;
+	background: url('/assets/images/mono/black/doc_edit_icon&16.png') 12px center no-repeat;
 }
 
 #tasks_nav .close_task {
-	background: url('/assets/images/mono/black/checkbox_checked_icon&24.png') 12px center no-repeat;
+	background: url('/assets/images/mono/black/checkbox_checked_icon&16.png') 12px center no-repeat;
 }
 
 #tasks_nav .delete_task {
-	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+	background: url('/assets/images/mono/black/delete_icon&16.png') 12px center no-repeat;
 }
 
 #tasks_nav .reopen_task {
-	background: url('/assets/images/mono/black/doc_new_icon&24.png') 12px center no-repeat;
+	background: url('/assets/images/mono/black/doc_new_icon&16.png') 12px center no-repeat;
+}
+
+.new_task {
+	background: url('/assets/images/mono/black/doc_plus_icon&16.png') 12px center no-repeat;
 }
 
 .new_task_submit_wrapper {
 	border-radius: 6px;
 	margin: 24px auto;
 	width: 230px;
+}
+
+.task_filter {
+	float: left;
+}
+
+.task_filter strong {
+	float: left;
+	margin: 4px 12px 0 0;
+}
+
+#task_filter {
+	padding: 4px 12px;
+	font-size: 14px;
+	background: #fff;
+	border-radius: 2px;
+	border: 1px solid #ababab;
 }
 
 #save_task {

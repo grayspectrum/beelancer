@@ -1,36 +1,52 @@
-<div id="tasks_nav" class="navigation light-gradient center-pane animated fadeInUp">
-	<div id="filter_tasks">
-		Show: 
-		<select>
-			<option value="active" selected="selected">Open Tasks</option>
-			<option value="closed">Completed Tasks</option>
-		</select>
+<h2 class="panel_title tasks">Tasks</h2>
+<!--
+<ul id="tasks_nav" class="left_menu navigation">
+	<li>
+		<a href="/#!/tasks?editTask=true&taskId=" class="edit_task">Edit</a>
+	</li>
+	<li>
+		<a class="task_status"></a>
+	</li>
+	<li>
+		<a class="delete_task">Delete</a>
+	</li>
+</ul>
+-->
+<div id="tasks" class="light-gradient center-pane">
+	<div class="top_options">
+		<div class="task_filter">
+			<strong>Viewing: </strong>
+			<select id="task_filter">
+				<option value="all">All Tasks</option>
+			</select>
+		</div>
+		<strong class="gold-gradient option_button">
+			<a href="/#!/tasks?newTask=true" class="new_task">Create Task</a>
+		</strong>
 	</div>
-	<ul>
-		<li>
-			<a href="/#!/tasks?newTask=true" class="new_task">New Task</a>
-		</li>
-		<li>
-			<a href="/#!/tasks?editTask=true&taskId=" class="edit_task">Edit</a>
-		</li>
-		<li>
-			<a class="task_status"></a>
-		</li>
-		<li>
-			<a class="delete_task">Delete</a>
-		</li>
-	</ul>
-</div>
-<div id="tasks_active" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">Open Tasks</h4>
-	<div id="tasks_active_list">
-		<div class="loader"></div>
+	<div class="col3">
+		<div class="col-header in-progress light-gradient">
+			<h3>In Progress</h3>
+		</div>
+		<div id="tasks_active_list">
+			<div class="loader"></div>
+		</div>
 	</div>
-</div>
-<div id="tasks_closed" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">Completed Tasks</h4>
-	<div id="tasks_closed_list">
-		<div class="loader"></div>
+	<div class="col3">
+		<div class="col-header completed light-gradient">
+			<h3>Completed</h3>
+		</div>
+		<div id="tasks_closed_list">
+			<div class="loader"></div>
+		</div>
+	</div>
+	<div class="col3">
+		<div class="col-header unassigned light-gradient">
+			<h3>Unassigned</h3>
+		</div>
+		<div id="tasks_unassigned_list">
+			<div class="loader"></div>
+		</div>
 	</div>
 </div>
 <div id="tasks_create" class="light-gradient center-pane animated fadeInUp">
@@ -79,6 +95,4 @@
 		</div>
 	</form>
 </div>
-<div id="task_view" class="animated fadeInUp">
-	
-</div>
+<div id="task_view" class="animated fadeInUp"></div>

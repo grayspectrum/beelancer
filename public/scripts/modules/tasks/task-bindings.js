@@ -102,7 +102,7 @@
 			{},
 			function(tasks) {
 				bee.ui.loader.hide();
-				generateTaskList(parseTasks(tasks));
+			//	generateTaskList(parseTasks(tasks));
 			},
 			function(err) {
 			//	bee.ui.loader.hide();

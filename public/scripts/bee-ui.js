@@ -121,24 +121,28 @@ bee.ui = (function() {
 		
 		var Notification = function(type, message, mustDismiss, onDismiss) {
 			this.type = type;
-			this.message = message.charAt(0).toUpperCase() + message.substr(1);
-			this.mustDismiss = mustDismiss;
-			this.ui = $(document.createElement('div'));
+			try {
+				this.message = JSON.parse(message).error;
+			} catch(e) { 
+				this.message = message.charAt(0).toUpperCase() + message.substr(1);
+			}
+			this.mustDismiss = (type === 'err') ? true : mustDismiss;
+			this.ui = $(document.createElement('li'));
 			this.onDismiss = onDismiss || function() { };
 			
-			if (mustDismiss) {
-				this.message = message + '<div>Click To Dismiss</div>';
+			if (this.mustDismiss) {
+				this.message = this.message + '<div>Click To Dismiss</div>';
 			}
 			
 			this.ui
 				.addClass(this.type + ' notification')
-				.addClass('animated bounceIn')
+			//	.addClass('animated bounceIn')
 			.html(this.message);
 		};
 		
 		Notification.prototype.notify = function() {
 			var notif = this;
-			this.container.append(this.ui);
+			this.container.prepend(this.ui);
 			this.ui.bind('click', this.onDismiss);
 			if (!this.mustDismiss) {
 				setTimeout(function() {
@@ -149,35 +153,49 @@ bee.ui = (function() {
 				notif.dismiss();
 			});
 			active.push(this);
+			updateCount();
 		};
 		
 		Notification.prototype.dismiss = function() {
 			var notif = this;
-			notif.ui.removeClass('animated bounceIn').addClass('animated bounceOut');
-			setTimeout(function() {
-				notif.ui.remove();
-			}, 1000);
+			notif.ui.remove();
 			var index = this.index();
 			active.splice(index, 1);
+			updateCount();
 		};
 		
 		Notification.prototype.index = function() {
 			return $.inArray(this, active);
 		};
 		
-		Notification.prototype.container = $('#notifications');
+		Notification.prototype.container = $('#notifications ul');
 		
 		function show(type, message, mustDismiss, onDismiss) {
 			var n = new Notification(type, message, mustDismiss, onDismiss);
 			n.notify();
+			if (type === 'err') {
+				if (!$('h1.logo').hasClass('open')) {
+					$('h1.logo').trigger('click');
+				}
+			}
 			return n;
 		};
 		
 		function dismiss() {
-			$('#notifications').children().remove();
-			$.each(active, function(index, notif) {
-				active[0].dismiss(true);
-			});
+			$('#notifications ul .err').trigger('click');
+		};	
+
+		function updateCount() {
+			$('#notifications_badge').html(active.length);
+			if (active.length) {
+				$('#notifications .no_projects').parent().remove();
+				$('#notifications_badge').show();
+			}
+			else {
+				$('#notifications_badge').hide();
+				$('#notifications ul').html('<li><p class="no_projects">No Notifications</p></li>');
+				if ($('h1.logo').hasClass('open')) $('h1.logo').trigger('click');
+			}
 		};
 		
 		return {
@@ -679,9 +697,26 @@ $(document).on('click', '#welcome .user', function(e){
 	}
 });
 
+$(document).on('click', '#header h1.logo', function(e){
+	var that = $(this);
+	e.stopPropagation();
+	if (that.hasClass('open')) {
+		that.removeClass('open');
+		$('#notifications').hide();
+	}
+	else {
+		that.addClass('open');
+		$('#notifications').show();
+	}
+});
+
+$(document).on('click', '#header h1.logo a', function(e){
+	e.preventDefault();
+});
+
 $(document).on('click', 'body', function(e){
-	$('#user_menu').hide();
-	$('#welcome .user').removeClass('open');
+	$('#user_menu, #notifications').hide();
+	$('#welcome .user, #header h1.logo').removeClass('open');
 });
 
 $(document).on('focus', 'input, textarea', function() {
