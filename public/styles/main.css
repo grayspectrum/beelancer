@@ -127,7 +127,7 @@ h3.title {
 .col3 {
 	width: 322px;
 	float: left;
-	margin: 0 0 0 10px;
+	margin: 0 0 12px 10px;
 	border: 1px solid #e2e2e2;
 	border-radius: 4px;
 }
@@ -158,6 +158,32 @@ h3.title {
 	padding: 12px 24px;
 	margin: 0 0 24px 0;
 	overflow: hidden;
+}
+
+.squarebutton {
+	float: right;
+	height: 20px;
+	width: 20px;
+	text-indent: -9999px;
+	margin: 0 4px;
+	border-radius: 3px;
+	border: 1px solid #D2D2D2;
+	background-color: #F1F1F1;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.squarebutton:hover {
+	cursor: pointer;
+	border-color: #666;
+}
+
+.squarebutton.addnew {
+	background-image: url('/assets/images/mono/black/round_plus_icon&16.png');
+}
+
+.squarebutton.viewdetails {
+	background-image: url('/assets/images/mono/black/expand_icon&16.png');	
 }
 
 .option_button {
@@ -833,6 +859,19 @@ p.desc {
 	line-height: 21px;
 	font-size: 12px;
 }
+button.greybutton {
+	border: 1px solid #D2D2D2;
+	border-radius: 3px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	padding: 4px 8px 4px 32px;
+	float: right;
+	margin: 12px;
+}
+
+button.greybutton:hover {
+	background-color: #FFF;
+	cursor: pointer;
+}
 
 .full_block span {
 	display: block;
@@ -840,7 +879,7 @@ p.desc {
 
 .full_block textarea {
 	margin: 6px 0;
-	width: 484px;
+	width: 524px;
 	height: 100px;
 	resize: vertical;
 	padding: 12px;

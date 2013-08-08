@@ -69,81 +69,120 @@
 
 <!-- Project Details -->
 <script id="tmpl-user_showcase" type="text/x-handlebars-template">
-	<div class="user_showcase">
-		<img src="{{avatarPath}}" width="48px" height="48px" />
-		<strong>{{firstName}} {{lastName}}</strong>
-		<em>{{title}} {{#if company}}at {{company}}{{/if}}</em>
-		<a href="/#!/team?viewProfile={{_id}}">View Profile</a>
-	</div>
+	<a href="/#!/team?viewProfile={{_id}}">
+		<img src="{{avatarPath}}" width="24px" height="24px" />
+		<span>{{firstName}} {{lastName}}</span>
+	</a>
 </script>
 
 <!-- Project Details -->
 <script id="tmpl-user" type="text/x-handlebars-template">
 	<a class="bee_user" href="/#!/team?viewProfile={{_id}}">
 		<img src="{{avatarPath}}" width="16px" height="16px" />
-		<strong>{{firstName}} {{lastName}}</strong>
+		<span>{{firstName}} {{lastName}}</span>
 	</a>
 </script>
 
 <!-- Project Details -->
 <script id="tmpl-project_details" type="text/x-handlebars-template">
-	<div class="light-gradient center-pane animated fadeInUp">
-		<div id="project_details">
-			<h4 class="gold-gradient">{{title}}</h4>
-			<div class="viewproject_deadline">
-				{{#if isActive}}
-					{{#if isOverdue}}
-						Due <span class="calendardate">{{daysText}}</span> days ago.
+	<div class="center-pane">
+		<div class="top_options">
+			{{#if isOwner}}
+				<strong class="gold-gradient option_button">
+					<a href="/#!/projects?newProject=true&projectId={{_id}}" class="edit_project">Edit</a>
+				</strong>
+				<strong class="gold-gradient option_button">
+					<a class="delete_project">Delete</a>
+				</strong> 
+				<strong class="gold-gradient option_button">
+					{{#if isActive}}
+						<a class="project_status close_project">Close</a>
 					{{else}}
-						Due in <span class="calendardate">{{daysText}}</span> days.
+						<a class="project_status reopen_project">Reopen</a>
 					{{/if}}
-				{{else}}
-					<span class="closed green-gradient">This project is closed.</span>
-				{{/if}}
-			</div>
-			<div class="viewproject_ownedby">
-				<strong>This project is owned by:</strong>
-				<div></div>
-			</div>
-			<div class="viewproject_description">
-				<div class="markdown rollout">
-					{{{description}}}
+				</strong>
+				<strong class="gold-gradient option_button">
+					<a href="/#!/invoices?createInvoice=true&projectId={{_id}}" class="bill_client">Invoice</a>
+				</strong>
+			{{/if}}
+			<strong class="gold-gradient option_button">
+				<a class="leave_project">Leave Team</a>
+			</strong>
+		</div>
+		<div class="two3rds">
+			<div id="project_details" data-id="{{_id}}">
+				<h3 class="title">{{title}}</h4>
+				<ul class="project_info">
+					<li>
+						<strong>Owned By:</strong> 
+						<span id="project-owned-by" data-owner="{{owner.profile}}"></span>
+					</li>
+					<li>
+						<strong>Deadline:</strong> 
+						<span id="task-deadline">
+							{{#if isActive}}
+								{{#if isOverdue}}
+									Due <span>{{daysText}}</span> days ago.
+								{{else}}
+									Due in <span>{{daysText}}</span> days.
+								{{/if}}
+							{{else}}
+								<span>This project is closed.</span>
+							{{/if}}
+						</span>
+					</li>
+				</ul>
+				<div class="viewproject_description">
+					<div class="markdown rollout">
+						{{{description}}}
+					</div>
 				</div>
 			</div>
-			<div class="viewproject_stats">
-				This project has <a href="#!/team?projectId={{_id}}">{{members.length}} members</a> working on <a href="/#!/tasks?projectId={{_id}}">{{tasks.length}} tasks</a>.
+		</div>
+		<div class="col3">
+			<div class="col-header files light-gradient">
+				<h3>Stats</h3>
 			</div>
-			<div class="float_wrap">
-				<div id="viewproject_team" class="half_list">
-					<h5 class="half-list-header">
-						Team Members
-						<button class="btn-add" id="project_add_team">Add a Teammate</button>
-					</h5>
-					{{#if members.length}}
-						<ul class="rollout none">
-							{{#each members}}
-								<li class="list-member" data-profile="{{this.profile}}">
-									<span class="loading-list">Loading Member...</span>
-								</li>
+			<ul class="project_stats">
+				<li>
+					{{tasks.length}} Total Tasks
+					<a href="/#!/tasks?forProject={{_id}}" class="squarebutton viewdetails">View</a>
+					<a href="/#!/tasks?newTask=true&projectId={{_id}}" class="squarebutton addnew">Add</a>
+				</li>
+				<li>
+					{{members.length}} Participants
+					<a href="/#!/team?projectId={{_id}}" class="squarebutton viewdetails">View</a>
+					<a id="project_add_team" class="squarebutton addnew">Add</a>
+				</li>
+				<li>
+					<em class="percent_bar">
+						<em class="progress" style="width:{{percentComplete}}%"></em>
+						<span class="percent">{{percentComplete}}% Complete</span>
+					</em>
+				</li>
+			</ul>
+		</div>
+		<div class="col3">
+			<div class="col-header files light-gradient">
+				<h3>
+					Files
+					<button class="greybutton addfile">Add</button>
+				</h3>
+			</div>
+			<div id="files_list">
+				{{#if files.length}}
+					<ul class="project_files">
+						{{#if files}}
+							{{#each files}}
+								{{#if ended}}
+									<li data-fileId="{{_id}}"></li>
+								{{/if}}
 							{{/each}}
-						</ul>
-					{{else}}
-						<p class="rollout none">You are the only member of this project.</p>
-					{{/if}}
-				</div>
-				<div id="viewproject_tasks" class="half_list">
-					<h5 class="half-list-header">
-						Project Tasks
-						<button class="btn-add" id="project_add_task">Add a Task</button>
-					</h5>
-					{{#if tasks.length}}
-						<ul id="project_tasks" class="rollout none">
-							<li>Loading tasks...</li>
-						</ul>
-					{{else}}
-						<p class="rollout none">There are no tasks attached to this project.</p>
-					{{/if}}
-				</div>
+						{{/if}}
+					</ul>
+				{{else}}
+					<p class="no_projects">No files attached to project.</p>
+				{{/if}}
 			</div>
 		</div>
 	</div>
@@ -419,7 +458,7 @@
 	</div>
 	<div class="two3rds">
 		<div id="task_details" data-id="{{_id}}">
-			<h3 class="title">{{title}}</h4>
+			<h3 class="title">{{title}}</h3>
 			<div id="task_timer_controls"></div>
 			<ul class="task_info">
 				<li>

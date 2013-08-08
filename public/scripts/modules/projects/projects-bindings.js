@@ -33,7 +33,7 @@
 	////
 	function new_project() {
 		$('#projects_create').show();
-		$('#projects_active, #projects_closed, #projects_nav, #project_view').remove();
+		$('#projects_list, #project_view').remove();
 		$('#newproject_deadline').datepicker({minDate : new Date()});
 	};
 	
@@ -94,7 +94,7 @@
 	////
 	function view_project() {	
 		$('#project_view').show();
-		$('#projects_active, #projects_closed, #filter_projects, #projects_create, #projects_nav .new_project').remove();
+		$('#projects_list, #projects_create').remove();
 		
 		// get project details
 		bee.api.send(
@@ -107,31 +107,16 @@
 				  , billurl = $('#projects_nav .bill_client').attr('href');
 				$('#projects_nav .edit_project').attr('href', editurl + project._id);
 				$('#projects_nav .bill_client').attr('href', billurl + project._id);
-				
-				
-				
-				if (project.isActive) {
-					$('#projects_nav .project_status')
-						.addClass('close_project')
-						.removeClass('reopen_project')
-					.html('Close');
-				} else {
-					$('#projects_nav .project_status')
-						.addClass('reopen_project')
-						.removeClass('close_project')
-					.html('Reopen');
-				}
+
 				var userid = _.cookies.get('userid');
-				
-				if (userid === project.owner._id) {
-					$('#projects_nav .leave_project').remove();
-				}
+				res.isOwner = (userid === project.owner._id)
 				
 				if (new Date() > new Date(project.deadline)) {
 					project.isOverdue = true;
 				}
 				project.daysText = bee.utils.daysUntil(new Date(), new Date(project.deadline));
 				project.description = marked(project.description);
+				project.percentComplete = getPercentComplete(project);
 				
 				var tmpl = $('#tmpl-project_details').html()
 				  , source = Handlebars.compile(tmpl)
@@ -139,12 +124,6 @@
 				
 				$('#project_view').html(view);
 				bindProjectActions();
-				loadTeamList();
-				loadTaskListByIds(project.tasks);
-				
-				if (bee.get('profile')._id !== project.owner.profile) {
-					$('.project_status, .edit_project, #project_add_team, #projects_nav .delete_project').remove();
-				}
 				
 				bee.api.send(
 					'GET',
@@ -152,7 +131,7 @@
 					{},
 					function(profile) {
 						var html = Handlebars.compile($('#tmpl-user_showcase').html())(profile);
-						$('.viewproject_ownedby > div').html(html);
+						$('#project-owned-by').html(html);
 					},
 					function(err) {
 						$('#viewproject_ownedby').remove();
@@ -249,6 +228,75 @@
 		addTask.bind('click', function() {
 			location.href = '/#!/tasks?newTask=true&projectId=' + viewProject;
 		});
+
+		$('.project_status').bind('click', function() {
+			var close = $(this).hasClass('close_project')
+			  , reopen = $(this).hasClass('reopen_project')
+			  , project = viewProject;
+			bee.ui.loader.show();
+			bee.api.send(
+				'PUT',
+				'/project/' + ((close) ? 'close' : 'reopen') + '/' + project,
+				{
+					isActive : (close) ? false : true
+				},
+				function(res) {
+					bee.ui.notifications.notify('success', 'Project ' + ((reopen) ? 'reopened.' : 'closed.'));
+					bee.ui.refresh();
+				},
+				function(err) {
+					bee.ui.notifications.notify('err', err, true);
+					bee.ui.loader.hide();
+				}
+			);
+		});
+
+		$('.delete_project').bind('click', function() {
+			bee.ui.confirm('Are you sure you want to delete this project? This cannot be undone.', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'DELETE',
+					'/project/delete/' + viewProject,
+					{},
+					function(res) {
+						history.back();
+						bee.ui.notifications.notify('success', 'Project deleted!');
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		});
+		
+		$('.leave_project').bind('click', function() {
+			bee.ui.confirm('Are you sure you want to leave this project?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'PUT',
+					'/project/removeMember',
+					{
+						projectId : viewProject,
+						memberId : bee.get('profile')._id
+					},
+					function(res) {
+						bee.ui.notifications.notify('success', 'Left project!');
+						location.href = '/#!/projects';
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		});
+
+		$('.addfile').bind('click', function() {
+			// open file dialog
+			bee.ui.notifications.notify('err', 'Feature not yet available.');
+		});
+
 	};
 	
 	
@@ -277,12 +325,7 @@
 				project.deadlineText = 'Project closed.';
 			}
 
-			var complete_tasks = 0;
-			// add percentComplete
-			$.each(project.tasks, function(key, task) {
-				if (task.isComplete) complete_tasks++;
-			});
-			project.percentComplete = ((complete_tasks / project.tasks.length).toFixed(2) * 100) || 0;
+			project.percentComplete = getPercentComplete(project);
 
 			if (project.owner === _.cookies.get('userid')) {
 				projects.owned.push(project);
@@ -291,6 +334,15 @@
 			}
 		}
 		return projects;
+	};
+
+	function getPercentComplete(project) {
+		var complete_tasks = 0;
+		// add percentComplete
+		$.each(project.tasks, function(key, task) {
+			if (task.isComplete) complete_tasks++;
+		});
+		return ((complete_tasks / project.tasks.length).toFixed(2) * 100) || 0;
 	};
 	
 	function generateList(projects) {
@@ -383,6 +435,10 @@
 	// Bindings
 	////
 	$('#create_project').bind('submit', tryCreateProject);
+	$('.save_project').bind('click', function(e) {
+		e.preventDefault();
+		$('#create_project').trigger('submit');
+	});
 
 	$('#newproject_client-true').bind('click', function() {
 		$('#newproject_client-info').show();
@@ -391,70 +447,9 @@
 		$('#newproject_client-info').hide();
 	});
 	
-	$('#projects_nav .project_status').bind('click', function() {
-		var close = $(this).hasClass('close_project')
-		  , reopen = $(this).hasClass('reopen_project')
-		  , project = viewProject;
-		bee.ui.loader.show();
-		bee.api.send(
-			'PUT',
-			'/project/' + ((close) ? 'close' : 'reopen') + '/' + project,
-			{
-				isActive : (close) ? false : true
-			},
-			function(res) {
-				bee.ui.notifications.notify('success', 'Project ' + ((reopen) ? 'reopened.' : 'closed.'));
-				bee.ui.refresh();
-			},
-			function(err) {
-				bee.ui.notifications.notify('err', err, true);
-				bee.ui.loader.hide();
-			}
-		);
-	});
-	
 	$('#project_filter').bind('change', function() {
 		location.href = '/#!/projects?show=' + $(this).val();
 	});
 	
-	$('#projects_nav .delete_project').bind('click', function() {
-		bee.ui.confirm('Are you sure you want to delete this project? This cannot be undone.', function() {
-			bee.ui.loader.show();
-			bee.api.send(
-				'DELETE',
-				'/project/delete/' + viewProject,
-				{},
-				function(res) {
-					history.back();
-					bee.ui.notifications.notify('success', 'Project deleted!');
-				},
-				function(err) {
-					bee.ui.loader.hide();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
-		});
-	});
 	
-	$('#projects_nav .leave_project').bind('click', function() {
-		bee.ui.confirm('Are you sure you want to leave this project?', function() {
-			bee.ui.loader.show();
-			bee.api.send(
-				'PUT',
-				'/project/removeMember',
-				{
-					projectId : viewProject,
-					memberId : bee.get('profile')._id
-				},
-				function(res) {
-					bee.ui.notifications.notify('success', 'Left project!');
-					location.href = '/#!/projects';
-				},
-				function(err) {
-					bee.ui.loader.hide();
-					bee.ui.notifications.notify('err', err);
-				}
-			);
-		});
-	});
 })();

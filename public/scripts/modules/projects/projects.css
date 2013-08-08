@@ -8,6 +8,11 @@
 	display: none;
 }
 
+#new_project_submit_wrapper,
+#save_project {
+	display: none !important;
+}
+
 .col-header.owned h3{
 	background: url('/assets/images/mono/black/user_icon&16.png') right center no-repeat;
 }
@@ -20,6 +25,18 @@
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
+}
+
+.project_stats {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.project_stats li {
+	border-top: 1px solid #e2e2e2;
+	padding: 8px;
+	font-size: 14px;
 }
 
 #projects_list li {
@@ -48,7 +65,7 @@
 	background: rgba(255, 207, 47, 0.2);;
 }
 
-#projects_list .percent_bar {
+.percent_bar {
 	display: block;
 	margin: 8px;
 	position: relative;
@@ -65,7 +82,7 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e5e5e5', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
 }
 
-#projects_list .percent_bar .progress {
+.percent_bar .progress {
 	display: block;
 	margin: 0;
 	position: absolute;
@@ -82,7 +99,7 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c9de96', endColorstr='#398235',GradientType=0 ); /* IE6-9 */
 }
 
-#projects_list .percent_bar .percent {
+.percent_bar .percent {
 	display: block;
 	margin: 0;
 	position: absolute;
@@ -145,32 +162,84 @@
 	display: none;
 }
 
+#project-owned-by a {
+	text-decoration: none;
+	color: #333;
+}
+
+#project-owned-by img {
+	width: 20px;
+	height: 20px;
+	float: left;
+	margin-right: 8px;
+}
+
+#project-owned-by a {
+	color: #333;
+}
+
+#project-owned-by a:hover {
+	text-decoration: underline;
+}
+
+.greybutton.addfile {
+	background: url('/assets/images/mono/black/round_plus_icon&16.png') 8px center no-repeat #E9E9E9;
+	position: relative;
+	left: 14px;
+	float: right;
+	margin: 0;
+}
+
+.project_info {
+	list-style-type: none;
+	margin: 12px 0;
+	padding: 0;
+}
+
+.project_info li {
+	font-size: 14px;
+	padding: 4px 0;
+	margin: 4px 0;
+	overflow: hidden;
+}
+
+.project_info li strong {
+	margin-right: 12px;
+	text-align: right;
+	width: 110px;
+	float: left;
+}
+
 .new_project {
 	background: url('/assets/images/mono/black/folder_plus_icon&16.png') 12px center no-repeat;
 }
 
-#projects_nav .edit_project {
-	background: url('/assets/images/mono/black/doc_edit_icon&24.png') 12px center no-repeat;
+.edit_project {
+	background: url('/assets/images/mono/black/doc_edit_icon&16.png') 12px center no-repeat;
 }
 
-#projects_nav .bill_client {
-	background: url('/assets/images/mono/black/money_icon&24.png') 12px center no-repeat;
+.bill_client {
+	background: url('/assets/images/mono/black/money_icon&16.png') 12px center no-repeat;
 }
 
-#projects_nav .close_project {
-	background: url('/assets/images/mono/black/round_minus_icon&24.png') 12px center no-repeat;
+.close_project {
+	background: url('/assets/images/mono/black/round_minus_icon&16.png') 12px center no-repeat;
 }
 
-#projects_nav .reopen_project {
-	background: url('/assets/images/mono/black/round_checkmark_icon&24.png') 12px center no-repeat;
+.reopen_project {
+	background: url('/assets/images/mono/black/round_checkmark_icon&16.png') 12px center no-repeat;
 }
 
-#projects_nav .delete_project {
-	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+.save_project {
+	background: url('/assets/images/mono/black/checkmark_icon&16.png') 12px center no-repeat;
 }
 
-#projects_nav .leave_project {
-	background: url('/assets/images/mono/black/undo_icon&24.png') 12px center no-repeat;
+.delete_project {
+	background: url('/assets/images/mono/black/delete_icon&16.png') 12px center no-repeat;
+}
+
+.leave_project {
+	background: url('/assets/images/mono/black/undo_icon&16.png') 12px center no-repeat;
 }
 
 #projects_active_list ul,
@@ -267,7 +336,7 @@
 
 .viewproject_description {
 	padding: 0;
-	margin: 12px 24px;
+	margin: 0;
 	border-top: 1px solid #c1c1c1;
 	font-size: 14px;
 }
