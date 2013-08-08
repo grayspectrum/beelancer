@@ -130,7 +130,7 @@ module.exports = function(app, db) {
 						function createUser(tester) {
 							var newUser = new db.user({
 								email : body.email,
-								hash : crypto.createHash('sha1').update(body.password).digest(),
+								hash : crypto.createHash('sha512').update(body.password).digest('hex'),
 								apiKey : utils.generateKey({ method : 'sha1', encoding : 'hex', bytes : 256 }),
 								memberSince : new Date().toDateString(),
 								isConfirmed : false,
@@ -243,7 +243,7 @@ module.exports = function(app, db) {
 	app.put('/api/user/login', function(req, res) {
 		var body = req.body;
 		if (req.body.email && req.body.password) {
-			var hash = crypto.createHash('sha1').update(body.password).digest();
+			var hash = crypto.createHash('sha512').update(body.password).digest('hex');
 			db.user
 			.findOne({ email : body.email, hash : hash })
 			.exec(function(err, user) {
@@ -392,7 +392,7 @@ module.exports = function(app, db) {
 				}));
 				res.end();
 			} else {
-				user.hash = crypto.createHash('sha1').update(body.password).digest();
+				user.hash = crypto.createHash('sha512').update(body.password).digest('hex');
 				user.recoveryKey = undefined;
 				user.save(function(err) {
 					if (err) {
