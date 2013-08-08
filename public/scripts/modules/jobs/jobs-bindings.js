@@ -874,7 +874,7 @@
 
 						if (res.owned.length) {
 							$.each(res.owned, function(key, val) {
-								if (val.status !== 'UNPUBLISHED' && val.status !== 'COMPLETED') {
+								if (val.isPublished === false) {
 									numJobs++;
 									if (val.isPromoted) proJobs++;
 								}
