@@ -511,8 +511,7 @@ bee.ui = (function() {
 		teamlist.prototype.template = Handlebars.compile($('#tmpl-populate_team').html());
 		
 		teamlist.prototype.show = function(pos) {
-			$(this.ui).removeClass('animated fadeOutDown');
-			$(this.ui).addClass('animated fadeInUp').show();
+			$(this.ui).show();
 			if (pos) {
 				$(this.ui).css({
 					left : pos.x,
@@ -525,8 +524,7 @@ bee.ui = (function() {
 		};
 		
 		teamlist.prototype.hide = function() {
-			$(this.ui).removeClass('animated fadeInUp');
-			$(this.ui).addClass('animated fadeOutDown').hide();
+			$(this.ui).hide();
 			return this;
 		};
 		

@@ -206,23 +206,23 @@
 <!-- Member List Item -->
 <script id="tmpl-list_member" type="text/x-handlebars-template">
 	{{#if this.length}}
-		<ul>
-			{{#each this}}
-				<li class="member_item"{{#if this.ratings.average}} title="Rating: {{this.ratings.average}}, # of Ratings: {{this.ratings.total}}"{{/if}}>
-					<a href="/#!/team?viewProfile={{_id}}">
-						<img src="{{avatarPath}}" width="32px" height="32px" />
-						<span class="member-name">{{firstName}} {{lastName}}</span>
-						<span class="member-title">{{title}}</span>
-					</a>
-				</li>
-			{{/each}}
-		</ul>
+		{{#each this}}
+			<li class="member_item"{{#if this.ratings.average}} title="Rating: {{this.ratings.average}}, # of Ratings: {{this.ratings.total}}"{{/if}}>
+				<a href="/#!/team?viewProfile={{_id}}">
+					<img src="{{avatarPath}}" width="32px" height="32px" />
+					<span class="member-name">{{firstName}} {{lastName}}</span>
+					<span class="member-title">{{title}}</span>
+					<strong class="rating">{{ratings.average}}</strong>
+				</a>
+			</li>
+		{{/each}}
 	{{else}}
 		{{#if this.firstName}}
 			<a href="/#!/team?viewProfile={{_id}}">
 				<img src="{{#if avatarPath}}{{avatarPath}}{{else}}/assets/images/default-avatar.jpg{{/if}}" width="32px" height="32px" />
 				<span class="member-name">{{firstName}} {{lastName}}</span>
 				<span class="member-title">{{title}}</span>
+				<strong class="rating">{{ratings.average}}</strong>
 			</a>
 		{{else}}
 			<p class="no_projects">No users found.</p>
@@ -358,6 +358,60 @@
 
 <!-- User Profile -->
 <script id="tmpl-user_profile" type="text/x-handlebars-template">
+	<div class="center-pane">
+		<div class="top_options">
+			{{#if isMyself}}
+				<div class="you">This is you!</div>
+			{{else}}
+				<strong class="gold-gradient option_button">
+					<a href="/#!/messages?compose=true&reply={{_id}}" class="message">Message</a>
+				</strong>
+				<strong class="gold-gradient option_button">
+					<a class="endorse">Endorse</a>
+				</strong>
+				{{#if isOnTeam}}
+					<strong class="gold-gradient option_button">
+						<a class="remove">Remove</a>
+					</strong>
+				{{else}}
+					<strong class="gold-gradient option_button">
+						<a class="invite">Invite</a>
+					</strong>
+				{{/if}}
+			{{/if}}
+		</div>
+		<div class="two3rds">
+			<div id="user_details" data-id="{{_id}}">
+				<img src="{{avatarPath}}?s=160" height="160" width="160" />
+				<h3 class="title">{{firstName}} {{lastName}}</h4>
+				<ul class="user_info">
+					<li class="user-title">
+						<span>{{title}}</span> 
+					</li>
+					<li class="user-company">
+						<span>Works at {{company}}</span> 
+					</li>
+					<li class="user-rating">
+						<span>Rated {{ratings.average}} out of 5 <em><small>({{ratings.total}} total ratings)</small></em></span> 
+					</li>
+				</ul>
+				<div class="user_about">
+					<div class="user-blurb">
+						{{about}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col3">
+			<div class="col-header endorsements light-gradient">
+				<h3>Endorsements</h3>
+			</div>
+			<ul class="endorsements_list">
+				<div class="loader"></div>
+			</ul>
+		</div>
+	</div>
+
 	<div id="endorse_compose" class="light-gradient center-pane animated fadeInUp">
 		<h4 class="gold-gradient">Endorse {{firstName}} {{lastName}}</h4>
 		<form id="endorse_user">
@@ -380,61 +434,34 @@
 			</div>
 		</form>
 	</div>
-	<div class="light-gradient center-pane animated fadeInUp">
-		<div class="profile_info">
-			<div class="profile_avatar">
-				<img src="{{avatarPath}}" height="80px" width="80px" alt="{{firstName}} {{lastName}}" />
-			</div>
-			<strong class="profile_name">{{firstName}} {{lastName}}</strong>
-			<em class="profile_title">{{title}} {{#if company}}at <span>{{company}}</span>{{/if}}</em>
-		</div>
-		{{#if about}}
-			<div class="profile_about">
-				<div class="bubble">{{about}}</div>
-			</div>
-		{{/if}}
-		{{#if ratings.average}}
-			<h4 class="gold-gradient">Rating</h4>
-			<div class="profile_average_rating">
-				<span class="number_ratings"># of Ratings:  <span>{{ratings.total}}</span></span>
-				<span class="rating">{{ratings.average}}</span>
-			</div>
-		{{/if}}
-		<h4 class="gold-gradient">Endorsements</h4>
-		<div class="profile_ratings">
-			Loading endorsements...
-		</div>
-	</div>
 </script>
 
 <!-- Ratings list -->
 <script id="tmpl-profile_ratings" type="text/x-handlebars-template">
 	{{#if this.length}}
-		<ul>
-			{{#each this}}
-				<li>
-					<div class="rating_from">
-						<div class="from_user">
-							<img src="{{this.fromUser.avatarPath}}" width="32px" height="32px" />
-							<span class="endorse_name">{{this.fromUser.firstName}} {{this.fromUser.lastName}}</span>
-							<div class="rating">
-								<ul class="stars">
-									<li></li>
-									<li></li>
-									<li></li>
-									<li></li>
-									<li></li>
-								</ul>
-								<input type="hidden" name="star_rating" id="star_rating" value="{{this.rating}}" />
-							</div>
+		{{#each this}}
+			<li>
+				<div class="rating_from">
+					<div class="from_user">
+						<img src="{{this.fromUser.avatarPath}}" width="32px" height="32px" />
+						<span class="endorse_name"><strong>{{this.fromUser.firstName}} {{this.fromUser.lastName}}</strong> says...</span>
+						<p class="rating-comment">{{this.comment}}</p>
+						<div class="rating">
+							<ul class="stars">
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+							</ul>
+							<input type="hidden" name="star_rating" id="star_rating" value="{{this.rating}}" />
 						</div>
-						<p>{{this.comment}}</p>
 					</div>
-				</li>
-			{{/each}}
-		</ul>
+				</div>
+			</li>
+		{{/each}}
 	{{else}}
-		<p class="emptyList">This user has no endorsements.</p>
+		<p class="no_projects">None</p>
 	{{/if}}
 </script>
 

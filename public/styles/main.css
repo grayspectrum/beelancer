@@ -109,6 +109,10 @@ h2.panel_title.projects {
 	background: url('/assets/images/mono/white/notepad_2_icon&32.png') 12px center no-repeat;
 }
 
+h2.panel_title.team {
+	background: url('/assets/images/mono/white/users_icon&32.png') 12px center no-repeat;
+}
+
 .two3rds {
 	float: left;
 	width: 664px;
@@ -1105,27 +1109,27 @@ form .group label select {
 
 #bee-ui_teamlist {
 	display: none;
-	background: #f1f1f1;
+/*	background: #f1f1f1;
 	border: 1px solid #999;
 	padding: 0;
 	box-shadow: 0 3px 5px rgba(0,0,0,0.5);
 	width: 350px;
 	max-height: 300px;
 	overflow: auto;
+*/
 }
 
 #bee-ui_teamlist ul {
 	list-style-type: none;
-	margin: 6px;
+	margin: 0;
 	padding: 0;
 }
 
 #bee-ui_teamlist ul li.teammember {
-	margin-bottom: 3px;
-	padding: 6px 12px;
+	border-top: 1px solid #e2e2e2;
+	padding: 14px 12px;
 	display: block;
 	overflow: hidden;
-	border: 1px solid transparent;
 }
 
 #bee-ui_teamlist ul li.teammember img {
@@ -1139,10 +1143,8 @@ form .group label select {
 }
 
 #bee-ui_teamlist ul li.teammember.selected, #bee-ui_teamlist ul li.teammember:hover {
-	background: #e2e2e2;
-	border-radius: 6px;
+	background: rgba(255, 207, 47, 0.2);
 	cursor: pointer;
-	border: 1px solid #d2d2d2;
 }
 
 #bee-ui_teamlist p {
@@ -1244,4 +1246,45 @@ p.no_projects {
 
 #bee-ui_add_worklog_entry label.invalid input {
 	border-color: red;
+}
+
+.member_item {
+	border-top: 1px solid #e2e2e2;
+}
+
+.member_item a {
+	overflow: hidden;
+	display: block;
+	padding: 12px;
+	color: #333;
+	text-decoration: none;
+	position: relative;
+}
+
+.member_item a:hover {
+	background: rgba(255, 207, 47, 0.2);
+}
+
+.member_item img {
+	float: left;
+	margin-right: 12px;
+}
+
+.member-name {
+	font-size: 14px;
+	display: block;
+}
+
+.member-title {
+	font-size: 12px;
+	display: block;
+}
+
+.member_item .rating {
+	float: right;
+	padding-left: 24px;
+	background: url('/assets/images/mono/black/star_fav_icon&16.png') left center no-repeat;
+	position: absolute;
+	right: 12px;
+	top: 20px;
 }

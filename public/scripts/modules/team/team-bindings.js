@@ -7,17 +7,15 @@
 	
 	// determine context
 	var viewProfile = _.querystring.get('viewProfile')
-	  , endorseUser = _.querystring.get('endorseUser')
 	  , filterProject = _.querystring.get('projectId')
-	  , searchUsers = _.querystring.get('globalFind')
 	  , alreadyEndorsed = false;
 	  
 	if (viewProfile) {
-		loadProfile(endorseUser);
-	} else if (searchUsers) {
-		loadSearch();
-	} else {
+		loadProfile();
+	} 
+	else {
 		loadTeam();
+		loadSearch();
 	}
 	
 	////
@@ -25,7 +23,7 @@
 	////
 	function loadProfile(endorse) {
 		// load profile
-		$('#team_nav .find_user, #team_list, #team_find, #which_team').remove();
+		$('#team_list').remove();
 		bee.api.send(
 			'GET',
 			'/profile/' + viewProfile,
@@ -33,34 +31,17 @@
 			function(res) {
 				var source = $('#tmpl-user_profile').html()
 				  , tmpl = Handlebars.compile(source)
-				  , profile = tmpl(res);
+				  , profile;
 				
-				var msgUrl = $('#team_nav .send_message').attr('href');
-				$('#team_nav .send_message').attr('href', msgUrl + res._id);
-				
-				if (bee.utils.onTeam(res._id)) {
-					$('#team_nav .remove_user, #team_nav .rate_user').show();
-					$('#team_nav .invite_user').remove();
-				} else if (res._id === bee.get('profile')._id) {
-					$('#team_nav .remove_user, #team_nav .invite_user, #team_nav .rate_user').remove();
-				} else {
-					$('#team_nav .invite_user, #team_nav .rate_user').show();
-					$('#team_nav .remove_user').remove();
-				}
-				  
+				res.isOnTeam = bee.utils.onTeam(res._id);
+				res.isMyself = (res._id === bee.get('profile')._id);
+
+				profile = tmpl(res);
 				$('#team_profile').html(profile);
 				
 				currentEndorsement();
 				loadEndorsements();
-				
-				// set the proper endorsement url
-				var endorseBtn = $('.rate_user')
-				  , url = location.href + '&endorseUser=true';
-				endorseBtn.attr('href', url);
-				if (endorse) {
-					showEndorsementForm();
-				}
-				
+				bindProfileActions();
 				bee.ui.loader.hide();
 			},
 			function(err) {
@@ -80,9 +61,9 @@
 					  , ratings = tmpl(res);
 
 
-					$('#team_profile .profile_ratings').html(ratings);
+					$('#team_profile .endorsements_list').html(ratings);
 
-					$.each($('.profile_ratings .rating'), function(){
+					$.each($('.rating'), function(){
 						var thisRating = Number($('input', this).val())
 						  , stars = $('.stars li', this);
 
@@ -127,7 +108,7 @@
 					}
 				},
 				function(err) {
-					console.log('fail', res);
+				//	console.log('fail', res);
 				}
 			);
 		};	
@@ -137,7 +118,7 @@
 	// Load Search
 	////
 	function loadSearch() {
-		$('#team_nav, #team_profile, #team_list').remove();
+		$('#team_profile').remove();
 		var search_input = $('#team_search');
 		
 		function doSearch(event) {
@@ -167,14 +148,14 @@
 		
 		function populateResults(results) {
 			var resultUi = Handlebars.compile($('#tmpl-list_member').html())(results || {});
-			$('#search_results').html(resultUi);
-			$('#search_results .member_item').tooltip();
+			$('#user_search_results').html(resultUi);
+		//	$('#user_search_results .member_item').tooltip();
 		};
 		
 		search_input.bind('keypress', doSearch);
 		search_input.bind('keyup', function() {
 			if ($(this).val().length === 0) {
-				$('#search_results').html('');
+				$('#user_search_results').html('');
 			}
 		});
 		
@@ -187,7 +168,7 @@
 	////
 	function loadTeam() {
 		// load list
-		$('#team_nav .remove_user, #team_nav .send_message, #team_nav .invite_user, #team_nav .rate_user, #team_find, #team_profile').remove();
+		$('#team_profile').remove();
 		bee.ui.loader.hide();
 		var teamList = new bee.ui.TeamList(showProfile);
 	
@@ -215,14 +196,14 @@
 						//	bee.ui.notifications.notify('err', err);
 							location.href = '/#!/team';
 						} else {
-							$('#list_team').empty();
-							teamList.populate(projectTeam).attach('#list_team').show();
-							bindMemberOptions('#list_team');
+							$('#my_team_list').empty();
+							teamList.populate(projectTeam).attach('#my_team_list').show();
+							bindMemberOptions('#my_team_list');
 						}
 					});
 				} else {
-					$('#list_team').empty();
-					teamList.populate().attach('#list_team').show();
+					$('#my_team_list').empty();
+					teamList.populate().attach('#my_team_list').show();
 				}
 			},
 			function(err) {
@@ -489,16 +470,20 @@
 	////
 	// Event Bindings
 	////
-	$('#team_nav .invite_user').bind('click', function() {
-		bee.ui.confirm('Invite this user to join your team?', function() {
-			inviteToTeam(viewProfile);
+	function bindProfileActions() {
+		$('.invite').bind('click', function() {
+			bee.ui.confirm('Invite this user to join your team?', function() {
+				inviteToTeam(viewProfile);
+			});
 		});
-	});
-	
-	$('#team_nav .remove_user').bind('click', function() {
-		bee.ui.confirm('Remove this user from your team?', function() {
-			removeFromTeam(viewProfile);
+		
+		$('.remove').bind('click', function() {
+			bee.ui.confirm('Remove this user from your team?', function() {
+				removeFromTeam(viewProfile);
+			});
 		});
-	});
+
+		$('.endorse').bind('click', showEndorsementForm);
+	};
 	
 })();

@@ -3,24 +3,32 @@
  * Author: Gordon Hall
  */
 
-#team_nav .find_user {
-	background: url('/assets/images/mono/black/zoom_icon&24.png') 12px center no-repeat;
+.message {
+	background: url('/assets/images/mono/black/mail_2_icon&16.png') 12px center no-repeat;
 }
 
-#team_nav .send_message {
-	background: url('/assets/images/mono/black/mail_2_icon&24.png') 12px center no-repeat;
+.invite {
+	background: url('/assets/images/mono/black/contact_card_icon&16.png') 12px center no-repeat;
 }
 
-#team_nav .invite_user {
-	background: url('/assets/images/mono/black/contact_card_icon&24.png') 12px center no-repeat;
+.endorse {
+	background: url('/assets/images/mono/black/hand_pro_icon&16.png') 12px center no-repeat;
 }
 
-#team_nav .rate_user {
-	background: url('/assets/images/mono/black/hand_pro_icon&24.png') 12px center no-repeat;
+.remove {
+	background: url('/assets/images/mono/black/delete_icon&16.png') 12px center no-repeat;
 }
 
-#team_nav .remove_user {
-	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+.col-header.myteam h3{
+	background: url('/assets/images/mono/black/users_icon&16.png') right center no-repeat;
+}
+
+.col-header.findusers h3 {
+	background: url('/assets/images/mono/black/zoom_icon&16.png') right center no-repeat;
+}
+
+.col-header.endorsements h3{
+	background: url('/assets/images/mono/black/cert_icon&16.png') right center no-repeat;
 }
 
 #team_profile .profile_average_rating {
@@ -32,6 +40,25 @@
 	overflow: auto;
 	margin: 0 10px;
 	padding: 10px;
+}
+
+#user_search_results {
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+
+#project_team {
+	padding: 4px 12px;
+	font-size: 14px;
+	background: #FFF;
+	border-radius: 2px;
+	border: 1px solid #ABABAB;
+}
+
+.project_filter strong {
+	float: left;
+	margin: 4px 12px 0 0;
 }
 
 #team_profile .profile_average_rating .number_ratings {
@@ -248,14 +275,19 @@
 	font-size: 16px;
 }
 
+.search {
+	background: #f1f1f1;
+	overflow: hidden;
+}
+
 #team_search {
 	display: block;
 	font-size: 16px;
 	padding: 8px 18px;
-	margin: 12px 24px 24px 24px;
+	margin: 12px;
 	border: 1px solid #999;
 	border-radius: 3px;
-	width: 468px;
+	width: 430px;
 }
 
 #search_results ul {
@@ -271,12 +303,6 @@
 #which_team {
 	margin: 12px;
 	float: left;
-}
-
-#project_team {
-	font-size: 16px;
-	margin-left: 12px;
-	max-width: 290px;
 }
 
 #search_results a {
@@ -314,16 +340,115 @@
 .removefromproject {
 	float: right !important;
 	text-indent: -9999px;
-	background: url('/assets/images/mono/black/delete_icon&16.png') center center no-repeat;
-	width: 26px;
-	height: 26px;
+	background: url('/assets/images/mono/black/round_delete_icon&16.png') center center no-repeat #f1f1f1;
+	border: 1px solid #e2e2e2;
+	border-radius: 2px;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	width: 24px;
+	height: 24px;
 }
 
 .removefromproject:hover {
-	background: url('/assets/images/mono/white/delete_icon&16.png') center center no-repeat #333;
-	border-radius: 6px;
+	border: 1px solid #666;
+	cursor: pointer;
 }
 
 #list_team #bee-ui_teamlist {
 	background: none;
+}
+
+.you {
+	text-align: right;
+}
+
+#user_details img {
+	float: left;
+	margin: 0 24px 24px 0;
+	border: 1px solid #D2D2D2;
+}
+
+.user_info {
+	list-style-type: none;
+	padding-left: 190px;
+}
+
+.user_info li {
+	padding: 4px 0 4px 24px;
+}
+
+.user-title {
+	background: url('/assets/images/mono/black/user_icon&16.png') left center no-repeat;
+}
+
+.user-company {
+	background: url('/assets/images/mono/black/case_icon&16.png') left center no-repeat;
+}
+
+.user-rating {
+	background: url('/assets/images/mono/black/cert_icon&16.png') left center no-repeat;
+}
+
+.user_about {
+	clear: both;
+	background: url('/assets/images/bubble-tick.png') 58px top no-repeat;
+	padding-top: 18px;
+	position: relative;
+	top: -12px;
+}
+
+.user-blurb {
+	background: #E2E2E2;
+	padding: 24px;
+	border-radius: 4px;
+	text-shadow: 0 1px 0 #FFF;
+	color: #333;
+}
+
+.endorsements_list {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+.endorsements_list > li {
+	border-top: 1px solid #e2e2e2;
+	overflow: hidden;
+}
+
+.endorsements_list img {
+	float: left;
+	margin: 12px;
+}
+
+.endorsements_list .endorse_name {
+	float: left;
+	margin: 16px 0;
+}
+
+.endorsements_list .rating-comment {
+	clear: both;
+	margin: 12px;
+	padding: 12px;
+	font-size: 14px;
+	background: #F1F1F1;
+	border-radius: 4px;
+}
+
+.rating .stars {
+	list-style-type: none;
+	overflow: hidden;
+	padding: 0;
+	width: 102px;
+	margin: 8px auto;
+}
+
+.rating .stars li {
+	background: url('/assets/images/mono/black/star_fav_empty_icon&16.png') 0 0 no-repeat;
+	float: left;
+	padding: 8px;
+	margin: 4px 2px;
+}
+
+.rating .stars li.marked {
+	background: url('/assets/images/mono/black/star_fav_icon&16.png') 0 0 no-repeat;
 }

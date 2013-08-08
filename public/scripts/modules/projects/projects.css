@@ -14,7 +14,7 @@
 }
 
 .col-header.owned h3{
-	background: url('/assets/images/mono/black/user_icon&16.png') right center no-repeat;
+	background: url('/assets/images/mono/black/notepad_icon&16.png') right center no-repeat;
 }
 
 .col-header.participating h3 {
@@ -62,7 +62,7 @@
 }
 
 #projects_list li a:hover {
-	background: rgba(255, 207, 47, 0.2);;
+	background: rgba(255, 207, 47, 0.2);
 }
 
 .percent_bar {

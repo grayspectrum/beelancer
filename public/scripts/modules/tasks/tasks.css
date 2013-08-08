@@ -84,7 +84,7 @@
 }
 
 .col-header.in-progress h3 {
-	background: url('/assets/images/mono/black/clock_icon&16.png') right center no-repeat;
+	background: url('/assets/images/mono/black/stop_watch_icon&16.png') right center no-repeat;
 }
 
 .col-header.completed h3 {
