@@ -102,8 +102,8 @@
 								$(this).addClass('marked');
 							}
 						});
-						$('#endorse_user .send_endorsement').hide();
-						$('#endorse_user .update_endorsement').show();
+						$('.submit-endorse').hide();
+						$('.update-endorse').show();
 						alreadyEndorsed = true;
 					}
 				},
@@ -362,7 +362,9 @@
 	function submitEndorsement() {
 		var rating = getStarRating();
 
-		if (!alreadyEndorsed) {		// only submit if they haven't already rated member
+		if (!alreadyEndorsed) {		
+			// only submit if they haven't already rated member
+			bee.ui.loader.show();
 			bee.api.send(
 				'POST',
 				'/rating/create/' + viewProfile,
@@ -373,12 +375,14 @@
 				},
 				function(res) {
 					bee.ui.notifications.notify('success', 'Endorsement submitted!');
-					$('#endorse_user .send_endorsement').hide();
-					$('#endorse_user .update_endorsement').show();
-					$('#endorse_compose').hide();
+					bee.ui.loader.hide();
+					$('.submit_endorse').hide();
+					$('.update_endorse').show();
+					$('#team_endorsement').hide();
 					alreadyEndorsed = true;
 				},
 				function(err) {
+					bee.ui.loader.hide();
 					bee.ui.notifications.notify('err', err);
 				}
 			);
@@ -387,7 +391,7 @@
 
 	function updateEndorsement(id) {
 		var rating = getStarRating();
-
+		bee.ui.loader.show();
 		bee.api.send(
 			'PUT',
 			'/rating/update/' + viewProfile,
@@ -398,10 +402,12 @@
 				needsAction : true
 			},
 			function(res) {
+				bee.ui.loader.hide();
 				bee.ui.notifications.notify('success', 'Endorsement submitted!');
-				$('#endorse_compose').hide();
+				$('#team_endorsement').hide();
 			},
 			function(err) {
+				bee.ui.loader.hide();
 				bee.ui.notifications.notify('err', err);
 			}
 		);
@@ -419,7 +425,7 @@
 	};
 	
 	function showEndorsementForm() {
-		$('#endorse_compose').show();
+		$('#team_endorsement').show();
 
 		var stars = $('.stars li');
 
@@ -456,12 +462,12 @@
 			});
 		});
 
-		$('#endorse_user .send_endorsement').unbind().bind('click', function(e) {
+		$('.submit-endorse').unbind().bind('click', function(e) {
 			e.preventDefault();
 			submitEndorsement();
 		});
 
-		$('#endorse_user .update_endorsement').unbind().bind('click', function(e) {
+		$('.update-endorse').unbind().bind('click', function(e) {
 			e.preventDefault();
 			updateEndorsement($('#endorse_user #rating_id').val());
 		});

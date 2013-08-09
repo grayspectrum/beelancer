@@ -31,6 +31,10 @@
 	background: url('/assets/images/mono/black/cert_icon&16.png') right center no-repeat;
 }
 
+.endorse_submit_wrapper, .update_submit_wrapper {
+	display: none;
+}
+
 #team_profile .profile_average_rating {
 	border: 1px solid #e2e2e2;
 	background: #fff;
@@ -77,18 +81,33 @@
 	padding-right: 34px;
 }
 
-#team_profile #endorse_compose {
+#endorse_compose {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: -125px 0 0 -200px;
+	width: 400px;
+	height: 300px;
+}
+
+.update-endorse {
 	display: none;
+	background: url('/assets/images/mono/black/checkmark_icon&16.png') 12px center no-repeat;
+}
+
+.submit-endorse {
+	background: url('/assets/images/mono/black/cert_icon&16.png') 12px center no-repeat;
 }
 
 #team_profile #endorse_compose #comment {
 	height: 144px;
-	width: 512px;
+	width: 352px;
 	margin: 12px;
 	font-size: 14px;
 	padding: 6px 10px;
 	border: 1px solid #ABABAB;
 	border-radius: 2px;
+	resize: none;
 }
 
 #team_profile #endorse_compose .stars {

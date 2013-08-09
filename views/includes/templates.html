@@ -243,7 +243,7 @@
 		</ul>
 	{{else}}	
 		<p class="no_projects">
-			No teammates to display.
+			No teammates.
 		</p>
 	{{/if}}
 </script>
@@ -412,27 +412,36 @@
 		</div>
 	</div>
 
-	<div id="endorse_compose" class="light-gradient center-pane animated fadeInUp">
-		<h4 class="gold-gradient">Endorse {{firstName}} {{lastName}}</h4>
-		<form id="endorse_user">
-			<label for="comment">
-				<textarea id="comment" name="comment" placeholder="Type your endorsement here..." maxlength="250"></textarea>
-			</label>
-			<input type="hidden" id="rating_id" name="rating_id" />
-			<ul class="stars">
-				<li></li>
-				<li></li>
-				<li></li>
-				<li></li>
-				<li></li>
-			</ul>
-			<div class="endorse_submit_wrapper gold-gradient">
-				<input type="submit" class="send_endorsement" value="Endorse!" />
+	<div class="modal-container" id="team_endorsement">
+		<div id="endorse_compose" class="center-pane">
+			<div class="top_options">
+				<strong class="gold-gradient option_button">
+					<a class="update-endorse">Update</a>
+				</strong>
+				<strong class="gold-gradient option_button">
+					<a class="submit-endorse">Endorse</a>
+				</strong>
 			</div>
-			<div class="update_submit_wrapper gold-gradient">
-				<input type="submit" class="update_endorsement" value="Update Endorsement" />
-			</div>
-		</form>
+			<form id="endorse_user">
+				<label for="comment">
+					<textarea id="comment" name="comment" placeholder="Type your endorsement here..." maxlength="250"></textarea>
+				</label>
+				<input type="hidden" id="rating_id" name="rating_id" />
+				<ul class="stars">
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+				</ul>
+				<div class="endorse_submit_wrapper gold-gradient">
+					<input type="submit" class="send_endorsement" value="Endorse!" />
+				</div>
+				<div class="update_submit_wrapper gold-gradient">
+					<input type="submit" class="update_endorsement" value="Update Endorsement" />
+				</div>
+			</form>
+		</div>
 	</div>
 </script>
 

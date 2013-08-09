@@ -1288,3 +1288,13 @@ p.no_projects {
 	right: 12px;
 	top: 20px;
 }
+
+.modal-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.4);
+	display: none;
+}

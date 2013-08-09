@@ -207,22 +207,25 @@
 					},
 					function(res) {
 						bee.ui.loader.hide();
+						$('#project_add_to_team_ctr').hide();
 						bee.ui.notifications.notify('success', 'Invited to project!');
 					},
 					function(err) {
 						bee.ui.loader.hide();
+						$('#project_add_to_team_ctr').hide();
 						bee.ui.notifications.notify('err', err);
 					}
 				);				
 			});
 			// fix weird incremental binding
 			that.populate(that.team);
-		}).populate().attach();
+		}).populate().attach('#project_teamlist_add');
 		
-		addTeamMember.bindTeamList(team);
+	//	addTeamMember.bindTeamList(team);
 		  
 		addTeamMember.bind('click', function() {
-			$(this).focus();
+			team.show();
+			$('#project_add_to_team_ctr').show();
 		});
 		
 		addTask.bind('click', function() {

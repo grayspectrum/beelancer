@@ -728,6 +728,14 @@ $(document).on('blur', 'input, textarea', function() {
 $(document).on('focus', 'li.req input', function(e) {
 	$('#job_add_req').trigger('click');
 });
+
+$(document).on('click', '.modal-container', function(e) {
+	$(this).hide();
+});
+
+$(document).on('click', '.modal-container > div', function(e) {
+	e.stopPropagation();
+});
 		
 $(document).on('blur', 'li.req input', function(e) {
 	if (!$(this).val()) {
