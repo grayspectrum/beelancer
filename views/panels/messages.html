@@ -1,3 +1,4 @@
+<!--
 <div id="messages_nav" class="navigation light-gradient center-pane animated fadeInUp">
 	<div id="filter_messages">
 		Show: 
@@ -21,48 +22,40 @@
 		</li>
 	</ul>
 </div>
-<div id="messages_inbox" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">Inbox</h4>
-	<div id="messages_inbox_list">
-		<div class="loader"></div>
+-->
+<h2 class="panel_title messages">Messages</h2>
+<div id="messages" class="center-pane">
+	<div class="top_options">
+		<strong class="gold-gradient option_button">
+			<a href="/#!/messages" class="new-message">New Conversation</a>
+		</strong>
 	</div>
-	<div class="pagination">
-		<button class="pageLeft">&laquo;</button>
-		<span class="pageLocation">
-			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-		</span>
-		<button class="pageRight">&raquo;</button>
+	<div class="col3">
+		<div class="col-header conversations light-gradient">
+			<h3>Conversations</h3>
+		</div>
+		<div id="my_messages">
+			<div class="loader"></div>
+		</div>
 	</div>
-</div>
-<div id="messages_sent" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">Sent Messages</h4>
-	<div id="messages_sent_list">
-		<div class="loader"></div>
-	</div>
-	<div class="pagination">
-		<button class="pageLeft">&laquo;</button>
-		<span class="pageLocation">
-			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-		</span>
-		<button class="pageRight">&raquo;</button>
-	</div>
-</div>
-<div id="message_compose" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">New Message</h4>
-	<form id="new_message">
-		<div id="message_to_wrapper">
-			<label for="newmessage_to">
-				<input type="text" id="newmessage_to" class="team_populate" placeholder="Start typing a team member's name..."/>
-				<input type="hidden" name="to" value="" />
+	<div class="two3rds border">
+		<div class="col-header message-to light-gradient">
+			<h3>To: </h3>
+			<input type="text" id="newmessage_to" class="team_populate" />
+			<input type="hidden" name="to" value="" />
+			<strong id="newmessage_send" class="gold-gradient option_button">
+				<a class="send-message">Send</a>
+			</strong>
+		</div>
+		<div id="messenger">
+			<label for="newmessage_body">
+				<textarea id="newmessage_body" name="body" placeholder="Type your message..."></textarea>
 			</label>
+			<div class="new_message_submit_wrapper gold-gradient">
+				<input type="submit" id="send_message" value="Send Message" />
+			</div>
 		</div>
-		<label for="newmessage_body">
-			<textarea id="newmessage_body" name="body" placeholder="Type your message..."></textarea>
-		</label>
-		<div class="new_message_submit_wrapper gold-gradient">
-			<input type="submit" id="send_message" value="Send Message" />
-		</div>
-	</form>
+	</div>
 </div>
 <div id="online_user"></div>
 <div id="message_view"></div>

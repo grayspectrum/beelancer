@@ -329,7 +329,7 @@ module.exports = function(app, db) {
 							owner : user._id
 						})
 					.exec(function(err, project) {
-						if (!err) {
+						if (!err && project) {
 							
 							db.message.findOne({
 								type : 'project_invite',

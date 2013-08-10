@@ -113,10 +113,18 @@ h2.panel_title.team {
 	background: url('/assets/images/mono/white/users_icon&32.png') 12px center no-repeat;
 }
 
+h2.panel_title.messages {
+	background: url('/assets/images/mono/white/spechbubble_2_icon&32.png') 12px center no-repeat;
+}
+
 .two3rds {
 	float: left;
 	width: 664px;
 	margin-left: 12px;
+}
+
+.two3rds.border {
+	border: 1px solid #E2E2E2;
 }
 
 h3.title {
@@ -146,6 +154,7 @@ h3.title {
 
 .col-header {
 	border-bottom: 1px solid #e2e2e2;
+	overflow: hidden;
 }
 
 .col-header h3 {

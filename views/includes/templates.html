@@ -280,7 +280,7 @@
 
 <!-- Message View -->
 <script id="tmpl-message_view" type="text/x-handlebars-template">
-	<div class="light-gradient center-pane animated fadeInUp">
+	<div>
 		<div class="messageview_body">
 			<ul>
 				{{#each this}}
@@ -315,9 +315,11 @@
 				{{/each}}
 			</ul>
 		</div>
-		<div class="message_compose">
+		<div class="message_compose light-gradient">
 			<input type="text" id="convo_compose" name="convo_compose" placeholder="Type your message here..." />
-			<span id="convo_submit"></span>
+			<strong class="gold-gradient option_button">
+				<a id="convo_submit" class="send-message">Send</a>
+			</strong>
 		</div>
 	</div>
 </script>

@@ -501,9 +501,10 @@ bee.ui = (function() {
 	////
 	var TeamList = (function() {
 		
-		var teamlist = function(onSelect) {
+		var teamlist = function(onSelect, addClass) {
 			this.ui = document.createElement('div');
 			this.ui.id = 'bee-ui_teamlist';
+			this.ui.className = addClass || '';
 			this.onSelect = onSelect || new Function();
 			this.team = null;
 		};
@@ -593,7 +594,7 @@ bee.ui = (function() {
 		// 		`teamlist` instance must already be attach()'ed and populate()'ed
 		////
 		(function($) {
-			$.fn.bindTeamList = function(teamlist) {
+			$.fn.bindTeamList = function(teamlist, className) {
 				var that = this;
 				this.bind('keyup', function(e) {
 					if (e.keyCode !== 38 && e.keyCode !== 40) {

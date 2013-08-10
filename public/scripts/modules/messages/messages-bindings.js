@@ -14,24 +14,28 @@
 	if (newMessage) {
 		showComposePanel(isReply);
 	} else if (viewMessage) {
+		$('#newmessage_send').hide();
 		showViewMessage();
 	} else {
-		showMessageList(showView);
+		showComposePanel(isReply);
 	}
 	
+	showMessageList(showView);
+
 	////
 	// Compose New Message or Reply
 	////
-	function showComposePanel(isReply) {
-		$('#messages_nav, #messages_inbox, #messages_sent').remove();
-		
+	function showComposePanel(isReply) {		
 		if (isReply) {
 			bee.api.send(
 				'GET',
 				'/profile/' + isReply,
 				{},
 				function(res) {
-					$('#newmessage_to').attr('disabled', 'disabled').val(res.firstName + ' ' + res.lastName);
+					$('#newmessage_to')
+					.attr('disabled', 'disabled')
+					.val(res.firstName + ' ' + res.lastName)
+					.addClass('disabled');
 					$('#newmessage_to').next('input[name="to"]').val(res._id);
 					bee.ui.loader.hide();
 				},
@@ -44,7 +48,7 @@
 			var recipientSelect = new bee.ui.TeamList(function(member) {
 				$('#newmessage_to').val(member.firstName + ' ' + member.lastName);
 				$('#newmessage_to').next('input[name="to"]').val(member._id);
-			}).populate().attach();
+			}, 'messaging_panel').populate().attach();
 			
 			$('#newmessage_to').bindTeamList(recipientSelect);
 			bee.ui.loader.hide();
@@ -55,36 +59,38 @@
 	// View Message
 	////
 	function showViewMessage() {
-		$('#messages_nav, #filter_messages, #messages_inbox, #messages_sent, #message_compose').remove();
-		
+
+		$('#newmessage_to').val('Loading...')
+		.addClass('disabled')
+		.attr('disabled', 'disabled');
+
+		$('#messenger').html('<div class="loader"></div>');
+
 		bee.api.send(
 			'GET',
 			'/conversation/' + viewMessage,
 			{},
 			function(res) {
-				var isOnline = false;
+				var isOnline = false
+				  , recipients = [];
 
 				// reverse order for chat window
 				res = res.reverse();
 				
 				$.each(res, function(key, val) {
+					var name = val.to.firstName + ' ' + val.to.lastName
+
+					if ($.inArray(name, recipients) === -1) {
+						recipients.push(name);
+					}
 					val.sentOn = new Date(val.sentOn).toLocaleString();
 				});
 
 				var tmpl = Handlebars.compile($('#tmpl-message_view').html())(res);
-				$('#message_view').html(tmpl);
+				$('#messenger').html(tmpl);
 
-				// $.each(bee.utils.onlineList, function(key, val) {
-				// 	if (val === fromUser) {
-				// 		bee.ui.notifications.notify('success', 'User is online.');
-				// 		isOnline = true;
-				// 		return false;
-				// 	}
-				// });
-
-				// if (!isOnline) {
-				// 	// mark as offline
-				// }
+				
+				$('#newmessage_to').val(recipients.join(', '));
 
 				checkPreviousMessage();
 				bindMessageActions();
@@ -95,7 +101,6 @@
 				$('#convo_compose').focus();
 			},
 			function(err) {
-			//	history.back();
 				bee.ui.notifications.notify('err', err);
 			}
 		);
@@ -120,14 +125,8 @@
 					val.sentOn = val.sentOn.split('T')[0];
 				});
 				var tmpl = Handlebars.compile($('#tmpl-message_list').html())(res);
-				$('#messages_' + (showView || 'inbox') + '_list').html(tmpl);
+				$('#my_messages').html(tmpl);
 				bindMessages();
-				var messagesPager = new bee.ui.Paginator(
-					$('#messages_' + (showView || 'inbox') + ' .pagination'),
-					$('#messages_' + (showView || 'inbox') + '_list .message'),
-					10
-				);
-				messagesPager.init();
 			},
 			function(err) {
 				bee.ui.loader.hide();
@@ -136,16 +135,11 @@
 		);
 		
 		function displayList() {
-			if (showView) {
-				$('#messages_' + showView).show();
-				$('#filter_messages select').val(showView);
-			} else {
-				$('#messages_inbox').show();
-			}
+			$('#my_messages').show();
 		};
 		
 		function bindMessages() {
-			$('li.message').bind('click', function() {
+			$('#my_messages li.message').bind('click', function() {
 				location.href = '/#!/messages?viewMessage=' + $(this).attr('data-id') + '&user=' + $(this).attr('data-from');
 			});
 		};
@@ -316,19 +310,19 @@
 		location.href = '/#!/messages?show=' + $(this).val();
 	});
 	
-	$('#new_message').bind('submit', function(e) {
+	$('#newmessage_send').bind('click', function(e) {
 		e.preventDefault();
 		if ($('#newmessage_to').is(':focus') && !$('#newmessage_body').val()) {
 			$('#newmessage_body').focus();
 		} else {
 			bee.ui.loader.show();
 			var mesObj = {
-				to : $('#new_message input[name="to"]').val(),
+				to : $('#newmessage_to').next('input[name="to"]').val(),
 				body : $('#newmessage_body').val()
 			};
 			sendMessage(mesObj,
 				function(res) {
-					location.href = '/#!/messages';
+					location.href = '/#!/messages?viewMessage=' + res._id + '&user=' + res.from._id;
 					bee.ui.notifications.notify('success', 'Message sent!');
 				},
 				function(err) {
@@ -359,14 +353,13 @@
 	});
 	
 	// handle reactive ui
-	$(window).bind('resize', function() {
-		var wHeight = $(window).height()
-		  , bMargin = 84
-		  , ctrHeight = wHeight - bMargin
-		  , composeH = $('.message_compose').height() + 24;
-		
-		$('#message_view .messageview_body').height(ctrHeight - composeH);
-		$('#message_view > div').height(ctrHeight);
-	});
+	$(window).unbind('resize').bind('resize', function() {
+		var dist = $(window).height() - $('#messenger').position().top + $('#header').height()
+		  , msg_comp = $('.messageview_compose').height();
+
+		$('#messenger, #my_messages').height(dist);
+		$('#newmessage_body').height(dist - 48);
+		$('.messageview_body').height(dist- 47 - msg_comp);
+	}).trigger('resize');
 	
 })();

@@ -3,6 +3,10 @@
  * Author: Gordon Hall
  */
 
+ .col-header.conversations h3{
+	background: url('/assets/images/mono/black/mail_2_icon&16.png') right center no-repeat;
+}
+
 #messages_nav .reply {
 	background: url('/assets/images/mono/black/redo_icon&24.png') 12px center no-repeat;
 }
@@ -11,8 +15,8 @@
 	background: url('/assets/images/mono/black/star_icon&24.png') 12px center no-repeat;
 }
 
-#messages_nav .new_message {
-	background: url('/assets/images/mono/black/spechbubble_sq_line_icon&24.png') 12px center no-repeat;
+.new-message {
+	background: url('/assets/images/mono/black/spechbubble_sq_line_icon&16.png') 12px center no-repeat;
 }
 
 #messages_nav .delete_message {
@@ -40,20 +44,12 @@
 }
 
 li.message {
-	border: 1px solid #e2e2e2;
-	background: #FFEFC6;
-	margin: 3px 0;
-	border-radius: 6px;
+	overflow: hidden;
 }
 
-li.message.isRead {
-	background: #fff;
-}
-
-li.message:hover {
+#my_messages li.message:hover {
 	cursor: pointer;
-	background: #e2e2e2;
-	border: 1px solid #d2d2d2;
+	background: rgba(255, 207, 47, 0.2);
 }
 
 li.message.isRead .msg_from {
@@ -61,7 +57,7 @@ li.message.isRead .msg_from {
 }
 
 li.message p {
-	font-size: 14px;
+	font-size: 12px;
 	margin: 0 12px 12px 12px;
 	height: 20px;
 	overflow: hidden;
@@ -100,7 +96,7 @@ li.message p {
 	font-size: 11px;
 	font-weight: normal;
 	float: right;
-	margin: 0 0 0 0 !important;
+	margin: 4px 10px 0 0 !important;
 }
 
 .current_body .msg_sentOn {
@@ -127,19 +123,16 @@ li.message p {
 	padding: 0;
 }
 
-.messageview_body li.message {
-	border: 1px solid #e2e2e2;
-	background: #FFEFC6;
-	margin: 3px 0;
-	border-radius: 6px;
+.my_messages .message {
+	background: none;
 }
 
-.messageview_body li.message.isRead {
-	background: #fff;
+.messageview_body li.message {
+	
 }
 
 .messageview_body li.message:hover {
-	border: 1px solid #d2d2d2;
+	
 }
 
 .messageview_body li.message.isRead .msg_from {
@@ -147,7 +140,7 @@ li.message p {
 }
 
 .messageview_body li.message p {
-	font-size: 14px;
+	font-size: 12px;
 	height: auto;
 	margin: 0 12px 12px 12px;
 	overflow: auto;
@@ -158,31 +151,43 @@ li.message p {
 }
 
 .message_compose {
-	margin: 6px 24px;
+	padding: 6px 12px;
 	overflow: auto;
+	border-top: 1px solid #E2E2E2;
 }
 
 .message_compose input {
 	float: left;
 	font-size: 14px;
 	padding: 6px 10px;
-	width: 425px;
+	width: 532px;
 	border: 1px solid #ABABAB;
 	border-radius: 2px;
 }
 
-.message_compose #convo_submit {
-	background: url('/assets/images/mono/black/spechbubble_icon&32.png') 0 0 no-repeat;
+.message_compose #convo_submit,
+#newmessage_send a {
+	background: url('/assets/images/mono/black/spechbubble_icon&16.png') 6px center no-repeat;
 	cursor: pointer;
 	display: inline-block;
-	float: right;
-	height: 32px;
-	width: 32px;
+	float: right; 
+}
+
+#newmessage_send {
+	margin: 8px;
+}
+
+.message_compose .option_button {
+	margin-top: 2px;
+}
+
+.message-to h3 {
+	float: left;
+	margin-right: 0;
 }
 
 #newmessage_to, #newmessage_body {
-	display: block;
-	margin: 12px;
+	margin: 8px 0;
 	font-size: 14px;
 	padding: 6px 10px;
 	width: 306px;
@@ -190,9 +195,27 @@ li.message p {
 	border-radius: 2px;
 }
 
+#newmessage_to:focus {
+	background: #fff !important;
+}
+
+#newmessage_to.disabled {
+	margin: 10px 0 8px -12px;
+	background: none;
+	border: none;
+}
+
 #newmessage_body {
-	height: 144px;
-	width: 512px;
+	width: 616px;
+	border: none;
+	background: #FFF;
+	resize: none;
+	padding: 24px;
+	margin: 0;
+}
+
+#messenger > label {
+	display: block;
 }
 
 .new_message_submit_wrapper {
@@ -214,6 +237,7 @@ li.message p {
 	padding: 12px;
 	border-radius: 6px;
 	border: 2px solid #FFC60B;
+	display: none;
 }
 
 #send_message:hover {
@@ -260,7 +284,7 @@ li.message p {
 }
 
 .messageview_body {
-	margin: 12px 24px 6px 24px;
+	margin: 0;
 	font-size: 14px;
 	line-height: 23px;
 	border-radius: 6px;
@@ -303,4 +327,34 @@ li.message p {
 .msg_action_decline:hover {
 	background: #fff;
 	cursor: pointer;
+}
+
+#my_messages {
+	overflow: auto;
+}
+
+#my_messages ul {
+	margin: 0;
+	padding: 0;
+}
+
+#my_messages ul li {
+	
+}
+
+
+.team_list_name {
+	font-size: 14px;
+}
+
+#messenger {
+	position: relative;
+}
+
+#bee-ui_teamlist.messaging_panel {
+	background: #FFF;
+	border: 1px solid #E2A809;
+	width: 326px;
+	margin-top: -1px;
+	border-top-color: #FFF;
 }
