@@ -398,7 +398,7 @@ bee.ui = (function() {
 		};
 		
 		worklog.prototype.renderFor = function(taskId, callback) {
-			$('body').append(this.ui);
+			$('body').append($(this.ui).show());
 			
 			var ui = $(this.ui)
 			  , log = this;
@@ -415,6 +415,10 @@ bee.ui = (function() {
 			
 			$('#wlog_startTime, #wlog_endTime', form).datetimepicker({
 				timeFormat: "hh:mm tt"
+			});
+
+			$('.save-worklog', form).bind('click', function() {
+				form.trigger('submit');
 			});
 			
 			form.bind('submit', function(event) {

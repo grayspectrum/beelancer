@@ -22,9 +22,13 @@
 
 <!-- Worklog Add/Edit Entry -->
 <script id="tmpl-add_worklog_entry" type="text/x-handlebars-template">
-	<div id="bee-ui_add_worklog_entry">
-		<form data-id="{{_id}}" class="light-gradient popup animated bounceInUp">
-			<h4 class="gold-gradient">Worklog Entry</h4>
+	<div id="bee-ui_add_worklog_entry" class="modal-container">
+		<form data-id="{{_id}}" class="center-pane">
+			<div class="top_options">
+				<strong class="gold-gradient option_button">
+					<a class="save-worklog">Save Entry</a>
+				</strong>
+			</div>
 			<div class="group">
 				<label for="wlog_startTime">
 					<span>Started:</span>

@@ -9,6 +9,10 @@
 	background: #fff;
 }
 
+#save_worklog {
+	display: none;
+}
+
 .task_list {
 	margin: 0;
 	padding: 0;
@@ -118,6 +122,10 @@
 .save_task {
 	background: url('/assets/images/mono/black/checkmark_icon&16.png') 12px center no-repeat;
 }
+
+ #bee-ui_add_worklog_entry .save-worklog {
+ 	background: url('/assets/images/mono/black/checkmark_icon&16.png') 6px center no-repeat;
+ }
 
 .new_task_submit_wrapper {
 	border-radius: 6px;
@@ -240,6 +248,7 @@ p.proj-name {
 }
 
 #bee-ui_add_worklog_entry {
+	/*
 	z-index: 997;
 	position: fixed;
 	left: 0;
@@ -247,12 +256,32 @@ p.proj-name {
 	width: 100%;
 	height: 100%;
 	background: rgba(0,0,0,0.4);
+	*/
 }
 
 #bee-ui_add_worklog_entry > form {
-	margin-left: -230px;
-	width: 562px;
-	margin-top: -198px;
+	margin-left: -288px;
+	width: 576px;
+	margin-top: -132px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	height: 308px;
+}
+
+#bee-ui_add_worklog_entry .full_block {
+	width: 530px;
+}
+
+#bee-ui_add_worklog_entry .full_block textarea {
+	margin: 12px 0;
+	width: 502px;
+	height: 60px;
+	resize: none;
+	padding: 12px;
+	font-size: 14px;
+	border: 1px solid #999;
+	border-radius: 2px;
 }
 
 #save_worklog {
