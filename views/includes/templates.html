@@ -999,7 +999,7 @@
 				<form id="credit-card">
 					<div class="cc-group">
 						<label for="name">
-							<span>Cardholder's Name:</span>
+							<span>Cardholder Name:</span>
 							<input type="textbox" id="name" name="name" class="required" />
 						</label>
 					</div>
@@ -1040,85 +1040,115 @@
 
 <!-- Invoice Template -->
 <script id="tmpl-invoice" type="text/x-handlebars-template">
-	<div class="invoice_container">
-		<div class="rollout markdown">
-			{{#if error}}
-				Couldn't load invoice.
-			{{else}}
-				{{#if isPaid}}
-					<div class="invoice_paid">PAID</div>
-				{{/if}}
-				<div class="float_wrap">
-					<div class="half_list">
-						<h3>From:</h3>
-						<div class="details">
-							<div>
-								{{#if owner.profile.company}}
-									<strong>{{owner.profile.company}}</strong>
-								{{/if}}
-								<span>{{owner.profile.firstName}} {{owner.profile.lastName}}</span>
-								<em>{{owner.profile.email}}</em>
-							</div>
-						</div>
-						<h3>To:</h3>
-						<div class="details">
-							<div>
-								{{#if recipient}}
-									<strong>{{recipient.profile.company}}</strong>
-									<span>{{owner.profile.firstName}} {{owner.profile.lastName}}</span>
-								{{/if}}
-								<em>{{externalRecipient}}</em>
-							</div>
-						</div>
-					</div>
-					<div class="half_list">
-						<h2>Invoice</h2>
-						<em>ID: {{_id}}</em>
-					</div>
-				</div>
-				<table cellspacing="0">
-					<thead>
-						<tr>
-							<th style="width: 60%;">Task</th>
-							<th>Time</th>
-							<th>Rate</th>
-						</tr>
-					</thead>
-					<tbody>
-						{{#each tasks}}
-							<tr>
-								<td>
-									{{this.title}}<br />
-									{{#if this.job}}
-										<em>{{this.job.title}}</em>
-									{{else}}
-										<em>{{this.project.title}}</em>
+	<div class="top_options">
+		{{#if options.pay}}
+			<strong class="gold-gradient option_button">
+				<a class="pay_invoice">Pay</a>
+			</strong>
+		{{/if}}
+		{{#if options.refund}}
+			<strong class="gold-gradient option_button">
+				<a class="refund_invoice">Refund</a>
+			</strong>
+		{{/if}}
+		{{#if options.del}}
+			<strong class="gold-gradient option_button">
+				<a class="delete_invoice">Delete</a>
+			</strong>
+		{{/if}}
+	</div>
+	{{#if options.paymentLink}}
+		<div class="public_link_invoice">
+			<p>
+				The recipient of this invoice does not appear to have a Beelancer account, 
+				however, they can still pay their invoice using the link below:
+			</p>
+			<div class="payment_link">
+				<a href="{{options.paymentLink}}">{{options.paymentLink}}</a>
+			</div>
+		</div>
+	{{/if}}
+	<div id="invoice_view">
+		<div class="invoice_container">
+			<div class="rollout markdown">
+				{{#if error}}
+					Failed to load invoice.
+				{{else}}
+					{{#if isPaid}}
+						<div class="invoice_paid">PAID</div>
+					{{/if}}
+					<div class="float_wrap">
+						<div class="half_list">
+							<h3>From:</h3>
+							<div class="details">
+								<div>
+									{{#if owner.profile.company}}
+										<strong>{{owner.profile.company}}</strong>
 									{{/if}}
-								</td>
-								<td class="time_worked_task">
-									<em>Calculating...</em>
-								</td>
-								<td>$ {{this.rate}} {{#if this.isFixedRate}}(Fixed){{else}}(Hourly){{/if}}</td>
-							</tr>
-						{{/each}}
-					</tbody>
-					<tfoot>
-						<tr>
-							<td>&nbsp;</td>
-							<td>Total: </td>
-							<td>$ {{amount}}</td>
-						</tr>
-					</tfoot>
-				</table>
-				<div class="description">
-					<p>
-						{{description}}
-					</p>
-					<div class="sent_with">
-						Sent using <a href="http://beelancer.com">Beelancer</a>
+									<span>{{owner.profile.firstName}} {{owner.profile.lastName}}</span>
+									<em>{{owner.profile.email}}</em>
+								</div>
+							</div>
+							<h3>To:</h3>
+							<div class="details">
+								<div>
+									{{#if recipient}}
+										<strong>{{recipient.profile.company}}</strong>
+										<span>{{owner.profile.firstName}} {{owner.profile.lastName}}</span>
+									{{/if}}
+									<em>{{externalRecipient}}</em>
+								</div>
+							</div>
+						</div>
+						<div class="half_list">
+							<h2>Invoice</h2>
+							<em>ID: {{_id}}</em>
+						</div>
 					</div>
-				</div>
-			{{/if}}
+					<table cellspacing="0">
+						<thead>
+							<tr>
+								<th style="width: 60%;">Task</th>
+								<th>Time</th>
+								<th>Rate</th>
+							</tr>
+						</thead>
+						<tbody>
+							{{#each tasks}}
+								<tr>
+									<td>
+										{{this.title}}<br />
+										{{#if this.job}}
+											<em>{{this.job.title}}</em>
+										{{else}}
+											<em>{{this.project.title}}</em>
+										{{/if}}
+									</td>
+									<td class="time_worked_task">
+										<em>Calculating...</em>
+									</td>
+									<td>$ {{this.rate}} {{#if this.isFixedRate}}(Fixed){{else}}(Hourly){{/if}}</td>
+								</tr>
+							{{/each}}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td>&nbsp;</td>
+								<td>Total: </td>
+								<td>$ {{amount}}</td>
+							</tr>
+						</tfoot>
+					</table>
+					<div class="description">
+						<p>
+							{{description}}
+						</p>
+						<div class="sent_with">
+							Sent using <a href="http://beelancer.com">Beelancer</a>
+						</div>
+					</div>
+				{{/if}}
+			</div>
 		</div>
 	</div>
 </script>

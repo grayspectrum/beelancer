@@ -1,3 +1,4 @@
+<!--
 <div id="invoices_nav" class="navigation light-gradient center-pane animated fadeInUp">
 	<div id="filter_invoices">
 		Show: 
@@ -21,47 +22,39 @@
 		</li>
 	</ul>
 </div>
-<div id="invoices_received" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">Received Invoices</h4>
-	<div id="invoices_received_list">
-		<div class="loader"></div>
+-->
+<h2 class="panel_title invoices">Invoices</h2>
+<div id="invoices" class="center-pane">
+	<div class="top_options">
+		<strong class="gold-gradient option_button">
+			<a href="/#!/invoices?createInvoice=true" class="new-invoice">New Invoice</a>
+		</strong>
 	</div>
-	<div class="pagination">
-		<button class="pageLeft">&laquo;</button>
-		<span class="pageLocation">
-			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-		</span>
-		<button class="pageRight">&raquo;</button>
-	</div>
-</div>
-<div id="invoices_sent" class="light-gradient center-pane animated fadeInUp">
-	<h4 class="gold-gradient">Sent invoices</h4>
-	<div id="invoices_sent_list">
-		<div class="loader"></div>
-	</div>
-	<div class="pagination">
-		<button class="pageLeft">&laquo;</button>
-		<span class="pageLocation">
-			Page <span class="pageCurrent">1</span> of <span class="pageTotal">1</span>
-		</span>
-		<button class="pageRight">&raquo;</button>
-	</div>
-</div>
-<div id="view_invoice" class="light-gradient center-pane animated fadeInUp">
-	<div class="public_link_invoice">
-		<p>
-			The recipient of this invoice does not appear to have a Beelancer account, 
-			however, they can still pay their invoice using the link below:
-		</p>
-		<div class="payment_link">
-			<a href="#">...</a>
+	<div class="col2">
+		<div class="col-header received-invoices light-gradient">
+			<h3>Received</h3>
+		</div>
+		<div id="invoices_received_list">
+			<div class="loader"></div>
 		</div>
 	</div>
-	<div id="invoice_view"></div>
+	<div class="col2">
+		<div class="col-header sent-invoices light-gradient">
+			<h3>Sent</h3>
+		</div>
+		<div id="invoices_sent_list">
+			<div class="loader"></div>
+		</div>
+	</div>
 </div>
-<div id="invoice_create" class="light-gradient center-pane animated fadeInUp">
+<div id="view_invoice" class="center-pane"></div>
+<div id="invoice_create" class="center-pane">
+	<div class="top_options">
+		<strong class="gold-gradient option_button">
+			<a class="save-invoice">Send</a>
+		</strong>
+	</div>
 	<form id="create_invoice">
-		<h4 class="gold-gradient">New Invoice</h4>
 		<div class="float_wrap">
 			<div class="half_list">
 				<label class="big_radio" for="type_project">

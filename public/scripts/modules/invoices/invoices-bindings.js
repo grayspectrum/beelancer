@@ -44,25 +44,11 @@
 	}
 	else {
 		showListInvoices();
-		if (showCategory) {
-			$('#filter_invoices select').val(showCategory);
-			if (showCategory === 'received') {
-				$('#invoices_received').show();
-				$('#invoices_sent').hide();
-			}
-			if (showCategory === 'sent') {
-				$('#invoices_received').hide();
-				$('#invoices_sent').show();
-			}
-		} else {
-			$('#invoices_received').show();
-			$('#invoices_sent').hide();
-		}
 	}
 	
 	function showViewInvoice(invoiceId) {
 		// hide stuff
-		$('#filter_invoices, #invoices_nav, #invoices_nav ul li, #invoices_sent, #invoices_received, #invoice_create').hide();
+		$('#invoices, #invoice_create').remove();
 		// prepare template
 		var tmpl = Handlebars.compile($('#tmpl-invoice').html());
 		bee.ui.loader.show();
@@ -72,34 +58,31 @@
 			'/invoice/' + invoiceId,
 			{},
 			function(invoice) {
-				// append invoice to panel
-				$('#invoice_view').html(tmpl(invoice)).parent().show();
-				// get the time worked for each task
-				updateInvoiceTimeWorked(invoice.tasks);
+				invoice.options = {};
 				// can we pay or refund?
 				if (invoice.recipient && invoice.recipient.profile._id === bee.get('profile')._id) {
 					// user is the recipient
 					if (!invoice.isPaid) {
-						$('#invoices_nav').show();
-						$('#invoices_nav .pay_invoice').parent().show();
+						invoice.options.pay = true;
 					}
 				}
 				else {
 					// user is the sender
-					$('#invoices_nav').show();
-					$('#invoices_nav .delete_invoice').parent().show();
+					invoice.options.del = true;
 					if (invoice.publicViewId) {
 						var url = location.href.split('/')[2] + '/invoice/' + invoice._id + '?publicViewId' + invoice.publicViewId;
-						$('.public_link_invoice .payment_link a')
-							.attr('href', url).html(url)
-						$('.public_link_invoice').show();
+						invoice.options.paymentLink = url;
 					}
 					if (invoice.isPaid) {
-						$('#invoices_nav .delete_invoice').parent().hide();
-						$('#invoices_nav .refund_invoice').parent().show()
+						invoice.options.del = false;
+						invoice.options.refund = true;
 					}
 				}
-				
+				// append invoice to panel
+				$('#view_invoice').html(tmpl(invoice)).show();
+				// get the time worked for each task
+				updateInvoiceTimeWorked(invoice.tasks);
+				bindInvoiceViewOptions();		
 				bee.ui.loader.hide();
 			},
 			function(err) {
@@ -131,7 +114,7 @@
 	
 	function showCreateInvoice() {
 		// hide stuff
-		$('#invoices_nav, #view_invoice, #invoices_sent, #invoices_received').hide();
+		$('#view_invoice, #invoices').hide();
 		bee.ui.loader.hide();
 		// initialize tabbed invoice type view
 		// here - user can create invoice for "job"
@@ -231,10 +214,8 @@
 	};
 	
 	function showListInvoices() {
-		// hide stuff
-		$('.delete_invoice, .refund_invoice, .pay_invoice, #view_invoice, #invoice_create').hide();
 		bee.ui.loader.show();
-		
+		$('#invoice_create').remove();
 		// get the invoices
 		bee.api.send(
 			'GET',
@@ -257,20 +238,6 @@
 		// build ui
 		$('#invoices_sent_list').html(tmpl(invoices.sent));
 		$('#invoices_received_list').html(tmpl(invoices.received));
-		
-		var receivedPager = new bee.ui.Paginator(
-			$('#invoices_received .pagination'),
-			$('#invoices_received_list ul li'),
-			10
-		);
-		receivedPager.init();
-		
-		var sentPager = new bee.ui.Paginator(
-			$('#invoices_sent .pagination'),
-			$('#invoices_sent_list ul li'),
-			10
-		);
-		sentPager.init();
 	};
 	
 	// iterate over tasks and return only the ones
@@ -296,10 +263,6 @@
 		}
 		return filtered;
 	};
-	
-	$('#filter_invoices select').bind('change', function() {
-		location.href = '/#!/invoices?show=' + $(this).val();
-	});
 	
 	$('#type_project, #type_job').bind('change', function() {
 		$('#project_ref, #job_ref').attr('disabled', 'disabled');
@@ -400,6 +363,11 @@
 		});
 	};
 	
+	$('.save-invoice').bind('click', function(e) {
+		e.preventDefault();
+		$('#create_invoice').trigger('submit');
+	});
+
 	$('#create_invoice').bind('submit', function(event) {
 		event.preventDefault();
 		if (valid()) {
@@ -440,62 +408,86 @@
 		}
 		
 	});
-	
-	$('#invoices_nav .delete_invoice').bind('click', function() {
-		var invoice = viewInvoice;
-		if (invoice) {
-			bee.ui.confirm('Are you sure you wish to delete this invoice?', function() {
-				bee.ui.loader.show();
-				bee.api.send(
-					'DELETE',
-					'/invoice/' + invoice,
-					{},
-					function(data) {
-						location.href = '/#!/invoices';
-					},
-					function(err) {
-						bee.ui.loader.hide();
-						bee.ui.notifications.notify('err', err);
-					}
-				);
-			});
-		}
-	});
 
-	$('#invoices_nav .pay_invoice').bind('click', function() {
-		// first check accountStatus to see if the user
-		// is able to pay the invoice
-		bee.ui.loader.show();
-		bee.api.send(
-			'GET',
-			'/payments/accountStatus',
-			{},
-			function(resp) {
-				if (resp.paymentCard.exists) {
-					bee.ui.loader.hide();
-					bee.ui.confirm(
-						'Pay this invoice using your credit card ending in ' + resp.paymentCard.account + ' ?',
-						payInvoice
-					);
-				}
-				// if they are not able to pay the invoice
-				// prompt them to set up their payment account
-				else {
-					bee.ui.loader.hide();
-					bee.ui.confirm(
-						'You are not currently set up to send payments. Setup payments now?', 
-						function() {
-							location.href = '/#!/account?hasFocus=payment_account_setup';
+	function bindInvoiceViewOptions() {
+	
+		$('.delete_invoice').bind('click', function() {
+			var invoice = viewInvoice;
+			if (invoice) {
+				bee.ui.confirm('Are you sure you wish to delete this invoice?', function() {
+					bee.ui.loader.show();
+					bee.api.send(
+						'DELETE',
+						'/invoice/' + invoice,
+						{},
+						function(data) {
+							location.href = '/#!/invoices';
+						},
+						function(err) {
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('err', err);
 						}
 					);
-				}
-			},
-			function(err) {
-				bee.ui.loader.hide();
-				bee.ui.notifications.notify('err', err);
+				});
 			}
-		);
-	});
+		});
+
+		$('.pay_invoice').bind('click', function() {
+			// first check accountStatus to see if the user
+			// is able to pay the invoice
+			bee.ui.loader.show();
+			bee.api.send(
+				'GET',
+				'/payments/accountStatus',
+				{},
+				function(resp) {
+					if (resp.paymentCard.exists) {
+						bee.ui.loader.hide();
+						bee.ui.confirm(
+							'Pay this invoice using your credit card ending in ' + resp.paymentCard.account + ' ?',
+							payInvoice
+						);
+					}
+					// if they are not able to pay the invoice
+					// prompt them to set up their payment account
+					else {
+						bee.ui.loader.hide();
+						bee.ui.confirm(
+							'You are not currently set up to send payments. Setup payments now?', 
+							function() {
+								location.href = '/#!/account?hasFocus=payment_account_setup';
+							}
+						);
+					}
+				},
+				function(err) {
+					bee.ui.loader.hide();
+					bee.ui.notifications.notify('err', err);
+				}
+			);
+		});
+
+		$('.refund_invoice').bind('click', function() {
+			var invoice = viewInvoice;
+			if (invoice) {
+				bee.ui.confirm('Are you sure you wish to refund this invoice?', function() {
+					bee.ui.loader.show();
+					bee.api.send(
+						'POST',
+						'/invoice/refund/' + invoice,
+						{},
+						function(data) {
+							location.href = '/#!/invoices';
+						},
+						function(err) {
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('err', err);
+						}
+					);
+				});
+			}
+		});
+	};
 
 	function payInvoice() {
 		bee.ui.loader.show();
@@ -515,25 +507,6 @@
 		);
 	};
 	
-	$('#invoices_nav .refund_invoice').bind('click', function() {
-		var invoice = viewInvoice;
-		if (invoice) {
-			bee.ui.confirm('Are you sure you wish to refund this invoice?', function() {
-				bee.ui.loader.show();
-				bee.api.send(
-					'POST',
-					'/invoice/refund/' + invoice,
-					{},
-					function(data) {
-						location.href = '/#!/invoices';
-					},
-					function(err) {
-						bee.ui.loader.hide();
-						bee.ui.notifications.notify('err', err);
-					}
-				);
-			});
-		}
-	});
+	
 	
 })();

@@ -117,6 +117,10 @@ h2.panel_title.messages {
 	background: url('/assets/images/mono/white/spechbubble_2_icon&32.png') 12px center no-repeat;
 }
 
+h2.panel_title.invoices {
+	background: url('/assets/images/mono/white/money_icon&32.png') 12px center no-repeat;
+}
+
 .two3rds {
 	float: left;
 	width: 664px;

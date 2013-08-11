@@ -4,19 +4,41 @@
  */
 
 .pay_invoice {
-	background: url('/assets/images/mono/black/wallet_icon&24.png') 12px center no-repeat;
+	background: url('/assets/images/mono/black/wallet_icon&16.png') 6px center no-repeat;
 }
 
 .refund_invoice {
-	background: url('/assets/images/mono/black/undo_icon&24.png') 12px center no-repeat;
+	background: url('/assets/images/mono/black/undo_icon&16.png') 6px center no-repeat;
 }
 
-.new_invoice {
-	background: url('/assets/images/mono/black/doc_import_icon&24.png') 12px center no-repeat;
+.new-invoice {
+	background: url('/assets/images/mono/black/doc_import_icon&16.png') 6px center no-repeat;
 }
 
 .delete_invoice {
-	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
+	background: url('/assets/images/mono/black/delete_icon&16.png') 6px center no-repeat;
+}
+
+.save-invoice {
+	background: url('/assets/images/mono/black/checkmark_icon&16.png') 6px center no-repeat;
+}
+
+.received-invoices h3 {
+	background:  url('/assets/images/mono/black/inbox_icon&16.png') right center no-repeat;
+}
+
+.sent-invoices h3 {
+	background:  url('/assets/images/mono/black/paper_airplane_icon&16.png') right center no-repeat;
+}
+
+#invoices ul {
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+
+#invoices ul li {
+	border-top: 1px solid #e2e2e2; 
 }
 
 #invoice_recipient {
@@ -41,6 +63,19 @@
 	margin: 12px;
 }
 
+#create_invoice {
+	width: 600px;
+	margin: auto;
+}
+
+#create_invoice .big_radio {
+	margin: 12px;
+}
+
+.new_invoice_submit_wrapper {
+	display: none;
+}
+
 #filter_invoices select {
 	font-size: 16px;
 	margin-left: 12px;
@@ -51,6 +86,7 @@
 	margin: 12px 24px;
 	border-top: 1px solid #c1c1c1;
 	font-size: 14px;
+	position: relative;
 }
 
 .invoice_container h3 {
@@ -150,6 +186,7 @@
 	padding: 32px 0;
 	-webkit-transform: rotate(10deg);
 	right: 50px;
+	top: 86px;
 }
 
 #invoices_received ul,
@@ -161,17 +198,11 @@
 
 li.invoice_list_item a {
 	padding: 0;
-	margin: 3px 0;
 	display: block;
 	text-decoration: none;
-	border-radius: 6px;
 	color: #333;
-	text-shadow: 0 1px 0 #fff;
 	font-size: 14px;
-	border: 1px solid #e2e2e2;
 	overflow: hidden;
-	background-color: #fff;
-	box-shadow: 0 2px 4px #d2d2d2;
 }
 
 li.invoice_list_item a > strong {
@@ -197,13 +228,11 @@ li.invoice_list_item a > strong.paid {
 li.invoice_list_item a > em {
 	float: left;
 	padding: 12px 12px;
-	width: 348px;
+	width: 284px;
 }
 
 li.invoice_list_item a:hover {
-	background-color: #f6f6f6;
-	border: 1px solid #d2d2d2;
-	border-color: #d2d2d2;
+	background-color: rgba(255, 207, 47, 0.2);
 }
 
 li.invoice_list_item a .invoice_amount {
@@ -220,7 +249,7 @@ li.invoice_list_item .description {
 	float: left;
 	margin: 0 12px;
 	font-size: 12px;
-	width: 348px;
+	width: 284px;
 	height: 18px;
 	margin-bottom: 12px;
 	overflow: hidden;
