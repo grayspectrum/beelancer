@@ -127,6 +127,7 @@
 				var tmpl = Handlebars.compile($('#tmpl-message_list').html())(res);
 				$('#my_messages').html(tmpl);
 				bindMessages();
+				$('#my_messages li.message[data-id="' + viewMessage + '"]').addClass('current');
 			},
 			function(err) {
 				bee.ui.loader.hide();

@@ -47,7 +47,8 @@ li.message {
 	overflow: hidden;
 }
 
-#my_messages li.message:hover {
+#my_messages li.message:hover,
+#my_messages li.message.current {
 	cursor: pointer;
 	background: rgba(255, 207, 47, 0.2);
 }
