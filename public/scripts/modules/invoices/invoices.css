@@ -229,6 +229,8 @@ li.invoice_list_item a > em {
 	float: left;
 	padding: 12px 12px;
 	width: 284px;
+	font-style: normal;
+	font-size: 14px;
 }
 
 li.invoice_list_item a:hover {

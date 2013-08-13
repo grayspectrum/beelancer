@@ -34,7 +34,8 @@
 		"marked" : "0.2.6",
 		"socket.io" : "0.9.x",
 		"request" : "2.21.x",
-		"balanced-official" : "0.3.x"
+		"balanced-official" : "0.3.x",
+		"async" : "0.2.9"
 	},
 	"analyze": false,
 	"engines": {

@@ -518,7 +518,10 @@ module.exports = function(app, db) {
 						{ owner : user._id },
 						{ recipient : user._id }
 					]
-				}).exec(function(err, invoices) {
+				})
+				.populate('job')
+				.populate('project')
+				.exec(function(err, invoices) {
 					if (!err && invoices) {
 						var response = {
 							sent : [],
