@@ -104,10 +104,10 @@ bee.utils = (function() {
 						bee.set('newEndorses', res.newEndorses);
 						$('#notifications .endorse').remove();
 						bee.ui.notifications.notify('info endorse', 'You have ' + res.newEndorses + ' new endorsements!', true, function() {
-							if (location.href === '#!/account?endorsements=true') {
+							if (location.hash === '#!/account?hasFocus=my_endorsements') {
 								bee.ui.refresh();
 							}
-							location.href = '/#!/account?endorsements=true';
+							location.href = '/#!/account?hasFocus=my_endorsements';
 						});
 					} else if(!res.newEndorses) {
 						if(bee.get('newEndorses')) {

@@ -106,6 +106,10 @@
 						$('.update-endorse').show();
 						alreadyEndorsed = true;
 					}
+					else {
+						$('.submit-endorse').show();
+						$('.update-endorse').hide();
+					}
 				},
 				function(err) {
 				//	console.log('fail', res);

@@ -692,7 +692,7 @@
 	<li class="endorse {{#if this.needsAction}}needsAction{{/if}}" data-id="{{this._id}}">
 		<div class="msg_from">
 			<img src="{{this.from.avatarPath}}" width="24px" height="24px" alt="{{this.from.avatarPath}}" />
-			<div class="view_endorse" data-id="{{this._id}}">View</div>
+			<div class="view_endorse" data-id="{{this._id}}">Click to View</div>
 			<span class="team_list_name">
 				{{this.from.firstName}} {{this.from.lastName}}
 			</span>
@@ -1213,11 +1213,11 @@
 
 <!-- Invoice Task List -->
 <script id="tmpl-paymentStatus" type="text/x-handlebars-template">
-	<h4 class="gold-gradient">Payments &amp; Billing</h4>
+	<h4>Payments &amp; Billing</h4>
 	<p class="hint">
 		In order to send and recieve payments, you will need to setup both a <strong>payment</strong> 
 		and <strong>payout</strong> account. For details regarding how we handle your information, see 
-		our <a href="/#!/privacy">Privacy Policy</a>.
+		our <a target="_blank" href="//beelancer.com/privacy.html">Privacy Policy</a>.
 	</p>
 	<div class="payment_account_status">
 		<div class="payment_method">

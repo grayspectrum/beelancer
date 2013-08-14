@@ -16,6 +16,7 @@
 		if (!bee.get('profile')) {
 			bee.ui.refresh();
 		} else {
+			selectView(hasFocus);
 			fillProfileFields();
 			getRatings();
 			checkPaymentAccountStatus();
@@ -61,6 +62,18 @@
 		saveProfile();
 	});
 	
+	function selectView(name) {
+		var selector = name || 'new_profile';
+		if ($('#' + selector).length) {
+			$('#' + selector).show();
+		}
+		else {
+			$('#new_profile').show();
+		}
+		// highlight menu item
+		$('#account_nav a[data-view="' + selector + '"]').addClass('current');
+	};
+
 	// check AWS account status
 	function checkPaymentAccountStatus() {
 		bee.api.send(
@@ -162,9 +175,6 @@
 			}
 		});
 		$('label[for="np_privacy' + profile.privacy + '"]').click();
-		$('#whoami .my_avatar').attr('src', profile.avatarPath);
-		$('#whoami .my_name').html('Hi, ' + profile.firstName + ' ' + profile.lastName + '!');
-		$('#view_my_profile .view_profile')[0].href += profile._id;
 	};
 
 	function getRatings() {
@@ -175,13 +185,8 @@
 			function(res) {
 				if(res.length > 0) {
 					getFromUserInfo(res);
-
-					// if coming from new endorsement notification
-					if(newEndorse) {
-						$(window).scrollTop($('#endorsement_section').offset().top);
-					}
 				} else {
-					$('.endorsements').remove();
+					$('.endorsements').html('<p class="no_projects">You have no endorsements.</p>');
 				}
 			},
 			function(err) {
@@ -196,6 +201,7 @@
 					'/profile/' + val.fromUser,
 					{},
 					function(response) {
+						$('#endorsement_list .loader').remove();
 						val.from = response;
 						var tmpl = Handlebars.compile($('#tmpl-accountEndorsement').html())(val);
 						$('#endorsement_list').append(tmpl);

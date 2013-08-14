@@ -7,16 +7,16 @@
 	background: url('/assets/images/mono/black/mail_2_icon&16.png') 6px center no-repeat;
 }
 
-.invite {
-	background: url('/assets/images/mono/black/contact_card_icon&16.png') 12px center no-repeat;
+#team_profile .invite {
+	background: url('/assets/images/mono/black/contact_card_icon&16.png') 6px center no-repeat;
 }
 
-.endorse {
-	background: url('/assets/images/mono/black/hand_pro_icon&16.png') 12px center no-repeat;
+#team_profile .endorse {
+	background: url('/assets/images/mono/black/hand_pro_icon&16.png') 6px center no-repeat;
 }
 
-.remove {
-	background: url('/assets/images/mono/black/delete_icon&16.png') 12px center no-repeat;
+#team_profile .remove {
+	background: url('/assets/images/mono/black/delete_icon&16.png') 6px center no-repeat;
 }
 
 .col-header.myteam h3{
