@@ -32,7 +32,7 @@
 	}
 
 	function generateJobHomePage() {
-		$('#job_search_result, #jobs_search, #jobs_create, #jobs_mine, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
+		$('#jobs_create, #jobs_mine').remove();
 
 		getJobs();
 		bindCategoryChange();
@@ -42,7 +42,7 @@
 		function getJobs() {
 			var category = $('#category').val();
 			if (category !== 'all') {
-				var query = { category: category };
+				var query = { category : category };
 			} else {
 				var query = {};
 			}
@@ -58,21 +58,17 @@
 				query,
 				function(res) {
 					if (res.length) {
+						// TODO //
+						// Change toa  different promoted job list template
 						var pro_tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
 						$('#promoted_jobs_list').html(pro_tmpl);
 					} 
 					else {
 						var no_tmpl = Handlebars.compile(
 							$('#tmpl-nojobspan').html()
-						)({ message : 'There are no promoted jobs to view.' });
+						)({ message : 'No promoted jobs' });
 						$('#promoted_jobs_list').html(no_tmpl);
 					}
-					var proPager = new bee.ui.Paginator(
-						$('#jobs_promoted .pagination'),
-						$('#jobs_promoted li.job'),
-						3
-					);
-					proPager.init();
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', err);
@@ -81,25 +77,22 @@
 		};
 
 		function getLatestJobs(query) {
+			$('#jobs_search_list').hide();
+			$('#latest_jobs').show();
 			bee.api.send(
 				'GET',
 				'/jobs',
 				query,
 				function(res) {
-					if (res.length) {
-						var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
-						$('#latest_jobs_list').html(tmpl);
-
-						var newPager = new bee.ui.Paginator(
-							$('#jobs_new .pagination'),
-							$('#jobs_new li.job'),
-							20
+					$.each(res, function(i, job) {
+						job.daysUntilClose = bee.utils.daysUntil(
+							new Date(job.listing.start),
+							new Date(job.listing.end)
 						);
-						newPager.init();
-					} else {
-						var no_tmpl = Handlebars.compile($('#tmpl-nojobspan').html())({ message : 'There are no current jobs to view.' })
-						$('#latest_jobs_list').html(no_tmpl);
-					}
+					});
+
+					var tmpl = Handlebars.compile($('#tmpl-joblist').html())(res);
+					$('#latest_jobs_list').html(tmpl);
 				},
 				function(err) {
 					bee.ui.notifications.notify('err', err);
@@ -109,9 +102,56 @@
 
 		function bindCategoryChange() {
 			$('#category').bind('change', function() {
+				$('#latest_jobs_list, #promoted_jobs_list').html('<div class="loader"></div>');
 				getJobs();
 			});
 		};
+
+		function doSearch(event) {
+			var text = $(this).val()
+			  , key = tappa.map('enter');
+
+			if (text && ((text.length % 3 === 0) || key === 13)) {	// run this on every fourth key stroke
+				if (text.length) {
+					searchJobs(text, function(err, jobs) {
+						if (err) {
+							bee.ui.notifications.notify('err', err);
+						} else {
+							displayJobSearchResults(jobs);
+						}
+					});
+				} else {
+					$('#job_search').focus();
+				}
+			}
+		};
+		
+		function displayJobSearchResults(results) {
+			var resultUi = Handlebars.compile($('#tmpl-joblist').html())(results || {});
+			$('#jobs_search_list').show();
+			$('#latest_jobs').hide();
+			$('#job_search_result').html(resultUi);
+		};
+
+		function searchJobs(jobSearch, callback) {
+			bee.api.send(
+				'GET',
+				'/jobs/search/' + jobSearch,
+				{},
+				function(res) {
+					callback.call(this, false, res);
+				},
+				function(err) {
+					callback.call(this, err, null);
+				}
+			);
+		};
+		
+		$('#job_search').bind('keypress', doSearch);
+		$('#job_search').bind('keyup', function() {
+			if (!$(this).val()) getLatestJobs();
+		});
+
 	};
 
 	function showNewJobPanel() {
@@ -525,59 +565,6 @@
 		bee.ui.loader.hide();
 	};
 
-	function showJobSearchPanel() {
-		$('#jobs_list, #jobs_create, #jobs_view, .job_search_nav, #jobs_mine, .job_edit_nav, .job_del_nav, .job_bid_nav').remove();
-
-		var search_input = $('#job_search');
-		
-		function doSearch(event) {
-			var text = $(this).val()
-			  , key = tappa.map('enter');
-
-			if (text && ((text.length % 3 === 0) || key === 13)) {	// run this on every fourth key stroke
-				if (text.length) {
-					searchJobs(text, function(err, jobs) {
-						if (err) {
-							bee.ui.notifications.notify('err', err);
-						} else {
-							displayJobSearchResults(jobs);
-						}
-					});
-				} else {
-					$('#job_search').focus();
-				}
-			}
-		};
-		
-		function displayJobSearchResults(results) {
-			var resultUi = Handlebars.compile($('#tmpl-joblist').html())(results || {});
-			$('#job_search_result').html(resultUi).show();
-		};
-
-		function searchJobs(jobSearch, callback) {
-			bee.api.send(
-				'GET',
-				'/jobs/search/' + jobSearch,
-				{},
-				function(res) {
-					callback.call(this, false, res);
-				},
-				function(err) {
-					callback.call(this, err, null);
-				}
-			);
-		};
-		
-		search_input.bind('keypress', doSearch);
-		search_input.bind('keyup', function() {
-			if ($(this).val().length === 0) {
-				$('#job_search_result').html('').hide();
-			}
-		});
-		$('.search_job_btn').bind('click', doSearch);
-
-		bee.ui.loader.hide();
-	};
 
 	function jobDataIsValid(showNotify) {
 		var required = $('.required')

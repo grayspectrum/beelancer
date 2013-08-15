@@ -728,16 +728,17 @@
 	{{#if this.length}}
 		<ul>
 			{{#each this}}
-				<li class="job" title="{{this.description}}">
-					<a href="/#!/jobs?viewJob={{this._id}}">
-						<span class="job_title">{{this.title}}</span>
-						<span class="view_job">View Job</span>
+				<li class="job" title="{{description}}">
+					<a href="/#!/jobs?viewJob={{_id}}">
+						<strong class="job_title">{{title}}</strong>
+						<span class="job_category">Posted in {{category.title}}</span>
+						<span class="job_listing_end">Closes for Bidding in {{daysUntilClose}} Days</span>
 					</a>
 				</li>
 			{{/each}}
 		</ul>
 	{{else}}
-		<p class="no_projects">No jobs found.</p>
+		<p class="no_projects">None</p>
 	{{/if}}
 </script>
 

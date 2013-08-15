@@ -125,6 +125,10 @@ h2.panel_title.account {
 	background: url('/assets/images/mono/white/cogs_icon&32.png') 12px center no-repeat;
 }
 
+h2.panel_title.jobs {
+	background: url('/assets/images/mono/white/case_icon&32.png') 12px center no-repeat;
+}
+
 .two3rds {
 	float: left;
 	width: 664px;

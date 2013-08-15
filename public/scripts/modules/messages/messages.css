@@ -65,7 +65,7 @@ li.message p {
 	overflow: hidden;
 }
 
-.msg_from {
+#my_messages .msg_from {
 	overflow: hidden;
 	background: url('/assets/images/mono/black/invisible_light_icon&16.png') 522px center no-repeat;
 }

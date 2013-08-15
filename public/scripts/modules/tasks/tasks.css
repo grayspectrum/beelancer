@@ -465,7 +465,7 @@ button.timer:hover {
 	cursor: pointer;
 }
 
-#tasks .status {
+#task_view .status {
 	float: left;
 	margin: 14px 0;
 	font-size: 16px;

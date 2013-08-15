@@ -3,12 +3,35 @@
  * Author: Gordon Hall
  */
 
+.job_filter {
+	float: left;
+}
+
+#jobs_search_list {
+	display: none;
+	border: 1px solid #e2e2e2;
+	border-top: none;
+}
+
+.job_filter strong {
+	float: left;
+	margin: 4px 12px 0 0;
+}
+
+#category {
+	padding: 4px 12px;
+	font-size: 14px;
+	background: #FFF;
+	border-radius: 2px;
+	border: 1px solid #ABABAB;
+}
+
 #jobs_nav .job_search_nav, .search_job_btn {
 	background: url('/assets/images/mono/black/zoom_icon&24.png') 12px center no-repeat;
 }
 
-#jobs_nav .job_new_nav {
-	background: url('/assets/images/mono/black/push_pin_icon&24.png') 12px center no-repeat;
+.job_new_nav {
+	background: url('/assets/images/mono/black/push_pin_icon&16.png') 6px center no-repeat;
 }
 
 #jobs_nav .job_myjobs_nav {
@@ -34,21 +57,78 @@
 }
 
 #search_jobs {
-	float: left;
-	width: 400px;
+	padding: 0 0 12px 0;
+	border-bottom: 1px solid #e2e2e2;
+}
+
+li.job .job_title {
+	font-size: 18px;
+	padding: 4px 0;
+	display: block;
+}
+
+li.job span {
+	font-size: 16px;
+	display: block;
+	padding: 2px 24px;
+}
+
+li.job .job_category {
+	background: url('/assets/images/mono/black/tag_icon&16.png') left center no-repeat;
+}
+
+li.job .job_listing_end {
+	background: url('/assets/images/mono/black/calendar_2_icon&16.png') left center no-repeat;
 }
 
 #job_search {
-	padding: 6px 12px;
-	border: 1px solid #d2d2d2;
-	border-radius: 4px;
-	font-size: 14px;
-	margin: 10px;
-	width: 364px;
+	padding: 10px 14px;
+	border: 1px solid #999;
+	border-radius: 3px;
+	font-size: 16px;
+	margin-bottom: 10px;
+	width: 633px;
+	letter-spacing: 0.1em;
+}
+
+#latest_jobs {
+	border-right: 1px solid #E2E2E2;
+	border-left: 1px solid #E2E2E2;
+	border-bottom: 1px solid #E2E2E2;
+}
+
+.latestjobs h3 {
+	background: url('/assets/images/mono/black/page_layout_icon&16.png') right center no-repeat;
+}
+
+.jobsearch h3 {
+	background: url('/assets/images/mono/black/zoom_icon&16.png') right center no-repeat
+}
+
+#latest_jobs_list ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+#latest_jobs_list ul li {
+
+}
+
+#latest_jobs_list ul li a {
+
+}
+
+#latest_jobs_list ul {
+
+}
+
+#latest_jobs_list ul {
+
 }
 
 #job_search_result {
-	display: none;
+	
 }
 
 #job_search_result p {
@@ -63,21 +143,17 @@
 
 li.job a {
 	padding: 12px 24px;
-	margin: 3px 0;
+	margin: 0;
 	display: block;
 	text-decoration: none;
-	border-radius: 6px;
 	color: #333;
-	text-shadow: 0 1px 0 #fff;
 	font-size: 14px;
-	border: 1px solid transparent;
+	border-top: 1px solid #e2e2e2;
 	overflow: hidden;
 }
 
 li.job a:hover {
-	background-color: #e2e2e2;
-	border: 1px solid #d2d2d2;
-	border-color: #d2d2d2;
+	background-color: rgba(255, 207, 47, 0.2);
 }
 
 li.job a span.view_job {
