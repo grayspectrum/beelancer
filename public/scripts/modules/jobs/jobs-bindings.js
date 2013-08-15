@@ -155,15 +155,14 @@
 	};
 
 	function showNewJobPanel() {
-		$('#jobs_list, #jobs_view, #job_search_result, #jobs_search, #jobs_mine').remove();
-		$('.job_new_nav, .job_edit_nav, .job_bid_nav').remove();
+		$('#jobs_list, #jobs_mine').remove();
 
 		bee.ui.loader.show();
 
 		if (newJob) {
 			$('#jobs_create .edit_job, #jobs_create #edit_job_heading, .job_del_nav').remove();
 			var tmpl = Handlebars.compile($('#tmpl-jobnew').html())({});
-			$('#create_job').prepend(tmpl);
+			$('#jobs_create').prepend(tmpl);
 
 			$('#job_task_list').parent().remove();
 			if (!bee.get('profile').isPro) $('.isPromoted').remove();
@@ -186,7 +185,7 @@
 					}
 					$('.job_myjobs_nav, .job_search_nav, #create_job_heading').remove();
 					var tmpl = Handlebars.compile($('#tmpl-jobnew').html())(res);
-					$('#create_job').html(tmpl);
+					$('#jobs_create').html(tmpl);
 					if (!bee.get('profile').isPro) $('.isPromoted').remove();
 
 					var req_tmpl = Handlebars.compile($('#tmpl-jobeditreqlist').html())(res.requirements);
@@ -290,7 +289,7 @@
 					  , catTmpl = $('#tmpl-catsForJob').html()
 					  , catSource = Handlebars.compile(catTmpl);
 
-					catList.append(catSource(res));
+					catList.html(catSource(res));
 
 					// if edit default
 					if (cat) {
@@ -308,8 +307,8 @@
 	};
 
 	function showJobView() {
-		$('#jobs_list, #jobs_create, #job_search_result, #jobs_search, #jobs_mine').remove();
-		$('.job_search_nav, .job_myjobs_nav, .job_new_nav').remove();
+		$('#jobs_list, #jobs_create, #jobs_mine').remove();
+		bee.ui.loader.show();
 
 		getJob(viewJob || bidJob, 
 			function(res) {
@@ -324,98 +323,22 @@
 					res.listing.end = (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear();
 				}
 
+				res.isOwner = res.owner.profile.user !== bee.get('profile').user;
+
+				// see if user is watching job
+				res.isWatched = false;
+				$.each(bee.get('profile').jobs.watched, function(key, val) {
+					if (val._id === res._id) {
+						res.isWatched = true;
+					} 
+				});
+
 				var tmpl = Handlebars.compile($('#tmpl-jobview').html())(res);
 				$('#job_view').html(tmpl);
 				// convert description to markdown!
 				$('.markdown').html(marked(_.trim($('.markdown').html())));
 
-				if (viewJob) {
-					$('.req-bid-accept, .job-bid-view').remove();
-				} else {
-					$('#jobs_nav, .job-watch').remove();
-				}
-
-				// if not the owner, remove nav edit / del options
-				if (res.owner.profile.user !== bee.get('profile').user) {
-					$('.job_del_nav, .job_edit_nav, .job-published, .job-bids').remove();
-
-					// if theres an assignee, remove bid and watch options
-					if (res.assignee) {
-						$('#jobs_nav, .job-watch').remove();
-					} else {
-						// check if item is being watch
-						if (bee.get('profile').jobs.watched.length === 0) {
-							$('.job-watch-btn').show();
-						} else {
-							$.each(bee.get('profile').jobs.watched, function(key, val) {
-								if (val._id === viewJob) {
-									$('.job-unwatch-btn').show();
-								} else {
-									$('.job-watch.btn').show();
-								}
-							});
-						}
-					}
-				} else {
-					$('.job_bid_nav, .job-watch').remove();
-
-					if (res.tasks.length > 0) {
-						var taskTmpl = Handlebars.compile($('#tmpl-jobtasklist').html())(res.tasks);
-						$('.job-tasks').html(taskTmpl);
-					}
-
-					// if no assignee, display bids if there are any
-					if (!res.assignee) {
-						if (res.bids.length > 0){
-							bee.api.send(
-								'GET',
-								'/job/bids/' + viewJob,
-								{},
-								function(bids) {
-									$.each(bids, function(key, val) {
-										bee.api.send(
-											'GET',
-											'/user/' + val.user,
-											{},
-											function(user) {
-												val.profile = user;
-												var bidTmpl = Handlebars.compile($('#tmpl-jobbidlist').html())(val);
-												$('.job-bids ul').append(bidTmpl);
-
-												// dunno how else to bind this right now
-												$('div[data-id="' + val._id + '"] span.accept').click(function() {
-													if (!val.isAccepted) {
-														hireBid(val, res);
-													}
-												});
-												$('div[data-id="' + val._id + '"] .profile').click(function() {
-													console.log('in click');
-													location.href = '/#!/team?viewProfile=' + val.profile._id;
-												});
-												$('.job-bids .bid .profile').tooltip();
-											},
-											function(jobErr) {
-												// ??
-											}
-										);
-									});
-									
-								},
-								function(err) {
-									bee.ui.notifications.notify('err', err);
-								}
-							);
-						} else {
-							// delete edit and delete nav options?
-							$('.job-bids').remove();
-						}
-					} else {
-						// there's an assignee, so this job has already been accepted
-						// so the job can no longer be edited or deleted by the owner
-						$('#jobs_nav, .job-bids').remove();
-					}
-				}
-
+				$('#job_view').show();
 				bindJobNav(res);
 				bee.ui.loader.hide();
 			},
@@ -483,12 +406,6 @@
 					);
 				});
 			}
-			//});
-			
-			// $('#credit-popup #bee-ui_confirm_cancel').click(function(e) {
-			// 	e.preventDefault();
-			// 	$('#credit-popup').remove();
-			// });
 		};
 	};
 
@@ -819,7 +736,7 @@
 			});
 		});
 
-		$('#save_job').click(function(e) {
+		$('#save_job, #jobs_create .job-save').click(function(e) {
 			e.preventDefault();
 			var updateJob = _.querystring.get('editJob');
 
@@ -842,7 +759,7 @@
 			);
 		});
 
-		$('#publish_job').click(function(e) {
+		$('#publish_job, #jobs_create .job-publish').click(function(e) {
 			e.preventDefault();
 			var updateJob = _.querystring.get('editJob');
 
@@ -986,8 +903,8 @@
 				bee.ui.notifications.notify('err', 'At least one task must be selected in order to publish a job.');
 			}
 		});
-
-		$('#unpublish_job').click(function(e) {
+		
+		$('#unpublish_job, #jobs_create .job-unpublish').click(function(e) {
 			e.preventDefault();
 
 			var jobId = _.querystring.get('editJob');

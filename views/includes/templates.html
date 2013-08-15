@@ -732,7 +732,11 @@
 					<a href="/#!/jobs?viewJob={{_id}}">
 						<strong class="job_title">{{title}}</strong>
 						<span class="job_category">Posted in {{category.title}}</span>
-						<span class="job_listing_end">Closes for Bidding in {{daysUntilClose}} Days</span>
+						{{#if daysUntilClose}}
+							<span class="job_listing_end">Closes for Bidding in {{daysUntilClose}} Days</span>
+						{{else}}
+							<span class="job_listing_end">Closed for Bidding</span>
+						{{/if}}
 					</a>
 				</li>
 			{{/each}}
@@ -767,186 +771,265 @@
 
 <!-- Job New/Edit Template -->
 <script id="tmpl-jobnew" type="text/x-handlebars-template">
-	<div class="group">
-		<label for="newjob_title">
-			<span>Title: </span>
-			<input class="required" type="text" id="title" placeholder="" name="title"{{#if title}}value="{{title}}"{{/if}} />
-		</label>
-		<label for="newjob_cat">
-			<span>Category: </span>
-			<select class="required" id="category" name="category">
-				<option value="null">Loading categories...</option>
-			</select>
-		</label>
-	</div>
-	<div class="full_block">
-		<label for="newjob_desc">
-			<span>Description: </span>
-			<textarea class="required" id="description" name="description">{{#if description}}{{description}}{{/if}}</textarea>
-		</label>
-	</div>
-	<h4 class="gold-gradient">Requirements</h4>
-	<p class="hint">
-		This should be a list of requirements that both you and the eventual assignee agree to.<br />(ex. 'Create Design', 'Implement Design', 'Create Documentation', etc.)
-	</p>
-	<div class="full_block">
-		<label for="newjob_reqs" class="req_label">
-			<div class="job_req_list">
-				<ul class="requirements_list">
-					<li class="req">
-						<input type="text" name="requirements" class="required" placeholder="Start typing a requirement..." />
-					</li>
-				</ul>
-			</div>
-			<div class="add_req">
-				<a href="#" id="job_add_req">Add</a>
-			</div>
-		</label>
-	</div>
-	<h4 class="gold-gradient">Tasks</h4>
-	<div class="full_block">
-		<label for="job_tasks" class="task_label">
-			<span>Job Task(s): </span>
-			<div id="job_task_list">Loading task(s)...</div>
-		</label>
-	</div>
-	<div class="full_block" id="job_unass_group">
-		<label for="job_unassigned_tasks" class="task_label">
-			<span>Unassigned Task(s): </span>
-			<div id="job_unassigned_task_list">Loading task(s)...</div>
-		</label>
-	</div>
-	<h4 class="gold-gradient">Listing</h4>
-	<div class="group">
-		<p class="hint listing-date-desc">This determines when the job will be posted to the jobs board and for how long.  The longer the amount of the time, the higher the cost associated with posting the job becomes.</p>
-		<label for="listingDateStart">
-			<span>Start: </span>
-			<input type="text" id="listingDateStart" placeholder="" name="listingDateStart"{{#if listing.start}}value="{{listing.start}}"{{/if}} />
-		</label>
-		<label for="listingDateEnd">
-			<span>End: </span>
-			<input type="text" id="listingDateEnd" placeholder="" name="listingDateEnd"{{#if listing.end}}value="{{listing.end}}"{{/if}} />
-		</label>
-	</div>
-	<label class="big_radio isPromoted" for="newjob_isPromoted">
-		<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true"{{#if listing.isPromoted}}checked{{/if}} /> Promote this job
-		<p>
-			By promoting this job, it will be given priority and will show up before other unpromoted jobs on the jobs board and when searching for jobs.  You are limited to three promoted jobs at a time.
-		</p>
-	</label>
-	<div class="job_buttons">
+	<div class="top_options">
 		{{#if isPublished}}
-			<div class="unpublish_job_submit_wrapper gold-gradient" id="unpublish_btn">
-				<input type="submit" id="unpublish_job" value="Unpublish Job" />
-			</div>
+			<strong class="gold-gradient option_button">
+				<a class="job-unpublish">Unpublish</a>
+			</strong>
 		{{else}}
-			<div class="save_job_submit_wrapper light-gradient">
-				<input type="submit" id="save_job" value="Save Job" />
-			</div>
-			<div class="publish_job_submit_wrapper gold-gradient">
-				<input type="submit" id="publish_job" value="Publish Job" />
-			</div>
+			<strong class="gold-gradient option_button">
+				<a class="job-publish">Publish</a>
+			</strong>
+			<strong class="gold-gradient option_button">
+				<a class="job-save">Save</a>
+			</strong>
 		{{/if}}
+	</div>
+	<div class="create_job_container">
+		<form id="create_job">
+			<div class="group">
+				<label for="newjob_title">
+					<span>Title: </span>
+					<input class="required" type="text" id="title" placeholder="" name="title" value="{{title}}" />
+				</label>
+				<label for="newjob_cat">
+					<span>Category: </span>
+					<select class="required" id="category" name="category">
+						<option value="null">Loading categories...</option>
+					</select>
+				</label>
+			</div>
+			<div class="full_block">
+				<label for="newjob_desc">
+					<span>Description: </span>
+					<textarea class="required" id="description" name="description">{{description}}</textarea>
+				</label>
+			</div>
+			<h4>Requirements</h4>
+			<p class="hint">
+				This should be a list of requirements that both you and the eventual assignee agree to.<br />(ex. 'Create Design', 'Implement Design', 'Create Documentation', etc.)
+			</p>
+			<div class="full_block">
+				<label for="newjob_reqs" class="req_label">
+					<div class="job_req_list">
+						<ul class="requirements_list">
+							<li class="req">
+								<input type="text" name="requirements" class="required" placeholder="Start typing a requirement..." />
+							</li>
+						</ul>
+					</div>
+					<div class="add_req">
+						<a href="#" id="job_add_req">Add</a>
+					</div>
+				</label>
+			</div>
+			<h4>Tasks</h4>
+			<div class="full_block">
+				<label for="job_tasks" class="task_label">
+					<span>Job Task(s): </span>
+					<div id="job_task_list">Loading task(s)...</div>
+				</label>
+			</div>
+			<div class="full_block" id="job_unass_group">
+				<label for="job_unassigned_tasks" class="task_label">
+					<span>Unassigned Task(s): </span>
+					<div id="job_unassigned_task_list">Loading task(s)...</div>
+				</label>
+			</div>
+			<h4>Listing</h4>
+			<div class="group">
+				<p class="hint listing-date-desc">This determines when the job will be posted to the jobs board and for how long.  The longer the amount of the time, the higher the cost associated with posting the job becomes.</p>
+				<label for="listingDateStart">
+					<span>Start: </span>
+					<input type="text" id="listingDateStart" placeholder="" name="listingDateStart" value="{{listing.start}}" />
+				</label>
+				<label for="listingDateEnd">
+					<span>End: </span>
+					<input type="text" id="listingDateEnd" placeholder="" name="listingDateEnd" value="{{listing.end}}" />
+				</label>
+			</div>
+			<label class="big_radio isPromoted" for="newjob_isPromoted">
+				<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true"{{#if listing.isPromoted}}checked{{/if}} /> Promote this job
+				<p>
+					By promoting this job, it will be given priority and will show up before other unpromoted jobs on the jobs board and when searching for jobs.  You are limited to three promoted jobs at a time.
+				</p>
+			</label>
+			<div class="job_buttons">
+				{{#if isPublished}}
+					<div class="unpublish_job_submit_wrapper gold-gradient" id="unpublish_btn">
+						<input type="submit" id="unpublish_job" value="Unpublish Job" />
+					</div>
+				{{else}}
+					<div class="save_job_submit_wrapper light-gradient">
+						<input type="submit" id="save_job" value="Save Job" />
+					</div>
+					<div class="publish_job_submit_wrapper gold-gradient">
+						<input type="submit" id="publish_job" value="Publish Job" />
+					</div>
+				{{/if}}
+			</div>
+		</form>
+		<div class="not-enough-tasks">
+			<p class="no_projects">You do not have any unassigned tasks from which to create a Job. <a href="/#!/tasks?newTask=true">Create a task</a>.</p>
+		</div>
 	</div>
 </script>
 
 <!-- Job View Template -->
 <script id="tmpl-jobview" type="text/x-handlebars-template">
-	<div class="light-gradient center-pane animated fadeInUp">
-		<div id="job_details" data-id="{{_id}}">
-			<h4 class="gold-gradient">{{title}}</h4>
+	<div class="top_options">
+		{{#if isPaid}}
+			<!-- No Options (archived) -->
+		{{else}}
 			{{#if isPublished}}
-				<div class="job-published published">Published</div>
-			{{else}}
-				{{#if assignee}}
-					<div class="job-published in_progress">In Progress</div>
+				{{#if isOwner}}
+					<strong class="gold-gradient option_button">
+						<a class="job-unpublish">Unpublish</a>
+					</strong>
 				{{else}}
-					<div class="job-published unpublished">Unpublished</div>
-				{{/if}}
-			{{/if}}
-			<div class="job-watch">
-				<button class="job-watch-btn">Watch Job</button>
-				<button class="job-unwatch-btn">Unwatch Job</button>
-			</div>
-			<div class="job-own-contain">
-				<strong>This job is owned by:</strong>
-				<div>
-					<div class="user_showcase">
-						<img src="{{owner.profile.avatarPath}}" width="48px" height="48px">
-						<strong>{{owner.profile.firstName}} {{owner.profile.lastName}}</strong>
-						<em>{{owner.profile.title}}</em>
-						<a href="/#!/team?viewProfile={{owner.profile._id}}">View Profile</a>
-					</div>
-				</div>				
-			</div>
-			{{#if assignee}}
-				<div class="job-assignee">
-					<strong>This job is assigned to:</strong>
-					<div>
-						<div class="user_showcase">
-							<img src="{{assignee.avatarPath}}" width="48px" height="48px">
-							<strong>{{assignee.firstName}} {{assignee.lastName}}</strong>
-							<em>{{assignee.title}}</em>
-							<a href="/#!/team?viewProfile={{assignee._id}}">View Profile</a>
-						</div>
-					</div>
-				</div>
-			{{/if}}
-			<div class="job-cat">
-				<strong>Category:</strong>
-				<span>{{category.title}}
-			</div>
-			<div class="job-desc full-block">
-				<div class="markdown rollout">
-					{{description}}
-				</div>
-			</div>
-			<div class="job-posting-stats">
-				{{#if assignee}}
-					Job is closed for bidding.
-				{{else}}
-					{{#if listing.end}}
-						Job is available for bidding until <strong>{{listing.end}}</strong>.
+					<strong class="gold-gradient option_button">
+						<a class="job-bid">Place Bid</a>
+					</strong>
+					{{#if isWatched}}
+						<strong class="gold-gradient option_button">
+							<a class="job-unwatch">Unwatch</a>
+						</strong>
 					{{else}}
-						Job has not been published for bidding.
+						<strong class="gold-gradient option_button">
+							<a class="job-watch">Watch</a>
+						</strong>
 					{{/if}}
 				{{/if}}
-			</div>
-			<div class="float_wrap">
-				<div class="job-tasks half_list">
-					<h5 class="half-list-header">Tasks:</h5>
-					<ul class="rollout none">
-						{{#each tasks}}
-							<li>
-								<span>{{title}}</span>
-								<span class="task-rate">${{rate}} {{#if isFixedRate}}(fixed){{else}}(hourly){{/if}}</span>
-							</li>
-						{{/each}}
-					</ul>
+			{{else}}
+				{{#if assignee}}
+					{{#if isOwner}}
+						<strong class="gold-gradient option_button">
+							<a class="job-retract">Retract Hire</a>
+						</strong>
+					{{else}}
+						<strong class="gold-gradient option_button">
+							<a class="job-invoice">Invoice</a>
+						</strong>
+					{{/if}}
+				{{else}}
+					{{#if isOwner}}
+						<strong class="gold-gradient option_button">
+							<a class="job-publish">Publish</a>
+						</strong>
+						<strong class="gold-gradient option_button">
+							<a class="job-edit">Edit</a>
+						</strong>
+						<strong class="gold-gradient option_button">
+							<a class="job-delete">Delete</a>
+						</strong>
+					{{else}}
+						<div class="you">Currently Closed for Bidding</div>
+					{{/if}}
+				{{/if}}
+			{{/if}}
+		{{/if}}
+	</div>
+	<div id="job_details" data-id="{{_id}}">
+		<div class="two3rds">
+			<h3 class="title">{{title}}</h3>
+			<ul class="job_info">
+				{{#if isOwner}}
+					<li>
+						<strong>Status:</strong> 
+						<span id="job-status">
+							{{#if isPublished}}
+								Published
+							{{else}}
+								{{#if assignee}}
+									In Progress
+								{{else}}
+									Unpublished
+								{{/if}}
+							{{/if}}
+						</span>
+					</li>
+				{{/if}}
+				<li>
+					<strong>Posted By:</strong> 
+					<span id="job-owned-by" data-owner="{{owner.profile}}">
+						<em>Getting owner details...</em>
+					</span>
+				</li>
+				<li>
+					<strong>Listed In:</strong> 
+					<span id="job-category">{{category.title}}</span>
+				</li>
+				{{#if assignee}}
+					<li>
+						<strong>Assigned To:</strong> 
+						<span id="job-assigned-to" data-assignee="{{assignee.profile}}">
+							<em>Getting assignee details...</em>
+						</span>
+					</li>
+				{{/if}}
+				<li>
+					{{#if isPublished}}
+						<strong>Listing:</strong> 
+						<span id="job-listing">
+							{{#if assignee}}
+								Bidding has closed
+							{{else}}
+								{{#if listing.end}}
+									Available for bidding until {{listing.end}}
+								{{else}}
+									Bidding is not yet open
+								{{/if}}
+							{{/if}}
+						</span>
+					</li>
+					<li>
+						<strong>Total Bids:</strong> 
+						<span id="job-total-bids">
+							{{bids.length}}
+						</span>
+					{{/if}}
+				</li>
+			</ul>
+			<div class="viewjob_description">
+				<div class="markdown rollout">
+					{{{description}}}
 				</div>
-				<div class="job-reqs half_list">
-					<h5 class="half-list-header">Requirements:</h5>
-					<ul class="rollout none">
-						{{#each requirements}}
-							<li>
-								<span>{{this}}</span>
-								<a href="#" data-req="{{this}}" class="req-bid-accept">Accept</a>
-							</li>
-						{{/each}}
-					</ul>
+			</div>
+			<div class="job-tasks">
+				<div class="col-header tasks light-gradient">
+					<h3>Bids</h3>
 				</div>
+				<ul>
+					{{#each tasks}}
+						<li>
+							<span>{{title}}</span>
+							<span class="task-rate">
+								${{rate}} {{#if isFixedRate}}(fixed){{else}}(hourly){{/if}}
+							</span>
+						</li>
+					{{/each}}
+				</ul>
 			</div>
-			<div class="job-bids group">
-				<strong>Bids:</strong>
-				<ul></ul>
-			</div>
-			<div class="job-bid-view">
-				<strong>Message:</strong>
-				<textarea class="required" id="message" name="message" placeholder="Type message here..."></textarea>
-				<div class="bid_job_submit_wrapper gold-gradient">
-					<input type="submit" id="bid_job" value="Bid on Job" />
+			<div class="job-reqs">
+				<div class="col-header requirementshead light-gradient">
+					<h3>Requirements</h3>
 				</div>
+				<ul>
+					{{#each requirements}}
+						<li>
+							<span>{{this}}</span>
+						</li>
+					{{/each}}
+				</ul>
 			</div>
+		</div>
+		<div class="col3">
+			<div class="col-header bids light-gradient">
+				<h3>Bids</h3>
+			</div>
+			<ul id="job_bids">
+				<div class="loader"></div>
+			</ul>
 		</div>
 	</div>
 </script>

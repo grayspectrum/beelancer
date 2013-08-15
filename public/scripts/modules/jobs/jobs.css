@@ -7,6 +7,36 @@
 	float: left;
 }
 
+#job_view {
+	display: none;
+}
+
+#jobs_create .job-save {
+	background: url('/assets/images/mono/black/save_icon&16.png') 6px center no-repeat;
+}
+
+#jobs_create .job-publish {
+	background: url('/assets/images/mono/black/round_checkmark_icon&16.png') 6px center no-repeat;
+}
+
+#jobs_create .job-unpublish {
+	background: url('/assets/images/mono/black/undo_icon&16.png') 6px center no-repeat;
+}
+
+.job_buttons {
+	display: none;
+}
+
+.create_job_container {
+	width: 600px;
+	margin: auto;
+}
+
+.create_job_container h4 {
+	margin: 12px 0;
+	border-left: 1px solid #e2e2e2;
+}
+
 #jobs_search_list {
 	display: none;
 	border: 1px solid #e2e2e2;
