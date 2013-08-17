@@ -56,6 +56,7 @@ li.message {
 
 li.message.isRead .msg_from {
 	background: none;
+	overflow: hidden;
 }
 
 li.message p {

@@ -908,16 +908,18 @@
 						</strong>
 					{{else}}
 						<strong class="gold-gradient option_button">
-							<a class="job-invoice">Invoice</a>
+							<a href="/#!/invoices?createInvoice=true&jobId={{_id}}" class="job-invoice">Invoice</a>
 						</strong>
 					{{/if}}
 				{{else}}
 					{{#if isOwner}}
+						{{#if tasks.length}}
+							<strong class="gold-gradient option_button">
+								<a class="job-publish">Publish</a>
+							</strong>
+						{{/if}}
 						<strong class="gold-gradient option_button">
-							<a class="job-publish">Publish</a>
-						</strong>
-						<strong class="gold-gradient option_button">
-							<a class="job-edit">Edit</a>
+							<a href="/#!/jobs?editJob={{_id}}" class="job-edit">Edit</a>
 						</strong>
 						<strong class="gold-gradient option_button">
 							<a class="job-delete">Delete</a>
@@ -951,7 +953,7 @@
 				{{/if}}
 				<li>
 					<strong>Posted By:</strong> 
-					<span id="job-owned-by" data-owner="{{owner.profile}}">
+					<span id="job-owned-by" data-owner="{{owner.profile._id}}">
 						<em>Getting owner details...</em>
 					</span>
 				</li>
@@ -962,7 +964,7 @@
 				{{#if assignee}}
 					<li>
 						<strong>Assigned To:</strong> 
-						<span id="job-assigned-to" data-assignee="{{assignee.profile}}">
+						<span id="job-assigned-to" data-assignee="{{assignee.profile._id}}">
 							<em>Getting assignee details...</em>
 						</span>
 					</li>
@@ -997,7 +999,7 @@
 			</div>
 			<div class="job-tasks">
 				<div class="col-header tasks light-gradient">
-					<h3>Bids</h3>
+					<h3>Tasks</h3>
 				</div>
 				<ul>
 					{{#each tasks}}

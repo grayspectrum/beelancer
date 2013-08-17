@@ -6,7 +6,19 @@
 module.exports = [
 	{
 		id : 'SFTDEV',
-		title : 'Web Design and Software Development'
+		title : 'Software Development'
+	},
+	{
+		id : 'WEBDES',
+		title : 'Web Design'
+	},
+	{
+		id : 'PHOTOG',
+		title : 'Photography'
+	},
+	{
+		id : 'VIDEO',
+		title : 'Film and Video'
 	},
 	{
 		id : 'DESIGN',

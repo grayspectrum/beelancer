@@ -23,6 +23,35 @@
 	background: url('/assets/images/mono/black/undo_icon&16.png') 6px center no-repeat;
 }
 
+.my-jobs {
+	background: url('/assets/images/mono/black/book_side_icon&16.png') 6px center no-repeat;
+}
+
+.jobs-search {
+	background: url('/assets/images/mono/black/zoom_icon&16.png') 6px center no-repeat;
+}
+
+.job-tasks,
+.job-reqs {
+	border: 1px solid #e2e2e2;
+	border-radius: 3px;
+	margin: 12px 0;
+}
+
+.job-tasks ul,
+.job-reqs ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.job-tasks li,
+.job-reqs li {
+	border-top: 1px solid #e2e2e2;
+	margin: 0;
+	padding: 12px;
+}
+
 .job_buttons {
 	display: none;
 }
@@ -56,28 +85,16 @@
 	border: 1px solid #ABABAB;
 }
 
-#jobs_nav .job_search_nav, .search_job_btn {
-	background: url('/assets/images/mono/black/zoom_icon&24.png') 12px center no-repeat;
-}
-
 .job_new_nav {
 	background: url('/assets/images/mono/black/push_pin_icon&16.png') 6px center no-repeat;
 }
 
-#jobs_nav .job_myjobs_nav {
-	background: url('/assets/images/mono/black/case_icon&24.png') 12px center no-repeat;
+#job_view .job-edit {
+	background: url('/assets/images/mono/black/doc_edit_icon&16.png') 6px center no-repeat;
 }
 
-#jobs_nav .job_edit_nav {
-	background: url('/assets/images/mono/black/doc_edit_icon&24.png') 12px center no-repeat;
-}
-
-#jobs_nav .job_del_nav {
-	background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat;
-}
-
-#jobs_nav .job_bid_nav {
-	background: url('/assets/images/mono/black/target_icon&32.png') 12px center no-repeat;
+#job_view .job-delete {
+	background: url('/assets/images/mono/black/delete_icon&16.png') 6px center no-repeat;
 }
 
 #jobs_list #jobs_category {
@@ -92,15 +109,15 @@
 }
 
 li.job .job_title {
-	font-size: 18px;
+	font-size: 14px;
 	padding: 4px 0;
 	display: block;
 }
 
 li.job span {
-	font-size: 16px;
+	font-size: 12px;
 	display: block;
-	padding: 2px 24px;
+	padding: 4px 24px;
 }
 
 li.job .job_category {
@@ -341,17 +358,44 @@ li.req a:hover {
 	border: 2px solid #FFC60B;
 }
 
-#publish_job {
-	background: url('/assets/images/mono/black/notepad_icon&32.png') 12px center no-repeat;
+#job-owned-by a,
+#job-assigned-to a {
+	text-decoration: none;
+	color: #333;
 }
 
-#bid_job {
-	background: url('/assets/images/mono/black/target_icon&32.png') 12px center no-repeat;
+#job-owned-by img,
+#job-assigned-to img {
+	width: 20px;
+	height: 20px;
+	float: left;
+	margin-right: 8px;
 }
 
-#bid_job:hover {
-	background: url('/assets/images/mono/black/target_icon&32.png') 12px center no-repeat #FFC60B;
-	cursor: pointer;
+#job-owned-by a,
+#job-assigned-to a {
+	color: #333;
+}
+
+#job-owned-by a:hover,
+#job-assigned-to a:hover {
+	text-decoration: underline;
+}
+
+#job_view .job-publish {
+	background: url('/assets/images/mono/black/notepad_icon&16.png') 6px center no-repeat;
+}
+
+#job_view .job-invoice {
+	background: url('/assets/images/mono/black/wallet_icon&16.png') 6px center no-repeat;
+}
+
+#job_view .job-retract {
+	background: url('/assets/images/mono/black/undo_icon&16.png') 6px center no-repeat;
+}
+
+#job_view .job-bid {
+	background: url('/assets/images/mono/black/target_icon&16.png') 6px center no-repeat;
 }
 
 #save_job {
@@ -359,28 +403,16 @@ li.req a:hover {
 	text-shadow: 0 1px 0 #CCC;
 }
 
-#publish_job:hover {
-	background: url('/assets/images/mono/black/notepad_icon&32.png') 12px center no-repeat #FFC60B;
-	cursor: pointer;
+#job_view .job-unpublish {
+	background: url('/assets/images/mono/black/undo_icon&16.png') 6px center no-repeat;
 }
 
-#unpublish_job {
-	background: url('/assets/images/mono/black/undo_icon&32.png') 12px center no-repeat;
+#job_view .job-watch {
+	background: url('/assets/images/mono/black/eye_icon&16.png') 6px center no-repeat;
 }
 
-#unpublish_job:hover {
-	background: url('/assets/images/mono/black/undo_icon&32.png') 12px center no-repeat #FFC60B;
-	cursor: pointer;
-}
-
-#save_job:hover {
-	background: url('/assets/images/mono/black/save_icon&32.png') 12px center no-repeat #DDD;
-	cursor: pointer;
-}
-
-.job-published, .job-watch {
-	float: right;
-	margin: -50px 24px 0 0;
+#job_view .job-unwatch {
+	background: url('/assets/images/mono/black/invisible_revert_icon&16.png') 6px center no-repeat;
 }
 
 .job-published {
@@ -703,12 +735,29 @@ li.job_task_option input {
 	display: none;
 }
 
-.job-reqs li {
-	clear: both;
-	display: block;
+.job_info {
+	list-style-type: none;
+	margin: 12px 0;
+	padding: 0;
+}
+
+.job_info li {
+	font-size: 14px;
+	padding: 4px 0;
+	margin: 4px 0;
+	overflow: hidden;
+}
+
+.job_info li strong {
+	margin-right: 12px;
+	text-align: right;
+	width: 110px;
 	float: left;
+}
+
+.job-reqs li {
+	display: block;
 	line-height: 18px;
-	width: 100%;
 }
 
 .job-reqs li span {
@@ -716,19 +765,6 @@ li.job_task_option input {
 	background: url('/assets/images/icons/check.png') left center no-repeat;
 	display: block;
 	font-size: 12px;
-	float: left;
-}
-
-.job-tasks li,
-.job-reqs li {
-	margin: 4px 0 !important;
-	/*border-bottom: 1px solid #e2e2e2;*/
-	/*padding: 8px 0;*/
-}
-
-.job-tasks li:last-of-type,
-.job-reqs li:last-of-type {
-	border: none;
 }
 
 .job-tasks li span {
