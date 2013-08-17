@@ -1342,7 +1342,7 @@ module.exports = function(app, db) {
 								}));
 								res.end();
 							} else {
-								project.members.forEach(function(val, key)) {
+								project.members.forEach(function(val, key) {
 									if (val._id.equals(user._id)) {
 										project.members.splice(key, 1);
 										project.save();
