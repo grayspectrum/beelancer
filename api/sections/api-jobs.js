@@ -1304,4 +1304,84 @@ module.exports = function(app, db) {
 			}
 		});
 	});
+
+	////
+	// GET - /api/job/resign
+	// Resigns from a specificed job
+	////
+	app.get('/api/job/resign/:jobId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				var jobId = req.params.jobId;
+				db.job.findOne({
+					_id : jobId
+				})
+				.populate('tasks')
+				.populate('project')
+				.exec(function(err, job) {
+					if (err) {
+						res.writeHead(401);
+						res.write(JSON.stringify({
+							error : 'You must be the assigned this job to resign from it.'
+						}));
+						res.end();
+					} else {
+						job.assignee = null;
+						job.acceptedBy = null;
+						job.status = 'UNPUBLISHED';
+						job.save();
+
+						// remove user from project
+						db.project.findOne({
+							_id : job.project._id
+						}).exec(function(err, project) {
+							if (err || !project) {
+								res.writeHead(401);
+								res.write(JSON.stringify({
+									error : 'You must be part of this project to be removed from it.'
+								}));
+								res.end();
+							} else {
+								project.members.forEach(function(val, key)) {
+									if (val._id.equals(user._id)) {
+										project.members.splice(key, 1);
+										project.save();
+
+										// unassign user from uncompleted tasks
+										db.task.find({
+											job : job._id,
+											assignee : user._id
+										}).exec(function(err, tasks) {
+											if (err || !tasks) {
+												res.writeHead(401);
+												res.write(JSON.stringify({
+													error : 'You must be assigned a task to be removed from it.'
+												}));
+												res.end();
+											} else {
+												tasks.forEach(function(val, key) {
+													// only unassigned if task isn't complete
+													if (val.isComplete === false) {
+														val.assignee = null;
+														val.save();
+													}
+												});
+												res.end();
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in and assigned this job to resign from it.'
+				}));
+				res.end();
+			}
+		});
+	});
 };
