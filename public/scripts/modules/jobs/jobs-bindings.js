@@ -343,6 +343,23 @@
 				$('#job-owned-by').html(user(res.owner.profile));
 				if (res.assignee) $('#job-assigned-to').html(user(res.assignee));
 
+				// show bid list for job
+				var bid_tmpl = Handlebars.compile($('#tmpl-jobbidlist').html());
+				bee.api.send(
+					'GET',
+					'/job/bids/' + res._id,
+					{},
+					function(bids) {
+						$('#job_bids').html(bid_tmpl({
+							bids : bids,
+							isOwner : res.isOwner
+						}));
+					},
+					function(err) {
+						bee.ui.notifications.notify('err', err, true);
+					}
+				);
+
 				$('#job_view').show();
 				bindJobNav(res);
 				bee.ui.loader.hide();

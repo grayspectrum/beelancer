@@ -1249,18 +1249,18 @@ module.exports = function(app, db) {
 
 	////
 	// DELETE - /api/bid
-	// Deletes an existing job
+	// Deletes an existing bid
 	////
 	app.del('/api/bid/:bidId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
-			// deletes a job
+			// deletes a bid
 			// job must not be published to delete
 			// must be unpublished before deleting
 			// and is bound by unpublishing rules
 			if (!err && user) {
 				db.bid.findOne({
 					_id : req.params.bidId,
-					'user._id' : user._id,
+					user : user._id,
 					isAccepted : false
 				}).exec(function(err, bid) {
 					if (err) {
@@ -1292,17 +1292,107 @@ module.exports = function(app, db) {
 				})
 				.populate('bids')
 				.exec(function(err, job) {
-					res.write(JSON.stringify(job.bids));
-					res.end();
+					if (!err && job) {
+						// if user is the owner serve back all bids
+						if (user._id.toString() === job.owner.toString()) {
+							populateBids(job.bids, function(err, bids) {
+								if (err) {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+								}
+								else {
+									res.write(JSON.stringify(bids));
+								}
+								res.end();
+							});
+						}
+						else {
+							var bids = [];
+							// otherwise only the bids the caller owns
+							job.bids.forEach(function(bid) {
+								if (bid.user.toString() === user._id.toString()) bids.push(bid);
+							});
+							populateBids(bids, function(err, bids) {
+								if (err) {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+								}
+								else {
+									res.write(JSON.stringify(bids));
+								}
+								res.end();
+							});
+						}
+					}
+					else {
+						res.writeHead(500);
+						res.write(JSON.stringify({
+							error : err || 'Could not get job.'
+						}));
+						res.end();
+					}
 				});
 			} else {
 				res.writeHead(401);
 				res.write(JSON.stringify({
-					error : 'You must be the owner of this job to see the current bids.'
+					error : 'You must be logged in to view bids.'
 				}));
 				res.end();
 			}
 		});
+
+		function populateBids(bidIds, callback) {
+			db.bid.find({
+				_id : {
+					$in : bidIds.map(function(bid) {
+						return bid._id
+					})
+				}
+			})
+			.populate('user', 'profile')
+			.exec(function(err, bids) {
+				if (!err) {
+					// get profile
+					db.profile.find({
+						_id : {
+							$in : bids.map(function(bid) {
+								return bid.user.profile
+							})
+						}
+					}).exec(function(err, profiles) {
+						if (!err) {
+							bids.forEach(function(bid, b_index) {
+								bids[b_index] = bid.toObject();
+								profiles.forEach(function(profile, p_index) {
+									if (bid.user.profile.toString() === profile._id.toString()) {
+										bids[b_index].user.profile = profile;
+									}
+								});
+							});
+							callback(err, bids);
+						}
+						else {
+							res.writeHead(500);
+							res.write(JSON.stringify({
+								error : err
+							}));
+							res.end();
+						}
+					});
+				}
+				else {
+					res.writeHead(500);
+					res.write(JSON.stringify({
+						error : err
+					}));
+					res.end();
+				}
+			});
+		};
 	});
 
 	////

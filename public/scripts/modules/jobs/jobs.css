@@ -31,6 +31,18 @@
 	background: url('/assets/images/mono/black/zoom_icon&16.png') 6px center no-repeat;
 }
 
+.col-header.bids h3 {
+	background: url('/assets/images/mono/black/target_icon&16.png') right center no-repeat;
+}
+
+.job-tasks .col-header.tasks h3 {
+	background: url('/assets/images/mono/black/clock_icon&16.png') right center no-repeat;
+}
+
+.job-reqs .col-header.requirementshead h3 {
+	background: url('/assets/images/mono/black/list_num_icon&16.png') right center no-repeat;
+}
+
 .job-tasks,
 .job-reqs {
 	border: 1px solid #e2e2e2;
@@ -207,30 +219,54 @@ li.job a span.view_job {
 	float: right;
 }
 
-.job-bids ul {
+#job_bids {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
 li.bid div.bid_container {
-	border: 1px solid #e2e2e2;
-	background: #e2e2e2;
-	margin: 3px 0;
-	padding: 12px 24px;
-	border-radius: 6px;
+	padding: 12px;
 	overflow: auto;
 	color: #333;
-}
-
-li.bid div.bid_container:hover {
-	cursor: pointer;
-	background: #FFEFC6;
-	border: 1px solid #d2d2d2;
+	border-top: 1px solid #e2e2e2;
 }
 
 li.bid .profile {
+	
+}
+
+li.bid .profile a {
+	display: block;
+	overflow: hidden;
+	color: #333;
+}
+
+li.bid .profile a:hover .member-name {
+	text-decoration: underline;
+}
+
+li.bid .profile a img {
 	float: left;
+	margin-right: 12px;
+}
+
+li.bid .profile .member-name {
+	float: left;
+	margin: 2px;	
+}
+
+.bid .profile .rating {
+	float: right;
+	background: url('/assets/images/mono/black/star_fav_icon&16.png') left center no-repeat;
+	padding: 2px 2px 2px 22px;
+}
+
+.bid p.message {
+	font-size: 12px;
+	margin: 8px 0;
+	padding: 8px;
+	border: 1px dashed #f1f1f1;
 }
 
 li.bid span.accept {
@@ -767,7 +803,8 @@ li.job_task_option input {
 	font-size: 12px;
 }
 
-.job-tasks li span {
+.job-tasks li span,
+.bid_items li span {
 	display: block;
 	padding: 2px 4px 2px 24px;
 	font-size: 12px;
@@ -775,7 +812,22 @@ li.job_task_option input {
 	background: url('/assets/images/icons/tasks.png') left center no-repeat;
 }
 
-.job-tasks li span.task-rate {
+.job-tasks li span.task-rate,
+.bid_items li span.task-rate {
 	font-weight: normal;
 	background: url('/assets/images/icons/bank.png') left center no-repeat;
+}
+
+.bid_items li {
+	border-top: 1px solid #f1f1f1;
+	padding: 6px;
+}
+
+.bid_items {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	border: 1px solid #F1F1F1;
+	border-top: none;
+	background: #F9F9F9;
 }

@@ -1051,20 +1051,47 @@
 
 <!-- Job Bid List Template -->
 <script id="tmpl-jobbidlist" type="text/x-handlebars-template">
-	<li class="bid">
-		<div class="bid_container" data-id="{{this._id}}">
-			<div class="profile"{{#if profile.ratings.average}} title="Rating: {{profile.ratings.average}}, # of Ratings: {{profile.ratings.total}}"{{/if}}>
-				<img src="{{profile.avatarPath}}" width="32px" height="32px" />
-				<span class="member-name">{{profile.firstName}} {{profile.lastName}}</span>
-				<p>{{this.message}}</p>
-			</div>
-			{{#if isAccepted}}
+	{{#if bids.length}}
+		{{#each bids}}
+			<li class="bid">
+				<div class="bid_container" data-id="{{_id}}">
+					<div class="profile">
+						<a href="/#!/team?viewProfile={{user.profile._id}}">
+							<img src="{{user.profile.avatarPath}}" width="24px" height="24px" />
+							<span class="member-name">{{user.profile.firstName}} {{user.profile.lastName}}</span>
+							<span class="rating">{{user.profile.ratings.average}}</span>
+						</a>
+					</div>
+					<p class="message">{{this.message}}</p>
+					<ul class="bid_items">
+						{{#each tasks}}
+							<li>
+								<span>{{title}}</span>
+								<span class="task-rate">
+									${{rate}} {{#if isFixedRate}}(fixed){{else}}(hourly){{/if}}
+								</span>
+							</li>
+						{{/each}}
+					</ul>
+					{{#if isAccepted}}
 
+					{{else}}
+						{{#if ../isOwner}}
+							<span class="gold-gradient accept">Accept Bid</span>
+						{{/if}}
+					{{/if}}
+				</div>
+			</li>
+		{{/each}}
+	{{else}}
+		<p class="no_projects">
+			{{#if isOwner}}
+				Your job has no bids.
 			{{else}}
-				<span class="gold-gradient accept">Accept Bid</span>
+				You have not bid on this job.
 			{{/if}}
-		</div>
-	</li>
+		</p>
+	{{/if}}
 </script>
 
 <!-- Credit Card Error Span Template -->
