@@ -146,11 +146,12 @@ module.exports = (function() {
 	function assignTasks(db, to, tasks, callback) {
 		tasks.forEach(function(val, key) {
 			db.task.findOne({ _id : val })
+			.populate('project')
 			.exec(function(err, task) {
 				if (!err && task) {
 					task.assignee = to;
 					task.save();
-					getProject(db, task._id, function(err, project) {
+					getProject(db, task.project._id, function(err, project) {
 						if (err) {
 							callback.call(this, 'Could not get project.', null);
 						} 

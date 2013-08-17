@@ -855,95 +855,51 @@ module.exports = function(app, db) {
 											// but chances are they already have
 										}
 										else {
-											// yes, this job is a standard post
-											// and the user now needs to pay
-											// var pmtData = utils.hasValidPaymentData(req.body.payment);
-											// if (pmtData.valid) {
-											// 	stripe.charges.create({
-											// 		card : req.body.payment,
-											// 		currency : 'usd',
-											// 		amount : (job.listing.cost * 100),
-											// 		capture : false, // don't capture until job is accepted
-											// 		description : 'Job ID: ' + job._id + ', User: ' + user.email
-											// 	}, function(err, data) {
-											// 		if (!err) {
-														// lets store the charge id, so we can charge it later when the assignee
-														// accepts the job
-														//job.listing.chargeId = data.id;
-														//job.save(function(err) {
-															//if (!err) {
-																// mark bid as accepted
-																bid.isAccepted = true;
-																bid.save(function(err) {
-																	if (!err) {
-																		// send hire request to assignee
-																		var jobOffer = new db.message({
-																			from : user.profile._id,
-																			to : bid.user.profile,
-																			body : 'I would like to hire you for the job "' + job.title + '"',
-																			type : 'invitation',
-																			attachment : {
-																				action : 'job_invite',
-																				data : bid._id
-																			},
-																			sentOn : new Date().toString(),
-																			isRead : false,
-																			belongsTo : user._id
-																		});
-																		
-																		jobOffer.save(function(err) {
-																			if (!err) {
-																				res.write(JSON.stringify(jobOffer));
-																				res.end();
-																				// emit notification
-																				var recip = clients.get(jobOffer.to);
-																				if (recip) {
-																					jobOffer.isCurrent = false;
-																					jobOffer.isRead = false;
-																					recip.socket.emit('message', jobOffer);
-																				}
-																			} else {
-																				res.writeHead(500);
-																				res.write('Could not send invitation.');
-																				res.end();
-																			}
-																		});
-																	}
-																	else {
-																		res.writeHead(500);
-																		res.write(JSON.stringify({
-																			error : err
-																		}));
-																		res.end();	
-																	}
-																});
-														// 	}
-														// 	else {
-														// 		res.writeHead(500);
-														// 		res.write(JSON.stringify({
-														// 			error : 'Failed to save charge ID.'
-														// 		}));
-														// 		res.end();
-														// 	}
-														// });
-												// 	}
-												// 	else {
-												// 		res.writeHead(500);
-												// 		res.write(JSON.stringify({
-												// 			error : err
-												// 		}));
-												// 		res.end();
-												// 	}
-												// });
-											// }
-											// else {
-											// 	res.writeHead(400);
-											// 	res.write(JSON.stringify({
-											// 		error : 'Missing required properties.',
-											// 		data : pmtData.missing
-											// 	}));
-											// 	res.end();
-											// }
+											// mark bid as accepted
+											bid.isAccepted = true;
+											bid.save(function(err) {
+												if (!err) {
+													// send hire request to assignee
+													var jobOffer = new db.message({
+														from : user.profile._id,
+														to : bid.user.profile,
+														body : 'I would like to hire you for the job "' + job.title + '"',
+														type : 'invitation',
+														attachment : {
+															action : 'job_invite',
+															data : bid._id
+														},
+														sentOn : new Date().toString(),
+														isRead : false,
+														belongsTo : user._id
+													});
+													
+													jobOffer.save(function(err) {
+														if (!err) {
+															res.write(JSON.stringify(jobOffer));
+															res.end();
+															// emit notification
+															var recip = clients.get(jobOffer.to);
+															if (recip) {
+																jobOffer.isCurrent = false;
+																jobOffer.isRead = false;
+																recip.socket.emit('message', jobOffer);
+															}
+														} else {
+															res.writeHead(500);
+															res.write('Could not send invitation.');
+															res.end();
+														}
+													});
+												}
+												else {
+													res.writeHead(500);
+													res.write(JSON.stringify({
+														error : err
+													}));
+													res.end();	
+												}
+											});
 										}
 									}
 									else {
@@ -1127,143 +1083,150 @@ module.exports = function(app, db) {
 				db.job.findOne({
 					_id : body.jobId,
 					isPublished : true
-				}).exec(function(err, job) {
+				})
+				.populate('tasks')
+				.exec(function(err, job) {
 					if (!err && job) {
 						// see if the user has an existing bid
 						// for this job and if so, update it
 						// otherwise lets create a new one
-						// but first they need to accept the requirements
-						// check that requirements were passed and all match up
-						var requirementsMatch = (req.body.requirements) ? (req.body.requirements.length === job.requirements.length) : false;
 						
-						if (requirementsMatch) {
-							req.body.requirements.forEach(function(val) {
-								if (job.requirements.indexOf(val) === -1) {
-									requirementsMatch = false;
-								}
-							});
-						}
-						
-						if (requirementsMatch) {
-							// check if user has bid on more than 10 active jobs
-							if (!user.isPro) {
-								db.bid.find({
-									user : user._id
-								}).exec(function(err, bids) {
-									if (!err) {
-										var countBids = 0;
-										if (bids.length) {
-											for (var i = 0; i < bids.length; i++) {
-												if (!bids[i].isAccepted) countBids++
-											}
-										}
-
-										if (countBids >= 10) {
-											res.writeHead(400);
-											res.write(JSON.stringify({
-												error : 'You cannot bid on more than 10 active jobs at a time.'
-											}));
-											res.end();
-										} else {
-											createBid();
+						// check if user has bid on more than 10 active jobs
+						if (!user.isPro) {
+							db.bid.find({
+								user : user._id
+							}).exec(function(err, bids) {
+								if (!err) {
+									var countBids = 0;
+									if (bids.length) {
+										for (var i = 0; i < bids.length; i++) {
+											if (!bids[i].isAccepted) countBids++
 										}
 									}
-								});
-							} else {
-								createBid();
-							}
 
-							function createBid() {
-								db.bid.findOne({
-									user : user._id,
-									job : job._id
-								}).exec(function(err, bid) {
-									if (!err) {
-										var isUpdate = false;
-										if (bid) {
-											bid.message = body.message;
-											bid.placedOn = new Date();
-											bid.isAccepted = false;
-											isUpdate = true;
-										}
-										else {
-											bid = new db.bid({
-												user : user._id,
-												job : job._id,
-												isAccepted : false,
-												placedOn : new Date(),
-												message : body.message
-											});
-										}
-
-										bid.save(function(err) {
-											if (!err) {
-												// only push the bid if it's not an updated bid
-												if (!isUpdate) job.bids.push(bid._id);
-												job.save(function(err) {
-													// add to callers watch list
-													if (!user.jobs.watched.length) {
-														user.jobs.watched.push(job._id);
-														user.save();
-													} else {
-														user.jobs.watched.forEach(function(val, key) {
-															if (!val._id.equals(job._id)) {
-																user.jobs.watched.push(job._id);
-																user.save();
-															}
-														});
-													}
-													
-													// if (user.jobs.watched.indexOf(job._id) === -1) {
-													// 	user.jobs.watched.push(job._id);
-													// 	user.save();
-													// }
-
-													// send an email to the owner to alert
-													// them that they've received a bid
-													db.user.findOne({ _id : job.owner })
-													.exec(function(err, owner) {
-														db.user.findOne({ _id : bid.user })
-														.populate('profile').exec(function(err, user) {
-															job = job.toObject();
-															job.owner = owner;
-															job.bid = user;
-
-															var email = new Mailer('bid', job);
-															email.send(owner.email, 'Bid Received');
-														});
-													});
-
-													res.write(JSON.stringify(bid));
-													res.end();
-												});
-											}
-											else {
-												res.writeHead(500);
-												res.write(JSON.stringify({
-													error : err
-												}));
-												res.end();
-											}
-										});
-									}
-									else {
-										res.writeHead(500);
+									if (countBids >= 10) {
+										res.writeHead(400);
 										res.write(JSON.stringify({
-											error : err
+											error : 'You cannot bid on more than 10 active jobs at a time.'
 										}));
 										res.end();
+									} else {
+										createBid();
 									}
-								});
-							};
+								}
+							});
+						} else {
+							createBid();
 						}
-						else {
-							res.writeHead(400);
-							res.write(JSON.stringify({
-								error : 'You must indicate you accept the job requirements.'
-							}));
-							res.end();
-						}
+
+						function createBid() {
+							db.bid.findOne({
+								user : user._id,
+								job : job._id
+							}).exec(function(err, bid) {
+								if (!err) {
+									var isUpdate = false;
+									if (bid) {
+										bid.message = body.message;
+										bid.placedOn = new Date();
+										bid.isAccepted = false;
+										isUpdate = true;
+									}
+									else {
+										bid = new db.bid({
+											user : user._id,
+											job : job._id,
+											isAccepted : false,
+											placedOn : new Date(),
+											message : body.message
+										});
+									}
+
+									if (body.tasks && body.tasks.length) {
+										createTaskBids(body.tasks);
+									} else {
+										// if tasks weren't passed over
+										// and this isn't an update
+										// then use the rates set by the
+										// the owner of the task
+										if (!isUpdate) {
+											createTaskBids(job.tasks);
+										}
+									}
+
+									function createTaskBids (tasksArray) {
+										var eachTask = {};
+										bid.tasks = [];
+										tasksArray.forEach(function(val, key) {
+											eachTask = {
+												id : val._id,
+												rate : val.rate,
+												isFixedRate : val.isFixedRate
+											};
+											bid.tasks.push(eachTask);
+										});
+									};
+
+									bid.save(function(err) {
+										if (!err) {
+											// only push the bid if it's not an updated bid
+											if (!isUpdate) job.bids.push(bid._id);
+											job.save(function(err) {
+												// add to callers watch list
+												if (!user.jobs.watched.length) {
+													user.jobs.watched.push(job._id);
+													user.save();
+												} else {
+													user.jobs.watched.forEach(function(val, key) {
+														if (!val._id.equals(job._id)) {
+															user.jobs.watched.push(job._id);
+															user.save();
+														}
+													});
+												}
+												
+												// if (user.jobs.watched.indexOf(job._id) === -1) {
+												// 	user.jobs.watched.push(job._id);
+												// 	user.save();
+												// }
+
+												// send an email to the owner to alert
+												// them that they've received a bid
+												db.user.findOne({ _id : job.owner })
+												.exec(function(err, owner) {
+													db.user.findOne({ _id : bid.user })
+													.populate('profile').exec(function(err, user) {
+														job = job.toObject();
+														job.owner = owner;
+														job.bid = user;
+
+														var email = new Mailer('bid', job);
+														email.send(owner.email, 'Bid Received');
+													});
+												});
+
+												res.write(JSON.stringify(bid));
+												res.end();
+											});
+										}
+										else {
+											res.writeHead(500);
+											res.write(JSON.stringify({
+												error : err
+											}));
+											res.end();
+										}
+									});
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						};
 					}
 					else {
 						res.writeHead(400);
@@ -1336,6 +1299,86 @@ module.exports = function(app, db) {
 				res.writeHead(401);
 				res.write(JSON.stringify({
 					error : 'You must be the owner of this job to see the current bids.'
+				}));
+				res.end();
+			}
+		});
+	});
+
+	////
+	// GET - /api/job/resign
+	// Resigns from a specificed job
+	////
+	app.get('/api/job/resign/:jobId', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				var jobId = req.params.jobId;
+				db.job.findOne({
+					_id : jobId
+				})
+				.populate('tasks')
+				.populate('project')
+				.exec(function(err, job) {
+					if (err) {
+						res.writeHead(401);
+						res.write(JSON.stringify({
+							error : 'You must be the assigned this job to resign from it.'
+						}));
+						res.end();
+					} else {
+						job.assignee = null;
+						job.acceptedBy = null;
+						job.status = 'UNPUBLISHED';
+						job.save();
+
+						// remove user from project
+						db.project.findOne({
+							_id : job.project._id
+						}).exec(function(err, project) {
+							if (err || !project) {
+								res.writeHead(401);
+								res.write(JSON.stringify({
+									error : 'You must be part of this project to be removed from it.'
+								}));
+								res.end();
+							} else {
+								project.members.forEach(function(val, key)) {
+									if (val._id.equals(user._id)) {
+										project.members.splice(key, 1);
+										project.save();
+
+										// unassign user from uncompleted tasks
+										db.task.find({
+											job : job._id,
+											assignee : user._id
+										}).exec(function(err, tasks) {
+											if (err || !tasks) {
+												res.writeHead(401);
+												res.write(JSON.stringify({
+													error : 'You must be assigned a task to be removed from it.'
+												}));
+												res.end();
+											} else {
+												tasks.forEach(function(val, key) {
+													// only unassigned if task isn't complete
+													if (val.isComplete === false) {
+														val.assignee = null;
+														val.save();
+													}
+												});
+												res.end();
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in and assigned this job to resign from it.'
 				}));
 				res.end();
 			}

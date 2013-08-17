@@ -16,6 +16,11 @@ module.exports = new Schema({
 		type : ObjectId,
 		ref : 'job'
 	},
+	tasks : [{
+		id : ObjectId,
+		rate : Number,
+		isFixedRate : Boolean
+	}],
 	message : String,
 	placedOn : Date,
 	isAccepted : Boolean
