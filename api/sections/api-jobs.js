@@ -874,8 +874,10 @@ module.exports = function(app, db) {
 														belongsTo : user._id
 													});
 													
-													jobOffer.save(function(err) {
+													jobOffer.save(function(err, message) {
 														if (!err) {
+															job.hireMessageId = message._id;
+															job.save();
 															res.write(JSON.stringify(jobOffer));
 															res.end();
 															// emit notification
@@ -940,6 +942,49 @@ module.exports = function(app, db) {
 				res.writeHead(401);
 				res.write(JSON.stringify({
 					error : 'You must be logged in to hire someone.'
+				}));
+				res.end();
+			}
+		});
+	});
+
+	////
+	// POST - /api/job/hire/retract
+	// Sends an offer request to the specified bidder for the passed job
+	////
+	app.post('/api/job/hire/retract', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.job.findOne({
+					_id : req.body.jobId,
+					owner : user._id
+				}).exec(function(err, job) {
+					if (!err && job) {
+						db.message.findOne({
+							_id : job.hireMessageId
+						}).exec(function(err, mess) {
+							if (!err && mess) {
+								mess.remove();
+							} else {
+								res.writeHead(401);
+								res.write(JSON.stringify({
+									error : 'Could not find hire request.'
+								}));
+								res.end();
+							}
+						});
+					} else {
+						res.writeHead(401);
+						res.write(JSON.stringify({
+							error : 'You must be the owner of this job to retract a hire request.'
+						}));
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to retract your hire request.'
 				}));
 				res.end();
 			}

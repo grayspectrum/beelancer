@@ -61,5 +61,6 @@ module.exports = new Schema({
 	bids : [{
 		type : ObjectId,
 		ref : 'bid'
-	}]
+	}],
+	hireMessageId : ObjectId
 });

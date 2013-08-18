@@ -123,11 +123,11 @@ module.exports = (function() {
 						// the posting fee - we already have the charge, so let's
 						// make some money...
 						if (bid.job.listing && !bid.job.listing.isPromoted) {
-							assignTasks(db, to._id, bid.job.tasks, callback);
+							assignTasks(db, to._id, bid.job.tasks, bid.tasks, callback);
 							finalizeHire(db, to._id, bid.job.owner, bid, message, callback);
 						}
 						else {
-							assignTasks(db, to._id, bid.job.tasks, callback);
+							assignTasks(db, to._id, bid.job.tasks, bid.tasks, callback);
 							finalizeHire(db, to._id, bid.job.owner, bid, message, callback);
 						}
 					}
@@ -143,13 +143,19 @@ module.exports = (function() {
 		};
 	};
 
-	function assignTasks(db, to, tasks, callback) {
+	function assignTasks(db, to, tasks, rates, callback) {
 		tasks.forEach(function(val, key) {
 			db.task.findOne({ _id : val })
 			.populate('project')
 			.exec(function(err, task) {
 				if (!err && task) {
 					task.assignee = to;
+					rates.forEach(function(value, index) {
+						if (value.id.equals(task._id)) {
+							task.rate = value.rate;
+							task.isFixedRate = task.isFixedRate;
+						}
+					});
 					task.save();
 					getProject(db, task.project._id, function(err, project) {
 						if (err) {
