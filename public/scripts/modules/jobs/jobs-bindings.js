@@ -10,7 +10,8 @@
 	  , myJobs = _.querystring.get('myJobs')
 	  , viewJob = _.querystring.get('viewJob')
 	  , editJob = _.querystring.get('editJob')
-	  , bidJob = _.querystring.get('bidJob');
+	  , bidJob = _.querystring.get('bidJob')
+	  , myBids = _.querystring.get('myBids');
 
 	if (jobSearch) {
 		showJobSearchPanel();
@@ -23,13 +24,31 @@
 	} 
 	else if (viewJob || bidJob) {
 		showJobView();
-	} 
-	else if (bidJob) {
-		showBidView();
-	} 
+	}
+	else if (myBids) {
+		showMyBids();
+	}
 	else {
 		generateJobHomePage();
 	}
+
+	function showMyBids() {
+		$('#jobs_create, #jobs_mine, #jobs_list').remove();
+		$('#job_bids').show();
+
+		bee.api.send(
+			'GET',
+			'/bids/mine',
+			{},
+			function(bids) {
+				var tmpl = Handlebars.compile($('#tmpl-mybidlist').html());
+				$('#bids-list-mine').html(tmpl(bids));
+			},
+			function(err) {
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	};
 
 	function generateJobHomePage() {
 		$('#jobs_create, #jobs_mine').remove();
@@ -325,6 +344,8 @@
 				}
 
 				res.isOwner = res.owner.profile.user === bee.get('profile').user;
+				res.isAssignee = res.assignee && (res.assignee.user === bee.get('profile').user);
+				res.canTerminate = res.acceptedBy && res.acceptedBy.assignee && res.acceptedBy.owner;
 
 				// see if user is watching job
 				res.isWatched = false;
@@ -350,10 +371,15 @@
 					'/job/bids/' + res._id,
 					{},
 					function(bids) {
+						$.each(bids, function(i, bid) {
+							bids[i].isOwner = (bid.user._id === bee.get('profile').user);
+						});
 						$('#job_bids').html(bid_tmpl({
 							bids : bids,
-							isOwner : res.isOwner
+							isJobOwner : res.isOwner,
+							canRetractBid : !res.canTerminate
 						}));
+						bindBidOptions();
 					},
 					function(err) {
 						bee.ui.notifications.notify('err', err, true);
@@ -432,10 +458,7 @@
 	};
 
 	function showBidView() {
-		$('#jobs_list, #jobs_create, #job_search_result, #jobs_search, #jobs_mine, #jobs_nav').remove();
-
-		//do stuff
-		bee.ui.loader.hide();
+		$('#place_bid').show();
 	};
 
 	function showMyJobsPanel() {
@@ -604,18 +627,181 @@
 		);
 	};
 
+	function bindBidOptions() {
+		$('.job-bid-retract').bind('click', function(e) {
+			var bidId = $(this).parent().parent().attr('data-id');
+			// retract bid
+			bee.ui.confirm('Are you sure you wish to retract your bid?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'DELETE',
+					'/bid/' + bidId,
+					{},
+					function(success) {
+						bee.ui.loader.hide();
+						bee.ui.refresh();
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		});
+
+		$('.job-bid-accept').bind('click', function(e) {
+			// accept bid
+			var bidId = $(this).parent().parent().attr('data-id')
+			  , jobId = $('#job_details').attr('data-id');
+			// retract bid
+			bee.ui.confirm('Are you sure you wish to accept this bid?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/job/hire',
+					{
+						jobId : jobId,
+						bidId : bidId
+					},
+					function(success) {
+						bee.ui.loader.hide();
+						bee.ui.refresh();
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		});
+
+		$('.job-hire-retract').bind('click', function(e) {
+			// retract hire 
+			var jobId = viewJob;
+			bee.ui.confirm('Are you sure you wish to retract your offer?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/job/hire/retract',
+					{
+						jobId : jobId
+					},
+					function(success) {
+						bee.ui.loader.hide();
+						bee.ui.refresh();
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		});
+
+		$('.bid-submit').bind('click', function(e) {
+			$('#create_bid').trigger('submit');
+		});
+
+		$('#create_bid').bind('submit', submitBid);
+	};
+
+	function submitBid(e) {
+		e.preventDefault();
+		bee.ui.loader.show();
+		// create payload
+		var payload = {
+			jobId : $('#job_details').attr('data-id'),
+			tasks : [],
+			message : $('#bid-message').val()
+		};
+
+		$('table.bid-tasks tr').each(function() {
+			var task = {
+				_id : $(this).attr('data-id'),
+				rate : $('input[name="task-rate"]', this).val()
+			};
+			if ($('select[name="task-isFixed"]', this).val() === 'true') {
+				task.isFixedRate = true;
+			}
+			payload.tasks.push(task);
+		});
+
+		bee.api.send(
+			'POST',
+			'/job/bid',
+			payload,
+			function(success) {
+				bee.ui.loader.hide();
+				bee.ui.refresh();
+			},
+			function(err) {
+				bee.ui.loader.hide();
+				bee.ui.notifications.notify('err', err);
+			}
+		);
+	};
+
 	function bindJobNav(job) {
 		$('.job_edit_nav').click(function(e) {
 			e.preventDefault();
 			location.href = '/#!/jobs?editJob=' + job._id;
 		});
 
-		$('#job_view .job-retract').bind('click', function(e) {
-			// retract hire API call
-			bee.ui.notifications.notify('err', 'Feature not yet available.');
+		$('#job_view .job-bid').bind('click', function(e) {
+			e.preventDefault();
+			// show bid modal ui
+			showBidView();
 		});
 
-		$('#job_view .job-publish').click(publishJob);
+		$('#job_view .job-cancel').bind('click', function(e) {
+			e.preventDefault();
+			var jobId = viewJob;
+			bee.ui.confirm('Are you sure you wish to cancel this job and terminate the assignee?', function() {
+				bee.ui.loader.show();
+				bee.api.send(
+					'POST',
+					'/job/cancel',
+					{
+						jobId : jobId
+					},
+					function(success) {
+						bee.ui.loader.hide();
+						bee.ui.refresh();
+					},
+					function(err) {
+						bee.ui.loader.hide();
+						bee.ui.notifications.notify('err', err);
+					}
+				);
+			});
+		});
+
+		$('#job_view .job-publish').bind('click', publishJob);
+
+		$('#job_view .job-resign').bind('click', function(e) {
+			e.preventDefault();
+
+			bee.ui.confirm(
+				'Are you sure you wish to resign from this job?',
+				function() {
+					bee.ui.loader.show();
+					bee.api.send(
+						'POST',
+						'/job/resign/' + viewJob,
+						{},
+						function(success) {
+							bee.ui.loader.hide();
+							bee.ui.refresh();
+							bee.ui.notifications.notify('success', 'Resigned from Job!');
+						},
+						function(err) {
+							bee.ui.loader.hide();
+							bee.ui.notifications.notify('err', err);
+						}
+					);
+				}
+			);
+		});
 
 		$('.job-delete').click(function(e) {
 			e.preventDefault();
@@ -664,11 +850,6 @@
 					);
 				}
 			});
-		});
-
-		$('.job_bid_nav').click(function(e) {
-			e.preventDefault();
-			location.href = '/#!/jobs/bidJob=' + job._id;
 		});
 
 		$('.job-watch').click(function(e) {
@@ -725,46 +906,6 @@
 				$(this).removeClass('accepted');
 			} else {
 				$(this).addClass('accepted');
-			}
-		});
-
-		$('#bid_job').click(function(e) {
-			e.preventDefault();
-
-			var reqAccepted = true
-			  , reqs = [];
-			$.each($('.req-bid-accept'), function() {
-				if (!$(this).hasClass('accepted')) {
-					reqAccepted = false;
-					return false;
-				} else {
-					reqs.push($(this).attr('data-req'));
-				}
-			});
-
-			if (!reqAccepted) {
-				bee.ui.notifications.notify('err', 'You must agree to all requirements!');
-			} else {
-				if (jobDataIsValid(true)) {
-					bee.ui.loader.show();
-					bee.api.send(
-						'POST',
-						'/job/bid',
-						{
-							jobId : job._id,
-							requirements : reqs,
-							message : $('#job_view #message').val()
-						},
-						function(res) {
-							bee.ui.notifications.notify('success', 'Job bid submitted!');
-							location.href = '/#!/jobs';
-						},
-						function(err) {
-							bee.ui.notifications.notify('err', err);
-							bee.ui.loader.hide();
-						}
-					);
-				}
 			}
 		});
 

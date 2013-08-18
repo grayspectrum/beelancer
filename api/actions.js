@@ -151,7 +151,7 @@ module.exports = (function() {
 				if (!err && task) {
 					task.assignee = to;
 					rates.forEach(function(value, index) {
-						if (value.id.equals(task._id)) {
+						if (value.reference.equals(task._id)) {
 							task.rate = value.rate;
 							task.isFixedRate = task.isFixedRate;
 						}

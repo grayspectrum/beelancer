@@ -37,6 +37,9 @@
 		<strong class="gold-gradient option_button">
 			<a href="/#!/jobs?myJobs=true" class="my-jobs">My Jobs</a>
 		</strong>
+		<strong class="gold-gradient option_button">
+			<a href="/#!/jobs?myBids=true" class="my-bids">My Bids</a>
+		</strong>
 	</div>
 	<div class="two3rds">
 		<div id="search_jobs"> 
@@ -73,6 +76,9 @@
 		<strong class="gold-gradient option_button">
 			<a href="/#!/jobs" class="jobs-search">Find Jobs</a>
 		</strong>
+		<strong class="gold-gradient option_button">
+			<a href="/#!/jobs?myBids=true" class="my-bids">My Bids</a>
+		</strong>
 	</div>
 	<div class="col3" id="jobs_i_own">
 		<div class="col-header jobsownedbyme light-gradient">
@@ -101,3 +107,21 @@
 </div>
 <div id="jobs_create" class="center-pane"></div>
 <div id="job_view" class="center-pane"></div>
+<div id="job_bids" class="center-pane">
+	<div class="top_options">
+		<strong class="gold-gradient option_button">
+			<a href="/#!/jobs?newJob=true" class="job_new_nav">Post Job</a>
+		</strong>
+		<strong class="gold-gradient option_button">
+			<a href="/#!/jobs?myJobs=true" class="my-jobs">My Jobs</a>
+		</strong>
+	</div>
+	<div id="bids_list_mine">
+		<div class="col-header mybidslist light-gradient">
+			<h3>My Bids</h3>
+		</div>
+		<ul id="bids-list-mine">
+			<div class="loader"></div>
+		</ul>
+	</div>
+</div>

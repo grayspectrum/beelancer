@@ -17,7 +17,10 @@ module.exports = new Schema({
 		ref : 'job'
 	},
 	tasks : [{
-		id : ObjectId,
+		reference : {
+			type : ObjectId,
+			ref : 'task'
+		},
 		rate : Number,
 		isFixedRate : Boolean
 	}],

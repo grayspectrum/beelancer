@@ -903,13 +903,23 @@
 			{{else}}
 				{{#if assignee}}
 					{{#if isOwner}}
-						<strong class="gold-gradient option_button">
-							<a class="job-retract">Retract Hire</a>
-						</strong>
+						{{#if isComplete}}
+						{{else}}
+							<strong class="gold-gradient option_button">
+								<a class="job-cancel">Cancel Job</a>
+							</strong>
+						{{/if}}
 					{{else}}
-						<strong class="gold-gradient option_button">
-							<a href="/#!/invoices?createInvoice=true&jobId={{_id}}" class="job-invoice">Invoice</a>
-						</strong>
+						{{#if isAssignee}}
+							<strong class="gold-gradient option_button">
+								<a href="/#!/invoices?createInvoice=true&jobId={{_id}}" class="job-invoice">Invoice</a>
+							</strong>
+							<strong class="gold-gradient option_button">
+								<a class="job-resign">Resign</a>
+							</strong>
+						{{else}}
+							<div class="you">Currently Closed for Bidding</div>
+						{{/if}}
 					{{/if}}
 				{{else}}
 					{{#if isOwner}}
@@ -1034,6 +1044,46 @@
 			</ul>
 		</div>
 	</div>
+	<div class="modal-container" id="place_bid">
+		<div class="center-pane">
+			<div class="top_options">
+				<strong class="gold-gradient option_button">
+					<a class="bid-submit">Submit Bid</a>
+				</strong>
+			</div>
+			<form id="create_bid">
+				<p class="desc">
+					Using the proposed rates as a reference point, set a rate 
+					for each task attached to this job.
+				</p>
+				<table class="bid-tasks">
+					<tbody>
+						{{#each tasks}}
+							<tr data-id="{{_id}}">
+								<td class="bid-task-title" data>{{title}}</td>
+								<td class="bid-task-rate">
+									<input type="number" value="{{rate}}" name="task-rate" />
+								</td>
+								<td class="bid-task-isFixed">
+									<select name="task-isFixed">
+										<option value="false">Hourly</option>
+										<option value="true" {{#if isFixedRate}}selected="selected"{{/if}}>Fixed</option>
+									</select>
+								</td>
+							</tr>
+						{{/each}}
+					</tbody>
+				</table>
+				<div class="full_block">
+					<label for="bid-message">
+						<span>Message:</span>
+						<textarea name="message" id="bid-message">Please consider my bid and message me with any questions.</textarea>
+					</label>
+				</div>
+				<input type="submit" value="Submit Bid" style="display: none" />
+			</form>
+		</div>
+	</div>
 </script>
 
 <!-- Job Task List Template -->
@@ -1047,6 +1097,40 @@
 			</li>
 		{{/each}}
 	</ul>
+</script>
+
+<!-- Job Bid List Template -->
+<script id="tmpl-mybidlist" type="text/x-handlebars-template">
+	{{#if length}}
+		{{#each this}}
+			<li class="bid">
+				<div class="bid_container" data-id="{{_id}}">
+					<div class="job-info">
+						<strong>Job: </strong>
+						<a href="/#!/jobs?viewJob={{job._id}}">
+							{{job.title}}
+						</a>
+					</div>
+					<p class="message">{{this.message}}</p>
+					<ul class="bid_items">
+						{{#each tasks}}
+							<li>
+								<span>{{reference.title}}</span>
+								<span class="task-rate">
+									${{rate}} {{#if isFixedRate}}(fixed){{else}}(hourly){{/if}}
+								</span>
+							</li>
+						{{/each}}
+					</ul>
+					{{#if isAccepted}}
+						<span class="accepted-bid">This bid was accepted!</span>
+					{{/if}}
+				</div>
+			</li>
+		{{/each}}
+	{{else}}
+		<p class="no_projects">You have not placed any bids.</p>
+	{{/if}}
 </script>
 
 <!-- Job Bid List Template -->
@@ -1066,7 +1150,7 @@
 					<ul class="bid_items">
 						{{#each tasks}}
 							<li>
-								<span>{{title}}</span>
+								<span>{{reference.title}}</span>
 								<span class="task-rate">
 									${{rate}} {{#if isFixedRate}}(fixed){{else}}(hourly){{/if}}
 								</span>
@@ -1074,10 +1158,23 @@
 						{{/each}}
 					</ul>
 					{{#if isAccepted}}
-
+						<span class="accepted-bid">This bid was accepted!</span>
+						{{#if ../../canRetractBid}}
+							{{#if ../../../isJobOwner}}
+								<strong class="gold-gradient option_button">
+									<a class="job-hire-retract">Retract Offer</a>
+								</strong>
+							{{/if}}
+						{{/if}}
 					{{else}}
-						{{#if ../isOwner}}
-							<span class="gold-gradient accept">Accept Bid</span>
+						{{#if ../../isJobOwner}}
+							<strong class="gold-gradient option_button">
+								<a class="job-bid-accept">Accept Bid</a>
+							</strong>
+						{{else}}
+							<strong class="gold-gradient option_button">
+								<a class="job-bid-retract">Retract Bid</a>
+							</strong>
 						{{/if}}
 					{{/if}}
 				</div>
@@ -1085,7 +1182,7 @@
 		{{/each}}
 	{{else}}
 		<p class="no_projects">
-			{{#if isOwner}}
+			{{#if isJobOwner}}
 				Your job has no bids.
 			{{else}}
 				You have not bid on this job.

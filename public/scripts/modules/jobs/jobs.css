@@ -11,8 +11,98 @@
 	display: none;
 }
 
+#job_bids {
+	display: none;
+}
+
+li.bid .option_button {
+	margin: 6px 0;
+}
+
+#place_bid .center-pane {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 600px;
+	height: 400px;
+	margin: -178px 0 0 -300px;
+}
+
+#create_bid {
+	max-height: 345px;
+	overflow: auto;
+}
+
+.bid-tasks {
+	width: 552px;
+	padding: 12px;
+	margin: 12px 24px;
+	border: 1px solid #F1F1F1;
+	border-radius: 2px;
+}
+
+.bid-tasks tr {
+	
+}
+
+.bid-task-title {
+	width: 378px;
+	font-size: 14px;
+	padding-left: 24px;
+	background: url('/assets/images/icons/tasks.png') left center no-repeat;
+}
+
+.bid-task-rate {
+	padding-left: 24px;
+	background: url('/assets/images/icons/bank.png') left center no-repeat;
+}
+
+.bid-task-rate input {
+	width: 56px;
+	border: 1px solid #ABABAB;
+	border-radius: 2px;
+	padding: 3px 4px;
+	font-size: 12px;
+}
+
+.bid-task-isFixed select {
+	padding: 2px 4px;
+	font-size: 12px;
+	background: #FFF;
+	border-radius: 2px;
+	border: 1px solid #ABABAB;
+}
+
+.accepted-bid {
+	display: block;
+	margin: 6px;
+	font-size: 14px;
+	padding-left: 24px;
+	background: url('/assets/images/icons/check.png') left center no-repeat;
+}
+
 #jobs_create .job-save {
 	background: url('/assets/images/mono/black/save_icon&16.png') 6px center no-repeat;
+}
+
+.job-cancel {
+	background: url('/assets/images/mono/black/cancel_icon&16.png') 6px center no-repeat;
+}
+
+.job-bid-retract {
+	background: url('/assets/images/mono/black/delete_icon&16.png') 6px center no-repeat;
+}
+
+.job-hire-retract {
+	background: url('/assets/images/mono/black/delete_icon&16.png') 6px center no-repeat;
+}
+
+.job-bid-accept {
+	background: url('/assets/images/mono/black/checkmark_icon&16.png') 6px center no-repeat;
+}
+
+.bid-submit {
+	background: url('/assets/images/mono/black/checkmark_icon&16.png') 6px center no-repeat;
 }
 
 #jobs_create .job-publish {
@@ -27,8 +117,16 @@
 	background: url('/assets/images/mono/black/book_side_icon&16.png') 6px center no-repeat;
 }
 
+.job-resign {
+	background: url('/assets/images/mono/black/undo_icon&16.png') 6px center no-repeat;
+}
+
 .jobs-search {
 	background: url('/assets/images/mono/black/zoom_icon&16.png') 6px center no-repeat;
+}
+
+.my-bids {
+	background: url('/assets/images/mono/black/target_icon&16.png') 6px center no-repeat;
 }
 
 .col-header.bids h3 {
@@ -41,6 +139,39 @@
 
 .job-reqs .col-header.requirementshead h3 {
 	background: url('/assets/images/mono/black/list_num_icon&16.png') right center no-repeat;
+}
+
+.col-header.mybidslist h3 {
+	background: url('/assets/images/mono/black/target_icon&16.png') right center no-repeat;
+}
+
+#bids_list_mine {
+	border: 1px solid #E2E2E2;
+	border-radius: 3px;
+	margin: 24px;
+}
+
+.job-info a {
+	text-decoration: none;
+	color: #333;
+}
+
+.job-info a:hover {
+	text-decoration: underline;
+}
+
+#bids-list-mine li:hover {
+	background: rgba(255, 207, 47, 0.1);
+}
+
+#bids-list-mine li:hover li {
+	background: rgba(255, 207, 47, 0.1);
+}
+
+#bids-list-mine {
+	margin: 0;
+	list-style-type: none;
+	padding: 0;
 }
 
 .job-tasks,

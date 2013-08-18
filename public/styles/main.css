@@ -912,6 +912,9 @@ button.greybutton:hover {
 	resize: vertical;
 	padding: 12px;
 	font-size: 14px;
+	border: 1px solid #ABABAB;
+	border-radius: 2px;
+	font-family: OpenSans, Helvetica, sans-serif;
 }
 
 .big_radio {

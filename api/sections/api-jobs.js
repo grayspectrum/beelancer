@@ -806,6 +806,74 @@ module.exports = function(app, db) {
 			}
 		});
 	});
+
+	////
+	// POST - /api/job/cancel
+	// Terminates the current assignee and unaccepts the chosen bid
+	////
+	app.post('/api/job/cancel', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.job.findOne({
+					_id : req.body.jobId,
+					owner : user._id
+				})
+				.populate('bids')
+				.exec(function(err, job) {
+					if (!err && job) {
+						if (!job.isComplete) {
+							// unaccept bid
+							job.bids.forEach(function(bid) {
+								if (bid.isAccepted) {
+									bid.isAccepted = false;
+									bid.save();
+								}
+							});
+							// unassign user
+							job.assignee = null;
+							job.acceptedBy.owner = false;
+							job.acceptedBy.assignee = false;
+							job.status = 'UNPUBLISHED';
+							job.save(function(err) {
+								if (!err) {
+									res.write(JSON.stringify(job));
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+						else {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'Cannot cancel a job after is has been completed.'
+							}));
+							res.end();
+						}
+					}
+					else {
+						res.writeHead(400);
+						res.write(JSON.stringify({
+							error : 'Job not found or it does not belong to you.'
+						}));
+						res.end();
+					}
+				});
+			}
+			else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to cancel a job.'
+				}));
+				res.end();
+			}
+		});
+	});
 	
 	////
 	// POST - /api/job/hire
@@ -822,109 +890,82 @@ module.exports = function(app, db) {
 					_id : req.body.jobId,
 					owner : user._id
 				}).exec(function(err, job) {
-					if (!err && job) {
-						// check that requirements were passed and all match up
-						var requirementsMatch = (req.body.requirements) ? (req.body.requirements.length === job.requirements.length) : false;
-						
-						if (requirementsMatch) {
-							req.body.requirements.forEach(function(val) {
-								if (job.requirements.indexOf(val) === -1) {
-									requirementsMatch = false;
-								}
-							});
-						}
-						
-						if (requirementsMatch) {
-							var bidId = req.body.bidId
-							  , bidIndex = -1;
-							for (var i = 0; i < job.bids.length; i++) {
-								if (job.bids[i].equals(bidId)) {
-									bidIndex = i;
-									break;
-								}
+					if (!err && job) {						
+						var bidId = req.body.bidId
+						  , bidIndex = -1;
+						for (var i = 0; i < job.bids.length; i++) {
+							if (job.bids[i].equals(bidId)) {
+								bidIndex = i;
+								break;
 							}
-							if (bidIndex !== -1) {
-								// find the bid
-								db.bid.findOne({ _id : bidId })
-									.populate('user')
-								.exec(function(err, bid) {
-									if (!err && bid) {
-										// does the owner need to pay now?
-										if (job.isPromoted) {
-											// make sure they have paid
-											// but chances are they already have
-										}
-										else {
-											// mark bid as accepted
-											bid.isAccepted = true;
-											bid.save(function(err) {
+						}
+						if (bidIndex !== -1) {
+							// find the bid
+							db.bid.findOne({ _id : bidId })
+								.populate('user')
+							.exec(function(err, bid) {
+								if (!err && bid) {
+									// mark bid as accepted
+									bid.isAccepted = true;
+									bid.save(function(err) {
+										if (!err) {
+											// send hire request to assignee
+											var jobOffer = new db.message({
+												from : user.profile._id,
+												to : bid.user.profile,
+												body : 'I would like to hire you for the job "' + job.title + '"',
+												type : 'invitation',
+												attachment : {
+													action : 'job_invite',
+													data : bid._id
+												},
+												sentOn : new Date().toString(),
+												isRead : false,
+												belongsTo : user._id
+											});
+											
+											jobOffer.save(function(err) {
 												if (!err) {
-													// send hire request to assignee
-													var jobOffer = new db.message({
-														from : user.profile._id,
-														to : bid.user.profile,
-														body : 'I would like to hire you for the job "' + job.title + '"',
-														type : 'invitation',
-														attachment : {
-															action : 'job_invite',
-															data : bid._id
-														},
-														sentOn : new Date().toString(),
-														isRead : false,
-														belongsTo : user._id
-													});
-													
-													jobOffer.save(function(err, message) {
-														if (!err) {
-															job.hireMessageId = message._id;
-															job.save();
-															res.write(JSON.stringify(jobOffer));
-															res.end();
-															// emit notification
-															var recip = clients.get(jobOffer.to);
-															if (recip) {
-																jobOffer.isCurrent = false;
-																jobOffer.isRead = false;
-																recip.socket.emit('message', jobOffer);
-															}
-														} else {
-															res.writeHead(500);
-															res.write('Could not send invitation.');
-															res.end();
-														}
-													});
-												}
-												else {
+													job.hireMessageId = jobOffer._id;
+													job.save();
+													res.write(JSON.stringify(jobOffer));
+													res.end();
+													// emit notification
+													var recip = clients.get(jobOffer.to);
+													if (recip) {
+														jobOffer.isCurrent = false;
+														jobOffer.isRead = false;
+														recip.socket.emit('message', jobOffer);
+													}
+												} else {
 													res.writeHead(500);
-													res.write(JSON.stringify({
-														error : err
-													}));
-													res.end();	
+													res.write('Could not send invitation.');
+													res.end();
 												}
 											});
 										}
-									}
-									else {
-										res.writeHead(404);
-										res.write(JSON.stringify({
-											error : 'Could not find bid.'
-										}));
-										res.end();
-									}
-								});
-							}
-							else {
-								res.writeHead(400);
-								res.write(JSON.stringify({
-									error : 'Bid was not found for this job.'
-								}));
-								res.end();
-							}
+										else {
+											res.writeHead(500);
+											res.write(JSON.stringify({
+												error : err
+											}));
+											res.end();	
+										}
+									});
+								}
+								else {
+									res.writeHead(404);
+									res.write(JSON.stringify({
+										error : 'Could not find bid.'
+									}));
+									res.end();
+								}
+							});
 						}
 						else {
 							res.writeHead(400);
 							res.write(JSON.stringify({
-								error : 'You must indicate you accept your own requirements.'
+								error : 'Bid was not found for this job.'
 							}));
 							res.end();
 						}
@@ -950,7 +991,7 @@ module.exports = function(app, db) {
 
 	////
 	// POST - /api/job/hire/retract
-	// Sends an offer request to the specified bidder for the passed job
+	// Deletes the hire request sent to bidder
 	////
 	app.post('/api/job/hire/retract', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
@@ -958,15 +999,36 @@ module.exports = function(app, db) {
 				db.job.findOne({
 					_id : req.body.jobId,
 					owner : user._id
-				}).exec(function(err, job) {
+				})
+				.populate('bids')
+				.exec(function(err, job) {
 					if (!err && job) {
+						
+						job.bids.forEach(function(bid) {
+							if (bid.isAccepted) {
+								bid.isAccepted = false;
+								bid.save();
+							}
+						});
+
 						db.message.findOne({
 							_id : job.hireMessageId
 						}).exec(function(err, mess) {
 							if (!err && mess) {
-								mess.remove();
+								mess.remove(function(err) {
+									if (!err) {
+										res.end();
+									}
+									else {
+										res.writeHead(500);
+										res.write(JSON.stringify({
+											error : err
+										}));
+										res.end();
+									}
+								});
 							} else {
-								res.writeHead(401);
+								res.writeHead(400);
 								res.write(JSON.stringify({
 									error : 'Could not find hire request.'
 								}));
@@ -974,7 +1036,7 @@ module.exports = function(app, db) {
 							}
 						});
 					} else {
-						res.writeHead(401);
+						res.writeHead(400);
 						res.write(JSON.stringify({
 							error : 'You must be the owner of this job to retract a hire request.'
 						}));
@@ -1204,7 +1266,7 @@ module.exports = function(app, db) {
 										bid.tasks = [];
 										tasksArray.forEach(function(val, key) {
 											eachTask = {
-												id : val._id,
+												reference : val._id,
 												rate : val.rate,
 												isFixedRate : val.isFixedRate
 											};
@@ -1299,28 +1361,47 @@ module.exports = function(app, db) {
 	app.del('/api/bid/:bidId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			// deletes a bid
-			// job must not be published to delete
-			// must be unpublished before deleting
-			// and is bound by unpublishing rules
 			if (!err && user) {
 				db.bid.findOne({
 					_id : req.params.bidId,
-					user : user._id,
-					isAccepted : false
+					user : user._id
 				}).exec(function(err, bid) {
-					if (err) {
-						res.writeHead(401);
+					if (!err && bid) {
+						if (bid.isAccepted) {
+							res.writeHead(400);
+							res.write(JSON.stringify({
+								error : 'Bid has already been accepted.'
+							}));
+							res.end();
+						}
+						else {
+							bid.remove(function(err) {
+								if (!err) {
+									res.end();
+								}
+								else {
+									res.writeHead(500);
+									res.write(JSON.stringify({
+										error : err
+									}));
+									res.end();
+								}
+							});
+						}
+					} else {
+						res.writeHead(400);
 						res.write(JSON.stringify({
 							error : 'You must be the owner of this bid to retract it.'
 						}));
 						res.end();
-					} else {
-						bid.remove();
-						res.end();
 					}
 				});
 			} else {
-
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to retract a bid.'
+				}));
+				res.end();
 			}
 		});
 	});
@@ -1399,6 +1480,7 @@ module.exports = function(app, db) {
 				}
 			})
 			.populate('user', 'profile')
+			.populate('tasks.reference')
 			.exec(function(err, bids) {
 				if (!err) {
 					// get profile
@@ -1448,9 +1530,10 @@ module.exports = function(app, db) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
 				db.bid.find({
-					user : user_.id
+					user : user._id
 				})
 				.populate('job')
+				.populate('tasks.reference')
 				.exec(function(err, bids) {
 					if (!err) {
 						res.write(JSON.stringify(bids));
@@ -1474,73 +1557,73 @@ module.exports = function(app, db) {
 	});
 
 	////
-	// GET - /api/job/resign
+	// POST - /api/job/resign
 	// Resigns from a specificed job
 	////
-	app.get('/api/job/resign/:jobId', function(req, res) {
+	app.post('/api/job/resign/:jobId', function(req, res) {
 		utils.verifyUser(req, db, function(err, user) {
 			if (!err && user) {
-				var jobId = req.params.jobId;
+				var jobId = req.params.jobId
+				  , project_ids = [];
 				db.job.findOne({
-					_id : jobId
+					_id : jobId,
+					assignee : user._id
 				})
 				.populate('tasks')
 				.populate('project')
+				.populate('bids')
 				.exec(function(err, job) {
-					if (err) {
-						res.writeHead(401);
-						res.write(JSON.stringify({
-							error : 'You must be the assigned this job to resign from it.'
-						}));
-						res.end();
-					} else {
+					if (!err && job) {
 						job.assignee = null;
 						job.acceptedBy = null;
 						job.status = 'UNPUBLISHED';
+						// unassign tasks
+						job.tasks.forEach(function(task) {
+							if (!task.isComplete) {
+								task.assignee = null;
+								project_ids.push(task.project);
+								task.save();
+							}
+						});
+						job.bids.forEach(function(bid) {
+							bid.isAccepted = false;
+							bid.save();
+						});
 						job.save();
 
 						// remove user from project
-						db.project.findOne({
-							_id : job.project._id
-						}).exec(function(err, project) {
-							if (err || !project) {
+						db.project.find({
+							_id : {
+								$in : project_ids
+							}
+						}).exec(function(err, projects) {
+							if (err) {
 								res.writeHead(401);
 								res.write(JSON.stringify({
 									error : 'You must be part of this project to be removed from it.'
 								}));
 								res.end();
 							} else {
-								project.members.forEach(function(val, key) {
-									if (val._id.equals(user._id)) {
-										project.members.splice(key, 1);
-										project.save();
-
-										// unassign user from uncompleted tasks
-										db.task.find({
-											job : job._id,
-											assignee : user._id
-										}).exec(function(err, tasks) {
-											if (err || !tasks) {
-												res.writeHead(401);
-												res.write(JSON.stringify({
-													error : 'You must be assigned a task to be removed from it.'
-												}));
-												res.end();
-											} else {
-												tasks.forEach(function(val, key) {
-													// only unassigned if task isn't complete
-													if (val.isComplete === false) {
-														val.assignee = null;
-														val.save();
-													}
-												});
-												res.end();
-											}
-										});
-									}
+								projects.forEach(function(project, index) {
+									project.members.forEach(function(val, key) {
+										if (val.equals(user._id)) {
+											project.members.splice(key, 1);
+											project.save();
+										}
+									});
 								});
+								res.write(JSON.stringify({
+									message : 'Resigned from job successfully.'
+								}));
+								res.end();
 							}
 						});
+					} else {
+						res.writeHead(401);
+						res.write(JSON.stringify({
+							error : 'You must be the assigned this job to resign from it.'
+						}));
+						res.end();
 					}
 				});
 			} else {
