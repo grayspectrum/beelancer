@@ -1441,6 +1441,39 @@ module.exports = function(app, db) {
 	});
 
 	////
+	// GET - /api/jbids/mine
+	// Returns all bids the user has submitted
+	////
+	app.get('/api/bids/mine', function(req, res) {
+		utils.verifyUser(req, db, function(err, user) {
+			if (!err && user) {
+				db.bid.find({
+					user : user_.id
+				})
+				.populate('job')
+				.exec(function(err, bids) {
+					if (!err) {
+						res.write(JSON.stringify(bids));
+						res.end();
+					} else {
+						res.writeHead(401);
+						res.write(JSON.stringify({
+							error : err
+						}));
+						res.end();
+					}
+				});
+			} else {
+				res.writeHead(401);
+				res.write(JSON.stringify({
+					error : 'You must be logged in to view your bids.'
+				}));
+				res.end();
+			}
+		});
+	});
+
+	////
 	// GET - /api/job/resign
 	// Resigns from a specificed job
 	////
