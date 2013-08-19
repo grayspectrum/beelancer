@@ -378,7 +378,7 @@
 							bids : bids,
 							isJobOwner : res.isOwner,
 							canRetractBid : !res.canTerminate
-						}));
+						})).show();
 						bindBidOptions();
 					},
 					function(err) {
