@@ -85,47 +85,7 @@ module.exports = function(app, db) {
 				} else {
 					// if all is good, then create the new user account
 					if (!user) {
-						// if we are in beta mode, then we need to
-						// make sure there is an activated tester
-						if (config.env === 'BETA') {
-							db.tester.findOne({
-								email : body.email
-							}).exec(function(err, tester) {
-								if (err) {
-									res.writeHead(500);
-									res.write(JSON.stringify({
-										error : err
-									}));
-									res.end();
-								}
-								else {
-									if (tester) {
-										// we have a test, so let's make sure they are 
-										// activated 
-										if (tester.isActivated) {
-											createUser(tester);
-										}
-										else {
-											res.writeHead(400);
-											res.write(JSON.stringify({
-												error : 'Your beta invitation is still pending.'
-											}));
-											res.end();
-										}
-									}
-									else {
-										res.writeHead(400);
-										res.write(JSON.stringify({
-											error : 'No beta invitation request found for ' + body.email
-										}));
-										res.end();
-									}
-								}
-							});
-						}
-						else {
-							createUser();
-						}
+						createUser();
 
 						function createUser(tester) {
 							var newUser = new db.user({
