@@ -50,6 +50,9 @@
 	} else {
 		$('#menu').hide();
 		$('#security, #view_my_profile, #my_endorsements, #aws_account_setup').remove();
+		$('#header, h2.account').hide();
+		$('#account').addClass('new_profile');
+		$('#new_profile').show();
 		bee.ui.loader.hide();
 	}
 	
@@ -112,7 +115,8 @@
 					if (newProfile) {
 						bee.ui.notifications.notify('info', 'Welcome to Beelancer!', true, bee.ui.help.show);
 					}
-					location.href = (newProfile) ? '/#!/projects' : '/#!/account';
+					$('#header, h2.account').hide();
+					location.href = (newProfile) ? '/#!/jobs' : '/#!/account';
 					bee.set('profile', res);
 				}, 
 				function(err) {

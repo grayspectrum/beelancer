@@ -15,6 +15,25 @@
 	padding-top: 12px;
 }
 
+#account.new_profile .col3 {
+	display: none;
+}
+
+#account.new_profile .two3rds {
+	border: none;
+}
+
+#account.new_profile .two3rds {
+	border-left: 1px solid #e2e2e2;
+	border: none;
+	margin: auto;
+	float: none;
+}
+
+#account.new_profile .two3rds h4 {
+	border-left: 1px solid #e2e2e2;
+}
+
 .acceptTerms {
 	display: block;
 	margin: 0 24px 24px 24px;
