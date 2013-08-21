@@ -110,7 +110,7 @@ bee.invoice = (function(bee) {
 
 jQuery(document).ready(function($) {
 	// payment bindings
-	$('#invoice_options a.payinvoice').bind('click', function(e) {
+	$('a.pay_invoice').bind('click', function(e) {
 		e.preventDefault();
 		$('#payment_information').show();
 	});

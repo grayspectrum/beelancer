@@ -4,18 +4,18 @@ extends invoice_layout
 block content
 	h1#logo 
 		a(href='//beelancer.com') Beelancer
-	div#invoice_options.navigation.light-gradient
-		ul
-			li
-				a.payinvoice(href='/invoice/pay/#{invoiceId}') Pay Invoice
-	div#invoice_container
+	div.center-pane
+		div.top_options
+			strong.gold-gradient.option_button
+				a.pay_invoice(href='/invoice/pay/#{invoiceId}') Pay Invoice
+		div#invoice_container
 	script(type='application/javascript')
 		| $(function() {
 		|	var id = '#{invoiceId}';
 		|	bee.invoice.get(id);
 		| });
 	div#payment_information
-		form#pay_invoice.light-gradient.animated.fadeInUp
+		form#pay_invoice.center-pane
 			div.group
 				label(for='public_invoice_email')
 					span Email:
