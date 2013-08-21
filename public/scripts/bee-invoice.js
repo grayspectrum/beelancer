@@ -28,6 +28,7 @@ bee.invoice = (function(bee) {
 				var template = Handlebars.compile($('#tmpl-invoice').html())
 				  , view = template(invoice);
 				$('#invoice_container').html(view);
+				$('#invoice_container .top_options').remove();
 				updateInvoiceTimeWorked(invoice.tasks);
 				$('#payment_information').fadeOut();
 				if (invoice.isPaid) $('#invoice_options a.payinvoice').hide();
@@ -38,6 +39,7 @@ bee.invoice = (function(bee) {
 				  , template = Handlebars.compile($('#tmpl-invoice').html())
 				  , view = template(error);
 				$('#invoice_container').html(view);
+				$('#invoice_container .top_options').remove();
 				$('#payment_information').fadeOut();
 				bee.ui.loader.hide();
 			}
