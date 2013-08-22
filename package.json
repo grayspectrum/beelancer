@@ -1,7 +1,7 @@
 {
 	"name": "beelancer",
 	"preferGlobal": "true",
-	"version": "0.7.5",
+	"version": "0.7.6",
 	"private" : true,
 	"author": "Gordon Hall <gordon@gordonwritescode.com>",
 	"description": "social project management for busy bees",

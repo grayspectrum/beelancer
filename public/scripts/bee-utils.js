@@ -42,10 +42,11 @@ bee.utils = (function() {
 					bee.ui.refresh();
 					bee.ui.menu.update();
 					// notify the sytem we are logged in
-					bee.socket.emit('online', {
-						userId : bee.get('profile')._id
-					});
-
+					if (res._id) {
+						bee.socket.emit('online', {
+							userId : res._id
+						});
+					}
 					bee.ui.user.update(res);
 					bee.utils.checkMessages();
 					bee.utils.checkEndorse();
