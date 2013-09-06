@@ -21,11 +21,12 @@
   },
   "keywords": [],
   "dependencies": {
-    "express": "3.0.x",
     "jade": "0.27.x",
     "handlebars": "1.0.7",
     "async": "0.2.9",
-    "socket.io": "~0.9.16"
+    "socket.io": "~0.9.16",
+    "http-proxy": "~0.10.3",
+    "express": "~3.3.8"
   },
   "analyze": false,
   "engines": {
