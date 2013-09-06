@@ -23,6 +23,9 @@ html
 			include ./includes/google-analytics.html
 		//- Application Init
 		script(type='application/javascript', src='/scripts/bee-init.js')
+		script(type='application/javascript')
+			| window.bee.api_url = '#{api_url}';
+		
 		//- Templates
 		include ./includes/templates.html
 	body
