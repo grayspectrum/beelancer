@@ -1,47 +1,34 @@
 {
-	"name": "beelancer",
-	"preferGlobal": "true",
-	"version": "0.7.6",
-	"private" : true,
-	"author": "Gordon Hall <gordon@gordonwritescode.com>",
-	"description": "social project management for busy bees",
-	"contributors": [
-		{
-			"name" : "Chris Williams",
-			"email" : "datzun@gmail.com"
-		}
-	],
-	"scripts": {
-		"start": "node ./app.js",
-		"predeploy": "",
-		"postdeploy": ""
-	},
-	"main": "./app.js",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/gordonwritescode/beelancer.git"
-	},
-	"keywords": [],
-	"dependencies" : {
-		"beelancer-mailer" : "git+ssh://git@github.com:gordonwritescode/beelancer-mailer.git",
-		"gitty"   :  ">=1.1.3",
-		"express" :  "3.0.x",
-		"jade" :  "0.27.x",
-		"mongoose" : "3.4.0",
-		"handlebars" : "1.0.7",
-		"commander" : "1.1.x",
-		"spijs" : "0.3.0",
-		"marked" : "0.2.6",
-		"socket.io" : "0.9.x",
-		"request" : "2.21.x",
-		"balanced-official" : "0.3.x",
-		"async" : "0.2.9"
-	},
-	"analyze": false,
-	"engines": {
-		"node": ">=0.8"
-	},
-	"bin": {
-	    "bee": "./bee.js"
-	  }
+  "name": "beelancer",
+  "version": "0.7.6",
+  "private": true,
+  "author": "Gordon Hall <gordon@gordonwritescode.com>",
+  "description": "social project management for busy bees",
+  "contributors": [
+    {
+      "name": "Chris Williams",
+      "email": "datzun@gmail.com"
+    }
+  ],
+  "main": "./lib/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./lib/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gordonwritescode/beelancer.git"
+  },
+  "keywords": [],
+  "dependencies": {
+    "express": "3.0.x",
+    "jade": "0.27.x",
+    "handlebars": "1.0.7",
+    "async": "0.2.9",
+    "socket.io": "~0.9.16"
+  },
+  "analyze": false,
+  "engines": {
+    "node": ">=0.8"
+  }
 }

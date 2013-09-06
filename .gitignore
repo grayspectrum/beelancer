@@ -3,3 +3,4 @@ node_modules
 public/assets/users/
 .DS_Store
 .idea
+npm-debug.log
