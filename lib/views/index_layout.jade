@@ -1,0 +1,36 @@
+!!! 5
+html
+	head(lang='en-US')
+		title Beelancer | Social Project Management
+		link(rel='stylesheet', type='text/css', href='/styles/animate.min.css')
+		link(rel='stylesheet', type='text/css', href='/styles/beelancer/jquery-ui-1.9.2.custom.min.css')
+		link(rel='stylesheet', type='text/css', href='/styles/jquery-ui-timepicker-addon.css')
+
+		link(rel='stylesheet', type='text/css', href='/styles/fonts.css')
+		link(rel='stylesheet', type='text/css', href='/styles/main.css')
+		link(rel='stylesheet', type='text/css', href='/styles/login.css')
+
+		script(type='application/javascript', src='/socket.io/socket.io.js')
+		script(type='application/javascript', src='/scripts/lib/jquery-1.9.1.js')
+		script(type='application/javascript', src='/scripts/lib/jquery-ui-1.9.2.custom.js')
+		script(type='application/javascript', src='/scripts/lib/jquery-ui-timepicker-addon.js')
+		script(type='application/javascript', src='/scripts/lib/marked.js')
+		if google_analytics
+			include ./includes/google-analytics.html
+		script(type='application/javascript')
+			| localStorage.setItem('api_url', '#{api_url}');
+	body
+		include ./includes/app_views.html
+		div#app
+			include ./includes/header.jade
+			div#main
+				block content
+			include ./includes/footer.jade
+		script(type='application/javascript', src='/scripts/lib/jquery-1.9.1.js')
+		script(type='application/javascript', src='/scripts/lib/handlebars-1.0.0.js')
+		script(type='application/javascript', src='/scripts/lib/ember-1.0.0.js')
+		script(type='application/javascript', src='/scripts/app.js')
+		script(type='application/javascript', src='/scripts/models.js')
+		script(type='application/javascript', src='/scripts/views.js')
+		script(type='application/javascript', src='/scripts/controllers.js')
+		script(type='application/javascript', src='/scripts/router.js')

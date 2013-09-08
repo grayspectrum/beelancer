@@ -13,19 +13,19 @@
 	margin-top: -254px;
 }
 
-.login-form.register {
+.login.register {
 	
 }
 
-.login-form.recover {
+.login.recover {
 	
 }
 
-.login-form.reset {
+.login.reset {
 	
 }
 
-.login-formError,
+.loginError,
 #confirmSuccess {
 	display: none;
 	color: #fff;
@@ -44,7 +44,7 @@
 	-ms-animation-duration: 0.5s;
 }
 
-.login-formError {
+.loginError {
 	border: 1px solid #cf0404;
 }
 
@@ -59,7 +59,6 @@
 	border-radius: 10px;
 	border: 2px solid white;
 	box-shadow: 0 0 24px black;
-	display: none;
 }
 
 .login-form form label {
