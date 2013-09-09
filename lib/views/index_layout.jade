@@ -22,11 +22,11 @@ html
 	body
 		each view in views
 			!= view
-		div#app
-			include ./includes/header.jade
-			div#main
-				block content
-			include ./includes/footer.jade
+		script(type='text/x-handlebars')
+			| {{#if isAuthenticated}}{{view Bee.HeaderView}}{{/if}}
+			| {{outlet}}
+			| {{render footer}}
+		block content
 		script(type='application/javascript', src='/scripts/lib/jquery-1.9.1.js')
 		script(type='application/javascript', src='/scripts/lib/handlebars-1.0.0.js')
 		script(type='application/javascript', src='/scripts/lib/ember-1.0.0.js')

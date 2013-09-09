@@ -46,7 +46,6 @@ html, body {
 	top: 0;
 	width: 100%;
 	left: 0;
-	display: none;
 	z-index: 997;
 	overflow: auto;
 	border-bottom: 1px solid #fff;
@@ -236,7 +235,6 @@ h3.title {
 }
 
 #notifications_badge {
-	display: none;
 	position: absolute;
 	top: 4px;
 	right: 4px;
@@ -367,6 +365,11 @@ h4 {
 	padding-top: 8px;
 }
 
+#user_menu.visible,
+#notifications.visible {
+	display: block;
+}
+
 #user_menu {
 	left: 50%;
 	top: 80px;
@@ -455,11 +458,11 @@ h4 {
 	background: url('/assets/images/mono/white/bug_icon&16.png') left center no-repeat;
 }
 
-li #logout {
+li .logout {
 	background: url('/assets/images/mono/black/on-off_icon&16.png') left center no-repeat;
 }
 
-li:hover #logout {
+li:hover .logout {
 	background: url('/assets/images/mono/white/on-off_icon&16.png') left center no-repeat;
 }
 
@@ -534,7 +537,6 @@ label.hasError input {
 /*	background : url('/assets/images/bg-blue.png') center center repeat #333;
 	box-shadow: inset -2px 0px 6px, inset 2px 0px 6px;
 */	float: left;
-	display: none;
 	z-index: 997;
 	overflow: hidden;
 	padding: 20px 4px;
@@ -566,6 +568,7 @@ label.hasError input {
 
 #menu ul li:hover,
 #menu ul li.active {
+	cursor: pointer;
 	border-radius: 4px;
 	background: url('/assets/images/bg-blue.png') center center repeat #333;;
 }

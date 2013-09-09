@@ -1,0 +1,15 @@
+<script type="text/x-handlebars" data-template-name="notifications">	
+	<div id="notifications" {{bindAttr class='visible:visible'}}>
+		<ul>
+			{{#if notifications.length}}
+				{{#each notifications}}
+					<li class="notification" {{bindAttr class="this.type"}}>
+						{{this.message}}
+					</li>
+				{{/each}}
+			{{else}}
+				<p class="no_projects">No notifications</p>
+			{{/if}}
+		</ul>
+	</div>
+</script>
