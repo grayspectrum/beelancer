@@ -20,7 +20,8 @@ html
 		script(type='application/javascript')
 			| localStorage.setItem('api_url', '#{api_url}');
 	body
-		include ./includes/app_views.html
+		each view in views
+			!= view
 		div#app
 			include ./includes/header.jade
 			div#main

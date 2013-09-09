@@ -1,0 +1,15 @@
+<script type="text/x-handlebars" id="register">
+	<div class="login-form">
+		<h2 id="logo">beelancer</h2>
+		<form id="register-form" class="light-gradient">
+			<label for="register_email">E-mail:</label>
+			<input class="txt" type="email" autofocus id="register_email" placeholder="you@example.com" />
+			<label for="register_password">Password:</label>
+			<input class="txt" type="password" id="register_password" placeholder="password" />
+			<label for="register_password2">Re-type Password:</label>
+			<input class="txt" type="password" id="register_password2" placeholder="password" />
+			<button {{action 'register'}} class="gold-gradient submit">Register Free</button>
+			<p class="sub_text">Already registered? {{#link-to 'login' classNames="action recover"}}Login!{{/link-to}}</p>
+		</form>
+	</div>
+</script>

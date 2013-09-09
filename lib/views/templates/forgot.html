@@ -1,0 +1,13 @@
+<script type="text/x-handlebars" id="forgot">
+	<div class="login-form">
+		<h2 id="logo">beelancer</h2>
+		<form id="forgot-form" class="light-gradient">
+			<label for="auth_email">E-mail:</label>
+			<input class="txt" type="email" id="recover_email" placeholder="you@example.com" />
+			<button {{action 'reset'}} class="gold-gradient submit">Send Recovery Code</button>
+			<p class="sub_text">
+				Remember your password? {{#link-to 'login' classNames='action register'}}Try logging in.{{/link-to}}
+			</p>
+		</form>
+	</div>
+</script>

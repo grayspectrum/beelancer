@@ -27,7 +27,6 @@
 
 .loginError,
 #confirmSuccess {
-	display: none;
 	color: #fff;
 	border-radius: 6px;
 	padding: 12px 24px;

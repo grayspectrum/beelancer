@@ -1,0 +1,27 @@
+<script type="text/x-handlebars" id="login">
+	<div class="login-form">
+		<h2 id="logo">beelancer</h2>
+		<form id="auth" {{action 'login' on='submit'}} class="light-gradient">
+			<label for="auth_email">E-mail:</label>
+			{{input classNames="txt" type="email" value=email id="auth_email" autofocus="autofocus" placeholder="you@example.com"}}
+			<label for="auth_password">Password: </label>
+			{{input classNames="txt" type="password" value=password id="auth_password" placeholder="password"}}
+			<button type="submit" {{bindAttr disabled='isProcessing'}} id="auth_submit" class="gold-gradient submit">Login</button>
+			<p class="sub_text">
+				Not registered? {{#link-to 'register' classNames="action register"}}Click here to sign up!{{/link-to}} 
+			</p>
+			<small class="recover">
+				{{#link-to 'forgot' classNames="action recover"}}Forgot Password?{{/link-to}}
+			</small>
+		</form>
+		{{#if loginFailed}}
+			{{#if loginFailed.validation}}
+				<div class="loginError red-gradient">
+					{{#each loginFailed.errors}}{{msg}}<br />{{/each}}
+				</div>
+			{{else}}
+				<div class="loginError red-gradient">{{loginFailed.errors}}</div>
+			{{/if}}
+		{{/if}}
+	</div>
+</script>
