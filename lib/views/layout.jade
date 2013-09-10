@@ -1,0 +1,35 @@
+!!! 5
+html
+	head(lang='en-US')
+		title Beelancer | Social Project Management
+		link(rel='stylesheet', type='text/css', href='/app/css/animate.min.css')
+		link(rel='stylesheet', type='text/css', href='/app/css/jquery-ui-1.9.2.custom.min.css')
+		link(rel='stylesheet', type='text/css', href='/app/css/jquery-ui-timepicker-addon.css')
+		link(rel='stylesheet', type='text/css', href='/app/css/fonts.css')
+		link(rel='stylesheet', type='text/css', href='/app/css/main.css')
+		link(rel='stylesheet', type='text/css', href='/app/css/login.css')
+		script(type='application/javascript', src='/socket.io/socket.io.js')
+		if google_analytics
+			include ./includes/google-analytics.html
+		script(type='application/javascript')
+			| localStorage.setItem('api_url', '#{api_url}');
+	body
+		each view in views
+			!= view
+		script(type='text/x-handlebars')
+			| {{render header}}
+			| {{outlet}}
+			| {{render footer}}
+		block content
+		script(type='application/javascript', src='/app/vendor/jquery-1.9.1.js')
+		script(type='application/javascript', src='/app/vendor/jquery-ui-1.9.2.custom.js')
+		script(type='application/javascript', src='/app/vendor/jquery-ui-timepicker-addon.js')
+		script(type='application/javascript', src='/app/vendor/marked.js')
+		script(type='application/javascript', src='/app/vendor/handlebars-1.0.0.js')
+		script(type='application/javascript', src='/app/vendor/ember-1.0.0.js')
+		script(type='application/javascript', src='/app/vendor/ember-data.js')
+		script(type='application/javascript', src='/app/lib/app.js')
+		script(type='application/javascript', src='/app/lib/models.js')
+		script(type='application/javascript', src='/app/lib/views.js')
+		script(type='application/javascript', src='/app/lib/controllers.js')
+		script(type='application/javascript', src='/app/lib/router.js')
