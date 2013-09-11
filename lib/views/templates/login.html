@@ -15,13 +15,7 @@
 			</small>
 		</form>
 		{{#if loginFailed}}
-			{{#if loginFailed.validation}}
-				<div class="loginError red-gradient">
-					{{#each loginFailed.errors}}{{msg}}<br />{{/each}}
-				</div>
-			{{else}}
-				<div class="loginError red-gradient">{{loginFailed.errors}}</div>
-			{{/if}}
+			<div class="loginError red-gradient">{{loginFailed.error}}</div>
 		{{/if}}
 	</div>
 </script>

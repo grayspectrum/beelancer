@@ -9,7 +9,7 @@ html
 		link(rel='stylesheet', type='text/css', href='/app/css/main.css')
 		link(rel='stylesheet', type='text/css', href='/app/css/login.css')
 		script(type='application/javascript', src='/socket.io/socket.io.js')
-		script(type='application/javascript', src='/app/vendor/require.js')
+		//- script(type='application/javascript', src='/app/vendor/require.js')
 		if google_analytics
 			include ./includes/google-analytics.html
 		script(type='application/javascript')
@@ -18,7 +18,7 @@ html
 		each view in views
 			!= view
 		script(type='text/x-handlebars')
-			| {{render header}}
+			| {{render 'header' profile}}
 			| {{outlet}}
 			| {{render footer}}
 		block content
