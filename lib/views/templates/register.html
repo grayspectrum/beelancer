@@ -1,15 +1,18 @@
 <script type="text/x-handlebars" id="register">
 	<div class="login-form">
 		<h2 id="logo">beelancer</h2>
-		<form id="register-form" class="light-gradient">
+		<form id="register-form" {{action 'register' on='submit'}} class="light-gradient">
 			<label for="register_email">E-mail:</label>
-			<input class="txt" type="email" autofocus id="register_email" placeholder="you@example.com" />
+			{{input classNames="txt" type="email" autofocus="autofocus" value=email id="auth_password" placeholder="me@example.com"}}
 			<label for="register_password">Password:</label>
-			<input class="txt" type="password" id="register_password" placeholder="password" />
+			{{input classNames="txt" type="password" value=password id="register_password" placeholder="password"}}
 			<label for="register_password2">Re-type Password:</label>
-			<input class="txt" type="password" id="register_password2" placeholder="password" />
-			<button {{action 'register'}} class="gold-gradient submit">Register Free</button>
+			{{input classNames="txt" type="password" value=password2 id="register_password2" placeholder="password"}}
+			<button type="submit" {{bindAttr disabled='isProcessing'}} class="gold-gradient submit">Register Free</button>
 			<p class="sub_text">Already registered? {{#link-to 'login' classNames="action recover"}}Login!{{/link-to}}</p>
 		</form>
+		{{#if registerFailed}}
+			<div class="loginError red-gradient">{{registerFailed.error}}</div>
+		{{/if}}
 	</div>
 </script>

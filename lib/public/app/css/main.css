@@ -78,6 +78,14 @@ h1.logo {
 	position: relative;
 }
 
+h1.logo.no-profile {
+	width: 208px;
+}
+
+h1.logo.no-profile a {
+	width: 208px !important;
+}
+
 h1.logo:hover {
 	background: #fff;
 	cursor: pointer;

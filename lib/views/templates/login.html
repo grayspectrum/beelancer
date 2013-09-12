@@ -16,6 +16,10 @@
 		</form>
 		{{#if loginFailed}}
 			<div class="loginError red-gradient">{{loginFailed.error}}</div>
+		{{else}}
+			{{#if confirmSuccess}}
+				<div id="confirmSuccess" class="green-gradient">{{confirmSuccess}}</div>
+			{{/if}}
 		{{/if}}
 	</div>
 </script>

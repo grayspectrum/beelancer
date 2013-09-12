@@ -2,42 +2,44 @@
 	{{#if Bee.Auth.signedIn}}
 		<div id="header">
 			<div class="container">
-				<h1 class="logo">
+				<h1 {{bindAttr class="newUser:no-profile :logo"}}>
 					<a {{action 'toggleNotifications'}}>Beelancer</a>
 					{{#if notifications.length}}
 						<span id="notifications_badge">0</span>
 					{{/if}}
 				</h1>
-				<div id="menu">
-					<ul>
-						{{#link-to 'projects' classNames='projects' tagName='li' href=false}}
-							<a {{bindAttr href='view.href'}}>Projects</a>
-						{{/link-to}}
-						{{#link-to 'tasks' classNames='tasks' tagName='li' href=false}}
-							<a {{bindAttr href='view.href'}}>Tasks</a>
-						{{/link-to}}
-						{{#link-to 'team' classNames='team' tagName='li' href=false}}
-							<a {{bindAttr href='view.href'}}>Team</a>
-						{{/link-to}}
-						{{#link-to 'messages' classNames='messages' tagName='li' href=false}}
-							<a {{bindAttr href='view.href'}}>Messages</a>
-						{{/link-to}}
-						{{#link-to 'jobs' classNames='jobs' tagName='li' href=false}}
-							<a {{bindAttr href='view.href'}}>Jobs</a>
-						{{/link-to}}
-						{{#link-to 'invoices' classNames='invoice' tagName='li' href=false}}
-							<a {{bindAttr href='view.href'}}>Invoices</a>
-						{{/link-to}}
-					</ul>
-				</div>
-				<div id="user">
-					<div id="welcome">
-						<span {{action 'toggleUserMenu'}} class="user">
-						<strong>{{profile.firstName}} {{profile.lastName}}</strong>
-						<img {{bindAttr src='profile.avatarPath'}} width="28" height="28" />
-						</span>
+				{{#if profile.firstName}}
+					<div id="menu">
+						<ul>
+							{{#link-to 'projects' classNames='projects' tagName='li' href=false}}
+								<a {{bindAttr href='view.href'}}>Projects</a>
+							{{/link-to}}
+							{{#link-to 'tasks' classNames='tasks' tagName='li' href=false}}
+								<a {{bindAttr href='view.href'}}>Tasks</a>
+							{{/link-to}}
+							{{#link-to 'team' classNames='team' tagName='li' href=false}}
+								<a {{bindAttr href='view.href'}}>Team</a>
+							{{/link-to}}
+							{{#link-to 'messages' classNames='messages' tagName='li' href=false}}
+								<a {{bindAttr href='view.href'}}>Messages</a>
+							{{/link-to}}
+							{{#link-to 'jobs' classNames='jobs' tagName='li' href=false}}
+								<a {{bindAttr href='view.href'}}>Jobs</a>
+							{{/link-to}}
+							{{#link-to 'invoices' classNames='invoice' tagName='li' href=false}}
+								<a {{bindAttr href='view.href'}}>Invoices</a>
+							{{/link-to}}
+						</ul>
 					</div>
-				</div>
+					<div id="user">
+						<div id="welcome">
+							<span {{action 'toggleUserMenu'}} class="user">
+							<strong>{{profile.firstName}} {{profile.lastName}}</strong>
+							<img {{bindAttr src='profile.avatarPath'}} width="28" height="28" />
+							</span>
+						</div>
+					</div>
+				{{/if}}
 			</div>
 		</div>
 		{{view Bee.MenuView}}
