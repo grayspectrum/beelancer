@@ -42,7 +42,7 @@
 				{{/if}}
 			</div>
 		</div>
-		{{view Bee.MenuView}}
-		{{view Bee.NotificationsView}}
+		{{view Bee.MenuView isVisibleBinding="menuVisible"}}
+		{{view Bee.NotificationsView isVisibleBinding="notificationsVisible"}}
 	{{/if}}
 </script>

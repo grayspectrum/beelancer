@@ -8,6 +8,8 @@ html
 		link(rel='stylesheet', type='text/css', href='/app/css/fonts.css')
 		link(rel='stylesheet', type='text/css', href='/app/css/main.css')
 		link(rel='stylesheet', type='text/css', href='/app/css/login.css')
+		link(rel='stylesheet', type='text/css', href='/app/css/account.css')
+		link(rel='stylesheet', type='text/css', href='/app/css/projects.css')
 		script(type='application/javascript', src='/socket.io/socket.io.js')
 		//- script(type='application/javascript', src='/app/vendor/require.js')
 		if google_analytics
@@ -18,9 +20,10 @@ html
 		each view in views
 			!= view
 		script(type='text/x-handlebars')
-			| {{render 'header' profile}}
-			| {{outlet}}
-			| {{render footer}}
+			div#app
+				| {{render 'header' profile}}
+				| {{outlet}}
+				| {{render footer}}
 		block content
 		script(type='application/javascript', src='/app/vendor/jquery-1.9.1.js')
 		script(type='application/javascript', src='/app/vendor/jquery-ui-1.9.2.custom.js')

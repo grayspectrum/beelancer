@@ -1,12 +1,12 @@
 <script type="text/x-handlebars" data-template-name="menu">	
 	<div id="user_menu" {{bindAttr class='visible:visible'}}>
 		<ul>
-			<li>{{#link-to 'team.view' profile classNames="profile"}}My Profile{{/link-to}}</li>
+			<li>{{#link-to 'team.view' profile._id classNames="profile"}}My Profile{{/link-to}}</li>
 			<li>{{#link-to 'settings' classNames="settings"}}Account Settings{{/link-to}}</li>
 			<li>
 				<a class="report" href="https://github.com/gordonwritescode/beelancer-issues/issues" target="_blank">Report Issue</a>
 			</li>
-			<li>{{#link-to 'logout' classNames="logout last"}}Logout{{/link-to}}</li>
+			<li class="last">{{#link-to 'logout' classNames="logout"}}Logout{{/link-to}}</li>
 		</ul>
 	</div>
 </script>

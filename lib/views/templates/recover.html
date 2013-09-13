@@ -3,11 +3,11 @@
 		<h2 id="logo">beelancer</h2>
 		<form id="recover-form" {{action 'recover' on='submit'}} class="light-gradient">
 			<label for="recovery_key">Recovery Key:</label>
-			<input class="txt" type="text" id="recovery_key" autofocus />
+			{{input classNames="txt" type="text" value=recoveryKey autofocus="autofocus" id="recover_key"}}
 			<label for="reset_password">New Password:</label>
-			<input class="txt" type="password" id="reset_password" placeholder="password" />
+			{{input classNames="txt" type="password" value=password id="recover_password" placeholder="password"}}
 			<label for="reset_password2">Re-type Password:</label>
-			<input class="txt" type="password" id="reset_password2" placeholder="password" />
+			{{input classNames="txt" type="password" value=password2 id="recover_password2" placeholder="password"}}
 			<button type="submit" {{bindAttr disabled='isProcessing'}} class="gold-gradient submit">Recover Account</button>
 		</form>
 		{{#if recoverFailed}}

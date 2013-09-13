@@ -1,0 +1,427 @@
+/*
+ * beelancer - new_profile.css
+ * Author: Gordon Hall
+ */
+
+#new_profile {
+	width: 606px;
+	margin-top: 96px;
+	margin-bottom: 24px;
+}
+
+strong.welcome {
+	display: block;
+	font-size: 20px;
+	margin: 0 0 12px 0;
+}
+
+#new_profile h2 {
+	text-align: center;
+	font-size: 36px;
+	margin: 12px;
+	text-shadow: 0 1px 0 white;
+	color: #001D28;
+}
+
+#account {
+	padding-top: 12px;
+}
+
+#account.new_profile .col3 {
+	display: none;
+}
+
+#account.new_profile .two3rds {
+	border: none;
+}
+
+#account.new_profile .two3rds {
+	border-left: 1px solid #e2e2e2;
+	border: none;
+	margin: auto;
+	float: none;
+}
+
+#account.new_profile .two3rds h4 {
+	border-left: 1px solid #e2e2e2;
+}
+
+.acceptTerms {
+	display: block;
+	margin: 0 24px 24px 24px;
+	padding: 6px 12px;
+	background: white;
+	border-radius: 18px;
+	border: 1px solid #DDD;
+}
+
+#account_nav {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#account_nav li a {
+	display: block;
+	font-size: 14px;
+	font-weight: normal;
+	text-decoration: none;
+	padding: 12px 6px 12px 42px;
+	border-bottom: 1px solid #F1F1F1;
+	color: #333;
+}
+
+#account .two3rds {
+	border-left: 1px solid #e2e2e2;
+}
+
+#account .two3rds > div {
+	display: none;
+}
+
+#account_nav li a:hover,
+#account_nav li a.current {
+	background-color: rgba(255, 207, 47, 0.2);
+}
+
+#account_nav .edit_profile {
+	background: url('/assets/images/mono/black/user_icon&16.png') 12px center no-repeat;
+}
+
+#account_nav .edit_endorsements {
+	background: url('/assets/images/mono/black/cert_icon&16.png') 12px center no-repeat;
+}
+
+#account_nav .edit_payments {
+	background: url('/assets/images/mono/black/wallet_icon&16.png') 12px center no-repeat;
+}
+
+#account_nav .edit_password {
+	background: url('/assets/images/mono/black/lock_open_icon&16.png') 12px center no-repeat;
+}
+
+.np_submit_wrapper {
+	border-radius: 6px;
+	margin: 24px auto;
+	width: 154px;
+}
+
+#authorize_aws {
+	display: none;
+}
+
+#np_submit,
+#recover_account,
+#authorize_aws,
+#unauthorize_aws {
+	display: block;
+	width: 100%;
+	font-size: 14px;
+	font-family: Raleway;
+	font-weight: bold;
+	text-shadow: 0 1px 0 #FFC60B;
+	text-align: left;
+	text-indent: 24px;
+	padding: 12px;
+	border-radius: 2px;
+	border: 1px solid #FFC60B;
+}
+
+.aws_account_status {
+	margin: 12px 24px;
+	padding: 6px 12px 6px 42px;
+	background: background: url('/assets/images/icons/networking.png') 12px center no-repeat rgba(51, 102, 255, 0.4);
+	border-radius: 4px;
+	border: 1px solid rgb(51, 102, 255);
+}
+
+.aws_account_status strong {
+	
+}
+
+.aws_account_status em {
+	
+}
+
+.aws_account_status.authorized {
+	background: url('/assets/images/icons/check.png') 12px center no-repeat rgba(0, 204, 0, 0.4);
+	border: 1px solid rgb(0, 204, 0);
+}
+
+.aws_account_status.not_authorized {
+	background: url('/assets/images/icons/busy.png') 12px center no-repeat rgba(255, 51, 0, 0.4);
+	border: 1px solid rgb(255, 51, 0);
+}
+
+#np_submit {
+	background: url('/assets/images/mono/black/contact_card_icon&16.png') 12px center no-repeat;
+}
+
+#recover_account {
+	background: url('/assets/images/mono/black/padlock_closed_icon&16.png') 12px center no-repeat;
+}
+
+#authorize_aws {
+	background: url('/assets/images/mono/black/key_icon&16.png') 12px center no-repeat;
+}
+
+#unauthorize_aws {
+	background: url('/assets/images/mono/black/undo_icon&16.png') 12px center no-repeat;
+}
+
+#unauthorize_aws:hover {
+	background: url('/assets/images/mono/black/undo_icon&16.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+#np_submit:hover {
+	background: url('/assets/images/mono/black/contact_card_icon&16.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+#recover_account:hover {
+	background: url('/assets/images/mono/black/padlock_closed_icon&16.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+#authorize_aws:hover {
+	background: url('/assets/images/mono/black/key_icon&16.png') 12px center no-repeat #FFC60B;
+	cursor: pointer;
+}
+
+#endorsement_section .endorsements {
+	border-color: #E2A809 !important;
+	box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+	background-color: #fff;
+	overflow: auto;
+	margin: 12px 24px;
+	padding: 12px;
+	border: 1px solid #E2E2E2;
+	border-radius: 3px;
+}
+
+#endorsement_section .ratings {
+	clear: both;
+}
+
+#endorsement_section ul#endorsement_list {
+	overflow: auto;
+}
+
+#endorsement_section ul {
+	clear: both;
+	padding: 0 10px;
+}
+
+#endorsement_section ul.stars {
+	text-align: center;
+	clear: both;
+	margin: 0;
+	padding-top: 10px;
+}
+
+#endorsement_section ul.stars.left {
+	float: left;
+}
+
+#endorsement_section li.endorse {
+	border: 1px solid #e2e2e2;
+	background: #fff;
+	margin: 3px 0;
+	border-radius: 2px;
+    float: left;
+    width: 96%;
+    clear: both;
+    padding: 0px 10px;
+}
+
+#endorsement_section li.endorse.needsAction {
+	background: #FFEFC6;
+}
+
+#endorsement_section li.endorse:hover {
+	cursor: pointer;
+	background: #e2e2e2;
+	border: 1px solid #d2d2d2;
+}
+
+#endorsement_section li.shown:hover {
+	cursor: default;
+	background: #fff;
+}
+
+#endorsement_section li.endorse.needsAction .msg_from {
+	/*background: none;*/
+}
+
+#endorsement_section li.endorse p {
+	font-size: 14px;
+	margin: 0 12px 12px 12px;
+	height: 100%;
+}
+
+#endorsement_section li.endorse .view_endorse {
+	cursor: pointer;
+	float: right;
+	margin-top: 12px;
+	padding: 3px 12px;
+	font-size: 14px;
+}
+
+#endorsement_section li.endorse .rating_content {
+	display: none;
+	overflow: auto;
+}
+
+#endorsement_section li.endorse span.left {
+	float: left;
+}
+
+#endorsement_section li.endorse span.right {
+	float: right;
+	padding: 0 20px 0 0;
+	margin-top: 8px;
+}
+
+#endorsement_section li.endorse span.right .hide {
+	display: none;
+}
+
+#endorsement_section ul.stars li {
+	background: url('/assets/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat;
+	display: inline-block;
+	height: 24px;
+	padding: 10px;
+	width: 24px;
+}
+
+#endorsement_section ul.stars li.marked {
+	background: url('/assets/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat;
+}
+
+#endorsement_section .msg_from {
+	overflow: hidden;
+}
+
+#endorsement_section .msg_from img {
+	margin: 12px;
+	float: left;
+}
+
+#endorsement_section .msg_from span {
+	font-weight: bold;
+	margin-top: 12px;
+	display: block;
+	width: 80%;
+}
+
+.hideBtn,
+.showBtn {
+	background-color: #f1f1f1;
+	background-position: 6px center;
+	background-repeat: no-repeat;
+	padding: 4px 8px 4px 30px;
+	border: 1px solid #d2d2d2;
+	border-radius: 3px;
+	box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+.hideBtn {
+	background-image: url('/assets/images/mono/black/invisible_light_icon&16.png');
+}
+
+.showBtn {
+	background-image: url('/assets/images/mono/black/eye_icon&16.png');
+}
+
+.hideBtn:hover,
+.showBtn:hover {
+	background-color: #e2e2e2;
+	cursor: pointer;
+}
+
+.payment_method button.save,
+.payment-method-new {
+	display: none;
+}
+
+.payment-account {
+	
+}
+
+.payment_account_status {
+	margin: 24px;
+}
+
+.payment_account_status .hint {
+	margin: 8px 24px;
+}
+
+.payment_account_status .payment_method {
+	background: #fff;
+	border: 1px solid #e2e2e2;
+	margin-bottom: 12px;
+}
+
+.payment_account_status .status.exists-true {
+	
+}
+
+.payment_account_status .status.exists-false {
+	
+}
+
+.payment_account_status .status {
+	padding: 6px 12px;
+	font-size: 14px;
+	margin: 0;
+	overflow: hidden;
+}
+
+.payment_account_status .status strong {
+	display: inline-block;
+	margin-top: 4px;
+}
+
+.payment_account_status .status em {
+	display: inline-block;
+	margin-top: 4px;
+}
+
+.payment_account_status .status button {
+	float: right;
+}
+
+.payment_account_status .status button.update {
+	
+}
+
+.payment_account_status .status button.save {
+	
+}
+
+.payment_account_status .status button.remove {
+	
+}
+
+.payment-method-new {
+	margin: 12px;
+	background: #f1f1f1;
+	border: 1px solid #e2e2e2;
+}
+
+.payment-method-new .group input {
+	width: 170px;
+}
+
+.payment-method-new .group select{
+	width: 192px;
+}
+
+.payment_method button {
+	
+}
+
+.payment_method button:hover {
+	
+}

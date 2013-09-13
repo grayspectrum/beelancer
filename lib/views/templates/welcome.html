@@ -1,3 +1,78 @@
 <script type="text/x-handlebars" data-template-name="welcome">
-	
+	<div id="new_profile" class="center-pane">
+		<p class="desc welcome">
+			<strong class="cute welcome">Welcome!</strong>
+			Before you can get started, we need to set up your profile. Once your profile has been saved, you can start 
+			taking advantage of everything Beelancer has to offer! You can always come back and edit your profile by 
+			visiting your <strong>Account Settings</strong>. We hope you enjoy using Beelancer!
+		</p>
+		<form id="create_profile" {{action 'createProfile' on='submit'}}>
+			<h4>Personal</h4>
+			<div class="group">
+				<label for="np_firstName">
+					<span>First Name: </span>
+					{{input type="text" value=firstName}}
+				</label>
+				<label for="np_lastName">
+					<span>Last Name: </span>
+					{{input type="text" value=lastName}}
+				</label>
+				<label for="np_company">
+					<span>Company: <small>(optional)</small> </span>
+					{{input type="text" value=company}}
+				</label>
+				<label for="np_jobTitle">
+					<span>Title: </span>
+					{{input type="text" value=title}}
+				</label>
+			</div>
+			<h4>Professional</h4>
+			<p class="hint">This is the place to put a short blurb about yourself or try to wow potential clients with some of your experience.</p>
+			<label class="full_block" for="np_about">
+				<span>About Me: <small>(optional)</small></span>
+				{{textarea id="np_about" type="text" value=about maxlength="500"}}
+			</label>
+			<!--
+			<h4>Privacy</h4>
+			<div class="full_block">
+				<label class="big_radio" for="np_privacy0">
+					<input id="np_privacy0" type="radio" name="privacy" value="0" /> Publicly Viewable
+					<p>
+						Anyone with your profile URL can view your profile. 
+						This option is best suited for freelancers looking to get as much exposure as possible.
+					</p>
+				</label>
+				<label class="big_radio" for="np_privacy1">
+					<input id="np_privacy1" type="radio" name="privacy" value="1" /> Internally Viewable
+					<p>
+						Only Beelancer users can view your profile. 
+						This option is best suited for project managers who are looking to hire contractors.
+					</p>
+				</label>
+				<label class="big_radio" for="np_privacy2">
+					<input id="np_privacy2" type="radio" name="privacy" value="2" /> Privately Viewable
+					<p>
+						Only your accepted team members can view your profile. 
+						This option is best suited for users who are tracking their business or small team.
+					</p>
+				</label>
+			</div>
+			-->
+			<h4 class="welcome">Terms and Conditions</h4>
+			<p class="hint welcome">
+				Beelancer respects you and your privacy and will not share or sell any of your personal data. 
+				However, the information you choose to make public is your responsibility. Please read and accept our 
+				{{#link-to 'terms'}}terms and conditions{{/link-to}}.
+			</p>
+			<label class="acceptTerms welcome">
+				{{input type="checkbox" id="iAccept" checked=terms }} I understand and accept the Terms and Conditions.
+			</label>
+			<div class="np_submit_wrapper gold-gradient">
+				<button type="submit" id="np_submit" {{bindAttr disabled='isProcessing'}}>Update Profile</button>
+			</div>
+		</form>
+		{{#if createFailed}}
+			<div class="loginError red-gradient">{{createFailed.error}}</div>
+		{{/if}}
+	</div>
 </script>

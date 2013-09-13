@@ -1,3 +1,33 @@
 <script type="text/x-handlebars" id="projects">
-	Projects!
+	<h2 class="panel_title projects">Projects</h2>
+	<div id="projects_list" class="center-pane">
+		<div class="top_options">
+			<div class="project_filter">
+				<strong>Viewing: </strong>
+				<select id="project_filter">
+					<option value="active" selected="selected">Active Projects</option>
+					<option value="closed">Closed Projects</option>
+				</select>
+			</div>
+			<strong class="gold-gradient option_button">
+				<a href="/#!/projects?newProject=true" class="new_project">Create Project</a>
+			</strong>
+		</div>
+		<div class="col2">
+			<div class="col-header owned light-gradient">
+				<h3>Owned By You</h3>
+			</div>
+			<div id="projects_owned_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+		<div class="col2">
+			<div class="col-header participating light-gradient">
+				<h3>Participating In</h3>
+			</div>
+			<div id="projects_participating_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+	</div>
 </script>
