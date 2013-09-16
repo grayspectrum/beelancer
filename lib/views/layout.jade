@@ -17,8 +17,8 @@ html
 		script(type='application/javascript')
 			| localStorage.setItem('api_url', '#{api_url}');
 	body
-		each view in views
-			!= view
+		each template in templates
+			!= template
 		script(type='text/x-handlebars')
 			div#app
 				| {{render 'header' profile}}
@@ -34,7 +34,10 @@ html
 		script(type='application/javascript', src='/app/vendor/ember-data.js')
 		script(type='application/javascript', src='/app/vendor/ember-auth.js')
 		script(type='application/javascript', src='/app/lib/app.js')
-		script(type='application/javascript', src='/app/lib/models.js')
-		script(type='application/javascript', src='/app/lib/views.js')
-		script(type='application/javascript', src='/app/lib/controllers.js')
+		each model in models
+			script(type='application/javascript', src='#{model}')
+		each view in views
+			script(type='application/javascript', src='#{view}')
+		each controller in controllers
+			script(type='application/javascript', src='#{controller}')
 		script(type='application/javascript', src='/app/lib/router.js')

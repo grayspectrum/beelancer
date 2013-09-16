@@ -50,9 +50,10 @@ strong.welcome {
 	display: block;
 	margin: 0 24px 24px 24px;
 	padding: 6px 12px;
-	background: white;
-	border-radius: 18px;
+	background: #FFF;
+	border-radius: 4px;
 	border: 1px solid #DDD;
+	background: #F9F9F9;
 }
 
 #account_nav {
