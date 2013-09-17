@@ -17,9 +17,9 @@
 				<h3>Owned By You</h3>
 			</div>
 			<div id="projects_owned_list">
-			{{#if owned.length}}
+			{{#if visible.owned.length}}
 				<ul>
-					{{#each owned}}{{view Bee.ProjectListView}}{{/each}}
+					{{#each visible.owned}}{{view Bee.ProjectListView}}{{/each}}
 				</ul>
 			{{else}}
 				<p class="no_projects"><em>None</em></p>
@@ -31,9 +31,9 @@
 				<h3>Participating In</h3>
 			</div>
 			<div id="projects_participating_list">
-				{{#if participating.length}}
+				{{#if visible.participating.length}}
 					<ul>
-						{{#each participating}}{{view Bee.ProjectListView}}{{/each}}
+						{{#each visible.participating}}{{view Bee.ProjectListView}}{{/each}}
 					</ul>
 				{{else}}
 					<p class="no_projects"><em>None</em></p>
