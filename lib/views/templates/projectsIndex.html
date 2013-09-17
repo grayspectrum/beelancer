@@ -1,0 +1,44 @@
+<script type="text/x-handlebars" id="projects/index">
+	<div id="projects_list" class="center-pane">
+		<div class="top_options">
+			<div class="project_filter">
+				<strong>Viewing: </strong>
+			    <select {{action 'filter' on='change'}}>
+			    	<option value="active" selected="selected">Active Projects</option>
+			    	<option value="closed">Closed Projects</option>
+			    </select>
+			</div>
+			<strong class="gold-gradient option_button">
+				{{#link-to 'projects.create' classNames="new_project"}}Create Project{{/link-to}}
+			</strong>
+		</div>
+		<div class="col2">
+			<div class="col-header owned light-gradient">
+				<h3>Owned By You</h3>
+			</div>
+			<div id="projects_owned_list">
+			{{#if owned.length}}
+				<ul>
+					{{#each owned}}{{view Bee.ProjectListView}}{{/each}}
+				</ul>
+			{{else}}
+				<p class="no_projects"><em>None</em></p>
+			{{/if}}
+			</div>
+		</div>
+		<div class="col2">
+			<div class="col-header participating light-gradient">
+				<h3>Participating In</h3>
+			</div>
+			<div id="projects_participating_list">
+				{{#if participating.length}}
+					<ul>
+						{{#each participating}}{{view Bee.ProjectListView}}{{/each}}
+					</ul>
+				{{else}}
+					<p class="no_projects"><em>None</em></p>
+				{{/if}}
+			</div>
+		</div>
+	</div>
+</script>

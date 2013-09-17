@@ -1,0 +1,12 @@
+<script type="text/x-handlebars" data-template-name="projects-list">
+	<li>
+		{{#link-to 'projects.view' this._id}}
+			<strong>{{title}}</strong>
+			<span class="project_due">{{deadline this}}</span>
+			<em class="percent_bar">
+				<em class="progress" style="width:{{unbound percentComplete this}}%"></em>
+				<span class="percent">{{percentComplete this}}% Complete</span>
+			</em>
+		{{/link-to}}
+	</li>
+</script>

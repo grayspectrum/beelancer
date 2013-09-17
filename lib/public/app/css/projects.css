@@ -130,7 +130,7 @@
 	margin: 4px 12px 0 0;
 }
 
-#project_filter {
+.project_filter select {
 	padding: 4px 12px;
 	font-size: 14px;
 	background: #fff;
