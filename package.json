@@ -27,7 +27,8 @@
     "socket.io": "~0.9.16",
     "express": "~3.3.8",
     "ember-precompile": "~0.2.2",
-    "hbs": "~2.3.1"
+    "hbs": "~2.3.1",
+    "browserify": "~2.32.2"
   },
   "analyze": false,
   "engines": {
