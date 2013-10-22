@@ -86,19 +86,19 @@ strong.welcome {
 }
 
 #account_nav .edit_profile {
-	background: url('/assets/images/mono/black/user_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/user_icon&16.png') 12px center no-repeat;
 }
 
 #account_nav .edit_endorsements {
-	background: url('/assets/images/mono/black/cert_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/cert_icon&16.png') 12px center no-repeat;
 }
 
 #account_nav .edit_payments {
-	background: url('/assets/images/mono/black/wallet_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/wallet_icon&16.png') 12px center no-repeat;
 }
 
 #account_nav .edit_password {
-	background: url('/assets/images/mono/black/lock_open_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/lock_open_icon&16.png') 12px center no-repeat;
 }
 
 .np_submit_wrapper {
@@ -131,7 +131,7 @@ strong.welcome {
 .aws_account_status {
 	margin: 12px 24px;
 	padding: 6px 12px 6px 42px;
-	background: background: url('/assets/images/icons/networking.png') 12px center no-repeat rgba(51, 102, 255, 0.4);
+	background: background: url('/static/images/icons/networking.png') 12px center no-repeat rgba(51, 102, 255, 0.4);
 	border-radius: 4px;
 	border: 1px solid rgb(51, 102, 255);
 }
@@ -145,48 +145,48 @@ strong.welcome {
 }
 
 .aws_account_status.authorized {
-	background: url('/assets/images/icons/check.png') 12px center no-repeat rgba(0, 204, 0, 0.4);
+	background: url('/static/images/icons/check.png') 12px center no-repeat rgba(0, 204, 0, 0.4);
 	border: 1px solid rgb(0, 204, 0);
 }
 
 .aws_account_status.not_authorized {
-	background: url('/assets/images/icons/busy.png') 12px center no-repeat rgba(255, 51, 0, 0.4);
+	background: url('/static/images/icons/busy.png') 12px center no-repeat rgba(255, 51, 0, 0.4);
 	border: 1px solid rgb(255, 51, 0);
 }
 
 #np_submit {
-	background: url('/assets/images/mono/black/contact_card_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/contact_card_icon&16.png') 12px center no-repeat;
 }
 
 #recover_account {
-	background: url('/assets/images/mono/black/padlock_closed_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/padlock_closed_icon&16.png') 12px center no-repeat;
 }
 
 #authorize_aws {
-	background: url('/assets/images/mono/black/key_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/key_icon&16.png') 12px center no-repeat;
 }
 
 #unauthorize_aws {
-	background: url('/assets/images/mono/black/undo_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/undo_icon&16.png') 12px center no-repeat;
 }
 
 #unauthorize_aws:hover {
-	background: url('/assets/images/mono/black/undo_icon&16.png') 12px center no-repeat #FFC60B;
+	background: url('/static/images/mono/black/undo_icon&16.png') 12px center no-repeat #FFC60B;
 	cursor: pointer;
 }
 
 #np_submit:hover {
-	background: url('/assets/images/mono/black/contact_card_icon&16.png') 12px center no-repeat #FFC60B;
+	background: url('/static/images/mono/black/contact_card_icon&16.png') 12px center no-repeat #FFC60B;
 	cursor: pointer;
 }
 
 #recover_account:hover {
-	background: url('/assets/images/mono/black/padlock_closed_icon&16.png') 12px center no-repeat #FFC60B;
+	background: url('/static/images/mono/black/padlock_closed_icon&16.png') 12px center no-repeat #FFC60B;
 	cursor: pointer;
 }
 
 #authorize_aws:hover {
-	background: url('/assets/images/mono/black/key_icon&16.png') 12px center no-repeat #FFC60B;
+	background: url('/static/images/mono/black/key_icon&16.png') 12px center no-repeat #FFC60B;
 	cursor: pointer;
 }
 
@@ -289,7 +289,7 @@ strong.welcome {
 }
 
 #endorsement_section ul.stars li {
-	background: url('/assets/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat;
+	background: url('/static/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat;
 	display: inline-block;
 	height: 24px;
 	padding: 10px;
@@ -297,7 +297,7 @@ strong.welcome {
 }
 
 #endorsement_section ul.stars li.marked {
-	background: url('/assets/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat;
+	background: url('/static/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat;
 }
 
 #endorsement_section .msg_from {
@@ -328,11 +328,11 @@ strong.welcome {
 }
 
 .hideBtn {
-	background-image: url('/assets/images/mono/black/invisible_light_icon&16.png');
+	background-image: url('/static/images/mono/black/invisible_light_icon&16.png');
 }
 
 .showBtn {
-	background-image: url('/assets/images/mono/black/eye_icon&16.png');
+	background-image: url('/static/images/mono/black/eye_icon&16.png');
 }
 
 .hideBtn:hover,

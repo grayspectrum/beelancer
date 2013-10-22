@@ -9,7 +9,7 @@ html, body {
 	margin: 0;
 	padding: 0;
 	background-color: #f1f1f1;
-	background : url('/assets/images/bg-blue.png') center center repeat #333;
+	background : url('/static/images/bg-blue.png') center center repeat #333;
 	font-family: OpenSans, Helvetica, sans-serif;
 }
 
@@ -25,7 +25,7 @@ html, body {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: url('/assets/images/loader.gif') center center no-repeat rgba(0,0,0,0.3);
+	background: url('/static/images/loader.gif') center center no-repeat rgba(0,0,0,0.3);
 	background-size: 50px;
 	z-index: 9999;
 }
@@ -65,7 +65,7 @@ html, body {
 	width: 48px;
 	height: 48px;
 	margin: 12px auto;
-	background: url('/assets/images/loader2.gif') center center no-repeat;
+	background: url('/static/images/loader2.gif') center center no-repeat;
 	background-size: 48px;
 }
 
@@ -102,7 +102,7 @@ h1.logo.no-profile:hover {
 
 h1.logo a {
 	display: block;
-	background: url('/assets/images/beelancer-logo-white-bg.png') left center no-repeat;
+	background: url('/static/images/beelancer-logo-white-bg.png') left center no-repeat;
 	height: 62px;
 	width: 40px;
 	margin: auto;
@@ -118,31 +118,31 @@ h2.panel_title {
 }
 
 h2.panel_title.tasks {
-	background: url('/assets/images/mono/white/clock_icon&32.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/clock_icon&32.png') 12px center no-repeat;
 }
 
 h2.panel_title.projects {
-	background: url('/assets/images/mono/white/notepad_2_icon&32.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/notepad_2_icon&32.png') 12px center no-repeat;
 }
 
 h2.panel_title.team {
-	background: url('/assets/images/mono/white/users_icon&32.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/users_icon&32.png') 12px center no-repeat;
 }
 
 h2.panel_title.messages {
-	background: url('/assets/images/mono/white/spechbubble_2_icon&32.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/spechbubble_2_icon&32.png') 12px center no-repeat;
 }
 
 h2.panel_title.invoices {
-	background: url('/assets/images/mono/white/money_icon&32.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/money_icon&32.png') 12px center no-repeat;
 }
 
 h2.panel_title.account {
-	background: url('/assets/images/mono/white/cogs_icon&32.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/cogs_icon&32.png') 12px center no-repeat;
 }
 
 h2.panel_title.jobs {
-	background: url('/assets/images/mono/white/case_icon&32.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/case_icon&32.png') 12px center no-repeat;
 }
 
 .two3rds {
@@ -221,11 +221,11 @@ h3.title {
 }
 
 .squarebutton.addnew {
-	background-image: url('/assets/images/mono/black/round_plus_icon&16.png');
+	background-image: url('/static/images/mono/black/round_plus_icon&16.png');
 }
 
 .squarebutton.viewdetails {
-	background-image: url('/assets/images/mono/black/expand_icon&16.png');	
+	background-image: url('/static/images/mono/black/expand_icon&16.png');	
 }
 
 .option_button {
@@ -296,23 +296,23 @@ h3 > span {
 }
 
 h3 span.user {
-	background: url('/assets/images/mono/black/user_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/user_icon&16.png') 12px center no-repeat;
 }
 
 h3 span.users {
-	background: url('/assets/images/mono/black/users_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/users_icon&16.png') 12px center no-repeat;
 }
 
 h3 span.inbox {
-	background: url('/assets/images/mono/black/inbox_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/inbox_icon&16.png') 12px center no-repeat;
 }
 
 h3 span.worklog {
-	background: url('/assets/images/mono/black/stop_watch_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/stop_watch_icon&16.png') 12px center no-repeat;
 }
 
 h3 span.project {
-	background: url('/assets/images/mono/black/notepad_2_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/notepad_2_icon&16.png') 12px center no-repeat;
 }
 
 h4 {
@@ -334,7 +334,7 @@ h4 {
 }
 
 .rollout {
-	background: url('/assets/images/rollout-top.png') top left repeat-x #fff !important;
+	background: url('/static/images/rollout-top.png') top left repeat-x #fff !important;
 	border-top: none !important;
 }
 
@@ -371,7 +371,7 @@ h4 {
 	text-shadow: 0 1px 0 #fff;
 	margin: 6px 0;
 	padding-right: 28px;
-	background: url('/assets/images/mono/black/list_bullets_icon&16.png') right center no-repeat;
+	background: url('/static/images/mono/black/list_bullets_icon&16.png') right center no-repeat;
 }
 
 #user_menu,
@@ -391,7 +391,7 @@ h4 {
 	top: 80px;
 	margin-left: 332px;
 	width: 180px;
-	background: url('/assets/images/mono/white/arrow_top_icon&24.png') 146px 0 no-repeat;
+	background: url('/static/images/mono/white/arrow_top_icon&24.png') 146px 0 no-repeat;
 }
 
 #notifications {
@@ -399,7 +399,7 @@ h4 {
 	top: 80px;
 	margin-left: -512px;
 	width: 270px;
-	background: url('/assets/images/mono/white/arrow_top_icon&24.png') 12px 0 no-repeat;
+	background: url('/static/images/mono/white/arrow_top_icon&24.png') 12px 0 no-repeat;
 }
 
 #user_menu ul,
@@ -441,7 +441,7 @@ h4 {
 #user_menu li:hover,
 #user_menu li:hover {
 	cursor: pointer;
-	background : url('/assets/images/bg-blue.png') center center repeat #333;
+	background : url('/static/images/bg-blue.png') center center repeat #333;
 	border-radius: 4px;
 }
 
@@ -451,35 +451,35 @@ h4 {
 }
 
 #user_menu li a.profile {
-	background: url('/assets/images/mono/black/user_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/black/user_icon&16.png') left center no-repeat;
 }
 
 #user_menu li:hover a.profile {
-	background: url('/assets/images/mono/white/user_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/white/user_icon&16.png') left center no-repeat;
 }
 
 #user_menu li a.settings {
-	background: url('/assets/images/mono/black/cogs_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/black/cogs_icon&16.png') left center no-repeat;
 }
 
 #user_menu li:hover a.settings {
-	background: url('/assets/images/mono/white/cogs_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/white/cogs_icon&16.png') left center no-repeat;
 }
 
 #user_menu li a.report {
-	background: url('/assets/images/mono/black/bug_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/black/bug_icon&16.png') left center no-repeat;
 }
 
 #user_menu li:hover a.report {
-	background: url('/assets/images/mono/white/bug_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/white/bug_icon&16.png') left center no-repeat;
 }
 
 li .logout {
-	background: url('/assets/images/mono/black/on-off_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/black/on-off_icon&16.png') left center no-repeat;
 }
 
 li:hover .logout {
-	background: url('/assets/images/mono/white/on-off_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/white/on-off_icon&16.png') left center no-repeat;
 }
 
 label.hasError {
@@ -536,21 +536,21 @@ label.hasError input {
 
 .notification.err {
 	border-left-color: #c01219;
-	background: url('/assets/images/icons/busy.png') 6px center no-repeat;
+	background: url('/static/images/icons/busy.png') 6px center no-repeat;
 }
 
 .notification.success {
 	border-left-color: #6cc53e;
-	background: url('/assets/images/icons/check.png') 6px center no-repeat;
+	background: url('/static/images/icons/check.png') 6px center no-repeat;
 }
 
 .notification.info {
 	border-left-color: #569bda;
-	background: url('/assets/images/icons/flag.png') 6px center no-repeat;
+	background: url('/static/images/icons/flag.png') 6px center no-repeat;
 }
 
 #menu {
-/*	background : url('/assets/images/bg-blue.png') center center repeat #333;
+/*	background : url('/static/images/bg-blue.png') center center repeat #333;
 	box-shadow: inset -2px 0px 6px, inset 2px 0px 6px;
 */	float: left;
 	z-index: 997;
@@ -586,7 +586,7 @@ label.hasError input {
 #menu ul li.active {
 	cursor: pointer;
 	border-radius: 4px;
-	background: url('/assets/images/bg-blue.png') center center repeat #333;;
+	background: url('/static/images/bg-blue.png') center center repeat #333;;
 }
 
 #menu ul li a:hover,
@@ -596,75 +596,75 @@ label.hasError input {
 }
 
 #menu .projects a {
-	background: url('/assets/images/mono/black/notepad_2_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/notepad_2_icon&16.png') 12px center no-repeat;
 }
 
 #menu .tasks a {
-	background: url('/assets/images/mono/black/clock_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/clock_icon&16.png') 12px center no-repeat;
 }
 
 #menu .team a {
-	background: url('/assets/images/mono/black/users_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/users_icon&16.png') 12px center no-repeat;
 }
 
 #menu .messages a {
-	background: url('/assets/images/mono/black/spechbubble_2_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/spechbubble_2_icon&16.png') 12px center no-repeat;
 }
 
 #menu .jobs a {
-	background: url('/assets/images/mono/black/case_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/case_icon&16.png') 12px center no-repeat;
 }
 
 #menu .invoice a {
-	background: url('/assets/images/mono/black/money_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/money_icon&16.png') 12px center no-repeat;
 }
 
 #menu .settings a {
-	background: url('/assets/images/mono/black/cog_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/cog_icon&16.png') 12px center no-repeat;
 }
 
 #menu .contact a {
-	background: url('/assets/images/mono/black/doc_edit_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/doc_edit_icon&16.png') 12px center no-repeat;
 }
 
 #menu .projects a:hover,
 #menu .projects.active a {
-	background: url('/assets/images/mono/white/notepad_2_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/notepad_2_icon&16.png') 12px center no-repeat;
 }
 
 #menu .tasks a:hover,
 #menu .tasks.active a {
-	background: url('/assets/images/mono/white/clock_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/clock_icon&16.png') 12px center no-repeat;
 }
 
 #menu .team a:hover,
 #menu .team.active a {
-	background: url('/assets/images/mono/white/users_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/users_icon&16.png') 12px center no-repeat;
 }
 
 #menu .messages a:hover,
 #menu .messages.active a {
-	background: url('/assets/images/mono/white/spechbubble_2_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/spechbubble_2_icon&16.png') 12px center no-repeat;
 }
 
 #menu .jobs a:hover,
 #menu .jobs.active a {
-	background: url('/assets/images/mono/white/case_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/case_icon&16.png') 12px center no-repeat;
 }
 
 #menu .invoice a:hover,
 #menu .invoice.active a {
-	background: url('/assets/images/mono/white/money_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/money_icon&16.png') 12px center no-repeat;
 }
 
 #menu .settings a:hover,
 #menu .settings.active a {
-	background: url('/assets/images/mono/white/cog_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/cog_icon&16.png') 12px center no-repeat;
 }
 
 #menu .contact a:hover,
 #menu .contact.active a {
-	background: url('/assets/images/mono/white/doc_edit_icon&24.png') 12px center no-repeat;
+	background: url('/static/images/mono/white/doc_edit_icon&24.png') 12px center no-repeat;
 }
 
 .action {
@@ -684,7 +684,7 @@ label.hasError input {
 
 h2#logo {
 	text-indent: -9999px;
-	background: url('/assets/images/logo.png') center center no-repeat;
+	background: url('/static/images/logo.png') center center no-repeat;
 	font-size: 48px;
 	margin-bottom: 12px;
 }
@@ -771,7 +771,7 @@ h2#logo {
 
 input:focus, textarea:focus {
 	border-color: #E2A809 !important;
-	background: url('/assets/images/tearaway.png') bottom right no-repeat #fff;
+	background: url('/static/images/tearaway.png') bottom right no-repeat #fff;
 	box-shadow: inset 0 1px 2px #fff;
 	outline: none;
 }
@@ -809,7 +809,7 @@ input:focus, textarea:focus {
 	margin: 24px 24px 12px 24px;
 	padding: 12px 0 12px 48px;
 	text-shadow: 0 1px 0 white;
-	background: url('/assets/images/mono/black/attention_icon&32.png') left center no-repeat;
+	background: url('/static/images/mono/black/attention_icon&32.png') left center no-repeat;
 }
 
 .popup-options {
@@ -1038,7 +1038,7 @@ form .group label select {
 }
 
 .pagination .pageLeft {
-	background: url('/assets/images/mono/black/arrow_left_icon&16.png') center center no-repeat #f9f9f9;
+	background: url('/static/images/mono/black/arrow_left_icon&16.png') center center no-repeat #f9f9f9;
 }
 
 .pagination .pageLocation {
@@ -1054,7 +1054,7 @@ form .group label select {
 }
 
 .pagination .pageRight {
-	background: url('/assets/images/mono/black/arrow_right_icon&16.png') center center no-repeat #f9f9f9;
+	background: url('/static/images/mono/black/arrow_right_icon&16.png') center center no-repeat #f9f9f9;
 }
 
 .pagination button.disabled {
@@ -1129,7 +1129,7 @@ form .group label select {
 }
 
 .btn-add {
-	background: url('/assets/images/mono/black/round_plus_icon&16.png') center center no-repeat #e2e2e2;
+	background: url('/static/images/mono/black/round_plus_icon&16.png') center center no-repeat #e2e2e2;
 	height: 28px;
 	width: 28px;
 	border: 1px solid #d2d2d2;
@@ -1211,7 +1211,7 @@ p.no_projects {
 }
 
 #view_my_profile .view_profile {
-	background: url('/assets/images/mono/black/user_icon&24.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/user_icon&24.png') 12px center no-repeat;
 }
 
 #whoami {
@@ -1261,11 +1261,11 @@ p.no_projects {
 	width: 46px;
 	height: 46px;
 	border-left: 1px solid #D2D2D2;
-	background: url('/assets/images/mono/black/export_icon&24.png') center center no-repeat;
+	background: url('/static/images/mono/black/export_icon&24.png') center center no-repeat;
 }
 
 .user_showcase a:hover {
-	background: url('/assets/images/mono/black/export_icon&32.png') center center no-repeat;
+	background: url('/static/images/mono/black/export_icon&32.png') center center no-repeat;
 }
 
 .tooltip {
@@ -1330,7 +1330,7 @@ p.no_projects {
 .member_item .rating {
 	float: right;
 	padding-left: 24px;
-	background: url('/assets/images/mono/black/star_fav_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/black/star_fav_icon&16.png') left center no-repeat;
 	position: absolute;
 	right: 12px;
 	top: 20px;

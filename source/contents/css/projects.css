@@ -14,11 +14,11 @@
 }
 
 .col-header.owned h3{
-	background: url('/assets/images/mono/black/notepad_icon&16.png') right center no-repeat;
+	background: url('/static/images/mono/black/notepad_icon&16.png') right center no-repeat;
 }
 
 .col-header.participating h3 {
-	background: url('/assets/images/mono/black/users_icon&16.png') right center no-repeat;
+	background: url('/static/images/mono/black/users_icon&16.png') right center no-repeat;
 }
 
 #projects_list ul {
@@ -150,12 +150,12 @@
 	padding: 12px;
 	border-radius: 6px;
 	border: 2px solid #FFC60B;
-	background: url('/assets/images/mono/black/folder_plus_icon&32.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/folder_plus_icon&32.png') 12px center no-repeat;
 }
 
 #save_project:hover {
 	cursor: pointer;
-	background: url('/assets/images/mono/black/folder_plus_icon&32.png') 12px center no-repeat #FFC60B;
+	background: url('/static/images/mono/black/folder_plus_icon&32.png') 12px center no-repeat #FFC60B;
 }
 
 #newproject_client-info {
@@ -183,7 +183,7 @@
 }
 
 .greybutton.addfile {
-	background: url('/assets/images/mono/black/round_plus_icon&16.png') 8px center no-repeat #E9E9E9;
+	background: url('/static/images/mono/black/round_plus_icon&16.png') 8px center no-repeat #E9E9E9;
 	position: relative;
 	left: 14px;
 	float: right;
@@ -211,35 +211,35 @@
 }
 
 .new_project {
-	background: url('/assets/images/mono/black/folder_plus_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/folder_plus_icon&16.png') 12px center no-repeat;
 }
 
 .edit_project {
-	background: url('/assets/images/mono/black/doc_edit_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/doc_edit_icon&16.png') 12px center no-repeat;
 }
 
 .bill_client {
-	background: url('/assets/images/mono/black/money_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/money_icon&16.png') 12px center no-repeat;
 }
 
 .close_project {
-	background: url('/assets/images/mono/black/round_minus_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/round_minus_icon&16.png') 12px center no-repeat;
 }
 
 .reopen_project {
-	background: url('/assets/images/mono/black/round_checkmark_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/round_checkmark_icon&16.png') 12px center no-repeat;
 }
 
 .save_project {
-	background: url('/assets/images/mono/black/checkmark_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/checkmark_icon&16.png') 12px center no-repeat;
 }
 
 .delete_project {
-	background: url('/assets/images/mono/black/delete_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/delete_icon&16.png') 12px center no-repeat;
 }
 
 .leave_project {
-	background: url('/assets/images/mono/black/undo_icon&16.png') 12px center no-repeat;
+	background: url('/static/images/mono/black/undo_icon&16.png') 12px center no-repeat;
 }
 
 #projects_active_list ul,
@@ -384,7 +384,7 @@
 	font-style: italic;
 	font-weight: normal !important;
 	padding-left: 22px;
-	background: url('/assets/images/mono/black/clock_icon&16.png') left center no-repeat;
+	background: url('/static/images/mono/black/clock_icon&16.png') left center no-repeat;
 }
 
 .task-list-status {
@@ -394,11 +394,11 @@
 }
 
 .task-list-status.open {
-	background: url('/assets/images/icons/current-work.png') left center no-repeat;
+	background: url('/static/images/icons/current-work.png') left center no-repeat;
 }
 
 .task-list-status.complete {
-	background: url('/assets/images/icons/check.png') left center no-repeat;
+	background: url('/static/images/icons/check.png') left center no-repeat;
 }
 
 #project_add_to_team_ctr > div.center-pane {

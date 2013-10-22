@@ -1,0 +1,40 @@
+!!! 5
+html
+	head(lang='en-US')
+		title Beelancer | Social Project Management
+		link(rel='stylesheet', type='text/css', href='/css/animate.min.css')
+		link(rel='stylesheet', type='text/css', href='/css/jquery-ui-1.9.2.custom.min.css')
+		link(rel='stylesheet', type='text/css', href='/css/jquery-ui-timepicker-addon.css')
+		link(rel='stylesheet', type='text/css', href='/css/fonts.css')
+		link(rel='stylesheet', type='text/css', href='/css/main.css')
+		link(rel='stylesheet', type='text/css', href='/css/login.css')
+		link(rel='stylesheet', type='text/css', href='/css/account.css')
+		link(rel='stylesheet', type='text/css', href='/css/projects.css')
+		//- script(type='application/javascript', src='/socket.io/socket.io.js')
+		script(type='application/javascript', src='/vendor/require.js')
+		if locals.google_analytics
+			include ./google-analytics.html
+		script(type='application/javascript')
+			| localStorage.setItem('apiUrl', '#{locals.apiProtocol}://#{apiHost}:#{apiPort}');
+	body
+		//- include handlebars templates here
+		script(type='text/x-handlebars')
+			div#app
+				| {{render 'header' profile}}
+				| {{outlet}}
+				| {{render footer}}
+		block content
+		script(type='application/javascript', src='/vendor/jquery-1.9.1.js')
+		script(type='application/javascript', src='/vendor/jquery-ui-1.9.2.custom.js')
+		script(type='application/javascript', src='/vendor/jquery-ui-timepicker-addon.js')
+		script(type='application/javascript', src='/vendor/marked.js')
+		script(type='application/javascript', src='/vendor/handlebars-1.0.0.js')
+		script(type='application/javascript', src='/vendor/ember-1.0.0.js')
+		script(type='application/javascript', src='/vendor/ember-data.js')
+		script(type='application/javascript', src='/vendor/ember-auth.js')
+		script(type='application/javascript', src='/lib/app.js')
+		script(type='application/javascript', src='/lib/models.js')
+		script(type='application/javascript', src='/lib/views.js')
+		script(type='application/javascript', src='/lib/controllers.js')
+		script(type='application/javascript', src='/lib/router.js')
+	

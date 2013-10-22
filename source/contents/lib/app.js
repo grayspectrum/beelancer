@@ -13,7 +13,7 @@ Bee.Adapter = DS.RESTAdapter.extend({
 			return '_id';
 		}
 	})
-})
+});
 
 Bee.Store = DS.Store.extend({
 	adapter : 'Bee.Adapter'
@@ -25,16 +25,16 @@ Bee.Auth = Ember.Auth.create({
 	strategyAdapter    : 'token',
 	signInEndPoint     : '/auth/token',
 	signOutEndPoint    : '/auth/token',
-	baseUrl            : localStorage.getItem('api_url'),
+	baseUrl            : localStorage.getItem('apiUrl'),
 	tokenKey           : 'token',
 	tokenIdKey         : 'user',
 	tokenLocation      : 'customHeader',
-  	tokenHeaderKey     : 'bee-token',
-  	modules            : ['emberData','authRedirectable','actionRedirectable','rememberable'],
-  	sessionAdapter     : 'localStorage',
-  	authRedirectable   : {
-    	route : 'login'
-    },  
+	tokenHeaderKey     : 'bee-token',
+	modules            : ['emberData','authRedirectable','actionRedirectable','rememberable'],
+	sessionAdapter     : 'localStorage',
+	authRedirectable   : {
+		route : 'login'
+  },
 	actionRedirectable : {
 		signInRoute     : 'projects',
 		signInSmart     : true,
