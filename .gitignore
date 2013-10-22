@@ -1,6 +1,6 @@
 node_modules
 .project
-public/assets/users/
 .DS_Store
 .idea
 npm-debug.log
+build

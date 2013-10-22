@@ -1,0 +1,26 @@
+{
+    "contents"  : "./source/contents",
+    "templates" : "./source/templates",
+    "jade"      : {
+        "pretty" : true
+    },
+    "locals"    : {
+        "apiHost"     : "beelancerapi-gordonwritescode.rhcloud.com",
+        "apiPort"     : 80,
+        "apiProtocol" : "http"
+    },
+    "require"   : {
+
+    },    
+    "plugins"   : [
+        "./node_modules/wintersmith-browserify",
+        "./node_modules/wintersmith-less"
+    ],
+    "ignore"    : [
+        "*.coffee"
+    ],
+    "output"    : "./build",
+    "baseUrl"   : "/",
+    "hostname"  : "",
+    "port"      : 8080
+}

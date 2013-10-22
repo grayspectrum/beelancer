@@ -21,14 +21,11 @@
   },
   "keywords": [],
   "dependencies": {
-    "jade": "0.27.x",
-    "handlebars": "1.0.7",
     "async": "0.2.9",
-    "socket.io": "~0.9.16",
-    "express": "~3.3.8",
-    "ember-precompile": "~0.2.2",
-    "hbs": "~2.3.1",
-    "browserify": "~2.32.2"
+    "wintersmith": "~2.0.7",
+    "wintersmith-browserify": "~0.2.3",
+    "wintersmith-less": "~0.2.1",
+    "handlebars": "~1.0.12"
   },
   "analyze": false,
   "engines": {
