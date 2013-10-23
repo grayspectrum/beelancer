@@ -19,7 +19,7 @@
     },    
     "plugins"    : [
         "./node_modules/wintersmith-coffee",
-        "./node_modules/wintersmith-less"
+        "./node_modules/wintersmith-sass"
     ],
     "ignore"     : [
         "*.coffee"

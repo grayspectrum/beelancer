@@ -2,16 +2,12 @@
 html
 	head(lang='en-US')
 		title Beelancer | Social Project Management
-		link(rel='stylesheet', type='text/css', href='/css/animate.min.css')
-		link(rel='stylesheet', type='text/css', href='/css/jquery-ui-1.9.2.custom.min.css')
-		link(rel='stylesheet', type='text/css', href='/css/jquery-ui-timepicker-addon.css')
-		link(rel='stylesheet', type='text/css', href='/css/fonts.css')
+		link(rel='stylesheet', type='text/css', href='/css/vendor/animate.min.css')
+		link(rel='stylesheet', type='text/css', href='/css/vendor/jquery-ui-1.9.2.custom.min.css')
+		link(rel='stylesheet', type='text/css', href='/css/vendor/jquery-ui-timepicker-addon.css')
 		link(rel='stylesheet', type='text/css', href='/css/main.css')
-		link(rel='stylesheet', type='text/css', href='/css/login.css')
-		link(rel='stylesheet', type='text/css', href='/css/account.css')
-		link(rel='stylesheet', type='text/css', href='/css/projects.css')
 		//- script(type='application/javascript', src='/socket.io/socket.io.js')
-		script(type='application/javascript', src='/vendor/require.js')
+		//- script(type='application/javascript', src='/vendor/require.js')
 		if locals.google_analytics
 			include ./google-analytics.html
 		script(type='application/javascript')
