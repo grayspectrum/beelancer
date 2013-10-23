@@ -17,7 +17,23 @@ html
 		script(type='application/javascript')
 			| localStorage.setItem('apiUrl', '#{locals.apiProtocol}://#{apiHost}:#{apiPort}');
 	body
-		//- include handlebars templates here
+		//- base ember templates
+		include ./views/header.html
+		include ./views/footer.html
+		include ./views/menu.html
+		include ./views/notifications.html
+		//- login and auth
+		include ./views/forgot.html
+		include ./views/login.html
+		include ./views/recover.html
+		include ./views/register.html
+		include ./views/welcome.html
+		include ./views/loader.html
+		//- projects templates
+		include ./views/projects.html
+		include ./views/projectList.html
+		include ./views/projectsIndex.html
+		include ./views/projectsView.html
 		script(type='text/x-handlebars')
 			div#app
 				| {{render 'header' profile}}
