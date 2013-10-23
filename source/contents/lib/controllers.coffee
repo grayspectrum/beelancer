@@ -43,135 +43,103 @@ Bee.ForgotController = Ember.ObjectController.extend
 		@set 'resetFailed', err
 
 # header
-Bee.HeaderController = Ember.ObjectController.extend({
-	needs                : ['application','menu','notifications'],
-	menuVisible          : Ember.computed.alias('controllers.menu.visible'),
-	notificationsVisible : Ember.computed.alias('controllers.notifications.visible'),
-	newUser              : true,
-	profile              : function() {
-		if (Bee.Auth.get('signedIn')) {
-			var ctrl = this;
-			return Bee.Auth.send({
-				url : Bee.endpoint('/users/me')
-			})
-			.done(function(data) {
-				if (data.profile) {
-					ctrl.set('profile', data.profile);
-					ctrl.set('newUser', false);
-				}
-				else {
-					var appRouter = ctrl.get('controllers.application.target');
-					appRouter.send('needsProfile');
-				}
-				return data;
-			})
-			.fail(function(err) {
-				// fail
-			});
-		}
-		else return ctrl.set('profile', null);
-	}.property('controllers.application.isAuthenticated', 'controllers.application.hasProfile')
-});
+Bee.HeaderController = Ember.ObjectController.extend
+	needs                : ['application','menu','notifications']
+	menuVisible          : Ember.computed.alias 'controllers.menu.visible'
+	notificationsVisible : Ember.computed.alias 'controllers.notifications.visible'
+	newUser              : yes
+	profile              : (->
+		if Bee.Auth.get 'signedIn'
+			ctrl = @
+			Bee.Auth.send
+				url : Bee.endpoint '/users/me'
+			.done (data) ->
+				if data.profile
+					ctrl.set 'profile', data.profile
+					ctrl.set 'newUser', no
+				else
+					appRouter = ctrl.get 'controllers.application.target'
+					appRouter.send 'needsProfile'
+				data
+			.fail (err) ->
+				# fail
+		else ctrl.set 'profile', null
+	).property 'controllers.application.isAuthenticated', 'controllers.application.hasProfile'
 
-Bee.LoginController = Ember.ObjectController.extend({
-	loginFailed    : false,
-  	isProcessing   : false,
-  	confirmSuccess : false,
-	content        : {
-		email    : null,
+# login
+Bee.LoginController = Ember.ObjectController.extend
+	loginFailed    : no
+  	isProcessing   : no
+  	confirmSuccess : no
+	content        : 
+		email    : null
 		password : null
+	actions : 
+		login : ->
+			var ctrl = @;
+			ctrl.setProperties
+		    	loginFailed  : no
+		    	isProcessing : yes
+		    Bee.Auth.on 'signInSuccess', -> ctrl.success
+			Bee.Auth.on 'signInError', -> ctrl.errors
+			Bee.Auth.signIn
+				data : 
+		    		email    : ctrl.get 'email'
+		    		password : ctrl.get 'password'
+	success : =>
+		@set 'isProcessing', no
+		@set 'password', null
+		@get('target').send 'isAuthenticated'
 	},
-	actions : {
-		login : function() {
-			var ctrl = this;
-			ctrl.setProperties({
-		    	loginFailed  : false,
-		    	isProcessing : true
-		    });
-		    Bee.Auth.on('signInSuccess', function() {
-		    	ctrl.success();
-		    });
-			Bee.Auth.on('signInError', function() {
-				ctrl.errors();
-			});
-			Bee.Auth.signIn({
-				data : {
-		    		email    : ctrl.get('email'),
-		    		password : ctrl.get('password')
-				}
-			});
-		}
-	},
-	success : function() {
-		this.set('isProcessing', false);
-		this.set('password', null);
-		this.get('target').send('isAuthenticated');
-	},
-	errors  : function() {
-		this.setProperties({
-			loginFailed  : {
+	errors  : =>
+		@setProperties
+			loginFailed  : 
 				error : 'Incorrect email/password.'
-			},
-			isProcessing : false
-		});
-	}
-});
+			isProcessing : no
 
-Bee.MenuController = Ember.ObjectController.extend({
+# menu
+Bee.MenuController = Ember.ObjectController.extend
 	visible  : false
-});
 
-Bee.NotificationsController = Ember.ArrayController.extend({
-	visible       : false,
+# notifications
+Bee.NotificationsController = Ember.ArrayController.extend
+	visible       : false
 	notifications : []
-});
 
-Bee.ProjectsIndexController = Ember.ObjectController.extend({
-	isActive : true, // active/closed
-	projects : { owned : [], participating : [] },
-	visible  : function() {
-		var ctrl = this
-		  , filtered = {
-			owned         : [],
+# projects index
+Bee.ProjectsIndexController = Ember.ObjectController.extend
+	isActive : yes # active/closed
+	projects : 
+		owned : []
+		participating : []
+	visible  : (->
+		ctrl = @
+		filtered =
+			owned         : []
 			participating : []
-		};
-		$.each(this.projects.owned, function (p, project) {
-			if (project.isActive === ctrl.isActive) filtered.owned.push(project);
-		});
-		$.each(this.projects.participating, function (p, project) {
-			if (project.isActive === ctrl.isActive) filtered.participating.push(project);
-		});
-		return filtered;
-	}.property('isActive','projects'),
-	content : {
-		
-	},
-	actions : {
-		filter : function() {
-			this.set('isActive', !this.get('isActive'));
-		}
-	}
-});
+		$.each this.projects.owned, (p, project) ->
+			if project.isActive is ctrl.isActive then filtered.owned.push project
+		$.each this.projects.participating, (p, project) ->
+			if project.isActive is ctrl.isActive then filtered.participating.push project
+		filtered
+	).property 'isActive','projects'
+	content : {}
+	actions : 
+		filter : ->
+			@set 'isActive', !@get 'isActive'
 
-Bee.ProjectsViewController = Ember.ObjectController.extend({
-	content : {
-		
-	},
-	actions : {
-		close   : function() {
-			console.log('close')
-		},
-		reopen  : function() {
-			console.log('reopen')
-		},
-		destroy : function() {
-			console.log('destroy')
-		},
-		abandon : function() {
-			console.log('abandon')
-		}
-	}
-});
+# projects view
+Bee.ProjectsViewController = Ember.ObjectController.extend
+	content : {}
+	actions :
+		close   : ->
+			console.log 'close'
+		reopen  : ->
+			console.log 'reopen'
+		destroy : ->
+			console.log 'destroy'
+		abandon : ->
+			console.log 'abandon'
 
 Bee.RecoverController = Ember.ObjectController.extend({
 	recoverFailed  : false,
