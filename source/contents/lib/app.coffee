@@ -7,41 +7,41 @@ window.Bee = Bee = Ember.Application.create {}
 
 Bee.Adapter = DS.RESTAdapter.extend
 	serializer : DS.RESTSerializer.extend
-		primaryKey : (type) -> '_id'
+		primaryKey : (type) -> "_id"
 
 Bee.Store = DS.Store.extend
-	adapter : 'Bee.Adapter'
+	adapter : "Bee.Adapter"
 
 Bee.Auth = Ember.Auth.create
-	requestAdapter     : 'jquery'
-	responseAdapter    : 'json'
-	strategyAdapter    : 'token'
-	signInEndPoint     : '/auth/token'
-	signOutEndPoint    : '/auth/token'
-	baseUrl            : localStorage.getItem 'apiUrl'
-	tokenKey           : 'token'
-	tokenIdKey         : 'user'
-	tokenLocation      : 'customHeader'
-	tokenHeaderKey     : 'bee-token'
-	modules            : ['emberData','authRedirectable','actionRedirectable','rememberable']
-	sessionAdapter     : 'localStorage'
+	requestAdapter     : "jquery"
+	responseAdapter    : "json"
+	strategyAdapter    : "token"
+	signInEndPoint     : "/auth/token"
+	signOutEndPoint    : "/auth/token"
+	baseUrl            : localStorage.getItem "apiUrl"
+	tokenKey           : "token"
+	tokenIdKey         : "user"
+	tokenLocation      : "customHeader"
+	tokenHeaderKey     : "bee-token"
+	modules            : ["emberData","authRedirectable","actionRedirectable","rememberable"]
+	sessionAdapter     : "localStorage"
 	authRedirectable   : 
-		route : 'login'
+		route : "login"
 	actionRedirectable :
-		signInRoute     : 'projects'
+		signInRoute     : "projects"
 		signInSmart     : true
-		signInBlacklist : ['register', 'recover', 'reset', 'forgot']
-		signOutRoute    : 'login'
+		signInBlacklist : ["register", "recover", "reset", "forgot"]
+		signOutRoute    : "login"
 	rememberable       : 
-		tokenKey   : 'remember'
+		tokenKey   : "remember"
 		period     : 14
 		autoRecall : true
 
 Bee.endpoint = (path) ->
-	api_url = localStorage.getItem 'api_url'
+	api_url = localStorage.getItem "api_url"
 	api_url + path
 
-Ember.Handlebars.helper 'deadline', (project, options) ->
+Ember.Handlebars.helper "deadline", (project, options) ->
 	daysUntil = (date1, date2) ->
 		oneDay        = 1000 * 60 * 60 * 24
 		date1_ms      = date1.getTime()
@@ -52,19 +52,16 @@ Ember.Handlebars.helper 'deadline', (project, options) ->
 	daysBetween = daysUntil new Date(), new Date project.deadline
 
 	if project.isActive
-		if new Date() < new Date project.deadline
-			return 'Due in ' + daysBetween + ' days.'
-		else
-			return 'Due ' + daysBetween + ' days ago.'
-	else
-		return 'Project closed.'
+		if new Date() < new Date project.deadline then "Due in #{daysBetween} days."
+		else "Due #{daysBetween} days ago."
+	else "Project closed."
 
-Ember.Handlebars.helper 'percentComplete', (value, options) ->
+Ember.Handlebars.helper "percentComplete", (value, options) ->
 	complete_tasks = 0;
 	# add percentComplete
 	$.each value.tasks, (key, task) ->
 		if task.isComplete then complete_tasks++
 	((complete_tasks / value.tasks.length).toFixed(2) * 100) or 0;
 
-Ember.Handlebars.helper 'markdown', (value, options) ->
+Ember.Handlebars.helper "markdown", (value, options) ->
 	new Ember.Handlebars.SafeString marked value
