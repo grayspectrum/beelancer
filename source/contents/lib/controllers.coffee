@@ -38,14 +38,14 @@ Bee.ForgotController = Ember.ObjectController.extend
                 err = JSON.parse err.responseText
                 ctrl.errors err
     success : (data) ->
-        @get("target").send "recoveryKeyGenerated", data.message
+        (@get "target").send "recoveryKeyGenerated", data.message
     errors  : (err) ->
         @set "isProcessing", no
         @set "resetFailed", err
 
 # header
 Bee.HeaderController = Ember.ObjectController.extend
-    needs                : ["application","menu","notifications"]
+    needs                : ["application", "menu", "notifications"]
     menuVisible          : Ember.computed.alias "controllers.menu.visible"
     notificationsVisible : Ember.computed.alias "controllers.notifications.visible"
     newUser              : yes
@@ -90,7 +90,7 @@ Bee.LoginController = Ember.ObjectController.extend
     success : ->
         @set "isProcessing", no
         @set "password", null
-        @get("target").send "isAuthenticated"
+        (@get "target").send "isAuthenticated"
     errors  : ->
         @setProperties
             loginFailed  : 
@@ -168,7 +168,7 @@ Bee.RecoverController = Ember.ObjectController.extend
                 err = JSON.parse err.responseText
                 ctrl.errors err
     success : (data) ->
-        @get("target").send "passwordReset", data.message
+        (@get "target").send "passwordReset", data.message
     errors  : (err) ->
         @setProperties
             isProcessing  : no
@@ -188,8 +188,8 @@ Bee.RegisterController = Ember.ObjectController.extend
             if ctrl.get "password" isnt ctrl.get "password2"
                 return ctrl.errors error : "Passwords do not match"
             ctrl.setProperties
-                registerFailed  : no
-                isProcessing    : yes
+                registerFailed : no
+                isProcessing   : yes
             Bee.Auth.send
                 type : "POST"
                 url  : Bee.endpoint "/users"
@@ -201,7 +201,7 @@ Bee.RegisterController = Ember.ObjectController.extend
             .fail (err) ->
                 ctrl.errors JSON.parse err.responseText
     success : (message) ->
-        @get("target").send "isRegistered", message
+        (@get "target").send "isRegistered", message
     errors  : (err) ->
         @set "isProcessing", no
         message = err.error or err.errors or "Registration Failed"
@@ -248,7 +248,7 @@ Bee.WelcomeController = Ember.ObjectController.extend
                 err = JSON.parse err.responseText
                 ctrl.errors err
     success : (data) ->
-        @get("target").send "profileCreated"
+        (@get "target").send "profileCreated"
     errors  : (err) ->
         if err.errors
             err = error : err.errors.map (error) -> error.msg

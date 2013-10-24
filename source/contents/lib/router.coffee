@@ -68,7 +68,7 @@ Bee.LoginRoute = Ember.Route.extend
         if Bee.Auth.get "signedIn" then @transitionTo "projects"
     actions  : 
         isAuthenticated : ->
-            @controllerFor("application").set "isAuthenticated", yes
+            (@controllerFor "application").set "isAuthenticated", yes
             @transitionTo "projects"
 
 # logout route
@@ -81,29 +81,29 @@ Bee.RegisterRoute = Ember.Route.extend
         if Bee.Auth.get "signedIn" then @transitionTo "projects"
     actions  : 
         isRegistered : (message) ->
-            @controllerFor("login").set "confirmSuccess", message
+            (@controllerFor "login").set "confirmSuccess", message
             @transitionTo "login"
 
 # forgot route
 Bee.ForgotRoute = Ember.Route.extend
     actions  : 
         recoveryKeyGenerated : (message) ->
-            @controllerFor("recover").set "confirmSuccess", message
+            (@controllerFor "recover").set "confirmSuccess", message
             @transitionTo "recover"
 
 # recover route
 Bee.RecoverRoute = Ember.Route.extend
     actions  : 
         passwordReset : (message) ->
-            @controllerFor("login").set "confirmSuccess", message
+            (@controllerFor "login").set "confirmSuccess", message
             @transitionTo "login"
 
 # welcome route
 Bee.WelcomeRoute = Ember.Route.extend
     actions  : 
         profileCreated : (message) ->
-            @controllerFor("application").set "hasProfile", yes
-            @controllerFor("header").set "newUser", no
+            (@controllerFor "application").set "hasProfile", yes
+            (@controllerFor "header").set "newUser", no
             @transitionTo "projects"
 
 # projects route
