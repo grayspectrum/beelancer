@@ -1,31 +1,31 @@
 {
-    "contents"   : "./source/contents",
-    "templates"  : "./source/templates",
-    "jade"       : {
-        "pretty" : true
+    "contents": "./source/contents",
+    "templates": "./source/templates",
+    "jade": {
+        "pretty": true
     },
-    "browserify" : {
-        "ignore" : [
+    "browserify": {
+        "ignore": [
             "./source/contents/vendor/*"
         ]
     },
-    "locals"     : {
-        "apiHost"     : "beelancerapi-gordonwritescode.rhcloud.com",
-        "apiPort"     : 80,
-        "apiProtocol" : "http"
+    "locals": {
+        "apiHost": "beelancerapi-gordonwritescode.rhcloud.com",
+        "apiPort": 80,
+        "apiProtocol": "http"
     },
-    "require"    : {
+    "require": {
 
     },    
-    "plugins"    : [
+    "plugins": [
         "./node_modules/wintersmith-coffee",
         "./node_modules/wintersmith-sass"
     ],
-    "ignore"     : [
+    "ignore": [
         "*.coffee"
     ],
-    "output"     : "./build",
-    "baseUrl"    : "/",
-    "hostname"   : "",
-    "port"       : 1337
+    "output": "./build",
+    "baseUrl": "/",
+    "hostname": "",
+    "port": 1337
 }
