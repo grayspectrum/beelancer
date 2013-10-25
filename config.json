@@ -9,6 +9,11 @@
             "./source/contents/vendor/*"
         ]
     },
+    "node-sass": {
+        "includePaths": [
+            "./source/contents/css"
+        ]
+    },
     "locals": {
         "apiHost": "beelancerapi-gordonwritescode.rhcloud.com",
         "apiPort": 80,
@@ -19,7 +24,7 @@
     },    
     "plugins": [
         "./node_modules/wintersmith-coffee",
-        "./node_modules/wintersmith-sass"
+        "./node_modules/wintersmith-dot-sass"
     ],
     "ignore": [
         "*.coffee"

@@ -1,0 +1,275 @@
+/*
+ * beelancer - css/_account
+ * author: gordon hall
+ */
+
+#new_profile 
+    width: 606px
+    margin-top: 96px
+    margin-bottom: 24px
+    h2 
+        text-align: center
+        font-size: 36px
+        margin: 12px
+        text-shadow: 0 1px 0 white
+        color: #001D28
+
+strong.welcome 
+    display: block
+    font-size: 20px
+    margin: 0 0 12px 0
+
+#account 
+    padding-top: 12px
+    &.new_profile 
+        .col3 
+            display: none
+        .two3rds 
+            border-left: 1px solid #e2e2e2
+            border: none
+            margin: auto
+            float: none
+            h4 
+                border-left: 1px solid #e2e2e2
+        &.two3rds 
+            border: none
+    .two3rds 
+        border-left: 1px solid #e2e2e2
+        > div 
+            display: none
+    
+.acceptTerms 
+    display: block
+    margin: 0 24px 24px 24px
+    padding: 6px 12px
+    background: #FFF
+    border-radius: 4px
+    border: 1px solid #DDD
+    background: #F9F9F9
+
+#account_nav 
+    list-style-type: none
+    margin: 0
+    padding: 0
+    li a 
+        display: block
+        font-size: 14px
+        font-weight: normal
+        text-decoration: none
+        padding: 12px 6px 12px 42px
+        border-bottom: 1px solid #F1F1F1
+        color: #333
+        &:hover,
+        &.current 
+            background-color: rgba(255, 207, 47, 0.2)
+    .edit_profile 
+        background: url('/static/images/mono/black/user_icon&16.png') 12px center no-repeat
+    .edit_endorsements 
+        background: url('/static/images/mono/black/cert_icon&16.png') 12px center no-repeat
+    .edit_payments 
+        background: url('/static/images/mono/black/wallet_icon&16.png') 12px center no-repeat
+    .edit_password 
+        background: url('/static/images/mono/black/lock_open_icon&16.png') 12px center no-repeat
+
+.np_submit_wrapper 
+    border-radius: 6px
+    margin: 24px auto
+    width: 154px
+
+#authorize_aws 
+    display: none
+
+#np_submit,
+#recover_account,
+#authorize_aws,
+#unauthorize_aws 
+    display: block
+    width: 100%
+    font-size: 14px
+    font-family: Raleway
+    font-weight: bold
+    text-shadow: 0 1px 0 #FFC60B
+    text-align: left
+    text-indent: 24px
+    padding: 12px
+    border-radius: 2px
+    border: 1px solid #FFC60B
+
+
+.aws_account_status 
+    margin: 12px 24px
+    padding: 6px 12px 6px 42px
+    background: url('/static/images/icons/networking.png') 12px center no-repeat rgba(51, 102, 255, 0.4)
+    border-radius: 4px
+    border: 1px solid rgb(51, 102, 255)
+    &.authorized 
+        background: url('/static/images/icons/check.png') 12px center no-repeat rgba(0, 204, 0, 0.4)
+        border: 1px solid rgb(0, 204, 0)
+    &.not_authorized 
+        background: url('/static/images/icons/busy.png') 12px center no-repeat rgba(255, 51, 0, 0.4)
+        border: 1px solid rgb(255, 51, 0)
+
+#np_submit 
+    background: url('/static/images/mono/black/contact_card_icon&16.png') 12px center no-repeat
+    &:hover 
+        background: url('/static/images/mono/black/contact_card_icon&16.png') 12px center no-repeat #FFC60B
+        cursor: pointer
+
+#recover_account 
+    background: url('/static/images/mono/black/padlock_closed_icon&16.png') 12px center no-repeat
+    &:hover 
+        background: url('/static/images/mono/black/padlock_closed_icon&16.png') 12px center no-repeat #FFC60B
+        cursor: pointer
+
+#authorize_aws 
+    background: url('/static/images/mono/black/key_icon&16.png') 12px center no-repeat
+    &:hover 
+        background: url('/static/images/mono/black/key_icon&16.png') 12px center no-repeat #FFC60B
+        cursor: pointer
+
+
+#unauthorize_aws 
+    background: url('/static/images/mono/black/undo_icon&16.png') 12px center no-repeat
+    &:hover 
+        background: url('/static/images/mono/black/undo_icon&16.png') 12px center no-repeat #FFC60B
+        cursor: pointer
+
+#endorsement_section
+    .msg_from 
+        overflow: hidden
+        img 
+            margin: 12px
+            float: left
+        span 
+            font-weight: bold
+            margin-top: 12px
+            display: block
+            width: 80%
+    .endorsements 
+        border-color: #E2A809 !important
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.3)
+        background-color: #fff
+        overflow: auto
+        margin: 12px 24px
+        padding: 12px
+        border: 1px solid #E2E2E2
+        border-radius: 3px
+    .ratings 
+        clear: both
+    ul.stars 
+        li 
+            background: url('/static/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat
+            display: inline-block
+            height: 24px
+            padding: 10px
+            width: 24px
+            &.marked 
+                background: url('/static/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat
+    li.endorse 
+        border: 1px solid #e2e2e2
+        background: #fff
+        margin: 3px 0
+        border-radius: 2px
+        float: left
+        width: 96%
+        clear: both
+        padding: 0px 10px
+        span.left 
+            float: left
+        span.right 
+            float: right
+            padding: 0 20px 0 0
+            margin-top: 8px
+            .hide 
+                display: none
+        .view_endorse 
+            cursor: pointer
+            float: right
+            margin-top: 12px
+            padding: 3px 12px
+            font-size: 14px
+        .rating_content 
+            display: none
+            overflow: auto
+        p 
+            font-size: 14px
+            margin: 0 12px 12px 12px
+            height: 100%
+        &.needsAction 
+            background: #FFEFC6
+        &:hover 
+            cursor: pointer
+            background: #e2e2e2
+            border: 1px solid #d2d2d2
+    li.shown
+        &:hover 
+            cursor: default
+            background: #fff
+
+#endorsement_list 
+    overflow: auto
+    ul 
+        clear: both
+        padding: 0 10px
+        &.stars
+            text-align: center
+            clear: both
+            margin: 0
+            padding-top: 10px
+            &.left
+                float: left
+
+.hideBtn,
+.showBtn 
+    background-color: #f1f1f1
+    background-position: 6px center
+    background-repeat: no-repeat
+    padding: 4px 8px 4px 30px
+    border: 1px solid #d2d2d2
+    border-radius: 3px
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1)
+    &:hover
+        background-color: #e2e2e2
+        cursor: pointer
+
+.hideBtn 
+    background-image: url('/static/images/mono/black/invisible_light_icon&16.png')
+
+.showBtn 
+    background-image: url('/static/images/mono/black/eye_icon&16.png')
+
+.payment_method button.save,
+.payment-method-new 
+    display: none
+
+.payment_account_status 
+    margin: 24px
+    .hint 
+        margin: 8px 24px
+    .payment_method 
+        background: #fff
+        border: 1px solid #e2e2e2
+        margin-bottom: 12px
+    .status 
+        padding: 6px 12px
+        font-size: 14px
+        margin: 0
+        overflow: hidden
+        strong 
+            display: inline-block
+            margin-top: 4px
+        em 
+            display: inline-block
+            margin-top: 4px
+        button 
+            float: right
+
+.payment-method-new 
+    margin: 12px
+    background: #f1f1f1
+    border: 1px solid #e2e2e2
+    .group 
+        input 
+            width: 170px
+        select
+            width: 192px
