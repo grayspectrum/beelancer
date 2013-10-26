@@ -1,0 +1,58 @@
+<script type="text/x-handlebars" data-template-name="projects/create">
+	<div class="center-pane">
+		<form id="create_project">
+			<div class="top_options">
+				<strong class="gold-gradient option_button">
+					<button {{bindAttr disabled="isProcessing"}} {{action 'createProject'}} class="save_project">Save Project</button>
+				</strong>
+			</div>
+			<div class="group">
+				<label>
+					<span>Title: </span>
+					{{input class="required" type="text" placeholder="" name="title" value=title }}
+				</label>
+				<label>
+					<span>Deadline: </span>
+					{{input class="required" type="text" placeholder="" name="deadline" value=deadline }}
+				</label>
+			</div>
+			<div class="full_block">
+				<p class="hint">
+					Give your team members an overview of the project. Or if you plan on posting this project to the job board, be sure 
+					that you give high-level information about the project goals, so candidates have a fundamental understanding of what 
+					the project is "all about".
+				</p>
+			</div>
+			<label class="full_block">
+				<span>Description: <small class="small_right">(<a href="http://daringfireball.net/projects/markdown/basics" target="_blank">Markdown</a> Supported)</small></span>
+				{{textarea value=description class="required markdown_input" name="description" maxlength="3000"}}
+			</label>
+			<div class="full_block">
+				<label class="big_radio" for="newproject_client-false">
+					{{input type="radio" name="hasClient" value="false"}} I will be funding this project
+					<p>
+						You will act as both the project owner and the client. This means that you will be responsible 
+						for hiring others, assigning work, and paying your team for their completed tasks.
+					</p>
+				</label>
+				<label class="big_radio">
+					{{input type="radio" name="hasClient" value="true"}} My client will be funding this project
+					<p>
+						You will be responsible for assembling your team and assigning tasks. When you bill your client, 
+						they will recieve a payment link and you and your team will be paid automatically.
+					</p>
+				</label>
+			</div>
+			<div class="group">
+				<label>
+					<span>Client's Email: </span>
+					{{input type="email" placeholder="" name="client" value=client}}
+				</label>
+				<label>
+					<span>Client's Budget: </span>
+					{{input type="number" id="newproject_budget" placeholder="" name="budget" value=budget}}
+				</label>
+			</div>
+		</form>
+	</div>
+</script>

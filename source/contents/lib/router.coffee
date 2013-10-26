@@ -126,6 +126,13 @@ Bee.ProjectsViewRoute = Bee.Auth.Route.extend
             project.id = project._id
             project
 
+# projects create route
+Bee.ProjectsCreateRoute = Bee.Auth.Route.extend
+	actions:
+		projectCreated: (projectId) ->
+			@transitionTo "projects.view", projectId
+
+
 Bee.TasksRoute = Bee.Auth.Route.extend {}
 Bee.TeamRoute = Bee.Auth.Route.extend {}
 Bee.MessagesRoute = Bee.Auth.Route.extend {}

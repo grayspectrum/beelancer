@@ -106,41 +106,6 @@ Bee.NotificationsController = Ember.ArrayController.extend
     visible: false
     notifications: []
 
-# projects index
-Bee.ProjectsIndexController = Ember.ObjectController.extend
-    isActive: yes # active/closed
-    projects: 
-        owned: []
-        participating: []
-    visible: (->
-        ctrl = @
-        filtered =
-            owned: []
-            participating: []
-        $.each this.projects.owned, (p, project) ->
-            if project.isActive is ctrl.isActive then filtered.owned.push project
-        $.each this.projects.participating, (p, project) ->
-            if project.isActive is ctrl.isActive then filtered.participating.push project
-        filtered
-    ).property "isActive","projects"
-    content: {}
-    actions: 
-        filter: ->
-            @set "isActive", not @get "isActive"
-
-# projects view
-Bee.ProjectsViewController = Ember.ObjectController.extend
-    content: {}
-    actions:
-        close: ->
-            console.log "close"
-        reopen: ->
-            console.log "reopen"
-        destroy: ->
-            console.log "destroy"
-        abandon: ->
-            console.log "abandon"
-
 # recover account
 Bee.RecoverController = Ember.ObjectController.extend
     recoverFailed: no
@@ -257,3 +222,64 @@ Bee.WelcomeController = Ember.ObjectController.extend
         @setProperties
             isProcessing: no
             createFailed: err
+
+# projects index
+Bee.ProjectsIndexController = Ember.ObjectController.extend
+    isActive: yes # active/closed
+    projects: 
+        owned: []
+        participating: []
+    visible: (->
+        ctrl = @
+        filtered =
+            owned: []
+            participating: []
+        $.each this.projects.owned, (p, project) ->
+            if project.isActive is ctrl.isActive then filtered.owned.push project
+        $.each this.projects.participating, (p, project) ->
+            if project.isActive is ctrl.isActive then filtered.participating.push project
+        filtered
+    ).property "isActive","projects"
+    content: {}
+    actions: 
+        filter: ->
+            @set "isActive", not @get "isActive"
+
+# projects view
+Bee.ProjectsViewController = Ember.ObjectController.extend
+    content: {}
+    actions:
+        close: ->
+            console.log "close"
+        reopen: ->
+            console.log "reopen"
+        destroy: ->
+            console.log "destroy"
+        abandon: ->
+            console.log "abandon"
+
+Bee.ProjectsCreateController = Ember.ObjectController.extend
+	errors: []
+	isProcessing: no
+	hasClient: no
+	content: 
+		title: null
+		description: null
+		deadline: null
+		client: null
+		budget: null
+	actions:
+		createProject: ->
+			ctrl = @
+			# add validation here
+			@set "isProcessing", yes
+			Bee.Auth.send
+				type: "POST"
+				url: Bee.endpoint "/projects"
+				data: @get "content"
+			.done (project) ->
+				ctrl.set "isProcessing", no
+				(ctrl.get "target").send "projectCreated", project._id
+			.fail (err) ->
+				ctrl.set "isProcessing", no
+				# display error message here

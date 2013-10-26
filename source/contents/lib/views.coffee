@@ -29,3 +29,10 @@ Bee.NotificationsView = Ember.View.extend
 # project list
 Bee.ProjectListView = Ember.View.extend
     templateName: "projects-list"
+
+# projects create view
+Bee.ProjectsCreateView = Ember.View.extend
+	templateName: "projects/create"
+	didInsertElement: ->
+		($ "[name='deadline']").datepicker minDate : "0"
+		($ "#create_project input:first").trigger "focus"
