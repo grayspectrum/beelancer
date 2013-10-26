@@ -30,6 +30,10 @@ Bee.NotificationsView = Ember.View.extend
 Bee.ProjectListView = Ember.View.extend
     templateName: "projects-list"
 
+# task list
+Bee.TaskListView = Ember.View.extend
+    templateName: "tasks-list"
+
 # projects create view
 Bee.ProjectsCreateView = Ember.View.extend
 	templateName: "projects/create"

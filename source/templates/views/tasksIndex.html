@@ -1,0 +1,39 @@
+<script type="text/x-handlebars" id="tasks/index">
+	<div class="center-pane">
+		<div class="top_options">
+			<div class="project_filter">
+				<strong>Viewing: </strong>
+				<select {{action 'filter' on='change'}}>
+					<option value=":projectId">Project List Goes Here</option>
+				</select>
+			</div>
+			<strong class="gold-gradient option_button">
+				{{#link-to 'tasks.create' classNames='new_task'}}Create Task{{/link-to}}
+			</strong>
+		</div>
+		<div class="col3">
+			<div class="col-header in-progress light-gradient">
+				<h3>In Progress</h3>
+			</div>
+			<div id="tasks_active_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+		<div class="col3">
+			<div class="col-header completed light-gradient">
+				<h3>Completed</h3>
+			</div>
+			<div id="tasks_closed_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+		<div class="col3">
+			<div class="col-header unassigned light-gradient">
+				<h3>Unassigned</h3>
+			</div>
+			<div id="tasks_unassigned_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+	</div>
+</script>
