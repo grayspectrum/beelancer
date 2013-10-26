@@ -38,7 +38,7 @@ Bee.Auth = Ember.Auth.create
         autoRecall: on
 
 Bee.endpoint = (path) ->
-    api_url = localStorage.getItem "api_url"
+    api_url = localStorage.getItem "apiUrl"
     api_url + path
 
 Ember.Handlebars.helper "deadline", (project, options) ->

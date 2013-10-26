@@ -186,7 +186,7 @@ Bee.RegisterController = Ember.ObjectController.extend
     actions: 
         register: ->
             ctrl = @
-            if ctrl.get "password" isnt ctrl.get "password2"
+            if (ctrl.get "password") isnt (ctrl.get "password2")
                 return ctrl.errors error : "Passwords do not match"
             ctrl.setProperties
                 registerFailed: no
