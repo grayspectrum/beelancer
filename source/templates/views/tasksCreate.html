@@ -1,0 +1,51 @@
+<script type="text/x-handlebars" data-template-name="tasks/create">
+	<div class="center-pane">
+		<form>
+			<div class="top_options">
+				<strong class="gold-gradient option_button">
+					<button {{bindAttr disabled=isProcessing}} class="save_task">Save Task</button>
+				</strong>
+			</div>
+			<div class="group">
+				<label for="newtask_title">
+					<span>Title: </span>
+					{{input classNames="required" type="text" placeholder="" name="title" value=title }}
+				</label>
+				<label for="newtask_rate">
+					<span>Rate: </span>
+					{{input classNames="required" type="text" placeholder="" name="rate" value=rate }}
+				</label>
+			</div>
+			<div class="group no_edit">
+				<label for="newtask_project">
+					<span>Project: </span>
+					<select class="required" id="newtask_project" name="projectId">
+						<option value="null">Loading projects...</option>
+					</select>
+				</label>
+				<label for="newtask_assignee">
+					<span>Assignee: </span>
+					<select id="newtask_assignee" name="assignee">
+						<option value="null">Loading team...</option>
+					</select>
+				</label>
+			</div>
+			<div class="full_block">
+				<label class="big_radio selected" for="newtask_isFixed-true">
+					{{input type="radio" name="isFixedRate" value=isFixedRate checked="checked" }} This task has a fixed price
+					<p>
+						The rate you specify above is the amount paid for the completion of this task. You can still track 
+						your time, but the billed amount will remain the same.
+					</p>
+				</label>
+				<label class="big_radio" for="newtask_isFixed-false">
+					{{input type="radio" name="isFixedRate" value=isFixedRate }} This task is paid hourly
+					<p>
+						The rate you specify above represents an hourly rate. The billed amount will be equal to this rate 
+						times the number of hours logged for this task upon billing.
+					</p>
+				</label>
+			</div>
+		</form>
+	</div>
+</script>

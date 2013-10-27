@@ -258,28 +258,47 @@ Bee.ProjectsViewController = Ember.ObjectController.extend
         abandon: ->
             console.log "abandon"
 
+# projects create
 Bee.ProjectsCreateController = Ember.ObjectController.extend
-	errors: []
-	isProcessing: no
-	hasClient: no
-	content: 
-		title: null
-		description: null
-		deadline: null
-		client: null
-		budget: null
-	actions:
-		createProject: ->
-			ctrl = @
-			# add validation here
-			@set "isProcessing", yes
-			Bee.Auth.send
-				type: "POST"
-				url: Bee.endpoint "/projects"
-				data: @get "content"
-			.done (project) ->
-				ctrl.set "isProcessing", no
-				(ctrl.get "target").send "projectCreated", project._id
-			.fail (err) ->
-				ctrl.set "isProcessing", no
-				# display error message here
+    errors: []
+    isProcessing: no
+    hasClient: no
+    content: 
+        title: null
+        description: null
+        deadline: null
+        client: null
+        budget: null
+    actions:
+        createProject: ->
+            ctrl = @
+            # add validation here
+            @set "isProcessing", yes
+            Bee.Auth.send
+                type: "POST"
+                url: Bee.endpoint "/projects"
+                data: @get "content"
+            .done (project) ->
+                ctrl.set "isProcessing", no
+                (ctrl.get "target").send "projectCreated", project._id
+            .fail (err) ->
+                ctrl.set "isProcessing", no
+                # display error message here
+
+# tasks index
+Bee.TasksIndexController = Ember.ObjectController.extend
+    project: null
+    content:
+        tasks: 
+            all: []
+            inProgress: []
+            completed: []
+            unassgined: []
+    projects: 
+        all: []
+        owned: []
+        participating: []
+    visible: (->
+        ctrl = @
+        # filter tasks here            
+    ).property "project"
