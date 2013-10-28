@@ -300,5 +300,6 @@ Bee.TasksIndexController = Ember.ObjectController.extend
         participating: []
     visible: (->
         ctrl = @
+        console.log "filter tasks by project #{@.project}"
         # filter tasks here            
     ).property "project"
