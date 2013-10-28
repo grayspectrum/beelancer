@@ -152,6 +152,12 @@ Bee.TasksIndexRoute = Bee.Auth.Route.extend
             ctrl.set "projects.participating", projects.participating
             ctrl.set "projects.all", projects.owned.concat projects.participating
 
+# projects create route
+Bee.TasksCreateRoute = Bee.Auth.Route.extend
+    actions:
+        taskCreated: (taskId) ->
+            @transitionTo "tasks.view", taskId
+
 Bee.TeamRoute = Bee.Auth.Route.extend {}
 Bee.MessagesRoute = Bee.Auth.Route.extend {}
 Bee.JobsRoute = Bee.Auth.Route.extend {}

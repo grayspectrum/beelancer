@@ -303,3 +303,29 @@ Bee.TasksIndexController = Ember.ObjectController.extend
         console.log "filter tasks by project #{@.project}"
         # filter tasks here            
     ).property "project"
+
+# tasks create
+Bee.TasksCreateController = Ember.ObjectController.extend
+    errors: []
+    isProcessing: no
+    content: 
+        title: null
+        rate: null
+        isFixedRate: null
+        project: null
+        assignee: null
+    actions:
+        createTask: ->
+            ctrl = @
+            # add validation here
+            @set "isProcessing", yes
+            Bee.Auth.send
+                type: "POST"
+                url: Bee.endpoint "/tasks"
+                data: @get "content"
+            .done (task) ->
+                ctrl.set "isProcessing", no
+                (ctrl.get "target").send "taskCreated", task._id
+            .fail (err) ->
+                ctrl.set "isProcessing", no
+                # display error message here

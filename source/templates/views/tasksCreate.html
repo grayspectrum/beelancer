@@ -1,9 +1,9 @@
 <script type="text/x-handlebars" data-template-name="tasks/create">
 	<div class="center-pane">
-		<form>
+		<form id="create_task">
 			<div class="top_options">
 				<strong class="gold-gradient option_button">
-					<button {{bindAttr disabled=isProcessing}} class="save_task">Save Task</button>
+					<button {{bindAttr disabled=isProcessing}} {{action 'createTask'}} class="save_task">Save Task</button>
 				</strong>
 			</div>
 			<div class="group">

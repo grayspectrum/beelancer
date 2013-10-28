@@ -40,3 +40,20 @@ Bee.ProjectsCreateView = Ember.View.extend
 	didInsertElement: ->
 		($ "[name='deadline']").datepicker minDate : "0"
 		($ "#create_project input:first").trigger "focus"
+
+# tasks create view
+Bee.TasksCreateView = Ember.View.extend
+    templateName: "tasks/create"
+    didInsertElement: ->
+        ($ "#create_task input:first").trigger "focus"
+
+# worklog view
+Bee.WorklogView = Ember.View.extend
+    tagName: "li"
+    content: null
+    edit: ->
+        id = @getPath "content._id"
+        console.log "editing log entry #{id}"
+    remove: ->
+        id = @getPath "content._id"
+        console.log "removing log entry #{id}"

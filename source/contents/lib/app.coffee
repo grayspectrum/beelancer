@@ -48,7 +48,7 @@ Bee.validate = (type, value) ->
 		email: /\A[^@]+@([^@\.]+\.)+[^@\.]+\z/
 		date: /(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d/
 		dollarAmount: /^\$?[0-9]+(\.[0-9][0-9])?$/
-	unless value and patterns[value]? then return false else value.match patterns[type]
+	unless value and patterns[value]? then no else value.match patterns[type]
 
 # view helpers
 Ember.Handlebars.helper "deadline", (project, options) ->
@@ -75,3 +75,29 @@ Ember.Handlebars.helper "percentComplete", (value, options) ->
 
 Ember.Handlebars.helper "markdown", (value, options) ->
     new Ember.Handlebars.SafeString marked value
+
+# hours calculator helper fn
+calculateWorklogHours = (logEntry) ->
+    ended      = if logEntry.ended then new Date logEntry.ended else Date.now()
+    started    = new Date logEntry.started
+    msWorked   = ended - started
+    minsWorked = Math.round ((msWorked % 86400000) % 3600000) / 60000
+    timeWorked = (minsWorked / 60).toFixed 2
+
+Ember.Handlebars.helper "taskCost", (value, options) ->
+    # calculate task cost
+    worklog    = value.worklog
+    rate       = value.rate
+    timeWorked = 0
+    # if it's a fixed rate task just return the cost
+    if value.isFixedRate then return "$#{rate}"
+    # other wise let's calculate it
+    calculateWorklogHours time for time in value.worklog
+    cost = timeWorked * rate
+    "$#{cost}"
+
+Ember.Handlebars.helper "hoursWorked", (value, options) ->
+    calculateWorklogHours value
+
+Ember.Handlebars.helper "dayStarted", (value, options) ->
+    (new Date value).toDateString()
