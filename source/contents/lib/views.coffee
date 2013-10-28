@@ -51,9 +51,29 @@ Bee.TasksCreateView = Ember.View.extend
 Bee.WorklogView = Ember.View.extend
     tagName: "li"
     content: null
-    edit: ->
-        id = @getPath "content._id"
-        console.log "editing log entry #{id}"
-    remove: ->
-        id = @getPath "content._id"
-        console.log "removing log entry #{id}"
+    editLogEntry: ->
+        ctrl = @get "targetObject"
+        ctrl.set "worklogFormVisible", yes
+        ctrl.set "editingWorklogEntry", @getPath "content"
+    removeLogEntry: ->
+        view      = @
+        ctrl      = @get "targetObject"
+        worklogId = @getPath "content._id"
+        taskId    = ctrl.get "_id"
+        ctrl.set "editingWorklogEntry", null
+        Bee.Auth.send
+            type: "DELETE"
+            url: Bee.endpoint "/tasks/#{taskId}/worklog/#{worklogId}"
+        .done (message) ->
+            view.destroy()
+            # remove this entry from the task controller
+            worklog = ctrl.get "worklog"
+            $.each worklog, (i, entry) -> 
+                if entry._id is worklogId then (worklog.splice i, 1) and false
+        .fail (err) ->
+            console.log err
+
+Bee.TasksWorklogModalView = Ember.View.extend
+    templateName: "tasks-worklog-form"
+    didInsertElement: ->
+        ($ "#wlog_startTime, #wlog_endTime").datepicker()

@@ -19,27 +19,36 @@
 			<div class="group no_edit">
 				<label for="newtask_project">
 					<span>Project: </span>
-					<select class="required" id="newtask_project" name="projectId">
-						<option value="null">Loading projects...</option>
-					</select>
+					{{view Ember.Select
+				       content=projects
+				       optionValuePath='content._id'
+				       optionLabelPath='content.title'
+				       value=selectedProject
+				   	}}
 				</label>
 				<label for="newtask_assignee">
 					<span>Assignee: </span>
 					<select id="newtask_assignee" name="assignee">
 						<option value="null">Loading team...</option>
 					</select>
+					{{view Ember.Select
+				       content=assignees
+				       optionValuePath='content._id'
+				       optionLabelPath='content.fullName'
+				       value=selectedAssignee
+				   	}}
 				</label>
 			</div>
 			<div class="full_block">
-				<label class="big_radio selected" for="newtask_isFixed-true">
-					{{input type="radio" name="isFixedRate" value=isFixedRate checked="checked" }} This task has a fixed price
+				<label class="big_radio selected">
+					<input type="radio" name="isFixedRate" {{bindAttr checked=isFixedRate}} /> This task has a fixed price
 					<p>
 						The rate you specify above is the amount paid for the completion of this task. You can still track 
 						your time, but the billed amount will remain the same.
 					</p>
 				</label>
-				<label class="big_radio" for="newtask_isFixed-false">
-					{{input type="radio" name="isFixedRate" value=isFixedRate }} This task is paid hourly
+				<label class="big_radio">
+					<input type="radio" name="isFixedRate" /> This task is paid hourly
 					<p>
 						The rate you specify above represents an hourly rate. The billed amount will be equal to this rate 
 						times the number of hours logged for this task upon billing.

@@ -287,7 +287,7 @@ Bee.ProjectsCreateController = Ember.ObjectController.extend
 
 # tasks index
 Bee.TasksIndexController = Ember.ObjectController.extend
-    project: null
+    selectedProject: null
     content:
         tasks: 
             all: []
@@ -302,16 +302,30 @@ Bee.TasksIndexController = Ember.ObjectController.extend
         ctrl = @
         console.log "filter tasks by project #{@.project}"
         # filter tasks here            
-    ).property "project"
+    ).property "selectedProject"
 
 # tasks create
 Bee.TasksCreateController = Ember.ObjectController.extend
     errors: []
     isProcessing: no
+    projects: []
+    selectedProject: null
+    selectedAssignee: null
+    assignees: (->
+        projectId = @get "selectedProject"
+        Bee.Auth.send
+            url: Bee.endpoint "/projects/#{projectId}/team"
+        .done (assignees) -> 
+            assignees.map (assignee) ->
+                assignee.fullName = "#{assignee.firstName} #{assignee.lastName}"
+        .fail (err) -> 
+            @.set "errors", [err]
+            []
+    ).property "selectedProject"
     content: 
         title: null
         rate: null
-        isFixedRate: null
+        isFixedRate: false
         project: null
         assignee: null
     actions:
@@ -322,10 +336,49 @@ Bee.TasksCreateController = Ember.ObjectController.extend
             Bee.Auth.send
                 type: "POST"
                 url: Bee.endpoint "/tasks"
-                data: @get "content"
+                data: 
+                    title: @get "title"
+                    rate: @get "rate"
+                    isFixedRate: @get "isFixedRate"
+                    project: @get "selectedProject"
+                    assignee: @get "selectedAssignee"
             .done (task) ->
                 ctrl.set "isProcessing", no
                 (ctrl.get "target").send "taskCreated", task._id
             .fail (err) ->
                 ctrl.set "isProcessing", no
                 # display error message here
+
+# tasks view
+Bee.TasksViewController = Ember.ObjectController.extend
+    content: {}
+    worklogFormVisible: no
+    editingWorklogEntry: null
+    actions:
+        # task actions
+        destroyTask: ->
+            console.log "deleting task #{id}"
+        markTaskAsClosed: ->
+            console.log "marking task #{id} as completed"
+        markTaskAsOpen: ->
+            console.log "marking task #{id} as open"
+        # worklog actions
+        addLogEntry: -> 
+            @set "editingWorklogEntry", null
+            @set "worklogFormVisible", yes
+        saveLogEntry: -> 
+            method    = "POST"
+            endpoint  = "/tasks/#{_id}/worklog"
+            worklogId = (@get "editingWorklogEntry")._id
+            if worklogId
+                endpoint += "/#{worklogId}"
+                method    = "PUT"
+            Bee.Auth.send
+                type: method
+                url: Bee.endpoint endpoint
+                data:
+                    # add worklog data here
+            @set "worklogFormVisible", no
+        closeLogEntry: -> 
+            @set "editingWorklogEntry", null
+            @set "worklogFormVisible", no

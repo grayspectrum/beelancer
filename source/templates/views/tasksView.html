@@ -5,13 +5,13 @@
                 {{#link-to 'tasks.edit' _id classNames='edit_project'}}Edit{{/link-to}}
             </strong>
             <strong class="gold-gradient option_button">
-                <a {{action 'destroy'}} class="delete_task">Delete</a>
+                <a {{action 'destroyTask'}} class="delete_task">Delete</a>
             </strong>
             <strong class="gold-gradient option_button">
                 {{#if isActive}}
-                    <a {{action 'markAsClosed'}} class="task_status open">Complete Task</a>
+                    <a {{action 'markTaskAsClosed'}} class="task_status open">Complete Task</a>
                 {{else}}
-                    <a {{action 'markAsOpen'}} class="task_status closed">Reopen Task</a>
+                    <a {{action 'markTaskAsOpen'}} class="task_status closed">Reopen Task</a>
                 {{/if}}
             </strong>
         </div>
@@ -55,7 +55,7 @@
             <div class="col-header worklog light-gradient">
                 <h3>
                     Work Log
-                    <button class="timer entry">Add</button>
+                    <button {{action "addLogEntry"}} class="timer entry">Add</button>
                 </h3>
             </div>
             <div id="task_worklog">
@@ -69,8 +69,8 @@
                                         <span class="wlog-ended">{{ended}}</span>
                                         <span class="wlog-hours">{{hoursWorked this}}</span> on <span class="wlog-day">{{dayStarted started}}</span>
                                     </strong>
-                                    <button {{action "remove"}} class="wlog delete">Delete Entry</button>
-                                    <button {{action "edit"}} class="wlog edit">Edit Entry</button>
+                                    <button {{action "removeLogEntry"}} class="wlog delete">Delete Entry</button>
+                                    <button {{action "editLogEntry"}} class="wlog edit">Edit Entry</button>
                                     <p>{{message}}</p>
                                 {{/view}}
                             {{/if}}
@@ -82,4 +82,5 @@
             </div>
         </div>
     </div>
+    {{#if worklogFormVisible}}{{view Bee.TasksWorklogModalView}}{{/if}}
 </script>

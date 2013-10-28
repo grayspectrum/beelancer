@@ -152,11 +152,25 @@ Bee.TasksIndexRoute = Bee.Auth.Route.extend
             ctrl.set "projects.participating", projects.participating
             ctrl.set "projects.all", projects.owned.concat projects.participating
 
-# projects create route
+# tasks create route
 Bee.TasksCreateRoute = Bee.Auth.Route.extend
+    setupController: (ctrl) ->
+        # get projects
+        Bee.Auth.send
+            url: Bee.endpoint "/projects"
+        .done (projects) -> 
+            ctrl.set "projects", projects.owned.concat projects.participating
     actions:
         taskCreated: (taskId) ->
             @transitionTo "tasks.view", taskId
+
+Bee.TasksViewRoute = Bee.Auth.Route.extend
+    model: (params) ->
+        Bee.Auth.send
+            url: Bee.endpoint "/tasks/#{params.id}"
+        .done (task) ->
+            task.id = task._id
+            task
 
 Bee.TeamRoute = Bee.Auth.Route.extend {}
 Bee.MessagesRoute = Bee.Auth.Route.extend {}

@@ -1,0 +1,26 @@
+<script type="text/x-handlebars-template" data-template-name="tasks-worklog-form">
+    <div id="bee-ui_add_worklog_entry" class="modal-container">
+        <form data-id="{{_id}}" class="center-pane">
+            <div class="top_options">
+                <strong class="gold-gradient option_button">
+                    <a {{action 'saveWorklogEntry'}} class="save-worklog">Save Entry</a>
+                </strong>
+            </div>
+            <div class="group">
+                <label for="wlog_startTime">
+                    <span>Started:</span>
+                    <input type="text" name="started" value="{{started}}" id="wlog_startTime" />
+                </label>
+                <label for="wlog_endTime">
+                    <span>Ended:</span>
+                    <input type="text" name="ended" value="{{ended}}" id="wlog_endTime" />
+                </label>
+            </div>
+            <div id="wlog_error"></div>
+            <label class="full_block" for="wlog_message">
+                <span>Notes:</span>
+                <textarea id="wlog_message" name="message">{{message}}</textarea>
+            </label>
+        </form>
+    </div>
+</script>
