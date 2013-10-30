@@ -309,18 +309,13 @@ Bee.TasksCreateController = Ember.ObjectController.extend
     errors: []
     isProcessing: no
     projects: []
+    teams: {}
     selectedProject: null
     selectedAssignee: null
     assignees: (->
-        projectId = @get "selectedProject"
-        Bee.Auth.send
-            url: Bee.endpoint "/projects/#{projectId}/team"
-        .done (assignees) -> 
-            assignees.map (assignee) ->
-                assignee.fullName = "#{assignee.firstName} #{assignee.lastName}"
-        .fail (err) -> 
-            @.set "errors", [err]
-            []
+        project = @get "selectedProject"
+        team = @get "teams.#{project}"
+        if project and team then team else []
     ).property "selectedProject"
     content: 
         title: null
@@ -351,6 +346,10 @@ Bee.TasksCreateController = Ember.ObjectController.extend
 
 # tasks view
 Bee.TasksViewController = Ember.ObjectController.extend
+    worlklogEntry:
+        started: null
+        ended: null
+        message: null
     content: {}
     worklogFormVisible: no
     editingWorklogEntry: null
@@ -376,8 +375,11 @@ Bee.TasksViewController = Ember.ObjectController.extend
             Bee.Auth.send
                 type: method
                 url: Bee.endpoint endpoint
-                data:
-                    # add worklog data here
+                data: @get "worklogEntry"
+            .done (logentry) ->
+                console.log "logentry saved:", logentry
+            .fail (err) ->
+                console.log "failed to save logentry"
             @set "worklogFormVisible", no
         closeLogEntry: -> 
             @set "editingWorklogEntry", null

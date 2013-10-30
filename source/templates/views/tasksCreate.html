@@ -24,18 +24,17 @@
 				       optionValuePath='content._id'
 				       optionLabelPath='content.title'
 				       value=selectedProject
+				       prompt='Select a Project...'
 				   	}}
 				</label>
 				<label for="newtask_assignee">
 					<span>Assignee: </span>
-					<select id="newtask_assignee" name="assignee">
-						<option value="null">Loading team...</option>
-					</select>
 					{{view Ember.Select
 				       content=assignees
 				       optionValuePath='content._id'
 				       optionLabelPath='content.fullName'
 				       value=selectedAssignee
+				       prompt='Select an Assignee...'
 				   	}}
 				</label>
 			</div>

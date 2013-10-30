@@ -159,7 +159,16 @@ Bee.TasksCreateRoute = Bee.Auth.Route.extend
         Bee.Auth.send
             url: Bee.endpoint "/projects"
         .done (projects) -> 
-            ctrl.set "projects", projects.owned.concat projects.participating
+            projects = projects.owned.concat projects.participating
+            ctrl.set "projects", projects
+            # get teams for each project pre-emptively
+            $.each projects, (i, project) ->
+                Bee.Auth.send
+                    url: Bee.endpoint "/projects/#{project._id}/team"
+                .done (assignees) -> 
+                    ctrl.set "teams.#{project._id}", assignees.map (assignee) ->
+                        assignee.fullName = "#{assignee.firstName} #{assignee.lastName}"
+                        assignee
     actions:
         taskCreated: (taskId) ->
             @transitionTo "tasks.view", taskId
