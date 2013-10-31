@@ -15,8 +15,8 @@
         ]
     },
     "locals": {
-        "apiHost": "beelancerapi-gordonwritescode.rhcloud.com",
-        "apiPort": 80,
+        "apiHost": "localhost",
+        "apiPort": 3333,
         "apiProtocol": "http"
     },
     "require": {

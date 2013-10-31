@@ -27,29 +27,48 @@ html
 		include ./views/loader.html
 		//- projects templates
 		include ./views/projects.html
-		include ./views/projectList.html
-		include ./views/projectsIndex.html
-		include ./views/projectsView.html
-		include ./views/projectsCreate.html
+		include ./views/projects-list.html
+		include ./views/projects-index.html
+		include ./views/projects-view.html
+		include ./views/projects-create.html
 		//- tasks templates
 		include ./views/tasks.html
-		include ./views/taskList.html
-		include ./views/tasksIndex.html
-		include ./views/tasksView.html
-		include ./views/tasksCreate.html
-		include ./views/taskWorklogModal.html
-		include ./views/taskWorklogTimer.html
+		include ./views/tasks-list.html
+		include ./views/tasks-index.html
+		include ./views/tasks-view.html
+		include ./views/tasks-create.html
+		include ./views/tasks-worklog-modal.html
+		include ./views/tasks-worklog-timer.html
 		//- team templates
 		include ./views/team.html
-		include ./views/teamList.html
-		include ./views/teamIndex.html
-		include ./views/teamView.html
-		include ./views/teamEndorsementList.html
+		include ./views/team-list.html
+		include ./views/team-index.html
+		include ./views/team-view.html
+		include ./views/team-endorsement-list.html
 		//- messages templates
 		include ./views/messages.html
-		include ./views/messagesList.html
-		include ./views/messagesCreate.html
-		include ./views/messageView.html
+		include ./views/messages-list.html
+		include ./views/messages-create.html
+		include ./views/messages-view.html
+		//- jobs templates
+		include ./views/jobs.html
+		include ./views/jobs-list.html
+		include ./views/jobs-index.html
+		include ./views/jobs-view.html
+		include ./views/jobs-create.html
+		//- invoices templates
+		include ./views/invoices.html
+		include ./views/invoices-list.html
+		include ./views/invoices-index.html
+		include ./views/invoices-create.html
+		include ./views/invoices-view.html
+		//- account templates
+		include ./views/account.html
+		include ./views/account-index.html
+		include ./views/account-profile.html
+		include ./views/account-payments.html
+		include ./views/account-password.html
+		include ./views/account-endorsements.html
 		script(type='text/x-handlebars')
 			div#app
 				| {{render 'header' profile}}

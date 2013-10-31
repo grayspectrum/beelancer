@@ -1,0 +1,264 @@
+/*
+ * beelancer - css/_messages
+ * author: gordon hall
+ */
+
+.col-header
+    &.conversations h3
+        background: url('/assets/images/mono/black/mail_2_icon&16.png') right center no-repeat
+
+#messages_nav 
+    .reply 
+        background: url('/assets/images/mono/black/redo_icon&24.png') 12px center no-repeat
+    .mark_unread 
+        background: url('/assets/images/mono/black/star_icon&24.png') 12px center no-repeat
+    .delete_message 
+        background: url('/assets/images/mono/black/delete_icon&24.png') 12px center no-repeat
+
+.new-message 
+    background: url('/assets/images/mono/black/spechbubble_sq_line_icon&16.png') 12px center no-repeat
+
+#filter_messages 
+    float: left
+    margin: 12px
+    select 
+        font-size: 16px
+        margin-left: 12px
+
+#messages_sent, 
+#messages_inbox 
+    display: none
+    ul 
+        margin: 3px
+        padding: 0
+        list-style-type: none
+
+li.message 
+    overflow: hidden
+    border-top: 1px solid #E2E2E2
+
+
+#my_messages 
+    li.message:hover,
+    li.message.current 
+        cursor: pointer
+        background: rgba(255, 207, 47, 0.2)
+    .msg_from 
+        overflow: hidden
+        background: url('/assets/images/mono/black/invisible_light_icon&16.png') 522px center no-repeat
+        img 
+            margin: 12px
+            float: left
+
+li.message
+    .isRead .msg_from 
+        background: none
+        overflow: hidden
+    p 
+        font-size: 12px
+        margin: 0 12px 12px 12px
+        height: 20px
+        overflow: hidden
+
+.messageview_body 
+    .msg_from 
+        img 
+            margin: 0px 12px 12px 12px
+            float: left
+    ul 
+        margin: 0
+        padding: 0
+    li.message.isRead .msg_from 
+        background: none
+    li.message p 
+        font-size: 12px
+        height: auto
+        margin: 0 12px 12px 12px
+        overflow: auto
+        &.current_body 
+            text-align: right
+
+.msg_from 
+    span 
+        font-weight: bold
+        margin-top: 12px
+        display: block
+    .this_user img 
+        float: right
+        margin: 0 12px 0 0
+
+#messages_inbox_list 
+    .msg_sentOn 
+        color: #000
+        font-size: 12px
+        float: right
+        margin: 4px 48px 0 0 !important
+
+.msg_sentOn 
+    color: #CCC
+    font-size: 11px
+    font-weight: normal
+    float: right
+    margin: 4px 10px 0 0 !important
+
+.current_body 
+    .msg_sentOn 
+        float: left
+        font-weight: normal
+        margin-top: 0px
+
+.this_user .team_list_name 
+    font-weight: bold
+    margin: 12px 0px
+    display: block
+    float: right
+    width: 75px
+
+.my_messages .message 
+    background: none
+
+.message_compose 
+    padding: 6px 12px
+    overflow: auto
+    border-top: 1px solid #E2E2E2
+    input 
+        float: left
+        font-size: 14px
+        padding: 6px 10px
+        width: 532px
+        border: 1px solid #ABABAB
+        border-radius: 2px
+    .option_button 
+        margin-top: 2px
+
+.message_compose #convo_submit,
+#newmessage_send a 
+    background: url('/assets/images/mono/black/spechbubble_icon&16.png') 6px center no-repeat
+    cursor: pointer
+    display: inline-block
+    float: right 
+
+#newmessage_send 
+    margin: 8px
+
+.message_compose 
+
+.message-to h3 
+    float: left
+    margin-right: 0
+
+#newmessage_to, 
+#newmessage_body 
+    margin: 8px 0
+    font-size: 14px
+    padding: 6px 10px
+    width: 306px
+    border: 1px solid #ABABAB
+    border-radius: 2px
+
+#newmessage_to
+    &:focus 
+        background: #fff !important
+    &.disabled 
+        margin: 10px 0 8px -12px
+        background: none
+        border: none
+
+#newmessage_body 
+    width: 616px
+    border: none
+    background: #FFF
+    resize: none
+    padding: 24px
+    margin: 0
+
+#messenger > label 
+    display: block
+
+#send_message 
+    background: url('/assets/images/mono/black/paper_airplane_icon&32.png') 12px center no-repeat
+    display: block
+    width: 100%
+    font-size: 28px
+    font-family: Raleway
+    font-weight: bold
+    text-shadow: 0 1px 0 #FFC60B
+    text-align: left
+    text-indent: 48px
+    padding: 12px
+    border-radius: 6px
+    border: 2px solid #FFC60B
+    display: none
+    &:hover 
+        background: url('/assets/images/mono/black/paper_airplane_icon&32.png') 12px center no-repeat #FFC60B
+        cursor: pointer
+
+.messageview_from 
+    overflow: hidden
+    padding: 24px
+    background: url('/assets/images/bubble-tick.png') 36px bottom no-repeat
+    img 
+        margin-right: 24px
+        width: 48px
+        height: 48px
+        border-radius: 4px
+        border: 1px solid #999
+    a 
+        color: #001E28
+        text-decoration: none
+        &:hover 
+            text-decoration: underline !important
+            img 
+                border: 1px solid #333
+    strong 
+        display: block
+        margin-top: 2px
+    span 
+        display: block
+        margin-top: 4px
+        font-size: 14px
+
+.messageview_body 
+    margin: 0
+    font-size: 14px
+    line-height: 23px
+    border-radius: 6px
+    text-shadow: 0 1px 0 white
+    overflow: auto
+
+.msg_attachment 
+    text-align: right
+    padding: 0px 24px 12px
+    border-bottom: 1px solid #e2e2e2
+    margin-bottom: 5px
+    button 
+        font-size: 12px
+        padding: 6px 12px
+        font-weight: bold
+        border-radius: 3px
+
+.msg_action_accept 
+    border: 1px solid #FFC60B
+    text-shadow: 0 1px 0 #FFC60B
+    &:hover 
+        background: #FFC60B
+        cursor: pointer
+
+.msg_action_decline 
+    border: 1px solid #fff
+    text-shadow: 0 1px 0 #fff
+    &:hover 
+        background: #fff
+        cursor: pointer
+
+#my_messages 
+    overflow: auto
+    ul 
+        margin: 0
+        padding: 0
+
+.team_list_name 
+    font-size: 14px
+
+#messenger 
+    position: relative

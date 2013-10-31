@@ -36,7 +36,7 @@ Bee.Router.map ->
     @resource "invoices", ->
         @route "view", path: "/:id"
         @route "create", path: "/create"
-    @resource "settings", ->
+    @resource "account", ->
         @route "profile", path: "/profile"
         @route "endorsements", path: "/endorsements"
         @route "payments", path: "/payments"
@@ -185,5 +185,5 @@ Bee.TeamRoute = Bee.Auth.Route.extend {}
 Bee.MessagesRoute = Bee.Auth.Route.extend {}
 Bee.JobsRoute = Bee.Auth.Route.extend {}
 Bee.ProfileRoute = Bee.Auth.Route.extend {}
-Bee.SettingsRoute = Bee.Auth.Route.extend {}
+Bee.AccountRoute = Bee.Auth.Route.extend {}
 Bee.InvoicesRoute = Bee.Auth.Route.extend {}
