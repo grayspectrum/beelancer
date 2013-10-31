@@ -1,0 +1,10 @@
+<script type="text/x-handlebars" data-template-name="team-list">
+    <li class="member_item"{{#if this.ratings.average}} title="Rating: {{this.ratings.average}}, # of Ratings: {{this.ratings.total}}"{{/if}}>
+        {{#link-to 'team.view' _id}}
+            <img src="{{avatarPath}}" width="32px" height="32px" />
+            <span class="member-name">{{firstName}} {{lastName}}</span>
+            <span class="member-title">{{title}}</span>
+            <strong class="rating">{{ratings.average}}</strong>
+        {{/link-to}}
+    </li>
+</script>

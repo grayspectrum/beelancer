@@ -1,0 +1,348 @@
+/*
+ * beelancer - team.css
+ * Author: Gordon Hall
+ */
+
+.top_options 
+    .message
+        background: url('/static/images/mono/black/mail_2_icon&16.png') 6px center no-repeat
+
+#team_profile 
+    .invite 
+        background: url('/static/images/mono/black/contact_card_icon&16.png') 6px center no-repeat
+    .endorse 
+        background: url('/static/images/mono/black/hand_pro_icon&16.png') 6px center no-repeat
+    .remove 
+        background: url('/static/images/mono/black/delete_icon&16.png') 6px center no-repeat
+
+
+.col-header
+    &.myteam h3
+        background: url('/static/images/mono/black/users_icon&16.png') right center no-repeat
+    &.findusers h3 
+        background: url('/static/images/mono/black/zoom_icon&16.png') right center no-repeat
+    &.endorsements h3
+        background: url('/static/images/mono/black/cert_icon&16.png') right center no-repeat
+
+#team_profile 
+    .profile_average_rating 
+        border: 1px solid #e2e2e2
+        background: #fff
+        border-radius: 6px
+        clear: both
+        list-style: none
+        overflow: auto
+        margin: 0 10px
+        padding: 10px
+        .number_ratings 
+            display: block
+            float: left
+            span 
+                font-weight: bold
+        .rating 
+            display: block
+            float: right
+            background: url('/static/images/mono/black/star_fav_icon&24.png') center right no-repeat
+            padding-right: 34px
+
+#user_search_results 
+    padding: 0
+    margin: 0
+    list-style-type: none
+
+#project_team 
+    padding: 4px 12px
+    font-size: 14px
+    background: #FFF
+    border-radius: 2px
+    border: 1px solid #ABABAB
+
+.project_filter 
+    strong 
+        float: left
+        margin: 4px 12px 0 0
+
+#endorse_compose 
+    position: absolute
+    top: 50%
+    left: 50%
+    margin: -125px 0 0 -200px
+    width: 400px
+    height: 300px
+    .stars 
+        text-align: center
+        margin: 10px 0px 20px
+        padding: 0
+    .update_submit_wrapper 
+        width: 370px
+    .send_endorsement,
+    .update_endorsement 
+        background: url('/static/images/mono/black/pencil_icon&32.png') 12px center no-repeat
+        display: block
+        width: 100%
+        font-size: 28px
+        font-family: Raleway
+        font-weight: bold
+        text-shadow: 0 1px 0 #FFC60B
+        text-align: left
+        text-indent: 48px
+        padding: 12px
+        border-radius: 6px
+        border: 2px solid #FFC60B
+        &:hover
+            background: url('/static/images/mono/black/pencil_icon&32.png') 12px center no-repeat #FFC60B
+            cursor: pointer
+    .update-endorsement
+        display: none
+
+.update-endorse 
+    display: none
+    background: url('/static/images/mono/black/checkmark_icon&16.png') 12px center no-repeat
+
+.submit-endorse 
+    background: url('/static/images/mono/black/cert_icon&16.png') 12px center no-repeat
+
+#comment 
+    height: 144px
+    width: 352px
+    margin: 12px
+    font-size: 14px
+    padding: 6px 10px
+    border: 1px solid #ABABAB
+    border-radius: 2px
+    resize: none
+
+#team_profile #endorse_compose li, 
+.profile_ratings .stars li 
+    background: url('/static/images/mono/black/star_fav_empty_icon&24.png') 0 0 no-repeat
+    display: inline-block
+    height: 24px
+    padding: 0px 10px
+    width: 24px
+    &.hovered
+        background: url('/static/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat
+        cursor: pointer
+    &.marked
+        background: url('/static/images/mono/black/star_fav_icon&24.png') 0 0 no-repeat
+
+.profile_ratings .stars li 
+    border: none
+    float: none
+    padding: 0px
+
+#team_profile 
+    .profile_avatar 
+        margin: 12px
+        border: 12px solid white
+        float: left
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.6)
+        height: 80px
+        width: 80px
+    .profile_info 
+        overflow: hidden
+    .profile_name 
+        display: block
+        margin: 24px 0 12px 12px
+        font-size: 32px
+        font-family: Raleway
+        text-shadow: 0 1px 0 white
+        float: left
+    .profile_title 
+        font-size: 18px
+        margin-left: 12px
+        float: left
+        width: 420px
+    .profile_about 
+        background: url('/static/images/bubble-tick.png') 32px 0 no-repeat
+        padding: 18px 12px 0 12px
+        .bubble 
+            background: #E2E2E2
+            border-radius: 12px
+            padding: 12px
+            color: #333
+            font-size: 16px
+            line-height: 26px
+            text-shadow: 0 1px 0 white
+    .profile_ratings 
+        margin: 0 12px 24px 12px
+        overflow: hidden
+        ul 
+        margin: 0
+        padding: 0
+        li 
+            border: 1px solid #e2e2e2
+            background: #fff
+            margin: 3px 0
+            border-radius: 6px
+            float: left
+            width: 100%
+            clear: both
+            list-style: none
+        .rating_from 
+            padding: 10px
+            .from_user 
+                float: left
+                margin: 0 0 10px
+                width: 100%
+                img 
+                    float: left
+                .endorse_name 
+                    float: left
+                    font-weight: bold
+                    margin: 6px
+                .rating 
+                    float: right
+                .rating_from p 
+                    clear: both
+                    margin: 0 0 5px
+        .emptyList 
+            background: url('/static/images/mono/black/emotion_sad_icon&24.png') left center no-repeat
+            padding: 6px 0 6px 34px
+
+#list_team 
+    margin-bottom: 24px
+
+#team_list 
+    label 
+        padding: 12px 24px
+        margin-bottom: 12px
+        background: #e2e2e2
+        display: block
+        select 
+            margin-left: 12px
+            font-size: 16px
+
+.search 
+    background: #f1f1f1
+    overflow: hidden
+
+#team_search 
+    display: block
+    font-size: 16px
+    padding: 8px 18px
+    margin: 12px
+    border: 1px solid #999
+    border-radius: 3px
+    width: 430px
+
+
+#search_results 
+    ul 
+        list-style-type: none
+        margin: 3px 3px 24px 3px
+        padding: 0
+
+#which_team 
+    margin: 12px
+    float: left
+
+#search_results a 
+    display: block
+    text-decoration: none
+    color: #333
+    border: 1px solid transparent
+    overflow: hidden
+    padding: 4px 0
+    border-radius: 6px
+    &:hover 
+        background: #e2e2e2
+        text-shadow: 0 1px 0 #fff
+        border: 1px solid #d2d2d2
+    .member-name 
+        float: left
+        margin: 8px
+        font-weight: bold
+    .member-title 
+        float: right
+        margin: 8px
+    img 
+        float: left
+        margin: 4px 12px
+
+.removefromproject 
+    float: right !important
+    text-indent: -9999px
+    background: url('/static/images/mono/black/round_delete_icon&16.png') center center no-repeat #f1f1f1
+    border: 1px solid #e2e2e2
+    border-radius: 2px
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2)
+    width: 24px
+    height: 24px
+    &:hover 
+        border: 1px solid #666
+        cursor: pointer
+
+.you 
+    text-align: right
+
+
+#user_details img 
+    float: left
+    margin: 0 24px 24px 0
+    border: 1px solid #D2D2D2
+
+.user_info 
+    list-style-type: none
+    padding-left: 190px
+    li 
+        padding: 4px 0 4px 24px
+
+.user-title 
+    background: url('/static/images/mono/black/user_icon&16.png') left center no-repeat
+
+.user-company 
+    background: url('/static/images/mono/black/case_icon&16.png') left center no-repeat
+
+.user-rating 
+    background: url('/static/images/mono/black/cert_icon&16.png') left center no-repeat
+
+.user_about 
+    clear: both
+    background: url('/static/images/bubble-tick.png') 58px top no-repeat
+    padding-top: 18px
+    position: relative
+    top: -12px
+
+.user-blurb 
+    background: #E2E2E2
+    padding: 24px
+    border-radius: 4px
+    text-shadow: 0 1px 0 #FFF
+    color: #333
+
+.endorsements_list 
+    margin: 0
+    padding: 0
+    list-style-type: none
+    > li 
+        border-top: 1px solid #e2e2e2
+        overflow: hidden
+    img 
+        float: left
+        margin: 12px
+    .endorse_name 
+        float: left
+        margin: 16px 0
+    .rating-comment 
+        clear: both
+        margin: 12px
+        padding: 12px
+        font-size: 14px
+        background: #F1F1F1
+        border-radius: 4px
+
+.rating 
+    .stars 
+        list-style-type: none
+        overflow: hidden
+        padding: 0
+        width: 102px
+        margin: 8px auto
+        li 
+            background: url('/static/images/mono/black/star_fav_empty_icon&16.png') 0 0 no-repeat
+            float: left
+            padding: 8px
+            margin: 4px 2px
+            &.marked 
+                background: url('/static/images/mono/black/star_fav_icon&16.png') 0 0 no-repeat
+

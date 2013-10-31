@@ -1,0 +1,25 @@
+<script type="text/x-handlebars" id="messages">
+    <h2 class="panel_title messages">Messages</h2>
+    <div class="center-pane">
+        <div class="top_options">
+            <strong class="gold-gradient option_button">
+                {{#link-to 'messages' classNames='new-message'}}New Conversation{{/link-to}}
+            </strong>
+        </div>
+        <div class="col3">
+            <div class="col-header conversations light-gradient">
+                <h3>Conversations</h3>
+            </div>
+            <div id="my_messages">
+                {{#if conversations.length}}
+                    <ul>{{#each conversations}}{{view Bee.ConversationsListView}}{{/each}}</ul>
+                {{else}}
+                    <p class="no_projects">No Conversations</p>
+                {{/if}}
+            </div>
+        </div>
+        <div class="two3rds border">
+            {{outlet}}
+        </div>
+    </div>
+</script>

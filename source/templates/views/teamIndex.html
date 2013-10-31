@@ -1,0 +1,39 @@
+<script type="text/x-handlebars" id="team/index">
+    <div id="team_list" class="center-pane">
+        <div class="top_options">
+            <div class="project_filter">
+                <strong>Viewing: </strong>
+                {{view Ember.Select
+                   content=projects
+                   optionValuePath='content._id'
+                   optionLabelPath='content.title'
+                   value=selectedProjectTeam
+                   prompt='All Projects'
+                }}
+            </div>
+        </div>
+        <div class="col2">
+            <div class="col-header myteam light-gradient">
+                <h3>Your Teammates</h3>
+            </div>
+            <div id="my_team_list">
+                {{#if team.filtered.length}}
+                    <ul>{{#each teams}}{{view Bee.TeamListView}}{{/each}}</ul>
+                {{else}}
+                    <p class="no_projects">No Teammates</p>
+                {{/if}}
+            </div>
+        </div>
+        <div class="col2">
+            <div class="col-header findusers light-gradient">
+                <h3>Search Users</h3>
+            </div>
+            <div>
+                <div class="search">
+                    <input type="text" id="team_search" placeholder="Type a user's name or email..." />
+                </div>
+                <ul id="user_search_results"></ul>
+            </div>
+        </div>
+    </div>
+</script>

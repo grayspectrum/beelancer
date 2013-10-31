@@ -1,0 +1,18 @@
+<script type="text/x-handlebars" data-template-name="messages/create">
+    <div class="col-header message-to light-gradient">
+        <h3>To: </h3>
+        <input type="text" id="newmessage_to" class="team_populate" />
+        <input type="hidden" name="to" value="" />
+        <strong id="newmessage_send" class="gold-gradient option_button">
+            <a class="send-message">Send</a>
+        </strong>
+    </div>
+    <div id="messenger">
+        <label for="newmessage_body">
+            <textarea id="newmessage_body" name="body" placeholder="Type your message..."></textarea>
+        </label>
+        <div class="new_message_submit_wrapper gold-gradient">
+            <input type="submit" id="send_message" value="Send Message" />
+        </div>
+    </div>
+</script>

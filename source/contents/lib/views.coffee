@@ -73,7 +73,24 @@ Bee.WorklogView = Ember.View.extend
         .fail (err) ->
             console.log err
 
+# create/edit worklog entry
 Bee.TasksWorklogModalView = Ember.View.extend
     templateName: "tasks-worklog-form"
     didInsertElement: ->
         ($ "#wlog_startTime, #wlog_endTime").datepicker()
+
+# task view timer
+Bee.TasksWorklogTimerView = Ember.View.extend
+    templateName: "tasks-worklog-timer"
+
+# team list
+Bee.TeamListView = Ember.View.extend
+    templateName: "team-list"
+
+# team endorsement list
+Bee.TeamEndorsementListView = Ember.View.extend
+    templateName: "team-endorsement-list"
+
+# messages list
+Bee.ConversationsListView = Ember.View.extend
+    templateName: "messages-list"

@@ -1,0 +1,11 @@
+<script type="text/x-handlebars" data-template-name="tasks-worklog-timer">
+    {{#if ended}}
+        <strong>Status: </strong>
+        <span class="status">Paused</span>
+        <button class="timer start">Start Working</button>
+    {{else}}
+        <strong>Status: </strong>
+        <span class="status">Timing</span>
+        <button class="timer stop">Stop Working</button>
+    {{/if}} 
+</script>

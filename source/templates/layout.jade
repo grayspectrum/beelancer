@@ -38,6 +38,18 @@ html
 		include ./views/tasksView.html
 		include ./views/tasksCreate.html
 		include ./views/taskWorklogModal.html
+		include ./views/taskWorklogTimer.html
+		//- team templates
+		include ./views/team.html
+		include ./views/teamList.html
+		include ./views/teamIndex.html
+		include ./views/teamView.html
+		include ./views/teamEndorsementList.html
+		//- messages templates
+		include ./views/messages.html
+		include ./views/messagesList.html
+		include ./views/messagesCreate.html
+		include ./views/messageView.html
 		script(type='text/x-handlebars')
 			div#app
 				| {{render 'header' profile}}
@@ -45,6 +57,8 @@ html
 				| {{render footer}}
 		block content
 		script(type='application/javascript', src='/vendor/jquery-1.9.1.js')
+		script(type='application/javascript', src='/vendor/jquery.validate.js')
+		script(type='application/javascript', src='/vendor/additional-methods.js')
 		script(type='application/javascript', src='/vendor/jquery-ui-1.9.2.custom.js')
 		script(type='application/javascript', src='/vendor/jquery-ui-timepicker-addon.js')
 		script(type='application/javascript', src='/vendor/marked.js')

@@ -1,6 +1,6 @@
 <script type="text/x-handlebars" data-template-name="projects-list">
 	<li>
-		{{#link-to 'projects.view' this._id}}
+		{{#link-to 'projects.view' _id}}
 			<strong>{{title}}</strong>
 			<span class="project_due">{{deadline this}}</span>
 			<em class="percent_bar">

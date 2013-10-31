@@ -1,0 +1,88 @@
+<script type="text/x-handlebars" data-template-name="team/view">
+    <div class="center-pane">
+        <div class="top_options">
+            {{#if isMyself}}
+                <div class="you">This is you!</div>
+            {{else}}
+                <strong class="gold-gradient option_button">
+                    {{#link-to 'messages' classNames="message"}}Message{{/link-to}}
+                </strong>
+                <strong class="gold-gradient option_button">
+                    <a {{action 'showEndorsementForm'}} class="endorse">Endorse</a>
+                </strong>
+                {{#if isOnTeam}}
+                    <strong class="gold-gradient option_button">
+                        <a {{action 'removeMemberFromTeam'}} class="remove">Remove</a>
+                    </strong>
+                {{else}}
+                    <strong class="gold-gradient option_button">
+                        <a {{action 'inviteMemberToTeam'}} class="invite">Invite</a>
+                    </strong>
+                {{/if}}
+            {{/if}}
+        </div>
+        <div class="two3rds">
+            <div id="user_details" data-id="{{_id}}">
+                <img src="{{avatarPath}}?s=160" height="160" width="160" />
+                <h3 class="title">{{firstName}} {{lastName}}</h4>
+                <ul class="user_info">
+                    <li class="user-title">
+                        <span>{{title}}</span> 
+                    </li>
+                    <li class="user-company">
+                        <span>Works at {{company}}</span> 
+                    </li>
+                    <li class="user-rating">
+                        <span>Rated {{ratings.average}} out of 5 <em><small>({{ratings.total}} total ratings)</small></em></span> 
+                    </li>
+                </ul>
+                <div class="user_about">
+                    <div class="user-blurb">
+                        {{about}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col3">
+            <div class="col-header endorsements light-gradient">
+                <h3>Endorsements</h3>
+            </div>
+            <ul class="endorsements_list">
+                {{#if endorsements.length}}
+                    {{#each endorsments}}
+                        {{view Bee.TeamEndorsementListView}}
+                    {{/each}}
+                {{else}}
+                    <p class="no_projects">No Endorsements</p>
+                {{/if}}
+            </ul>
+        </div>
+    </div>
+    {{#if endorsingUser}}
+        <div class="modal-container" id="team_endorsement">
+            <div id="endorse_compose" class="center-pane">
+                <div class="top_options">
+                    <strong class="gold-gradient option_button">
+                        <a class="update-endorse">Update</a>
+                    </strong>
+                    <strong class="gold-gradient option_button">
+                        <a class="submit-endorse">Endorse</a>
+                    </strong>
+                </div>
+                <form id="endorse_user">
+                    <label for="comment">
+                        <textarea id="comment" name="comment" placeholder="Type your endorsement here..." maxlength="250"></textarea>
+                    </label>
+                    <input type="hidden" id="rating_id" name="rating_id" />
+                    <ul class="stars">
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    {{/if}}
+</script>
