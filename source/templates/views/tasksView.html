@@ -9,9 +9,9 @@
             </strong>
             <strong class="gold-gradient option_button">
                 {{#if isActive}}
-                    <a {{action 'markTaskAsClosed'}} class="task_status open">Complete Task</a>
+                    <a {{action 'markTaskAsClosed'}} class="task_status task_open">Complete Task</a>
                 {{else}}
-                    <a {{action 'markTaskAsOpen'}} class="task_status closed">Reopen Task</a>
+                    <a {{action 'markTaskAsOpen'}} class="task_status task_closed">Reopen Task</a>
                 {{/if}}
             </strong>
         </div>
@@ -46,7 +46,10 @@
                         <span class="time"></span>
                     </li>
                     <li>
-                        <strong>Unbilled:</strong> <span class="calc-cost">{{taskCost this}}</span>
+                        <strong>Unbilled:</strong> 
+                        <span class="calc-cost">
+                            {{#if isFixedRate}}${{rate}}{{else}}{{taskCost worklog rate}}{{/if}}
+                        </span>
                     </li>
                 </ul>
             </div>

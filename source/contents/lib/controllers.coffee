@@ -299,8 +299,8 @@ Bee.TasksIndexController = Ember.ObjectController.extend
         owned: []
         participating: []
     visible: (->
-        ctrl = @
-        console.log "filter tasks by project #{@.project}"
+        project = @get "selectedProject"
+        console.log "filter tasks by project #{project}"
         # filter tasks here            
     ).property "selectedProject"
 
@@ -326,11 +326,12 @@ Bee.TasksCreateController = Ember.ObjectController.extend
     actions:
         createTask: ->
             ctrl = @
+            projectId = @get "selectedProject"
             # add validation here
             @set "isProcessing", yes
             Bee.Auth.send
                 type: "POST"
-                url: Bee.endpoint "/tasks"
+                url: Bee.endpoint "/projects/#{projectId}/tasks"
                 data: 
                     title: @get "title"
                     rate: @get "rate"
@@ -356,10 +357,13 @@ Bee.TasksViewController = Ember.ObjectController.extend
     actions:
         # task actions
         destroyTask: ->
+            id = @get "_id"
             console.log "deleting task #{id}"
         markTaskAsClosed: ->
+            id = @get "_id"
             console.log "marking task #{id} as completed"
         markTaskAsOpen: ->
+            id = @get "_id"
             console.log "marking task #{id} as open"
         # worklog actions
         addLogEntry: -> 

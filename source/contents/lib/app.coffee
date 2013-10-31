@@ -84,15 +84,10 @@ calculateWorklogHours = (logEntry) ->
     minsWorked = Math.round ((msWorked % 86400000) % 3600000) / 60000
     timeWorked = (minsWorked / 60).toFixed 2
 
-Ember.Handlebars.helper "taskCost", (value, options) ->
-    # calculate task cost
-    worklog    = value.worklog
-    rate       = value.rate
+Ember.Handlebars.helper "taskCost", (worklog=[], rate=0, options) ->
     timeWorked = 0
-    # if it's a fixed rate task just return the cost
-    if value.isFixedRate then return "$#{rate}"
     # other wise let's calculate it
-    calculateWorklogHours time for time in value.worklog
+    calculateWorklogHours time for time in worklog
     cost = timeWorked * rate
     "$#{cost}"
 
