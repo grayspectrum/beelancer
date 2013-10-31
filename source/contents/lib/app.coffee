@@ -42,14 +42,6 @@ Bee.endpoint = (path) ->
     api_url = localStorage.getItem "apiUrl"
     api_url + path
 
-Bee.validate = (type, value) ->
-	patterns = 
-		notEmpty: /^$|\s+/
-		email: /\A[^@]+@([^@\.]+\.)+[^@\.]+\z/
-		date: /(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d/
-		dollarAmount: /^\$?[0-9]+(\.[0-9][0-9])?$/
-	unless value and patterns[value]? then no else value.match patterns[type]
-
 # view helpers
 Ember.Handlebars.helper "deadline", (project, options) ->
     daysUntil = (date1, date2) ->

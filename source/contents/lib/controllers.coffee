@@ -300,8 +300,21 @@ Bee.TasksIndexController = Ember.ObjectController.extend
         participating: []
     visible: (->
         project = @get "selectedProject"
+        ctrl    = @
         console.log "filter tasks by project #{project}"
-        # filter tasks here            
+        filtered = 
+            inProgress: []
+            completed: []
+            unassigned: []
+        $.each (@get "tasks.all"), (i, task) ->
+            if task.project is ctrl.get "selectedProject"
+                # unassigned
+                if not task.assignee then return filtered.unassigned.push task
+                # in progress
+                if task.isActive then return filtered.inProgress.push task 
+                # completed
+                else return filtered.completed.push task
+        filtered           
     ).property "selectedProject"
 
 # tasks create
