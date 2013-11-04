@@ -1,0 +1,15 @@
+<script type="text/x-handlebars" data-template-name="invoices-list">
+    <li class="invoice_list_item">
+        {{#link-to 'invoices.view' _id}}
+            <em><strong>To: </strong>{{externalRecipient}}</em>         
+            <strong class="{{#if isPaid}}paid{{else}}unpaid{{/if}}">
+                {{#if isPaid}}paid{{else}}unpaid{{/if}}
+            </strong>
+            <span class="invoice_amount">$ {{amount}}</span>
+            <span class="description"><strong>For: </strong>
+                {{#if job}}{{job.title}}{{/if}}
+                {{#if project}}{{project.title}}{{/if}}
+            </span>
+        {{/link-to}}
+    </li>
+</script>

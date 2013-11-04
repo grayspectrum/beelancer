@@ -1,0 +1,209 @@
+<script type="text/x-handlebars" data-template-name="jobs/view">
+    <div class="top_options">
+        {{#if isPaid}}
+            <!-- No Options (archived) -->
+        {{else}}
+            {{#if isPublished}}
+                {{#if isOwner}}
+                    <strong class="gold-gradient option_button">
+                        <a {{action 'unpublishJob'}} class="job-unpublish">Unpublish</a>
+                    </strong>
+                {{else}}
+                    <strong class="gold-gradient option_button">
+                        <a {{action 'placeBid'}} class="job-bid">Place Bid</a>
+                    </strong>
+                    {{#if isWatched}}
+                        <strong class="gold-gradient option_button">
+                            <a {{action 'unwatchJob'}} class="job-unwatch">Unwatch</a>
+                        </strong>
+                    {{else}}
+                        <strong class="gold-gradient option_button">
+                            <a {{action 'watchJob'}} class="job-watch">Watch</a>
+                        </strong>
+                    {{/if}}
+                {{/if}}
+            {{else}}
+                {{#if assignee}}
+                    {{#if isOwner}}
+                        {{#if isComplete}}
+                        {{else}}
+                            <strong class="gold-gradient option_button">
+                                <a class="job-cancel">Cancel Job</a>
+                            </strong>
+                        {{/if}}
+                    {{else}}
+                        {{#if isAssignee}}
+                            <strong class="gold-gradient option_button">
+                                <a href="/#!/invoices?createInvoice=true&jobId={{_id}}" class="job-invoice">Invoice</a>
+                            </strong>
+                            <strong class="gold-gradient option_button">
+                                <a class="job-resign">Resign</a>
+                            </strong>
+                        {{else}}
+                            <div class="you">Currently Closed for Bidding</div>
+                        {{/if}}
+                    {{/if}}
+                {{else}}
+                    {{#if isOwner}}
+                        {{#if tasks.length}}
+                            <strong class="gold-gradient option_button">
+                                <a class="job-publish">Publish</a>
+                            </strong>
+                        {{/if}}
+                        <strong class="gold-gradient option_button">
+                            <a href="/#!/jobs?editJob={{_id}}" class="job-edit">Edit</a>
+                        </strong>
+                        <strong class="gold-gradient option_button">
+                            <a class="job-delete">Delete</a>
+                        </strong>
+                    {{else}}
+                        <div class="you">Currently Closed for Bidding</div>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        {{/if}}
+    </div>
+    <div id="job_details" data-id="{{_id}}">
+        <div class="two3rds">
+            <h3 class="title">{{title}}</h3>
+            <ul class="job_info">
+                {{#if isOwner}}
+                    <li>
+                        <strong>Status:</strong> 
+                        <span id="job-status">
+                            {{#if isPublished}}
+                                Published
+                            {{else}}
+                                {{#if assignee}}
+                                    In Progress
+                                {{else}}
+                                    Unpublished
+                                {{/if}}
+                            {{/if}}
+                        </span>
+                    </li>
+                {{/if}}
+                <li>
+                    <strong>Posted By:</strong> 
+                    <span id="job-owned-by" data-owner="{{owner.profile._id}}">
+                        <em>Getting owner details...</em>
+                    </span>
+                </li>
+                <li>
+                    <strong>Listed In:</strong> 
+                    <span id="job-category">{{category.title}}</span>
+                </li>
+                {{#if assignee}}
+                    <li>
+                        <strong>Assigned To:</strong> 
+                        <span id="job-assigned-to" data-assignee="{{assignee.profile._id}}">
+                            <em>Getting assignee details...</em>
+                        </span>
+                    </li>
+                {{/if}}
+                <li>
+                    {{#if isPublished}}
+                        <strong>Listing:</strong> 
+                        <span id="job-listing">
+                            {{#if assignee}}
+                                Bidding has closed
+                            {{else}}
+                                {{#if listing.end}}
+                                    Available for bidding until {{listing.end}}
+                                {{else}}
+                                    Bidding is not yet open
+                                {{/if}}
+                            {{/if}}
+                        </span>
+                    </li>
+                    <li>
+                        <strong>Total Bids:</strong> 
+                        <span id="job-total-bids">
+                            {{bids.length}}
+                        </span>
+                    {{/if}}
+                </li>
+            </ul>
+            <div class="viewjob_description">
+                <div class="markdown rollout">
+                    {{{description}}}
+                </div>
+            </div>
+            <div class="job-tasks">
+                <div class="col-header tasks light-gradient">
+                    <h3>Tasks</h3>
+                </div>
+                <ul>
+                    {{#each tasks}}
+                        <li>
+                            <span>{{title}}</span>
+                            <span class="task-rate">
+                                ${{rate}} {{#if isFixedRate}}(fixed){{else}}(hourly){{/if}}
+                            </span>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="job-reqs">
+                <div class="col-header requirementshead light-gradient">
+                    <h3>Requirements</h3>
+                </div>
+                <ul>
+                    {{#each requirements}}
+                        <li>
+                            <span>{{this}}</span>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+        <div class="col3">
+            <div class="col-header bids light-gradient">
+                <h3>Bids</h3>
+            </div>
+            <ul id="job_bids">
+                <div class="loader"></div>
+            </ul>
+        </div>
+    </div>
+    <div class="modal-container" id="place_bid">
+        <div class="center-pane">
+            <div class="top_options">
+                <strong class="gold-gradient option_button">
+                    <a class="bid-submit">Submit Bid</a>
+                </strong>
+            </div>
+            <form id="create_bid">
+                <p class="desc">
+                    Using the proposed rates as a reference point, set a rate 
+                    for each task attached to this job.
+                </p>
+                <table class="bid-tasks">
+                    <tbody>
+                        {{#each tasks}}
+                            <tr data-id="{{_id}}">
+                                <td class="bid-task-title" data>{{title}}</td>
+                                <td class="bid-task-rate">
+                                    <input type="number" value="{{rate}}" name="task-rate" />
+                                </td>
+                                <td class="bid-task-isFixed">
+                                    <select name="task-isFixed">
+                                        <option value="false">Hourly</option>
+                                        <option value="true" {{#if isFixedRate}}selected="selected"{{/if}}>Fixed</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <div class="full_block">
+                    <label for="bid-message">
+                        <span>Message:</span>
+                        <textarea name="message" id="bid-message">Please consider my bid and message me with any questions.</textarea>
+                    </label>
+                </div>
+                <input type="submit" value="Submit Bid" style="display: none" />
+            </form>
+        </div>
+    </div>
+</script>

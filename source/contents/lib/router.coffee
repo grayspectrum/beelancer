@@ -44,6 +44,8 @@ Bee.Router.map ->
         @route "payments", path: "/payments"
         @route "password", path: "/password"
     @resource "logout"
+    # 404 - not found
+    @route "fourZeroFour", path: "*path"
 
 # application route
 Bee.ApplicationRoute = Ember.Route.extend

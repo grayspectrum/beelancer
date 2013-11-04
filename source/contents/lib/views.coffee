@@ -94,3 +94,13 @@ Bee.TeamEndorsementListView = Ember.View.extend
 # messages list
 Bee.ConversationsListView = Ember.View.extend
     templateName: "messages-list"
+
+# invoices list
+Bee.InvoiceListView = Ember.View.extend
+    templateName: "invoices-list"
+
+
+
+# 404 view
+Bee.FourZeroFourView = Ember.View.extend
+    templateName: "four-zero-four"

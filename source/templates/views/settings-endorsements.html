@@ -1,0 +1,46 @@
+<script type="text/x-handlebars" data-template-name="settings/endorsements">
+    <div id="my_endorsements">
+        <div id="endorsement_section">
+            <h4>Endorsements</h4>
+            <p class="hint">This is a list of endorsements you've received.  Decide which ones you'd like to display on your profile.</p>
+            <div class="endorsements">
+                <ul id="endorsement_list">
+                    {{#each endorsements}}
+                        <li class="endorse {{#if needsAction}}needsAction{{/if}}">
+                            <div class="msg_from">
+                                <img src="{{from.avatarPath}}" width="24px" height="24px" alt="{{from.avatarPath}}" />
+                                <div class="view_endorse" data-id="{{_id}}">Click to View</div>
+                                <span class="team_list_name">
+                                    {{from.firstName}} {{from.lastName}}
+                                </span>
+                            </div>
+                            <div class="rating_content">
+                                <div class="ratings">
+                                    <p>{{comment}}</p>
+                                </div>
+                                <div>
+                                    <ul class="stars left">
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                    </ul>
+                                    <span class="right">
+                                        {{#if isVisible}}
+                                            <button class="showBtn hide">Show On Profile</button>
+                                            <button class="hideBtn show">Hide From Profile</button>
+                                        {{else}}
+                                            <button class="showBtn show">Show On Profile</button>
+                                            <button class="hideBtn hide">Hide From Profile</button>
+                                        {{/if}}
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+</script>

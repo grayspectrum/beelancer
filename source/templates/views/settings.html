@@ -1,0 +1,24 @@
+<script type="text/x-handlebars" id="settings">
+    <h2 class="panel_title account">Account Settings</h2>
+    <div id="account" class="center-pane">
+        <div class="col3">
+            <ul id="account_nav">
+                <li>
+                    {{#link-to 'settings.profile' classNames="edit_profile"Edit Profile{{/link-to}}
+                </li>
+                <li>
+                    {{#link-to 'settings.endorsements' classNames="edit_endorsements"}}Endorsements{{/link-to}}
+                </li>
+                <li>
+                    {{#link-to 'settings.payments' classNames="edit_payments"}}Payments &amp; Billing<{{/link-to}}
+                </li>
+                <li>
+                    {{#link-to 'settings.password' classNames="edit_password"}}Reset Password{{/link-to}}
+                </li>
+            </ul>
+        </div>
+        <div class="two3rds">
+            {{outlet}}
+        </div>
+    </div>
+</script>

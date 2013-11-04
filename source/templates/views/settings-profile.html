@@ -1,0 +1,73 @@
+<script type="text/x-handlebars" data-template-name="settings/profile">
+    <div id="new_profile">
+        <h2 class="cute welcome">Welcome to Beelancer</h2>
+        <p class="desc welcome">
+            Before you can get started, we need to set up your profile. Once your profile has been saved, you can start 
+            taking advantage of everything Beelancer has to offer! You can always come back and edit your profile by 
+            clicking the <strong>Settings</strong> tab on the menu to the left.
+        </p>
+        <form id="create_profile">
+            <h4>Personal</h4>
+            <div class="group">
+                <label for="np_firstName">
+                    <span>First Name: </span>
+                    <input class="required" type="text" id="np_firstName" placeholder="" name="firstName" />
+                </label>
+                <label for="np_lastName">
+                    <span>Last Name: </span>
+                    <input class="required" type="text" id="np_lastName" placeholder="" name="lastName" />
+                </label>
+                <label for="np_company">
+                    <span>Company: <small>(optional)</small> </span>
+                    <input type="text" id="np_company" placeholder="" name="company" />
+                </label>
+                <label for="np_jobTitle">
+                    <span>Title: </span>
+                    <input class="required" type="text" id="np_jobTitle" placeholder="" name="title" />
+                </label>
+            </div>
+            <h4>Professional</h4>
+            <p class="hint">This is the place to put a short blurb about yourself or try to wow potential clients with some of your experience.</p>
+            <label class="full_block" for="np_about">
+                <span>About Me: <small>(optional)</small></span>
+                <textarea id="np_about" name="about" maxlength="500"></textarea>
+            </label>
+            <h4>Privacy</h4>
+            <div class="full_block">
+                <label class="big_radio" for="np_privacy0">
+                    <input id="np_privacy0" type="radio" name="privacy" value="0" /> Publicly Viewable
+                    <p>
+                        Anyone with your profile URL can view your profile. 
+                        This option is best suited for freelancers looking to get as much exposure as possible.
+                    </p>
+                </label>
+                <label class="big_radio" for="np_privacy1">
+                    <input id="np_privacy1" type="radio" name="privacy" value="1" /> Internally Viewable
+                    <p>
+                        Only Beelancer users can view your profile. 
+                        This option is best suited for project managers who are looking to hire contractors.
+                    </p>
+                </label>
+                <label class="big_radio" for="np_privacy2">
+                    <input id="np_privacy2" type="radio" name="privacy" value="2" /> Privately Viewable
+                    <p>
+                        Only your accepted team members can view your profile. 
+                        This option is best suited for users who are tracking their business or small team.
+                    </p>
+                </label>
+            </div>
+            <h4 class="welcome">Terms and Conditions</h4>
+            <p class="hint welcome">
+                Beelancer respects you and your privacy and will not share or sell any of your personal data. 
+                However, the information you choose to make public is your responsibility. Please read and accept our 
+                <a href="/#!/terms">Terms and Conditions</a>.
+            </p>
+            <label class="acceptTerms welcome">
+                <input type="checkbox" id="iAccept" /> I understand and accept the Terms and Conditions.
+            </label>
+            <div class="np_submit_wrapper gold-gradient">
+                <input type="submit" id="np_submit" value="Update Profile" />
+            </div>
+        </form>
+    </div>
+</script>

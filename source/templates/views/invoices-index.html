@@ -10,7 +10,15 @@
 				<h3>Received</h3>
 			</div>
 			<div id="invoices_received_list">
-				<div class="loader"></div>
+				{{#if invoices.recieved.length}}
+        			<ul>
+        				{{#each invoices.recieved}}
+        					{{view Bee.InvoiceListView}}
+        				{{/each}}
+        			</ul>
+        		{{else}}
+        			<p class="no_projects">No invoices to display.</p>
+        		{{/if}}
 			</div>
 		</div>
 		<div class="col2">
@@ -18,7 +26,15 @@
 				<h3>Sent</h3>
 			</div>
 			<div id="invoices_sent_list">
-				<div class="loader"></div>
+				{{#if invoices.sent.length}}
+        			<ul>
+        				{{#each invoices.sent}}
+        					{{view Bee.InvoiceListView}}
+        				{{/each}}
+        			</ul>
+        		{{else}}
+        			<p class="no_projects">No invoices to display.</p>
+        		{{/if}}
 			</div>
 		</div>
 	</div>
