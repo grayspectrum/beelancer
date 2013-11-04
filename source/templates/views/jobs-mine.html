@@ -1,0 +1,39 @@
+<script type="text/x-handlebars" data-template-name="jobs/mine">
+	<div class="center-pane">
+		<div class="top_options">
+			<strong class="gold-gradient option_button">
+				{{#link-to 'jobs.create' classNames="job_new_nav"}}Post Job{{/link-to}}
+			</strong>
+			<strong class="gold-gradient option_button">
+				{{#link-to 'jobs.index' classNames="jobs-search"}}Find Jobs{{/link-to}}
+			</strong>
+			<strong class="gold-gradient option_button">
+				{{#link-to 'jobs.bids' classNames="my-bids"}}My Bids{{/link-to}}
+			</strong>
+		</div>
+		<div class="col3" id="jobs_i_own">
+			<div class="col-header jobsownedbyme light-gradient">
+				<h3>Owned By Me</h3>
+			</div>
+			<div id="own_jobs_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+		<div class="col3" id="jobs_assigned">
+			<div class="col-header jobsassignedtome light-gradient">
+				<h3>Assigned To Me</h3>
+			</div>
+			<div id="assigned_jobs_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+		<div class="col3" id="jobs_watched">
+			<div class="col-header jobsimwatching light-gradient">
+				<h3>Watching</h3>
+			</div>
+			<div id="watched_jobs_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+	</div>
+</script>

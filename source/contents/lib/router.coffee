@@ -33,10 +33,12 @@ Bee.Router.map ->
         @route "view", path: "/:id" 
         @route "edit", path: "/:id/edit" 
         @route "create", path: "/create" 
+        @route "mine", path: "/mine"
+        @route "bids", path: "/bids"
     @resource "invoices", ->
         @route "view", path: "/:id"
         @route "create", path: "/create"
-    @resource "account", ->
+    @resource "settings", ->
         @route "profile", path: "/profile"
         @route "endorsements", path: "/endorsements"
         @route "payments", path: "/payments"

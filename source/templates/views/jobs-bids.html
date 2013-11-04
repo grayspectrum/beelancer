@@ -1,0 +1,20 @@
+<script type="text/x-handlebars" data-template-name="jobs/bids">
+	<div class="center-pane">
+		<div class="top_options">
+			<strong class="gold-gradient option_button">
+				{{#link-to 'jobs.create' classNames="job_new_nav"}}Post Job{{/link-to}}
+			</strong>
+			<strong class="gold-gradient option_button">
+				{{#link-to 'jobs.create' classNames='my-jobs'}}My Jobs{{/link-to}}
+			</strong>
+		</div>
+		<div id="bids_list_mine">
+			<div class="col-header mybidslist light-gradient">
+				<h3>My Bids</h3>
+			</div>
+			<ul id="bids-list-mine">
+				<div class="loader"></div>
+			</ul>
+		</div>
+	</div>
+</script>

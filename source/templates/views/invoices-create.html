@@ -1,0 +1,70 @@
+<script type="text/x-handlebars" data-template-name="invoices/create">
+	<div class="center-pane">
+		<div class="top_options">
+			<strong class="gold-gradient option_button">
+				<a {{action 'saveInvoice'}} class="save-invoice">Send</a>
+			</strong>
+		</div>
+		<form id="create_invoice">
+			<div class="float_wrap">
+				<div class="half_list">
+					<label class="big_radio" for="type_project">
+						<input id="type_project" type="radio" name="type" value="project" /> Project
+						<p>
+							Bill for tasks completed on a project.
+						</p>
+						<select id="project_ref" name="project" disabled="disabled">
+							<option>Loading Projects...</option>
+						</select>
+					</label>
+				</div>
+				<div class="half_list">
+					<label class="big_radio" for="type_job">
+						<input id="type_job" type="radio" name="type" value="job" /> Job
+						<p>
+							Bill for a completed job.
+						</p>
+						<select id="job_ref" name="job" disabled="disabled">
+							<option>Loading Jobs...</option>
+						</select>
+					</label>
+				</div>
+			</div>
+			<label class="full_block" for="invoice_tasks">
+				<span>Tasks</span>
+				<div id="invoice_tasks">
+					<p><small><em>Select a Job or Project to choose the tasks you wish to bill for.</em></small></p>
+				</div>
+			</label>
+			<div class="group">
+				<label for="invoice_dueDate">
+					<span>Due Date: </span>
+					<input type="text" id="invoice_dueDate" class="required" placeholder="" name="dueDate" />
+				</label>
+				<label for="invoice_amount">
+					<span>Total: </span>
+					<input type="text" disabled="disabled" id="invoice_amount" value="$ 0.00" name="amount" />
+				</label>
+			</div>
+			<div class="group" id="invoice_recipient">
+				<label for="invoice_externalRecipient">
+					<span>Recipient: </span>
+					<input type="text" id="invoice_externalRecipient" disabled="disabled" placeholder="" name="externalRecipient" />
+				</label>
+				<label class="note">
+					<span><strong>Note: </strong></span>
+					<p>
+						You are currently set as the recipient of this invoice. Please specify the email address of the intended recipient.
+					</p>
+				</label>
+			</div>
+			<label class="full_block" for="invoice_description">
+				<span>Description:</span>
+				<textarea id="invoice_description" class="required" name="description" maxlength="3000" placeholder="It was a pleasure working together!"></textarea>
+			</label>
+			<div class="new_invoice_submit_wrapper gold-gradient">
+				<input type="submit" id="send_invoice" value="Send Invoice" />
+			</div>
+		</form>
+	</div>
+</script>

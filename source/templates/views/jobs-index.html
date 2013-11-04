@@ -1,0 +1,47 @@
+<script type="text/x-handlebars" data-template-name="jobs/index">
+	<div id="jobs_list" class="center-pane">
+		<div class="top_options">
+			<div class="job_filter">
+				<strong>Category: </strong>
+				<select id="category" name="category">
+					<option value="all">All</option>
+				</select>
+			</div>
+			<strong class="gold-gradient option_button">
+				{{#link-to 'jobs.create' classNames='job_new_nav'}}Post Job{{/link-to}}
+			</strong>
+			<strong class="gold-gradient option_button">
+				{{#link-to 'jobs.mine' classNames='my-jobs'}}My Jobs{{/link-to}}
+			</strong>
+			<strong class="gold-gradient option_button">
+				{{#link-to 'jobs.bids' classNames="my-bids"}}My Bids{{/link-to}}
+			</strong>
+		</div>
+		<div class="two3rds">
+			<div id="search_jobs"> 
+				{{input type="text" placeholder="Search All Jobs..." id="job_search" value=searchCriteria}}
+			</div>
+			<div id="latest_jobs">
+				<div class="col-header latestjobs light-gradient">
+					<h3>Latest Jobs</h3>
+				</div>
+				<div id="latest_jobs_list">
+					<div class="loader"></div>
+				</div>
+			</div>
+			<div id="jobs_search_list">
+				<div class="col-header jobsearch light-gradient">
+					<h3>Search Results</h3>
+				</div>
+				<div id="job_search_result">
+					<div class="loader"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col3">
+			<div id="promoted_jobs_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+	</div>
+</script>

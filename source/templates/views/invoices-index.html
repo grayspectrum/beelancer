@@ -1,0 +1,25 @@
+<script type="text/x-handlebars" data-template-name="invoices/index">
+	<div class="center-pane">
+		<div class="top_options">
+			<strong class="gold-gradient option_button">
+				{{#link-to 'invoices.create' classNames="new-invoice"}}New Invoice{{/link-to}}
+			</strong>
+		</div>
+		<div class="col2">
+			<div class="col-header received-invoices light-gradient">
+				<h3>Received</h3>
+			</div>
+			<div id="invoices_received_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+		<div class="col2">
+			<div class="col-header sent-invoices light-gradient">
+				<h3>Sent</h3>
+			</div>
+			<div id="invoices_sent_list">
+				<div class="loader"></div>
+			</div>
+		</div>
+	</div>
+</script>

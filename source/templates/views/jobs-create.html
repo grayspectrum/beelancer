@@ -1,0 +1,106 @@
+<script type="text/x-handlebars" data-template-name="jobs/create">
+	<div class="center-pane">
+		<div class="top_options">
+			{{#if isPublished}}
+				<strong class="gold-gradient option_button">
+					<a {{action 'unpublish'}} class="job-unpublish">Unpublish</a>
+				</strong>
+			{{else}}
+				<strong class="gold-gradient option_button">
+					<a {{action 'publish'}} class="job-publish">Publish</a>
+				</strong>
+				<strong class="gold-gradient option_button">
+					<a {{action 'saveJob'}} class="job-save">Save</a>
+				</strong>
+			{{/if}}
+		</div>
+		<div class="create_job_container">
+			<form id="create_job">
+				<div class="group">
+					<label for="newjob_title">
+						<span>Title: </span>
+						<input class="required" type="text" id="title" placeholder="" name="title" value="{{title}}" />
+					</label>
+					<label for="newjob_cat">
+						<span>Category: </span>
+						<select class="required" id="category" name="category">
+							<option value="null">Loading categories...</option>
+						</select>
+					</label>
+				</div>
+				<div class="full_block">
+					<label for="newjob_desc">
+						<span>Description: </span>
+						<textarea class="required" id="description" name="description">{{description}}</textarea>
+					</label>
+				</div>
+				<h4>Requirements</h4>
+				<p class="hint">
+					This should be a list of requirements that both you and the eventual assignee agree to.<br />(ex. 'Create Design', 'Implement Design', 'Create Documentation', etc.)
+				</p>
+				<div class="full_block">
+					<label for="newjob_reqs" class="req_label">
+						<div class="job_req_list">
+							<ul class="requirements_list">
+								<li class="req">
+									<input type="text" name="requirements" class="required" placeholder="Start typing a requirement..." />
+								</li>
+							</ul>
+						</div>
+						<div class="add_req">
+							<a href="#" id="job_add_req">Add</a>
+						</div>
+					</label>
+				</div>
+				<h4>Tasks</h4>
+				<div class="full_block">
+					<label for="job_tasks" class="task_label">
+						<span>Job Task(s): </span>
+						<div id="job_task_list">Loading task(s)...</div>
+					</label>
+				</div>
+				<div class="full_block" id="job_unass_group">
+					<label for="job_unassigned_tasks" class="task_label">
+						<span>Unassigned Task(s): </span>
+						<div id="job_unassigned_task_list">Loading task(s)...</div>
+					</label>
+				</div>
+				<h4>Listing</h4>
+				<div class="group">
+					<p class="hint listing-date-desc">This determines when the job will be posted to the jobs board and for how long.  The longer the amount of the time, the higher the cost associated with posting the job becomes.</p>
+					<label for="listingDateStart">
+						<span>Start: </span>
+						<input type="text" id="listingDateStart" placeholder="" name="listingDateStart" value="{{listing.start}}" />
+					</label>
+					<label for="listingDateEnd">
+						<span>End: </span>
+						<input type="text" id="listingDateEnd" placeholder="" name="listingDateEnd" value="{{listing.end}}" />
+					</label>
+				</div>
+				<label class="big_radio isPromoted" for="newjob_isPromoted">
+					<input id="newjob_isPromoted" type="checkbox" name="isPromoted" value="true"{{#if listing.isPromoted}}checked{{/if}} /> Promote this job
+					<p>
+						By promoting this job, it will be given priority and will show up before other unpromoted jobs on the jobs board and when searching for jobs.  You are limited to three promoted jobs at a time.
+					</p>
+				</label>
+				<div class="job_buttons">
+					{{#if isPublished}}
+						<div class="unpublish_job_submit_wrapper gold-gradient" id="unpublish_btn">
+							<input type="submit" id="unpublish_job" value="Unpublish Job" />
+						</div>
+					{{else}}
+						<div class="save_job_submit_wrapper light-gradient">
+							<input type="submit" id="save_job" value="Save Job" />
+						</div>
+						<div class="publish_job_submit_wrapper gold-gradient">
+							<input type="submit" id="publish_job" value="Publish Job" />
+						</div>
+					{{/if}}
+				</div>
+			</form>
+			<div class="not-enough-tasks">
+				<p class="no_projects">You do not have any unassigned tasks from which to create a Job. <a href="/#!/tasks?newTask=true">Create a task</a>.</p>
+			</div>
+		</div>
+	</div>
+</script>
