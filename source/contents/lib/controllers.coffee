@@ -23,7 +23,7 @@ Bee.ForgotController = Ember.ObjectController.extend
         email: null
     actions: 
         reset: ->
-            ctrl = @;
+            ctrl = @
             ctrl.setProperties
                 resetFailed  : no
                 isProcessing : yes
