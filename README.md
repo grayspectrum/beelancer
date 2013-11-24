@@ -30,8 +30,9 @@ If you want to run Beelancer against the hosted API, just run
 ~# wintersmith preview
 ```
 
-If you are running a local instance of the Beelancer API, edit the `locals` property
-in `./config-local.json` to match your local Beelancer API server instance, then run
+If you are running a local instance of the Beelancer API (you are on the core team), 
+edit the `locals` property in `./config-local.json` to match your local Beelancer 
+API server instance, then run
 
 ```
 ~# wintersmith preview -c config-local.json
