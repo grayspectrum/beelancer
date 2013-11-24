@@ -1,0 +1,56 @@
+//- Point to layout
+extends landing-shell
+block content
+  .fiber
+    .container
+      #tagline
+        span.social Social
+        span.project Project
+        span.management Management
+        span.for for
+        span.busy Busy
+        span.bees Bees
+      #beta-signup 
+        .signup-form                         
+          h4 Join the Public Beta Free!
+          a#sign_up(href='/app/index.html#/register') Register Now
+  ul#features.3col.container
+    li.projects-icon
+      h3 Manage Projects
+      ul
+        li
+          | Search and Bid using the 
+          strong Job Board
+        li
+          | Find 
+          strong Professionals 
+          | to Work With
+        li
+          | Build and Manage Your Project 
+          strong Team
+    li.track-icon
+      h3 Track Progress
+      ul
+        li
+          | Keep Up With 
+          strong Deadlines
+        li
+          | Track Your 
+          strong Time Worked
+        li
+          strong Chat 
+          | With Teammates and Others
+    li.invoice-icon
+      h3 Get Paid
+      ul
+        li
+          | Create and Manage 
+          strong Invoices
+        li
+          | Send and Receive 
+          strong Payments
+        li
+          | Safe and 
+          strong Secure 
+          | Transactions
+  .push

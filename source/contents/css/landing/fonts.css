@@ -1,0 +1,62 @@
+/*
+ * beelancer-landing - styles/fonts
+ * Author: Gordon Hall
+ */
+
+@font-face {
+	font-family: OpenSans;
+	src: url('/static/fonts/Open_Sans/OpenSans-Regular.ttf');
+}
+
+@font-face {
+	font-family: OpenSans;
+	src: url('/static/fonts/Open_Sans/OpenSans-Bold.ttf');
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: OpenSans;
+	src: url('/static/fonts/Open_Sans/OpenSans-Italic.ttf');
+	font-style: italic;
+}
+
+@font-face {
+	font-family: OpenSans;
+	src: url('/static/fonts/Open_Sans/OpenSans-BoldItalic.ttf');
+	font-style: italic;
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: VampiroOne;
+	src: url('/static/fonts/Vampiro_One/VampiroOne-Regular.ttf');
+}
+
+@font-face {
+	font-family: Raleway;
+	src: url('/static/fonts/Raleway/Raleway-Regular.ttf');
+}
+
+@font-face {
+	font-family: Raleway;
+	src: url('/static/fonts/Raleway/Raleway-Bold.ttf');
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: Raleway;
+	src: url('/static/fonts/Raleway/Raleway-Italic.ttf');
+	font-style: italic;
+}
+
+@font-face {
+	font-family: Raleway;
+	src: url('/static/fonts/Raleway/Raleway-BoldItalic.ttf');
+	font-style: italic;
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: Digital7;
+	src: url('/static/fonts/digital-7.ttf');
+}

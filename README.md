@@ -31,10 +31,10 @@ If you want to run Beelancer against the hosted API, just run
 ```
 
 If you are running a local instance of the Beelancer API, edit the `locals` property
-in `./config-localdev.json` to match your local Beelancer API server instance, then run
+in `./config-local.json` to match your local Beelancer API server instance, then run
 
 ```
-~# wintersmith preview -c config-localdev.json
+~# wintersmith preview -c config-local.json
 ```
 
 **Step 5:** Party!
