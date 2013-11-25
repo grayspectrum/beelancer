@@ -147,7 +147,7 @@ Bee.TasksIndexRoute = Bee.Auth.Route.extend
         Bee.Auth.send
             url: Bee.endpoint "/tasks"
         .done (tasks) -> 
-            ctrl.set "tasks.all", tasks
+            ctrl.set "tasks", tasks
         # get projects
         Bee.Auth.send
             url: Bee.endpoint "/projects"
