@@ -31,7 +31,7 @@
 					<span>Assignee: </span>
 					{{view Ember.Select
 				       content=assignees
-				       optionValuePath='content._id'
+				       optionValuePath='content.user'
 				       optionLabelPath='content.fullName'
 				       value=selectedAssignee
 				       prompt='Unassigned'

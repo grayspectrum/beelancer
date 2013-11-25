@@ -298,33 +298,31 @@ Bee.TasksIndexController = Ember.ObjectController.extend
     owned: []
     participating: []
   visible: (->
-    project = @get "selectedProject"
-    ctrl    = @
-    console.log "filter tasks by project #{project}"
+    project  = @get "selectedProject"
+    ctrl     = @
     filtered = 
       inProgress: []
       completed: []
       unassigned: []
 
-    $.each (@get "tasks.all"), filterLists
+    filterByProject = (tasklist, target) ->
+      tasks = []
+      $.each tasklist.tasks, (i, task) ->
+        if task.project is project then tasks.push task
+      filteredTaskList = 
+        assignee: tasklist.assignee
+        tasks: tasks
+      target.push? filteredTaskList
 
-    filterLists = (i, task) ->
-      selectedProject = ctrl.get "selectedProject"
+    $.each (ctrl.get "tasks").inProgress, (i, tasklist) ->
+      filterByProject tasklist, filtered.inProgress
 
-      filterTask = (task) ->
-        # unassigned
-        if not task.assignee then return filtered.unassigned.push task
-        # in progress
-        if task.isActive then return filtered.inProgress.push task 
-        # completed
-        else return filtered.completed.push task
+    $.each (ctrl.get "tasks").completed, (i, tasklist) ->
+      filterByProject tasklist, filtered.completed
 
-      if selectedProject
-        console.log "project is selected"
-        if task.project is selectedProject then filterTask task 
-      else
-        console.log "no project selected"
-        filterTask task
+    $.each (ctrl.get "tasks").unassigned, (i, tasklist) ->
+      filterByProject tasklist, filtered.unassigned
+
     filtered     
           
   ).property "selectedProject"

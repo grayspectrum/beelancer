@@ -5,7 +5,7 @@
         {{#each this}}
           <li>
             {{#if assignee}}
-              <strong class="task_assignee">{{assignee.firstName}} {{assignee.lastName}}</strong>
+              <strong class="task_assignee">{{assignee.profile.firstName}} {{assignee.profile.lastName}}</strong>
               <ul class="task_list">
                 {{#each tasks}}
                   <li>
