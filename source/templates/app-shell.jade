@@ -9,7 +9,7 @@ html
 		//- script(type='application/javascript', src='/socket.io/socket.io.js')
 		//- script(type='application/javascript', src='/vendor/require.js')
 		if locals.google_analytics
-			include ./google-analytics.html
+			include ./app-analytics.html
 		script(type='application/javascript')
 			| localStorage.setItem('apiUrl', '#{locals.apiProtocol}://#{apiHost}:#{apiPort}');
 	body

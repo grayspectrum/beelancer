@@ -6,7 +6,6 @@ html(lang="en")
   link(rel='shortcut icon', href='/static/images/favicon.ico')
   link(rel='stylesheet', href='/css/landing/base.css')
   script(type='text/javascript', src='/vendor/jquery-1.9.1.js')
-  script(type='text/javascript', src='/vendor/blueprint.1.5.3.js')
   script.
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -23,76 +22,6 @@ html(lang="en")
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
-  script.
-    jQuery(document).ready(function($) {
-      $('#private-beta').bind('submit', function(e) {
-        e.preventDefault();
-        var that = this;
-        if (valid()) {
-          $.ajax({
-            type : 'GET',
-            url : '//app.beelancer.com/api/beta/request',
-            data : $(that).serialize(),
-            dataType : 'jsonp',
-            timeout : 3000,
-            beforeSend : function() {
-              $('input', that).attr('disabled','disabled');
-              $('#submit-beta-request').addClass('disabled').val('');
-            },
-            success : function(data) {
-              $('input', that).removeAttr('disabled');
-              if (data.error) {
-                $(that).html('<p class="error">' + data.error + '</p>');
-              }
-              else {
-                _gaq.push(['_trackEvent', 'Beta', 'InvitationRequested']);
-                $(that).html('<p>' + data.message + '</p>');
-              }
-            },
-            error : function(err) {
-              $(that).html('<p class="error">Failed to request Beta Invitation</p>');
-            }
-          });
-        }
-      });
-      $('input').bind('blur', valid);
-      function valid() {
-        var validity = true;
-        $('*').removeClass('invalid');
-        $('#private-beta input').each(function() {
-          switch($(this).attr('name')) {
-             case 'firstName' : 
-              if (!$(this).val()) {
-                validity = false;
-                $(this).parent().addClass('invalid');
-              }
-              break;
-             case 'lastName' :
-              if (!$(this).val()) {
-                validity = false;
-                $(this).parent().addClass('invalid');
-              }
-              break;
-             case 'email' :
-              if (!$(this).val() || !_.validate.email($(this).val())) {
-                validity = false;
-                $(this).parent().addClass('invalid');
-              }
-              break;
-             case 'emailConfirm' :
-              if (!$(this).val() || ($(this).val() !== $('input[name="email"]').val())) {
-                validity = false;
-                $(this).parent().addClass('invalid');
-              }
-              break;
-             default :
-              // nothing
-          }
-        });
-        return validity;
-      };
-    });
-
   body
     .wrapper
       #header
