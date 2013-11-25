@@ -88,3 +88,11 @@ Ember.Handlebars.helper "hoursWorked", (value, options) ->
 
 Ember.Handlebars.helper "dayStarted", (value, options) ->
     (new Date value).toDateString()
+
+# jQuery live bindings
+($ document).on "change", ".big_radio [type='radio']", (e) ->
+    input  = ($ this)
+    others = ($ "[type='radio'][name='#{input.attr 'name'}']").parent()
+    house  = input.parent()
+    others.removeClass "selected"
+    if input.is ":checked" then house.addClass "selected"

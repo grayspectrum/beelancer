@@ -1,32 +1,19 @@
 <script type="text/x-handlebars" data-template-name="tasks-list">
   <li>
-    {{#if length}}
-      <ul class="task_list">
-        {{#each this}}
-          <li>
-            {{#if assignee}}
-              <strong class="task_assignee">{{assignee.profile.firstName}} {{assignee.profile.lastName}}</strong>
-              <ul class="task_list">
-                {{#each tasks}}
-                  <li>
-                    <a href="/#!/tasks?viewTask={{_id}}">
-                      <strong class="task_title">{{title}}</strong>
-                      <em class="task_rate">
-                        ${{rate}}
-                        {{#if isFixedRate}}
-                           total
-                        {{else}}
-                           per hour
-                        {{/if}}
-                      </em>
-                    </a>
-                  </li>
-                {{/each}}
-              </ul>
-            {{else}}
-              <ul class="task_list">
+    <ul class="task_list">
+      <li>
+        {{#if assignee}}
+          <strong class="task_assignee">
+            {{#link-to "team.view" assignee._id}}
+              <img src="{{unbound assignee.avatarPath}}" width="24" height="24" />
+              {{assignee.firstName}} {{assignee.lastName}}
+            {{/link-to}}
+          </strong>
+          <ul class="task_list">
+            {{#if tasks.length}}
+              {{#each tasks}}
                 <li>
-                  <a href="/#!/tasks?viewTask={{_id}}">
+                  {{#link-to "tasks.view" _id}}
                     <strong class="task_title">{{title}}</strong>
                     <em class="task_rate">
                       ${{rate}}
@@ -36,15 +23,31 @@
                          per hour
                       {{/if}}
                     </em>
-                  </a>
+                  {{/link-to}}
                 </li>
-              </ul>
+              {{/each}}
+            {{else}}
+              <li><p class="no_projects"><em>None</em></p></li>
             {{/if}}
-          </li>
-        {{/each}}
-      </ul>
-    {{else}}
-      <p class="no_projects"><em>None</em></p>
-    {{/if}}
+          </ul>
+        {{else}}
+          <ul class="task_list">
+            <li>
+              {{#link-to "tasks.view" _id}}
+                <strong class="task_title">{{title}}</strong>
+                <em class="task_rate">
+                  ${{rate}}
+                  {{#if isFixedRate}}
+                     total
+                  {{else}}
+                     per hour
+                  {{/if}}
+                </em>
+              {{/link-to}}
+            </li>
+          </ul>
+        {{/if}}
+      </li>
+    </ul>
   </li>
 </script>
