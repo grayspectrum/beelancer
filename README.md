@@ -2,7 +2,7 @@
 
 This is the repository for the Beelancer web application front-end located at https://beelancer.com.
 Feel free to fork and contribute or use as a reference for building your own Beelancer
-applications. Contributors, please see the (wiki)[https://github.com/gordonwritescode/beelancer/wiki] 
+applications. Contributors, please see the [wiki](https://github.com/gordonwritescode/beelancer/wiki) 
 for the style guide and documentation.
 
 ## Getting Started
