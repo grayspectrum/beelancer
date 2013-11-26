@@ -11,7 +11,7 @@ html
 		if locals.google_analytics
 			include ./app-analytics.html
 		script(type='application/javascript')
-			| localStorage.setItem('apiUrl', '#{locals.apiProtocol}://#{apiHost}:#{apiPort}');
+			| localStorage.setItem('bee-api-url', '#{locals.apiProtocol}://#{apiHost}:#{apiPort}');
 	body
 		//- base ember templates
 		include ./views/header.html

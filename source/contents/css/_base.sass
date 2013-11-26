@@ -541,6 +541,14 @@ textarea:focus
 .focused 
     font-weight: bold
 
+.block-ui
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    background: rgba(0,0,0,0.6)
+
 .popup 
     width: 400px
     min-height: 162px
@@ -571,6 +579,21 @@ textarea:focus
             padding: 6px 12px
             font-weight: bold
             border-radius: 3px
+
+.popup button:hover
+    cursor: pointer
+
+button.gold-gradient
+    border: 1px solid #FFC60B
+    text-shadow: 0 1px 0 #FFC60B
+    &:hover
+        background: #FFC60B
+
+button.light-gradient
+    border: 1px solid #fff
+    text-shadow: 0 1px 0 #fff
+    &:hover
+        background: #fff
 
 .half_list 
     width: 50%

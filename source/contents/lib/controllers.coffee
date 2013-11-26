@@ -248,15 +248,43 @@ Bee.ProjectsIndexController = Ember.ObjectController.extend
 # projects view
 Bee.ProjectsViewController = Ember.ObjectController.extend
   content: {}
+  deletionRequested: no
+  abandonRequested: no
   actions:
-    close: ->
-      console.log "close"
-    reopen: ->
-      console.log "reopen"
     destroy: ->
-      console.log "destroy"
+      @set "deletionRequested", yes
     abandon: ->
-      console.log "abandon"
+      @set "abandonRequested", yes
+    confirmDestroy: ->
+      projectId = @get "id"
+      Bee.Auth.send
+        type: "DELETE"
+        url: Bee.endpoint "/projects/#{projectId}"
+      .done =>
+        @set "deletionRequested", no
+        (@get "target").send "projectDeleted"
+    confirmAbandon: ->
+      # make project leave api call
+    cancelDestroy: ->
+      @set "deletionRequested", no
+    cancelAbandon: ->
+      @set "abandonRequested", no
+    close: ->
+      projectId = @get "id"
+      Bee.Auth.send
+        type: "PUT"
+        url: Bee.endpoint "/projects/#{projectId}"
+        data:
+          isActive: no
+      .done (project) => @set "isActive", no
+    reopen: ->
+      projectId = @get "id"
+      Bee.Auth.send
+        type: "PUT"
+        url: Bee.endpoint "/projects/#{projectId}"
+        data:
+          isActive: yes
+      .done (project) => @set "isActive", yes
 
 # projects create
 Bee.ProjectsCreateController = Ember.ObjectController.extend

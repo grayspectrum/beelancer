@@ -40,7 +40,7 @@
 					<li>
 						<strong>Deadline:</strong> 
 						<span id="task-deadline">
-							{{deadline this}}
+							{{deadline this.content}}
 						</span>
 					</li>
 				</ul>
@@ -98,4 +98,26 @@
 			</div>
 		</div>
 	</div>
+	{{#if deletionRequested}}
+		<div class="block-ui">
+			<div class="light-gradient popup">
+				<p>Are you sure you want to delete this project?</p>
+				<ul class="popup-options">
+					<li><button {{action 'cancelDestroy'}} class="light-gradient">Cancel</button></li>
+					<li><button {{action 'confirmDestroy'}} class="gold-gradient">Confirm</button></li>
+				</ul>
+			</div>
+		</div>
+	{{/if}}
+	{{#if abandonRequested}}
+		<div class="block-ui">
+			<div class="light-gradient popup">
+				<p>Are you sure you want to leave this project?</p>
+				<ul class="popup-options">
+					<li><button {{action 'cancelAbandon'}} class="light-gradient">Cancel</button></li>
+					<li><button {{action 'confirmAbandon'}} class="gold-gradient">Confirm</button></li>
+				</ul>
+			</div>
+		</div>
+	{{/if}}
 </script>
