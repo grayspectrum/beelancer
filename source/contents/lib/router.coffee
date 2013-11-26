@@ -187,6 +187,9 @@ Bee.TasksViewRoute = Bee.Auth.Route.extend
     .done (task) ->
       task.id = task._id
       task
+  actions:
+    taskDeleted: ->
+      @transitionTo "tasks.index"
 
 Bee.TeamRoute = Bee.Auth.Route.extend {}
 Bee.MessagesRoute = Bee.Auth.Route.extend {}

@@ -1,11 +1,14 @@
 <script type="text/x-handlebars" data-template-name="tasks-worklog-timer">
-    {{#if ended}}
-        <strong>Status: </strong>
-        <span class="status">Paused</span>
-        <button class="timer start">Start Working</button>
-    {{else}}
-        <strong>Status: </strong>
-        <span class="status">Timing</span>
-        <button class="timer stop">Stop Working</button>
-    {{/if}} 
+    {{#if worklog.length}}
+    	{{#if isTiming}}
+	        <strong>Status: <span class="status">Timing</span></strong>
+	        <button {{action "stopTimer"}} class="timer stop">Stop Working</button>
+	    {{else}}
+	        <strong>Status: <span class="status">Paused</span></strong>
+	        <button {{action "startTimer"}} class="timer start">Start Working</button>
+	    {{/if}} 
+	{{else}}
+		<strong>Status: <span class="status">Paused</span></strong>
+        <button {{action "startTimer"}} class="timer start">Start Working</button>
+	{{/if}}
 </script>

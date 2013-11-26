@@ -1,91 +1,110 @@
 <script type="text/x-handlebars" data-template-name="tasks/view">
-    <div class="center-pane">
-        <div class="top_options">
-            <strong class="gold-gradient option_button">
-                {{#link-to 'tasks.edit' _id classNames='edit_project'}}Edit{{/link-to}}
-            </strong>
-            <strong class="gold-gradient option_button">
-                <a {{action 'destroyTask'}} class="delete_task">Delete</a>
-            </strong>
-            <strong class="gold-gradient option_button">
-                {{#if isActive}}
-                    <a {{action 'markTaskAsClosed'}} class="task_status task_open">Complete Task</a>
-                {{else}}
-                    <a {{action 'markTaskAsOpen'}} class="task_status task_closed">Reopen Task</a>
-                {{/if}}
-            </strong>
-        </div>
-        <div class="two3rds">
-            <div id="task_details" data-id="{{_id}}">
-                <h3 class="title">{{title}}</h3>
-                <div id="task_timer_controls">
-                    {{view Bee.TasksWorklogTimerView}}
-                </div>
-                <ul class="task_info">
-                    <li>
-                        <strong>Assignee:</strong> 
-                        {{#if assignee}}
-                            <span id="task-assigned-to" data-assignee="{{assignee.profile}}"></span>
-                        {{else}}
-                            <em>Unassigned</em>
-                        {{/if}}
-                    </li>
-                    <li>
-                        <strong>Owner:</strong> 
-                        <span id="task-owned-by" data-owner="{{owner.profile}}"></span>
-                    </li>
-                    <li>
-                        <strong>Project:</strong> 
-                        {{#link-to 'projects.view' project._id classNames='edit_project'}}{{project.title}}{{/link-to}}
-                    </li>
-                    <li>
-                        <strong>Rate:</strong> 
-                        <span class="rate">${{rate}}</span>
-                        <em class="rate-type">{{#if isFixedRate}}(fixed){{else}}per hour{{/if}}</em>
-                    </li>
-                    <li>
-                        <strong>Time Worked:</strong> 
-                        <span class="time"></span>
-                    </li>
-                    <li>
-                        <strong>Unbilled:</strong> 
-                        <span class="calc-cost">
-                            {{#if isFixedRate}}${{rate}}{{else}}{{taskCost worklog rate}}{{/if}}
-                        </span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="col3">
-            <div class="col-header worklog light-gradient">
-                <h3>
-                    Work Log
-                    <button {{action "addLogEntry"}} class="timer entry">Add</button>
-                </h3>
-            </div>
-            <div id="task_worklog">
-                {{#if worklog.length}}
-                    <ul class="work_log">
-                        {{#each worklog}}
-                            {{#if ended}}
-                                {{#view Bee.WorklogView contentBinding='this'}}
-                                    <strong class="wlog-time">
-                                        <span class="wlog-started">{{started}}</span>
-                                        <span class="wlog-ended">{{ended}}</span>
-                                        <span class="wlog-hours">{{hoursWorked this}}</span> on <span class="wlog-day">{{dayStarted started}}</span>
-                                    </strong>
-                                    <button {{action "removeLogEntry"}} class="wlog delete">Delete Entry</button>
-                                    <button {{action "editLogEntry"}} class="wlog edit">Edit Entry</button>
-                                    <p>{{message}}</p>
-                                {{/view}}
-                            {{/if}}
-                        {{/each}}
-                    </ul>
-                {{else}}
-                    <p class="no_projects">No work history yet.</p>
-                {{/if}}
-            </div>
-        </div>
+  <div class="center-pane">
+    <div class="top_options">
+      <strong class="gold-gradient option_button">
+        {{#link-to 'tasks.edit' _id classNames='edit_project'}}Edit{{/link-to}}
+      </strong>
+      <strong class="gold-gradient option_button">
+        <a {{action 'destroyTask'}} class="delete_task">Delete</a>
+      </strong>
+      <strong class="gold-gradient option_button">
+        {{#if isComplete}}
+          <a {{action 'markTaskAsOpen'}} class="task_status reopen_task">Reopen Task</a>
+        {{else}}
+          <a {{action 'markTaskAsClosed'}} class="task_status close_task">Complete Task</a>
+        {{/if}}
+      </strong>
     </div>
-    {{#if worklogFormVisible}}{{view Bee.TasksWorklogModalView}}{{/if}}
+    <div class="two3rds">
+      <div id="task_details" data-id="{{_id}}">
+        <h3 class="title">{{title}}</h3>
+        <div id="task_timer_controls">
+          {{view Bee.TasksWorklogTimerView}}
+        </div>
+        <ul class="task_info">
+          <li>
+            <strong>Assignee:</strong> 
+            {{#if assignee}}
+              <span id="task-assigned-to">
+                {{#link-to "team.view" assignee.profile._id}}
+                  <img src="{{unbound assignee.profile.avatarPath}}" width="24px" height="24px">
+                  <span>{{assignee.profile.firstName}} {{assignee.profile.lastName}}</span>
+                {{/link-to}}
+              </span>
+            {{else}}
+              <em>Unassigned</em>
+            {{/if}}
+          </li>
+          <li>
+            <strong>Owner:</strong> 
+            <span id="task-owned-by">
+              {{#link-to "team.view" owner.profile._id}}
+                <img src="{{unbound owner.profile.avatarPath}}" width="24px" height="24px">
+                <span>{{owner.profile.firstName}} {{owner.profile.lastName}}</span>
+              {{/link-to}}
+            </span>
+          </li>
+          <li>
+            <strong>Project:</strong> 
+            {{#link-to 'projects.view' project._id}}{{project.title}}{{/link-to}}
+          </li>
+          <li>
+            <strong>Rate:</strong> 
+            <span class="rate">${{rate}}</span>
+            <em class="rate-type">{{#if isFixedRate}}(fixed){{else}}per hour{{/if}}</em>
+          </li>
+          <li>
+            <strong>Time Worked:</strong> 
+            <span class="time">{{timeWorked worklog}} hours</span>
+          </li>
+          <li>
+            <strong>Unbilled:</strong> 
+            <span class="calc-cost">
+              {{#if isFixedRate}}${{rate}}{{else}}{{taskCost worklog rate}}{{/if}}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col3">
+      <div class="col-header worklog light-gradient">
+        <h3>
+          Work Log
+          <button {{action "addLogEntry"}} class="timer entry">Add</button>
+        </h3>
+      </div>
+      <div id="task_worklog">
+        {{#if worklog.length}}
+          <ul class="work_log">
+            {{#each worklog}}
+              {{#if ended}}
+                {{#view Bee.WorklogView contentBinding='this'}}
+                  <strong class="wlog-time">
+                    <span class="wlog-hours">{{hoursWorked this}} hours</span> on <span class="wlog-day">{{dayStarted started}}</span>
+                  </strong>
+                  <button {{action "removeLogEntry"}} class="wlog delete">Delete Entry</button>
+                  <button {{action "editLogEntry"}} class="wlog edit">Edit Entry</button>
+                  <p>{{message}}</p>
+                {{/view}}
+              {{/if}}
+            {{/each}}
+          </ul>
+        {{else}}
+          <p class="no_projects">No work history yet.</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  {{#if deletionRequested}}
+    <div class="block-ui">
+      <div class="light-gradient popup">
+        <p>Are you sure you want to delete this task?</p>
+        <ul class="popup-options">
+          <li><button {{action 'cancelDestroy'}} class="light-gradient">Cancel</button></li>
+          <li><button {{action 'confirmDestroy'}} class="gold-gradient">Confirm</button></li>
+        </ul>
+      </div>
+    </div>
+  {{/if}}
+  {{#if worklogFormVisible}}{{view Bee.TasksWorklogModalView}}{{/if}}
 </script>

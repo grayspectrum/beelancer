@@ -401,44 +401,119 @@ Bee.TasksCreateController = Ember.ObjectController.extend
 
 # tasks view
 Bee.TasksViewController = Ember.ObjectController.extend
-  worlklogEntry:
+  logEntry:
     started: null
     ended: null
     message: null
+    _id: null
   content: {}
   worklogFormVisible: no
+  worklogError: null
   editingWorklogEntry: null
+  deletionRequested: no
+  isTiming: (->
+    worklog = @get "worklog"
+    @set "logEntry._id", worklog[worklog.length - 1]?._id
+    not worklog[worklog.length - 1]?.ended
+  ).property "model"
   actions:
-    # task actions
     destroyTask: ->
-      id = @get "_id"
-      console.log "deleting task #{id}"
+      @set "deletionRequested", yes
+    confirmDestroy: ->
+      taskId = @get "id"
+      Bee.Auth.send
+        type: "DELETE"
+        url: Bee.endpoint "/tasks/#{taskId}"
+      .done =>
+        @set "deletionRequested", no
+        (@get "target").send "taskDeleted"
+    cancelDestroy: ->
+      @set "deletionRequested", no
     markTaskAsClosed: ->
-      id = @get "_id"
-      console.log "marking task #{id} as completed"
+      taskId = @get "id"
+      Bee.Auth.send
+        type: "PUT"
+        url: Bee.endpoint "/tasks/#{taskId}"
+        data:
+          isComplete: yes
+      .done => @set "isComplete", yes
     markTaskAsOpen: ->
-      id = @get "_id"
-      console.log "marking task #{id} as open"
+      taskId = @get "id"
+      Bee.Auth.send
+        type: "PUT"
+        url: Bee.endpoint "/tasks/#{taskId}"
+        data:
+          isComplete: no
+      .done => @set "isComplete", no
     # worklog actions
     addLogEntry: -> 
       @set "editingWorklogEntry", null
       @set "worklogFormVisible", yes
     saveLogEntry: -> 
+      @set "worklogError", null
+      taskId    = @get "_id"
       method    = "POST"
-      endpoint  = "/tasks/#{_id}/worklog"
-      worklogId = (@get "editingWorklogEntry")._id
+      endpoint  = "/tasks/#{taskId}/worklog"
+      logEntry  = @get "logEntry"
+      worklogId = (@get "editingWorklogEntry")?._id
       if worklogId
         endpoint += "/#{worklogId}"
         method    = "PUT"
+      
+      # when casting dates to json, they are losing their hours/secs
+      # so we need to get the timezone offset and create new objects
+      createValidJSONTime = (datestring) ->
+        date = new Date datestring
+        date = new Date date.getTime() + (date.getTimezoneOffset() * 3600)
+        do date.toJSON
+
+      started = createValidJSONTime logEntry.started
+      ended   = createValidJSONTime logEntry.ended
+
       Bee.Auth.send
         type: method
         url: Bee.endpoint endpoint
-        data: @get "worklogEntry"
-      .done (logentry) ->
+        data: 
+          started: started
+          ended: ended
+          message: logEntry.message
+      .done (logentry) =>
         console.log "logentry saved:", logentry
-      .fail (err) ->
-        console.log "failed to save logentry"
-      @set "worklogFormVisible", no
+        @set "worklogFormVisible", no
+      .fail (err) =>
+        errorText = (JSON.parse err.responseText)
+        # if it's validation errors, then show first
+        if errorText.errors
+          errorText = errorText.errors[0].msg
+        else
+          errorText = errorText.error
+        @set "worklogError", errorText
     closeLogEntry: -> 
+      @set "worklogError", null
       @set "editingWorklogEntry", null
       @set "worklogFormVisible", no
+    startTimer: ->
+      taskId = @get "_id"
+      Bee.Auth.send
+        type: "POST"
+        url: Bee.endpoint "/tasks/#{taskId}/worklog"
+      .done (entry) => 
+        task = @get "content"
+        task.worklog.push entry
+        @set "model", task
+        @set "logEntry", entry
+        @set "isTiming", yes
+    stopTimer: ->
+      taskId    = @get "_id"
+      worklog   = @get "worklog"
+      entryId   = (@get "logEntry")._id or worklog[worklog.length - 1]?._id
+      Bee.Auth.send
+        type: "PUT"
+        url: Bee.endpoint "/tasks/#{taskId}/worklog/#{entryId}"
+        data:
+          ended: new Date()
+      .done (entry) => 
+        task = @get "content"
+        task.worklog.push entry
+        @set "worklog", task.worklog
+        @set "isTiming", no

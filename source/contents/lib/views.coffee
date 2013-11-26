@@ -77,7 +77,8 @@ Bee.WorklogView = Ember.View.extend
 Bee.TasksWorklogModalView = Ember.View.extend
   templateName: "tasks-worklog-form"
   didInsertElement: ->
-    ($ "#wlog_startTime, #wlog_endTime").datepicker()
+    ($ ".datepicker").datetimepicker
+      timeFormat: "hh:mm tt"
 
 # task view timer
 Bee.TasksWorklogTimerView = Ember.View.extend

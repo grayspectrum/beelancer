@@ -79,12 +79,17 @@ calculateWorklogHours = (logEntry) ->
 Ember.Handlebars.helper "taskCost", (worklog=[], rate=0, options) ->
   timeWorked = 0
   # other wise let's calculate it
-  calculateWorklogHours time for time in worklog
+  timeWorked += Number calculateWorklogHours time for time in worklog
   cost = timeWorked * rate
-  "$#{cost}"
+  "$#{cost.toFixed 2}"
 
 Ember.Handlebars.helper "hoursWorked", (value, options) ->
   calculateWorklogHours value
+
+Ember.Handlebars.helper "timeWorked", (worklog, options) ->
+  time = 0
+  time += Number calculateWorklogHours log for log in worklog
+  time.toFixed 2
 
 Ember.Handlebars.helper "dayStarted", (value, options) ->
   (new Date value).toDateString()
