@@ -9,44 +9,28 @@
               {{assignee.firstName}} {{assignee.lastName}}
             {{/link-to}}
           </strong>
-          <ul class="task_list">
-            {{#if tasks.length}}
-              {{#each tasks}}
-                <li>
-                  {{#link-to "tasks.view" _id}}
-                    <strong class="task_title">{{title}}</strong>
-                    <em class="task_rate">
-                      ${{rate}}
-                      {{#if isFixedRate}}
-                         total
-                      {{else}}
-                         per hour
-                      {{/if}}
-                    </em>
-                  {{/link-to}}
-                </li>
-              {{/each}}
-            {{else}}
-              <li><p class="no_projects"><em>None</em></p></li>
-            {{/if}}
-          </ul>
-        {{else}}
-          <ul class="task_list">
-            <li>
-              {{#link-to "tasks.view" _id}}
-                <strong class="task_title">{{title}}</strong>
-                <em class="task_rate">
-                  ${{rate}}
-                  {{#if isFixedRate}}
-                     total
-                  {{else}}
-                     per hour
-                  {{/if}}
-                </em>
-              {{/link-to}}
-            </li>
-          </ul>
         {{/if}}
+        <ul class="task_list">
+          {{#if tasks.length}}
+            {{#each tasks}}
+              <li>
+                {{#link-to "tasks.view" _id}}
+                  <strong class="task_title">{{title}}</strong>
+                  <em class="task_rate">
+                    ${{rate}}
+                    {{#if isFixedRate}}
+                       total
+                    {{else}}
+                       per hour
+                    {{/if}}
+                  </em>
+                {{/link-to}}
+              </li>
+            {{/each}}
+          {{else}}
+            <li><p class="no_projects"><em>None</em></p></li>
+          {{/if}}
+        </ul>
       </li>
     </ul>
   </li>

@@ -335,13 +335,13 @@ Bee.TasksIndexController = Ember.ObjectController.extend
 
     filterByProject = (tasklist, target) ->
       tasks = []
-      $.each tasklist.tasks, (i, task) ->
-        if ctrl.get "selectedProject"
+      $.each (tasklist.tasks or tasklist), (i, task) ->
+        if project
           if task.project is project then tasks.push task
         else
           tasks.push task
       filteredTaskList = 
-        assignee: tasklist.assignee
+        assignee: tasklist.assignee or null
         tasks: tasks
       target.push? filteredTaskList
 
@@ -351,8 +351,7 @@ Bee.TasksIndexController = Ember.ObjectController.extend
     $.each (ctrl.get "tasks").completed, (i, tasklist) ->
       filterByProject tasklist, filtered.completed
 
-    $.each (ctrl.get "tasks").unassigned, (i, tasklist) ->
-      filterByProject tasklist, filtered.unassigned
+    filterByProject (ctrl.get "tasks").unassigned, filtered.unassigned
 
     return filtered     
           

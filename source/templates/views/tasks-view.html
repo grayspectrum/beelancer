@@ -18,9 +18,13 @@
     <div class="two3rds">
       <div id="task_details" data-id="{{_id}}">
         <h3 class="title">{{title}}</h3>
-        <div id="task_timer_controls">
-          {{view Bee.TasksWorklogTimerView}}
-        </div>
+        {{#if assignee}}
+          {{#if isComplete}}{{else}}
+            <div id="task_timer_controls">
+              {{view Bee.TasksWorklogTimerView}}
+            </div>
+          {{/if}}
+        {{/if}}
         <ul class="task_info">
           <li>
             <strong>Assignee:</strong> 
