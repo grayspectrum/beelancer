@@ -3,7 +3,11 @@
 		<form id="create_project">
 			<div class="top_options">
 				<strong class="gold-gradient option_button">
-					<button {{bindAttr disabled="isProcessing"}} {{action 'createProject'}} class="save_project">Save Project</button>
+					{{#if isEditing}}
+						<button {{bindAttr disabled="isProcessing"}} {{action 'updateProject'}} class="save_project">Update Project</button>
+					{{else}}
+						<button {{bindAttr disabled="isProcessing"}} {{action 'createProject'}} class="save_project">Create Project</button>
+					{{/if}}
 				</strong>
 			</div>
 			<div class="group">

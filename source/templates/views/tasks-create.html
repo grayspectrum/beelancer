@@ -3,7 +3,11 @@
 		<form id="create_task">
 			<div class="top_options">
 				<strong class="gold-gradient option_button">
-					<button {{bindAttr disabled=isProcessing}} {{action 'createTask'}} class="save_task">Save Task</button>
+					{{#if isEditing}}
+						<button {{bindAttr disabled=isProcessing}} {{action 'updateTask'}} class="save_task">Update Task</button>
+					{{else}}
+						<button {{bindAttr disabled=isProcessing}} {{action 'createTask'}} class="save_task">Create Task</button>
+					{{/if}}
 				</strong>
 			</div>
 			<div class="group">

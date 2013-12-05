@@ -139,6 +139,18 @@ Bee.ProjectsCreateRoute = Bee.Auth.Route.extend
     projectCreated: (projectId) ->
       @transitionTo "projects.view", projectId
 
+# projects view route
+Bee.ProjectsEditRoute = Bee.Auth.Route.extend
+  model: (params) ->
+    Bee.Auth.send
+      url: Bee.endpoint "/projects/#{params.id}"
+    .done (project) ->
+      project.id = project._id
+      project
+  actions:
+    projectUpdated: (id) ->
+      @transitionTo "projects.view", id
+
 # tasks route
 Bee.TasksRoute = Bee.Auth.Route.extend {}
 
@@ -178,6 +190,37 @@ Bee.TasksCreateRoute = Bee.Auth.Route.extend
             assignee
   actions:
     taskCreated: (taskId) ->
+      @transitionTo "tasks.view", taskId
+
+# tasks edit route
+Bee.TasksEditRoute = Bee.Auth.Route.extend
+  model: (params) ->
+    Bee.Auth.send
+      url: Bee.endpoint "/tasks/#{params.id}"
+    .done (task) ->
+      task.id = task._id
+      task
+  # TODO: find out why setupController fn prevents the model
+  # from properly populating the view - we still need to use
+  # this fn to setup the allowed projects and assignees
+  setupController: (ctrl) ->
+    # get projects
+    Bee.Auth.send
+      url: Bee.endpoint "/projects"
+    .done (projects) -> 
+      projects = projects.owned.concat projects.participating
+      ctrl.set "projects", projects
+
+      # get teams for each project pre-emptively
+      $.each projects, (i, project) ->
+        Bee.Auth.send
+          url: Bee.endpoint "/projects/#{project._id}/team"
+        .done (assignees) -> 
+          ctrl.set "teams.#{project._id}", assignees.map (assignee) ->
+            assignee.fullName = "#{assignee.firstName} #{assignee.lastName}"
+            assignee
+  actions:
+    taskUpdated: (taskId) ->
       @transitionTo "tasks.view", taskId
 
 Bee.TasksViewRoute = Bee.Auth.Route.extend

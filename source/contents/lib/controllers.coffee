@@ -319,24 +319,24 @@ Bee.ProjectsEditController = Ember.ObjectController.extend
   isEditing: yes
   isProcessing: no
   hasClient: no
-  content: 
-    title: null
-    description: null
-    deadline: null
-    client: null
-    budget: null
   actions:
     updateProject: ->
-      ctrl = @
+      ctrl      = @
+      projectId = @get "id"
+      content   = @get "content"
       # add validation here
       @set "isProcessing", yes
       Bee.Auth.send
-        type: "POST"
-        url: Bee.endpoint "/projects"
-        data: @get "content"
+        type: "PUT"
+        url: Bee.endpoint "/projects/#{projectId}"
+        data:
+          title: content.title
+          description: content.description
+          deadline: content.deadline
+          hasClient: content.hasClient
       .done (project) ->
         ctrl.set "isProcessing", no
-        (ctrl.get "target").send "projectCreated", project._id
+        (ctrl.get "target").send "projectUpdated", project._id
       .fail (err) ->
         ctrl.set "isProcessing", no
         # display error message here 
@@ -354,8 +354,8 @@ Bee.TasksIndexController = Ember.ObjectController.extend
     owned: []
     participating: []
   visible: (->
-    project  = @get "selectedProject"
-    ctrl     = @
+    project = @get "selectedProject"
+    ctrl = @
     filtered = 
       inProgress: []
       completed: []
@@ -422,6 +422,50 @@ Bee.TasksCreateController = Ember.ObjectController.extend
       .done (task) ->
         ctrl.set "isProcessing", no
         (ctrl.get "target").send "taskCreated", task._id
+      .fail (err) ->
+        ctrl.set "isProcessing", no
+        # display error message here
+
+# tasks edit
+Bee.TasksEditController = Ember.ObjectController.extend
+  errors: []
+  isProcessing: no
+  isEditing: yes
+  projects: []
+  teams: {}
+  content: 
+    title: null
+    rate: null
+    project: null
+    assignee: null
+    isFixedRate: null
+  selectedProject: null
+  selectedAssignee: null
+  assignees: (->
+    project = @get "selectedProject"
+    team = @get "teams.#{project}"
+    if project and team then team else []
+  ).property "selectedProject"
+  actions:
+    updateTask: ->
+      ctrl = @
+      projectId = @get "selectedProject"
+      taskId = @get "id"
+      content = @get "content"
+      # add validation here
+      @set "isProcessing", yes
+      Bee.Auth.send
+        type: "PUT"
+        url: Bee.endpoint "/projects/#{projectId}/tasks/#{taskId}"
+        data: 
+          title: content.title
+          rate: content.rate
+          isFixedRate: content.isFixedRate
+          project: @get "selectedProject"
+          assignee: @get "selectedAssignee"
+      .done (task) ->
+        ctrl.set "isProcessing", no
+        (ctrl.get "target").send "taskUpdated", task._id
       .fail (err) ->
         ctrl.set "isProcessing", no
         # display error message here
