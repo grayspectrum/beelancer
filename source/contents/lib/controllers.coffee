@@ -313,6 +313,34 @@ Bee.ProjectsCreateController = Ember.ObjectController.extend
         ctrl.set "isProcessing", no
         # display error message here
 
+# edit project
+Bee.ProjectsEditController = Ember.ObjectController.extend
+  errors: []
+  isEditing: yes
+  isProcessing: no
+  hasClient: no
+  content: 
+    title: null
+    description: null
+    deadline: null
+    client: null
+    budget: null
+  actions:
+    updateProject: ->
+      ctrl = @
+      # add validation here
+      @set "isProcessing", yes
+      Bee.Auth.send
+        type: "POST"
+        url: Bee.endpoint "/projects"
+        data: @get "content"
+      .done (project) ->
+        ctrl.set "isProcessing", no
+        (ctrl.get "target").send "projectCreated", project._id
+      .fail (err) ->
+        ctrl.set "isProcessing", no
+        # display error message here 
+
 # tasks index
 Bee.TasksIndexController = Ember.ObjectController.extend
   selectedProject: null

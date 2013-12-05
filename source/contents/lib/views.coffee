@@ -41,11 +41,21 @@ Bee.ProjectsCreateView = Ember.View.extend
     ($ "[name='deadline']").datepicker minDate : "0"
     ($ "#create_project input:first").trigger "focus"
 
+# point edit project to the same template as
+# create project, but we will just pre-populate it
+Bee.ProjectsEditView = Ember.View.extend
+  templateName: "projects/create"
+
 # tasks create view
 Bee.TasksCreateView = Ember.View.extend
   templateName: "tasks/create"
   didInsertElement: ->
     ($ "#create_task input:first").trigger "focus"
+
+# point edit task to the same template as
+# create task, but we will just pre-populate it
+Bee.TasksEditView = Ember.View.extend
+  templateName: "tasks/create"
 
 # worklog view
 Bee.WorklogView = Ember.View.extend
