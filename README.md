@@ -1,6 +1,9 @@
 # Beelancer - Social Project Management For Busy Bees
 
-This is the repository for the Beelancer web application front-end located at https://beelancer.com.
+This is the repository for the Beelancer web application front-end located at https://beelancer.com. 
+
+> **This project is being actively refactored, so please be gentle with submitting issues.**
+
 Feel free to fork and contribute or use as a reference for building your own Beelancer
 applications. Contributors, please see the [wiki](https://github.com/gordonwritescode/beelancer/wiki) 
 for the style guide and documentation.
